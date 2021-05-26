@@ -18,7 +18,7 @@
 2. On terminal, tap : ```sudo docker build -t rdfminer:1.0 . --no-cache``` (takes a long time)
 > It is important to execute this command at the same level of ***Dockerfile***
 3. Create a folder (anywhere on your machine) which contains your files (axioms, grammar, ...). 
-> For the continuation, let's assume that you have created the folder **shared** which contains a file ***axioms.txt***
+> For the following step, let's assume that you have created the folder **shared** which contains a file ***axioms.txt***
 4. Once this phase is complete, you can launch the container : ```sudo docker run -it -v $(pwd)/shared/:/rdfminer/data/ rdfminer:1.0 -a /rdfminer/data/axioms.txt -t 1 -o /rdfminer/data/results.xml```
 > The container takes the same parameters as RDFMiner jar file
 
@@ -45,4 +45,4 @@
 
 ## Documentations
 
-All resources about the project are avalaible on /docs folder. See [working-paper.pdf](https://github.com/RemiFELIN/RDFMining/tree/main/docs/working-paper.pdf)
+All resources about the project are avalaible on [docs](https://github.com/RemiFELIN/RDFMining/tree/main/docs) folder. See [working-paper.pdf](https://github.com/RemiFELIN/RDFMining/tree/main/docs/working-paper.pdf)
