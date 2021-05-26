@@ -1,0 +1,14 @@
+1. Satisfactory, in this context, means accurate, in agreement with the assessment of a knowledge engineer. The interest of our approach as compared to the probabilistic framework is that it is more accurate, as shown in [19]. Since this fact is established and published and the focus of this paper is scalability of the possibilistic approach, we respectfully think that repeating the comparison to the probabilistic framework would be a waste of space and would distract the reader from the actual contribution.
+
+2. While the possibilistic framework has been already introduced in [19], we would like to point out that:
+a) the EKAW paper was a short paper and we wanted to take the opportunity of this submission to ISWC to fully expound our proposal; indeed, Sections 2 and 3 provide a more thorough formalization than the EKAW paper did;
+b) we do think that the time capping heuristics is a substantial progress wrt to the EKAW paper, deserving publication: in order to evaluate this claim, please just consider how many more axioms we could test in a very short time span and, moreover, on a much less powerful machine.
+
+3. Computational complexity is an attribute of a problem, not of an algorithm. An algorithm has a computational cost. That said, the computational cost of our heuristic depends entirely on the execution of three SPARQL queries: (13), (14), and (15). The time these queries will take depends on the implementation of the particular SPARQL engine used, not on our heuristic. Since the queries are time-capped, the test time is upper-bounded by the time-out, e.g., 20 minutes. Therefore, the computation time to test an axiom is O(1).
+
+4. The reason why evaluation only includes subsumption axioms and only considers DBpedia as test data is to allow a comparison to be made with the uncapped results, which are available for those axioms and those test data only.
+
+5. Once again, the point our paper wants to make is not to show that our possibilistic framework works better than the probability-based and statistical-based approaches (that was done in [19]), but to answer the question whether time capping can alleviate its computation without giving up the precision of the scores, and we think we have delivered on that point.
+
+Finally, we do not have enough space to retort to Reviewer 2's comments on Section 2.2 and alleged contradiction between Section 5.3 and 5.4. However, the confusion between an axiom and a fact, his/her thinking that elements in content(axiom) belonging to case 3 are removed (why?), and his/her mention of "further" checks, while we are still and always talking about the same RDF facts, lead us to suppose that his/her doubts are mainly caused by the little time available for reading all the assigned papers on a tight reviewing schedule and we are confident that a second reading will help dissipate them.
+

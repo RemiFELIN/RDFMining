@@ -1,0 +1,11 @@
+Sentence := NP ' ' VP
+
+VP := IntransitiveVerb | TransitiveVerb ' ' NP
+
+NP := Det ' ' Noun
+
+Det := 'the' | 'a'
+Noun := 'cat' | 'dog' | 'mouse'
+IntransitiveVerb := 'runs' | 'sleeps'
+TransitiveVerb := 'sees' | 'chases' | 'bites'
+

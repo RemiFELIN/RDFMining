@@ -1,0 +1,206 @@
+----------------------- REVIEW 1 ---------------------
+PAPER: 160
+TITLE: Time-Capped Possibilistic Testing of OWL Axioms Against RDF Facts
+AUTHORS: Andrea Tettamanzi and Catherine Faron Zucker
+
+OVERALL EVALUATION: 1 (weak accept)
+APPROPRIATENESS: Does the paper fit in ESWC? [IN-USE & INDUSTRIAL TRACK: Does the paper showcase a novel application of Semantic Web technologies in the enterprise or in a real world deployment?]: 5 (Certainly)
+CLARITY: For the reasonably well-prepared reader, is it clear what was done and why? Is the paper well-written and well-structured?: 4 (Understandable by most readers.)
+ORIGINALITY / INNOVATIVENESS: Is there novelty in the paper? Does it address a new problem or one that has received little attention? Does it improve previous approaches in terms of usability, coverage, or success?: 2 (Marginal: Minor improvements on existing systems.)
+IMPLEMENTATION AND SOUNDNESS: Has the approach been fully implemented? Does the approach achieve its claims? Is enough detail provided that one might be able to replicate the system with some effort?: 5 (The system is fully implemented, and the claims for the system are convincingly supported. Other researchers should be able to replicate the work.)
+IMPACT OF IDEAS OR RESULTS: How significant is the work described? Will novel aspects of the system result in other researchers adopting the approach in their own work? Does the system represent a significant and important advance?: 3 (Interesting but not too influential. The work will be cited, but mainly for comparison or as a source of minor contributions.)
+RELATED WORK: To what extent the authors show awareness of related work and discuss comparison to previous work?: 3 (Fair knowledge of related work and some kind of comparison)
+EVALUATION: To what extent has the approach been evaluated ?: 5 (The approach has been thoroughly evaluated)
+RECOMMENDATION FOR BEST LONG PAPER AWARD: 2 (Probably Not)
+Should this be a Poster Paper?: 2 (Maybe)
+Should this be a Demo Paper?: 1 (No)
+Is there an ESWC 2015 workshop this paper could be submitted to?: 2 (I don't know)
+
+----------- REVIEW -----------
+This paper deals with the problem of checking the correctness of subclass OWL axioms by checking the degree of satisfaction of the axioms by existing RDF facts. The authors try to improve an existing probabilistic approach by proposing a possibilistic approach, which increases both the accuracy and the computational complexity. In order to reduce the computational complexity, a heuristic consisting in setting a timeout is proposed. Finally, the authors evaluate the impact of their possibilistic approach and their heuristic, providing good results.
+
+The paper is interesting for the conference audience, easy to follow, and tackles an important research problem. However, it seems that most of the material has already been published by the authors in reference [19]. In particular, Sections 2, 3, 4, and 5.1 have already been presented. So, this paper should give much more importance to the evaluation in 5.4, which is the real contribution. For example, it is not really clear how the accuracy was measured (i.e., why the proposed ARI index is more accurate than the probabilistic score) or what is the overall speedup in the reasoning time. I also think that the think about the counterexamples in Section 6 could be extended. Right now it is arguable whether the contribution is enough for acceptance.
+
+The approach is sound and the technical work is good, but in Equation (7), it should be more correct to talk about entailment with respect to an ontology. Moreover, it is not clear to me the third argument against the probabilistic approach, i.e., why the need to assume that the RDF facts are representative is not a problem for the possibilistic approach.
+
+The related work reduces to [2]. If there is only a previous work, saying that "axiom scoring is a critical task" is a too strong claim. Otherwise, some more reference should be included here.
+
+The paper is well written in general but there are some typos, such as a missing closing parenthesis (page 5, line 9), "D" -> "D'" (page 10, line 4), or "wether" -> "whether" (page 14). Furthermore, the authors forgot to replace the "TO DO" with the actual organization of the paper (page 2).
+
+----------------------- REVIEW 2 ---------------------
+PAPER: 160
+TITLE: Time-Capped Possibilistic Testing of OWL Axioms Against RDF Facts
+AUTHORS: Andrea Tettamanzi and Catherine Faron Zucker
+
+OVERALL EVALUATION: -1 (weak reject)
+APPROPRIATENESS: Does the paper fit in ESWC? [IN-USE & INDUSTRIAL TRACK: Does the paper showcase a novel application of Semantic Web technologies in the enterprise or in a real world deployment?]: 5 (Certainly)
+CLARITY: For the reasonably well-prepared reader, is it clear what was done and why? Is the paper well-written and well-structured?: 4 (Understandable by most readers.)
+ORIGINALITY / INNOVATIVENESS: Is there novelty in the paper? Does it address a new problem or one that has received little attention? Does it improve previous approaches in terms of usability, coverage, or success?: 4 (Noteworthy: An interesting new problem, or substantial benefits over other systems that attack this problem.)
+IMPLEMENTATION AND SOUNDNESS: Has the approach been fully implemented? Does the approach achieve its claims? Is enough detail provided that one might be able to replicate the system with some effort?: 5 (The system is fully implemented, and the claims for the system are convincingly supported. Other researchers should be able to replicate the work.)
+IMPACT OF IDEAS OR RESULTS: How significant is the work described? Will novel aspects of the system result in other researchers adopting the approach in their own work? Does the system represent a significant and important advance?: 4 (Some important advances over previous approaches, and likely to impact development work of other research groups.)
+RELATED WORK: To what extent the authors show awareness of related work and discuss comparison to previous work?: 4 (Good awareness of state of the art. The authors include a solid comparison to previous work)
+EVALUATION: To what extent has the approach been evaluated ?: 4 (The approach has been evaluated on a reasonable corpus or with a small set of users.)
+RECOMMENDATION FOR BEST LONG PAPER AWARD: 4 (May be)
+Should this be a Poster Paper?: 1 (No)
+Should this be a Demo Paper?: 1 (No)
+Is there an ESWC 2015 workshop this paper could be submitted to?: 2 (I don't know)
+
+----------- REVIEW -----------
+GENERAL REMARKS
+
+This paper presents an approach to scoring axioms of an ontology using a possibilistic approach, offering
+an alternative to statistical approaches. It reviews the state of the art, introducing notations used
+throughout the paper. It defined clearly the possibilistic approach (with a refreshing on possibilistic
+theory). The framework for testing consists in using RDF facts of the LOD, which raises the following
+difficulty: these facts have to be considered according to OWA (meaning the CWA must not be applied
+here), by contrast to the facts corresponding to the classical semantics of DLs. In particular, this
+makes it difficult to query the set of ?x that are in \neg C (for a class C). For this purpose, 3
+approaches are presented and discussed, then one is chosen with some argument (this approach being argued
+as being "between" the 2 other approaches).
+
+This approach as such is computationally costly, so a heuristics is introduced based on the assumption
+"the more the test takes time, the lower its score will be", an assumption that is tested: the experiments
+show that this assumption only involves an error rate of 4.1% while enabling a great gain in computing
+time.
+
+The paper is nicely written for the most. Remarks on the details follow.
+
+The main concern is the originality wrt your previous paper on a similar subject (in EKAW 2014)...
+
+PAGE BY PAGE REMARKS
+
+Page 2
+The sentence "Some preliminary results indicate that applying [...] yields very promising results [...]"
+is not very nice and should be rewritten (by contrast to other sentences of your introduction).
+
+
+Page 3
+There is a "[TO DO]" to be substituted, I imagine, by the organization of your paper.
+
+
+Page 5
+"possibility theory which is weaker than probability theory": weaker in what sense?
+
+
+Page 8
+- In the first paragraph of Section 4, it seems that you have forgotten the sets of
+  ordered pairs (for interpreting object properties).
+- "(exceptions or possible mistakes)": I'm OK for mistakes, but for exceptions, I don't get the ideal:
+  OWL is based on classical monotonic logic, so, a real exception (not a mistake) should invalidate
+  a piece of knowledge, no?
+- "class C is empty" does not contradict the axiom SubClassOf(C, D).
+- Note that the negation of some OWL2 formulas are easily expressible (up to the syntax) in OWL2.
+  For example, C(a) or r(a, b).
+
+
+Page 10
+- "it might well be that an individual is an instance of \neg C even though it is not an instance
+   of a class disjoint with C!": you should add "atomic" ("an atomic class disjoint with C"),
+   otherwise it does not work (unless I have not understood something...).
+- Before \cite, put a non-breaking space (a "~") to avoid having your citation at the beginning
+  of a line: cf. reference [16].
+
+
+Page 11
+"according" --> "according to"
+
+
+Page 12
+- The order between Figures 2 and 3 should be changed.
+- "an HP" --> "a HP"
+- You should not mention the colors (red line in Fig. 2, red and blue lines in Fig. 3):
+  the proceedings will probably be printed in grayscale colors.
+- Figure 2: the words on the 2nd axis are trimmed...
+- "at a high computational cost": given the context, maybe "higher" is more appropriate
+  than "high".
+- First sentence of Sect. 5.4: the figure tends to show that it is /upper bounded/ by the
+  inverse of their score, no? Furthermore, the score should be (1 + ARI(phi)) to make it
+  work.
+
+
+Page 13
+"cardinality of C": I guess you mean "the number of (known) instances of C"?
+
+
+Page 14
+- All the paragraph "In addition, a human evaluation, ..." should be moved to Section 5
+  (for example, in a subsection for qualitative analysis of the result).
+- "thant" --> "than"
+- "Another example of mistakes on is the use": remove "on".
+
+----------------------- REVIEW 3 ---------------------
+PAPER: 160
+TITLE: Time-Capped Possibilistic Testing of OWL Axioms Against RDF Facts
+AUTHORS: Andrea Tettamanzi and Catherine Faron Zucker
+
+OVERALL EVALUATION: -2 (reject)
+APPROPRIATENESS: Does the paper fit in ESWC? [IN-USE & INDUSTRIAL TRACK: Does the paper showcase a novel application of Semantic Web technologies in the enterprise or in a real world deployment?]: 2 (Probably Not)
+CLARITY: For the reasonably well-prepared reader, is it clear what was done and why? Is the paper well-written and well-structured?: 4 (Understandable by most readers.)
+ORIGINALITY / INNOVATIVENESS: Is there novelty in the paper? Does it address a new problem or one that has received little attention? Does it improve previous approaches in terms of usability, coverage, or success?: 2 (Marginal: Minor improvements on existing systems.)
+IMPLEMENTATION AND SOUNDNESS: Has the approach been fully implemented? Does the approach achieve its claims? Is enough detail provided that one might be able to replicate the system with some effort?: 4 (Generally solid work, although there are some aspects of the system that still need work, and/or some claims that should be better illustrated and supported.)
+IMPACT OF IDEAS OR RESULTS: How significant is the work described? Will novel aspects of the system result in other researchers adopting the approach in their own work? Does the system represent a significant and important advance?: 4 (Some important advances over previous approaches, and likely to impact development work of other research groups.)
+RELATED WORK: To what extent the authors show awareness of related work and discuss comparison to previous work?: 4 (Good awareness of state of the art. The authors include a solid comparison to previous work)
+EVALUATION: To what extent has the approach been evaluated ?: 4 (The approach has been evaluated on a reasonable corpus or with a small set of users.)
+RECOMMENDATION FOR BEST LONG PAPER AWARD: 1 (Certainly Not)
+Should this be a Poster Paper?: 2 (Maybe)
+Should this be a Demo Paper?: 2 (Maybe)
+Is there an ESWC 2015 workshop this paper could be submitted to?: 2 (I don't know)
+
+----------- REVIEW -----------
+I found the manuscript interesting and thought provoking, though I am not convinced by the utility of ‘possibility theory’.
+
+However, I cannot recommend acceptance because, in my opinion, there is far too much overlap with author’s EKAW 2014 paper.  There are whole sections that are identical.  There are some extra results, but these are not sufficient to justify an ESWC paper.
+
+The English needs improving
+
+----------------------- REVIEW 4 ---------------------
+PAPER: 160
+TITLE: Time-Capped Possibilistic Testing of OWL Axioms Against RDF Facts
+AUTHORS: Andrea Tettamanzi and Catherine Faron Zucker
+
+OVERALL EVALUATION: -2 (reject)
+APPROPRIATENESS: Does the paper fit in ESWC? [IN-USE & INDUSTRIAL TRACK: Does the paper showcase a novel application of Semantic Web technologies in the enterprise or in a real world deployment?]: 4 (Probably)
+CLARITY: For the reasonably well-prepared reader, is it clear what was done and why? Is the paper well-written and well-structured?: 3 (Mostly understandable to me with some effort.)
+ORIGINALITY / INNOVATIVENESS: Is there novelty in the paper? Does it address a new problem or one that has received little attention? Does it improve previous approaches in terms of usability, coverage, or success?: 2 (Marginal: Minor improvements on existing systems.)
+IMPLEMENTATION AND SOUNDNESS: Has the approach been fully implemented? Does the approach achieve its claims? Is enough detail provided that one might be able to replicate the system with some effort?: 2 (Troublesome. There are some aspects of the system that might be good, but the system has significant deficiencies and/or limitations that make it premature.)
+IMPACT OF IDEAS OR RESULTS: How significant is the work described? Will novel aspects of the system result in other researchers adopting the approach in their own work? Does the system represent a significant and important advance?: 2 (Marginally interesting. May or may not be cited.)
+RELATED WORK: To what extent the authors show awareness of related work and discuss comparison to previous work?: 3 (Fair knowledge of related work and some kind of comparison)
+EVALUATION: To what extent has the approach been evaluated ?: 2 (No significant evaluation has been performed.)
+RECOMMENDATION FOR BEST LONG PAPER AWARD: 1 (Certainly Not)
+Should this be a Poster Paper?: 3 (Yes)
+Should this be a Demo Paper?: 1 (No)
+Is there an ESWC 2015 workshop this paper could be submitted to?: 2 (I don't know)
+
+----------- REVIEW -----------
+This submission does not cut it as an ESWC publication. I would argue that this is indeed the case because of the following two reasons:
+
+1. The paper is poorly written. See the following excerpts along with comments:
+
+ - End of Section 1: [TO DO]. Please, proofread your papers more thoroughly.
+
+ - 3rd paragraph of Section 2: I do not understand the definition of $u_phi$: what are the logical consequences of an axiom? Normally, a logical consequence is something defined with respect to an ontology or a set of axioms. What does it mean for a consequence to be true? Is it that it is part of the repository as an explicit fact?
+
+ - Paragraph before formula (4): evidence $e = \psi \text{ such that } \phi \models \psi \text{ is in the RDF repository}$. I assume $\phi$ is the axiom mentioned in the previous paragraph and $\psi$ is a fact. Then, I am left wondering what does it mean that $\phi \models \psi$ is "in the repository". You mean that $\psi$ is a fact that is in the repository? If so, how is it possible that $\phi \models \psi$? You do not properly define the relation $\models$ (this could have been done with a rather simple reference), nor what is an RDF repository. If I make the assumption that $\models$ is the standard FOL entailment this makes even less sense as an axiom of the form $C \sqsubseteq D$ (which I assume what $\phi$ is) can never by itself entail a fact.
+
+ - 1st paragraph of Section 3.1: what is $\omega^*$? I assume it is a word over set $\Omega$. If so, how do you apply mapping $\pi$ to it? As it has previously defined, $\pi$ maps elements of $\Omega$ to some rational number between 0 and 1.
+
+ - 2nd paragraph of Section 3.2: "Let BS be a finite set of basic statements, i.e., assertions, like the ones contained in an RDF repository, that may be tested by means of a SPARQL ASK query." Again, I believe a better written and more precise definition would be helpful.
+
+ - 2nd paragraph of Section 3.2: if I assume that $\phi$ is an axiom of the form $C \sqsubseteq D$ then $\text{content}(\phi)$ is empty if $\phi$. Note that the domain of the $\models$ relation is usually a set of axioms or ontology, not a single axiom.
+
+ - 1st paragraph of Section 4: this brief introduction of model-theoretic semantics is completely warped. An interpretation is defined over an ontology or a signature and consists in a domain and an valuation function. What are OWL 2 expressions? Either if they are concept expressions or role expressions they are not mapped to "elements and sets of elements." Individuals are mapped into domain elements, concept expressions are mapped into domain subsets and role expressions are mapped into a binary relation over the domain.
+
+ - 2nd paragraph of Section 4: you mention that "unlike interpretation domains, RDF stores are incomplete and possibly noisy." What does incompleteness when talking about an interpretation means?
+
+These are only some of the very many examples of ill-defined notions that can be found through the paper.
+
+2. Lack of novel technical content.
+
+Most of the results presented in this paper come from [1] which the authors only cite in Section 6. Note that a significant amount of the content of this submission is directly copied from [1]. The only novel contribution of the submission is the "time-capping" aspect of the approach. By itself, this seems to be an insufficient contribution for an ESWC paper.
+
+The evaluation of the method is rather limited as it only deals with a single dataset. The authors justify some design choices, which in my opinion deserve a more thorough empirical evaluation, rather poorly: "To sum up, Equation 12 is too optimistic, Equation 14 too pessimistic, and Equation 13 somewhere in the middle. Following the old adage “virtue stands in the middle”, adopting Equation 13 looks like a sensible choice." 
+
+
+[1] Testing OWL Axioms Against RDF Facts: A Possibilistic Approach. Andrea G. B. Tettamanzi, Catherine Faron-Zucker, and Fabien Gandon.
+
+------------------------------------------------------
