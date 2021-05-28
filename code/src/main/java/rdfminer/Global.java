@@ -18,9 +18,9 @@ public class Global {
 	public static final String DBPEDIA_TDB_PATH = "/home/remi/Bureau/dev/DBPedia/tdb";
 	
 	/**
-	 * DBPEDIA endpoint
+	 * SPARQL Endpoint : our Virtuoso server endpoint
 	 */
-	public static final String DBPEDIA_SERVER = "http://134.59.130.136:8890/";
+	public static final String SPARQL_ENDPOINT = "http://134.59.130.136:8890/sparql";
 	// public static final String DBPEDIA_SERVER = "http://dbpedia.org/";
 	
 }
