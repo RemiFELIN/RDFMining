@@ -8,11 +8,11 @@
 extern "C" {
 #endif
 /*
- * Class:     rdfminer_RDFMiner
+ * Class:     com_i3s_app_rdfminer_RDFMiner
  * Method:    getProcessCPUTime
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_rdfminer_RDFMiner_getProcessCPUTime
+JNIEXPORT jlong JNICALL Java_com_i3s_app_rdfminer_RDFMiner_getProcessCPUTime
   (JNIEnv *, jclass);
 
 #ifdef __cplusplus
