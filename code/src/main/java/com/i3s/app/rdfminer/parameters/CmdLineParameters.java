@@ -37,10 +37,10 @@ public class CmdLineParameters
 	 *  as the product of the reference cardinality of the subclass and of the number
 	 *  of classes sharing at least one instance with it.</p>
 	 */
-	@Option(name = "-d", aliases = { "--dynamic-timeout" },
-			usage = "use a dynamic time-out for axiom testing",
-			metaVar = "ANGULAR_COEFF")
-	public double dynTimeOut = 0.0;
+	// @Option(name = "-d", aliases = { "--dynamic-timeout" },
+	//		usage = "use a dynamic time-out for axiom testing",
+	//		metaVar = "ANGULAR_COEFF")
+	// public double dynTimeOut = 0.0;
 	
 	@Option(name = "-g", aliases = { "--grammar" },
 			usage = "use this file as the axiom grammar",
@@ -48,9 +48,9 @@ public class CmdLineParameters
 	public String grammarFile = System.getenv("HOME") + "code/resources/OWL2Axiom-test.bnf";
 
 	@Option(name = "-o", aliases = { "--output" },
-			usage = "name of output results files: a XML and CSV file",
+			usage = "name of output files (without extension): the name 'results' is chosen if -o is not used. It produces a XML (containing confirmations and exceptions of each axioms) and CSV (containing results of each axioms) file",
 			metaVar = "RESULTFILE")
-	public String resultFile = System.getenv("HOME") + "data/results";
+	public String resultFile = System.getenv("HOME") + "io/results";
 	
 	@Option(name = "-r", aliases = { "--random"},
 			usage = "test randomly generated axioms")
@@ -61,10 +61,10 @@ public class CmdLineParameters
 			metaVar = "FILE")
 	public String subclassList = null;
 
-	@Option(name = "-t", aliases = { "--timeout" },
-			usage = "use this time-out (in minutes) for axiom testing",
-			metaVar = "MINUTES")
-	public long timeOut = 0;
+	// @Option(name = "-t", aliases = { "--timeout" },
+	//		usage = "use this time-out (in minutes) for axiom testing",
+	//		metaVar = "MINUTES")
+	// public long timeOut = 0;
 	
     // receives other command line parameters than options
     @Argument

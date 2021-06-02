@@ -34,13 +34,9 @@ public class ComplementExpression extends Expression
 	{	
 		String dc = getFreshVariableName();
 		String z = getFreshVariableName();
-		return // "{ " + subject + " a " + dc + " .\n" +
-				// "MINUS { " + subExpressions.get(0).createGraphPattern(subject, getFreshVariableName()) + " }\n}";
-				// "FILTER NOT EXISTS { " + z + " a " + dc + " .\n" +
-				"FILTER NOT EXISTS { " + 
-				subExpressions.get(0).createGraphPattern(subject, getFreshVariableName()) + 
-				"\n}";
-				// "\n}\n}";
+		return "{ " + subject + " a " + dc + " .\n" + 
+				"FILTER NOT EXISTS { " + z + " a " + dc + " .\n" + 
+		       subExpressions.get(0).createGraphPattern(z, getFreshVariableName()) + "\n}\n}";
 	}
 
 	/**

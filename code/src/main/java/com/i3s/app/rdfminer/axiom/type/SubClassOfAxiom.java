@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.i3s.app.rdfminer.axiom.types;
+package com.i3s.app.rdfminer.axiom.type;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,6 +39,7 @@ import Mapper.Symbol;
  */
 public class SubClassOfAxiom extends Axiom
 {
+	
 	private static Logger logger = Logger.getLogger(SubClassOfAxiom.class.getName());
 	
 	/**
@@ -65,6 +66,8 @@ public class SubClassOfAxiom extends Axiom
 	 * A map to hold the maximum test time observed so far for an accepted SubClassOf axiom.
 	 */
 	public static TimeMap maxTestTime = new TimeMap();
+	
+	public static boolean isTimeout;
 	
 	/**
 	 * Create a new <code>SubClassOf</code> object expression axiom from the two given concept expressions.
@@ -191,8 +194,8 @@ public class SubClassOfAxiom extends Axiom
 		referenceCardinality = RDFMiner.endpoint.count("?x", subClass.graphPattern);
 		int numIntersectingClasses = RDFMiner.endpoint.count("?D", subClass.graphPattern + " ?x a ?D . ");
 		logger.warn("No. of Intersecting Classes = " + numIntersectingClasses);
-		timePredictor = referenceCardinality*numIntersectingClasses;
-		logger.warn("Time Predictor = " + timePredictor);
+		// timePredictor = referenceCardinality*numIntersectingClasses;
+		// logger.warn("Time Predictor = " + timePredictor);
 		numConfirmations = RDFMiner.endpoint.count("?x",
 				subClass.graphPattern + "\n" + superClass.graphPattern);
 		if(numConfirmations>0 && numConfirmations<100)
@@ -213,10 +216,36 @@ public class SubClassOfAxiom extends Axiom
 			numExceptions = 0;
 			return;
 		}
-		
+		// This is the EKAW 2014 version, without time-out:
+		numExceptions = RDFMiner.endpoint.count("?x",
+				subClass.graphPattern + "\n" + superClassComplement.graphPattern);
+		if(!isTimeout) {
+			// Log the response time
+			logger.info("Exceptions query finished - time: " + SparqlEndpoint.selectResponseTime + "ms");
+		} else {
+			// If the query times out, it is very likely that it would end up
+			// having a large number of exceptions. Therefore, we take the reference
+			// cardinality minus the number of confirmations as the conventional
+			// number of exceptions in this case.
+			// We take the same action also in case of interruption.
+			numExceptions = referenceCardinality - numConfirmations;
+			isTimeout = false;
+		}
+		if(numExceptions>0 && numExceptions<100)
+		{
+			// retrieve the exceptions
+			RDFMiner.endpoint.select("DISTINCT ?x WHERE { " +
+				subClass.graphPattern + "\n" + superClassComplement.graphPattern + " }");
+			while(RDFMiner.endpoint.hasNext())
+			{
+		    	QuerySolution solution = RDFMiner.endpoint.next();
+	    		RDFNode x = solution.get("x");
+				exceptions.add(Expression.sparqlEncode(x));
+			}
+		}
 		// Since the query to count exception is complex and may take very long to execute,
 		// we execute it with the user-supplied time out.
-		try
+		/* try
 		{
 			if(RDFMiner.parameters.timeOut>0 || RDFMiner.parameters.dynTimeOut!=0.0)
 			{
@@ -237,7 +266,7 @@ public class SubClassOfAxiom extends Axiom
 				
 				// Here, we assume that the contract of this method w.r.t. the semantics of the time-out
 				// is the same as the wait() method of class Object, i.e., a time-out of zero means no time-out.
-				numExceptions = future.get(timeOut, TimeUnit.MINUTES);				
+				numExceptions = future.get(timeOut, TimeUnit.MINUTES);
 			}
 			else
 			{
@@ -245,6 +274,8 @@ public class SubClassOfAxiom extends Axiom
 				// This is the EKAW 2014 version, without time-out:
 				numExceptions = RDFMiner.endpoint.count("?x",
 						subClass.graphPattern + "\n" + superClassComplement.graphPattern);
+				// Log the response time
+				logger.info("Exceptions query finished - time: " + SparqlEndpoint.selectResponseTime + "");
 			}
 			if(numExceptions>0 && numExceptions<100)
 			{
@@ -266,6 +297,7 @@ public class SubClassOfAxiom extends Axiom
 			// cardinality minus the number of confirmations as the conventional
 			// number of exceptions in this case.
 			// We take the same action also in case of interruption.
+			logger.warn("Interrupted|Timeout exception:\n" + e.getStackTrace());
 			numExceptions = referenceCardinality - numConfirmations;
 		}
 		catch(ExecutionException e)
@@ -274,8 +306,8 @@ public class SubClassOfAxiom extends Axiom
 			if(cause instanceof IllegalStateException)
 				throw (IllegalStateException) cause;
 			throw new RuntimeException(cause);
-		}
-	}
+		} */
+	} 
 
 	/**
 	 * Return the time predictor for this axiom.

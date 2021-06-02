@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.i3s.app.rdfminer.axiom.types;
+package com.i3s.app.rdfminer.axiom.type;
 
 import java.util.ArrayList;
 import java.util.List;

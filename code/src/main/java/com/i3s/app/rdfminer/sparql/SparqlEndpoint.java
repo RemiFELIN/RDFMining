@@ -5,11 +5,13 @@ package com.i3s.app.rdfminer.sparql;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.concurrent.TimeoutException;
+
+import org.apache.jena.atlas.lib.Timer;
 import org.apache.jena.atlas.web.HttpException;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryException;
-import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QueryParseException;
@@ -19,25 +21,12 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.shared.Lock;
+import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
 import org.apache.jena.tdb.TDBFactory;
 import org.apache.log4j.Logger;
 
 import com.i3s.app.rdfminer.Global;
-
-//import com.hp.hpl.jena.query.Dataset;
-//import com.hp.hpl.jena.query.Query;
-//import com.hp.hpl.jena.query.QueryException;
-//import com.hp.hpl.jena.query.QueryExecution;
-//import com.hp.hpl.jena.query.QueryExecutionFactory;
-//import com.hp.hpl.jena.query.QueryFactory;
-//import com.hp.hpl.jena.query.QueryParseException;
-//import com.hp.hpl.jena.query.QuerySolution;
-//import com.hp.hpl.jena.query.ResultSet;
-//import com.hp.hpl.jena.rdf.model.Model;
-//import com.hp.hpl.jena.rdf.model.ModelFactory;
-//import com.hp.hpl.jena.rdf.model.RDFNode;
-//import com.hp.hpl.jena.shared.Lock;
-//import com.hp.hpl.jena.tdb.TDBFactory;
+import com.i3s.app.rdfminer.axiom.type.SubClassOfAxiom;
 
 /**
  * A class to encapsulate a SPARQL endpoint and centralise all accesses to the RDF store.
@@ -80,12 +69,17 @@ public class SparqlEndpoint implements Iterator<QuerySolution>
 	/**
 	 * The current query execution.
 	 */
-	QueryExecution queryExecution;
+	QueryEngineHTTP queryExecution;
 	
 	/**
 	 * The result of the current query.
 	 */
 	ResultSet resultSet;
+	
+	/**
+	 * The response time of the "SELECT" SPARQL Request on remote service (in ms)
+	 */
+	public static long selectResponseTime;
 	
 	/**
 	 * Create a new SPARQL endpoint.
@@ -125,10 +119,13 @@ public class SparqlEndpoint implements Iterator<QuerySolution>
 		if(queryExecution!=null) queryExecution.close();
 		// Prepare the execution context for the given query:
 		if(endpoint!=null) {
-			queryExecution = QueryExecutionFactory.sparqlService(endpoint, query);
+			queryExecution = (QueryEngineHTTP) QueryExecutionFactory.createServiceRequest(endpoint, query);
+			// Fix "500 SPARQL Request Failed"
+			// We set a long "timeout" using addParam method instead of setTimeout from QueryEngineHttp
+			queryExecution.addParam("timeout", Integer.toString(Global.SPARQL_TIMEOUT));
 		}
 		else {
-			queryExecution = QueryExecutionFactory.create(query, tdb);
+			queryExecution = (QueryEngineHTTP) QueryExecutionFactory.create(query, tdb);
 			tdb.enterCriticalSection(Lock.READ);
 		}
 	}
@@ -145,7 +142,12 @@ public class SparqlEndpoint implements Iterator<QuerySolution>
 			String str = prefixes + "SELECT " + sparql;
 			Query query = QueryFactory.create(str);
 			prepare(query);
+		    // Set a timer to compute the result time of each query
+		    Timer timer = new Timer();
+		    timer.startTimer();
+		    // execution of SPARQL "SELECT" request
 		    resultSet = queryExecution.execSelect();
+		    selectResponseTime = timer.endTimer();
 		}
 		catch(Exception e)
 		{
@@ -310,6 +312,11 @@ public class SparqlEndpoint implements Iterator<QuerySolution>
 			logger.error("Caught an HTTP exception while " + context);
 			logger.error(httpe.getMessage());
 			logger.error("Cause: " + httpe.getCause().getMessage());
+		}
+		else if(e instanceof InterruptedException || e instanceof TimeoutException) {
+			logger.warn("Interrupted|Timeout exception:\n" + e.getStackTrace());
+			// To compute the number of exceptions, we set the "isTimeout" of SubclassOfAxiom on true 
+			SubClassOfAxiom.isTimeout = true;
 		}
 		else
 			logger.error(e.getMessage() + " while " + context);

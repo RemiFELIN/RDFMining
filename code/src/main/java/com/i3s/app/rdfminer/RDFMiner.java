@@ -30,7 +30,7 @@ import com.i3s.app.rdfminer.axiom.AxiomGenerator;
 import com.i3s.app.rdfminer.axiom.CandidateAxiomGenerator;
 import com.i3s.app.rdfminer.axiom.IncreasingTimePredictorAxiomGenerator;
 import com.i3s.app.rdfminer.axiom.RandomAxiomGenerator;
-import com.i3s.app.rdfminer.axiom.types.SubClassOfAxiom;
+import com.i3s.app.rdfminer.axiom.type.SubClassOfAxiom;
 import com.i3s.app.rdfminer.output.AxiomTestCSV;
 import com.i3s.app.rdfminer.output.AxiomTestXML;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
@@ -257,7 +257,9 @@ public class RDFMiner {
 				reportCSV.numExceptions = a.numExceptions;
 				reportCSV.possibility = a.possibility().doubleValue();
 				reportCSV.necessity = a.necessity().doubleValue();
-				
+				// print useful results
+				logger.info("Num. confirmations: " + a.numConfirmations);
+				logger.info("Num. exceptions: " + a.numExceptions);
 				logger.info("Possibility = " + reportCSV.possibility);
 				logger.info("Necessity = " + reportCSV.necessity);
 				

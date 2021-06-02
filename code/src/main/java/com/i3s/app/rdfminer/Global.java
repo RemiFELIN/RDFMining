@@ -23,4 +23,9 @@ public class Global {
 	public static final String SPARQL_ENDPOINT = "http://134.59.130.136:8890/sparql";
 	// public static final String DBPEDIA_SERVER = "http://dbpedia.org/";
 	
+	/**
+	 * SPARQL Request : "SELECT" timeout
+	 */
+	public static final int SPARQL_TIMEOUT = 250000;
+	
 }

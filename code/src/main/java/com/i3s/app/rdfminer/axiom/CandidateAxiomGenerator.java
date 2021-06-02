@@ -15,6 +15,7 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
+import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
@@ -71,8 +72,8 @@ public class CandidateAxiomGenerator extends AxiomGenerator
 	 * Furthermore, to allow running different experiments in parallel, it has a suffix
 	 * based on the time-out used for axiom test.</p>
 	 */
-	protected final String statusFileName = "AxiomGenerator" +
-	 (RDFMiner.parameters.timeOut > 0 ? "-" + RDFMiner.parameters.timeOut : "") +
+	protected final String statusFileName = "AxiomGenerator-" + Global.SPARQL_TIMEOUT +
+	// (RDFMiner.parameters.timeOut > 0 ? "-" + RDFMiner.parameters.timeOut : "") +
 	 ".status";
 
 	/**

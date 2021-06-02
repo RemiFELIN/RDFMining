@@ -6,8 +6,8 @@ package com.i3s.app.rdfminer.axiom;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.i3s.app.rdfminer.axiom.types.DisjointClassesAxiom;
-import com.i3s.app.rdfminer.axiom.types.SubClassOfAxiom;
+import com.i3s.app.rdfminer.axiom.type.DisjointClassesAxiom;
+import com.i3s.app.rdfminer.axiom.type.SubClassOfAxiom;
 import com.i3s.app.rdfminer.grammar.DLFactory;
 
 import Mapper.Symbol;
