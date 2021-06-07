@@ -37,10 +37,10 @@ public class CmdLineParameters
 	 *  as the product of the reference cardinality of the subclass and of the number
 	 *  of classes sharing at least one instance with it.</p>
 	 */
-	// @Option(name = "-d", aliases = { "--dynamic-timeout" },
-	//		usage = "use a dynamic time-out for axiom testing",
-	//		metaVar = "ANGULAR_COEFF")
-	// public double dynTimeOut = 0.0;
+	@Option(name = "-d", aliases = { "--dynamic-timeout" },
+			usage = "use a dynamic time-out for axiom testing",
+			metaVar = "ANGULAR_COEFF")
+	public double dynTimeOut = 0.0;
 	
 	@Option(name = "-g", aliases = { "--grammar" },
 			usage = "use this file as the axiom grammar",
@@ -61,10 +61,10 @@ public class CmdLineParameters
 			metaVar = "FILE")
 	public String subclassList = null;
 
-	// @Option(name = "-t", aliases = { "--timeout" },
-	//		usage = "use this time-out (in minutes) for axiom testing",
-	//		metaVar = "MINUTES")
-	// public long timeOut = 0;
+	@Option(name = "-t", aliases = { "--timeout" },
+			usage = "use this time-out (in minutes) for axiom testing",
+			metaVar = "MINUTES")
+	public long timeOut = 0;
 	
     // receives other command line parameters than options
     @Argument

@@ -122,7 +122,7 @@ public class SparqlEndpoint implements Iterator<QuerySolution>
 			queryExecution = (QueryEngineHTTP) QueryExecutionFactory.createServiceRequest(endpoint, query);
 			// Fix "500 SPARQL Request Failed"
 			// We set a long "timeout" using addParam method instead of setTimeout from QueryEngineHttp
-			queryExecution.addParam("timeout", Integer.toString(Global.SPARQL_TIMEOUT));
+			// queryExecution.addParam("timeout", Integer.toString(Global.SPARQL_TIMEOUT));
 		}
 		else {
 			queryExecution = (QueryEngineHTTP) QueryExecutionFactory.create(query, tdb);
@@ -313,11 +313,11 @@ public class SparqlEndpoint implements Iterator<QuerySolution>
 			logger.error(httpe.getMessage());
 			logger.error("Cause: " + httpe.getCause().getMessage());
 		}
-		else if(e instanceof InterruptedException || e instanceof TimeoutException) {
+		/* else if(e instanceof InterruptedException || e instanceof TimeoutException) {
 			logger.warn("Interrupted|Timeout exception:\n" + e.getStackTrace());
 			// To compute the number of exceptions, we set the "isTimeout" of SubclassOfAxiom on true 
 			SubClassOfAxiom.isTimeout = true;
-		}
+		} */
 		else
 			logger.error(e.getMessage() + " while " + context);
 	    e.printStackTrace();

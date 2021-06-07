@@ -75,8 +75,8 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator
 	 * Furthermore, to allow running different experiments in parallel, it has a suffix
 	 * based on the time-out used for axiom test.</p>
 	 */
-	protected final String statusFileName = "IncreasingTPAxiomGenerator-" + Global.SPARQL_TIMEOUT +
-	// (RDFMiner.parameters.timeOut > 0 ? "-" + RDFMiner.parameters.timeOut : "") +
+	protected final String statusFileName = "IncreasingTPAxiomGenerator-" +
+	 (RDFMiner.parameters.timeOut > 0 ? "-" + RDFMiner.parameters.timeOut : "") +
 	 ".status";
 
 	/**
