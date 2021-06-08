@@ -67,8 +67,6 @@ public class SubClassOfAxiom extends Axiom
 	 */
 	public static TimeMap maxTestTime = new TimeMap();
 	
-	// public static boolean isTimeout;
-	
 	/**
 	 * Create a new <code>SubClassOf</code> object expression axiom from the two given concept expressions.
 	 * 
@@ -279,6 +277,18 @@ public class SubClassOfAxiom extends Axiom
 				logger.warn("The thread has been interrupted");
 			}
 			numExceptions = referenceCardinality - numConfirmations;
+			// If numExceptions E ]0,100[ then we must make a simple query ("closed world")
+			// to get all the exceptions with this method
+			RDFMiner.endpoint.select("DISTINCT ?x WHERE { " +
+					subClass.graphPattern + "\nFILTER NOT EXISTS {\n" + superClass.graphPattern + " \n}\n}");
+			while(RDFMiner.endpoint.hasNext())
+			{
+		    	QuerySolution solution = RDFMiner.endpoint.next();
+	    		RDFNode x = solution.get("x");
+				exceptions.add(Expression.sparqlEncode(x));
+			}
+			// Specify isTimeout for this axiom
+			isTimeout = true;
 		}
 		catch(ExecutionException e)
 		{

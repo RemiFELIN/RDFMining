@@ -27,17 +27,22 @@
 ## Parameters
 
 ```
- -a (--axioms) AXIOMFILE  : test axioms contained in this file
- -g (--grammar) GRAMMAR   : use this file as the axiom grammar (default:
-                            /rdfminer/code/resources/OWL2Axiom-test.bnf)
- -o (--output) RESULTFILE : name of output files (without extension): the name
-                            'results' is chosen if -o is not used. It produces
-                            a XML (containing confirmations and exceptions of
-                            each axioms) and CSV (containing results of each
-                            axioms) file (default: /rdfminer/data/results)
- -r (--random)            : test randomly generated axioms (default: false)
- -s (--subclasslist) FILE : test subClassOf axioms generated from the list of
-                            subclasses in the given file
+ -a (--axioms) AXIOMFILE              : test axioms contained in this file
+ -d (--dynamic-timeout) ANGULAR_COEFF : use a dynamic time-out for axiom
+                                        testing (default: 0.0)
+ -g (--grammar) GRAMMAR               : use this file as the axiom grammar
+                                        (default: /home/remicode/resources/OWL2A
+                                        xiom-test.bnf)
+ -o (--output) RESULTFILE             : name of output file (without
+                                        extension): the name 'results' is
+                                        chosen if -o is not used (default:
+                                        results)
+ -r (--random)                        : test randomly generated axioms
+                                        (default: false)
+ -s (--subclasslist) FILE             : test subClassOf axioms generated from
+                                        the list of subclasses in the given file
+ -t (--timeout) MINUTES               : use this time-out (in minutes) for
+                                        axiom testing (default: 0)
 ```
 
 ## Documentations

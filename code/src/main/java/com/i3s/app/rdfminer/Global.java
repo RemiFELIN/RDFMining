@@ -24,8 +24,8 @@ public class Global {
 	// public static final String DBPEDIA_SERVER = "http://dbpedia.org/";
 	
 	/**
-	 * SPARQL Request : "SELECT" timeout
+	 * Output path : corresponding to '/rdfminer/io/' in container
 	 */
-	public static final int SPARQL_TIMEOUT = 250000;
+	public static final String OUTPUT_PATH = System.getenv("HOME") + "io/";
 	
 }

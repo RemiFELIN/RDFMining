@@ -15,7 +15,6 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
-import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;

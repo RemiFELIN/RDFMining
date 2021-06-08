@@ -83,6 +83,12 @@
 	    <artifactId>slf4j-simple</artifactId>
 	    <version>1.7.30</version>
 	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.json/json -->
+	<dependency>
+	    <groupId>org.json</groupId>
+	    <artifactId>json</artifactId>
+	    <version>20210307</version>
+	</dependency>
 	<!-- 						JENA 							 -->
 	<!-- https://mvnrepository.com/artifact/org.apache.jena/jena -->
 	<dependency>

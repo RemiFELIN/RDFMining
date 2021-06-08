@@ -62,6 +62,11 @@ public abstract class Axiom
 	 * will have to be adopted, e.g., a record of a SPARQL query result.</p>
 	 */
 	public List<String> exceptions = null;
+
+	/**
+	 * Specify if the exception query reached the timeout given by "-t" parameter
+	 */
+	public boolean isTimeout = false;
 	
 	/**
 	 * Updates the counts used to compute the possibility and necessity degrees.

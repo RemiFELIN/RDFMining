@@ -48,9 +48,9 @@ public class CmdLineParameters
 	public String grammarFile = System.getenv("HOME") + "code/resources/OWL2Axiom-test.bnf";
 
 	@Option(name = "-o", aliases = { "--output" },
-			usage = "name of output files (without extension): the name 'results' is chosen if -o is not used. It produces a XML (containing confirmations and exceptions of each axioms) and CSV (containing results of each axioms) file",
+			usage = "name of output file (without extension): the name 'results' is chosen if -o is not used",
 			metaVar = "RESULTFILE")
-	public String resultFile = System.getenv("HOME") + "io/results";
+	public String resultFile = "results";
 	
 	@Option(name = "-r", aliases = { "--random"},
 			usage = "test randomly generated axioms")

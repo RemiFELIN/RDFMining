@@ -4,23 +4,17 @@
 package com.i3s.app.rdfminer;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.engine.http.QueryExceptionHTTP;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.json.JSONObject;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
@@ -31,15 +25,9 @@ import com.i3s.app.rdfminer.axiom.CandidateAxiomGenerator;
 import com.i3s.app.rdfminer.axiom.IncreasingTimePredictorAxiomGenerator;
 import com.i3s.app.rdfminer.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.axiom.type.SubClassOfAxiom;
-import com.i3s.app.rdfminer.output.AxiomTestCSV;
-import com.i3s.app.rdfminer.output.AxiomTestXML;
+import com.i3s.app.rdfminer.output.AxiomTestJSON;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
 import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
-import com.opencsv.bean.StatefulBeanToCsv;
-import com.opencsv.bean.StatefulBeanToCsvBuilder;
-import com.opencsv.exceptions.CsvDataTypeMismatchException;
-import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
-
 import Individuals.Phenotype;
 
 //import com.hp.hpl.jena.shared.JenaException;
@@ -81,6 +69,11 @@ public class RDFMiner {
 	 * An executor to be used to submit asynchronous tasks which might be subjected to a time-out. 
 	 */
 	public static ExecutorService executor;
+	
+	/**
+	 * The output file in json
+	 */
+	public static FileWriter output;
 	
 	/**
 	 * A service native method to query for CPU usage.
@@ -139,26 +132,13 @@ public class RDFMiner {
 		// Set SPARQL Endpoit
 		endpoint = new SparqlEndpoint(Global.SPARQL_ENDPOINT, PREFIXES);
 		
-		Marshaller marshaller = null;
-		FileOutputStream xmlStream = null;
-		File csvStream = new File(parameters.resultFile + ".csv");
-		Writer writer = null;
-		StatefulBeanToCsv<AxiomTestCSV> beanToCsv = null;
+		// Create an empty json object which will be fill with our results
+		JSONObject json = new JSONObject();
 		
 		try {
-		    // prepare XML File output
-			xmlStream = new FileOutputStream(parameters.resultFile + ".xml", true); // here, 'true' means 'append'...
-		    // prepare CSV File output
-			writer = new PrintWriter(csvStream);
-			// Set header of CSV File
-			writer.append(AxiomTestCSV.COLUMNS_NAME);
-		    beanToCsv = new StatefulBeanToCsvBuilder<AxiomTestCSV>(writer).withApplyQuotesToAll(false).build();
-		    // prepare JAXBContext to edit the XML File
-		    JAXBContext context = JAXBContext.newInstance(AxiomTestXML.class);
-		    marshaller = context.createMarshaller();
-		    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			output = new FileWriter(Global.OUTPUT_PATH + parameters.resultFile + ".json");
 		}
-		catch(JAXBException | IOException e) {
+		catch(/*JAXBException | */IOException e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 			System.exit(1);
@@ -241,60 +221,31 @@ public class RDFMiner {
 			long t = getProcessCPUTime();
 			
 			if(a != null) {
-				// Save an XML report of the confirmations and the exceptions:
-				AxiomTestXML reportXML = new AxiomTestXML();
-				reportXML.axiom = axiomName;
-				if(a.numConfirmations<100)
-					reportXML.confirmations = a.confirmations;
-				if(a.numExceptions<100)
-					reportXML.exceptions = a.exceptions;
-				// Save an CSV report of the test:
-				AxiomTestCSV reportCSV = new AxiomTestCSV();
-				reportCSV.axiom = axiomName;
-				reportCSV.elapsedTime = t - t0;
-				reportCSV.referenceCardinality = a.referenceCardinality;
-				reportCSV.numConfirmations = a.numConfirmations;
-				reportCSV.numExceptions = a.numExceptions;
-				reportCSV.possibility = a.possibility().doubleValue();
-				reportCSV.necessity = a.necessity().doubleValue();
+				// Save a JSON report of the test
+				AxiomTestJSON reportJSON = new AxiomTestJSON();
+				reportJSON.elapsedTime = t - t0;
+				reportJSON.referenceCardinality = a.referenceCardinality;
+				reportJSON.numConfirmations = a.numConfirmations;
+				reportJSON.numExceptions = a.numExceptions;
+				reportJSON.possibility = a.possibility().doubleValue();
+				reportJSON.necessity = a.necessity().doubleValue();
+				reportJSON.isTimeout = a.isTimeout;
+				if(a.numConfirmations>0 && a.numConfirmations<100) reportJSON.confirmations = a.confirmations;
+				if(a.numExceptions>0 && a.numExceptions<100) reportJSON.exceptions = a.exceptions;
+
 				// print useful results
 				logger.info("Num. confirmations: " + a.numConfirmations);
 				logger.info("Num. exceptions: " + a.numExceptions);
-				logger.info("Possibility = " + reportCSV.possibility);
-				logger.info("Necessity = " + reportCSV.necessity);
+				logger.info("Possibility = " + reportJSON.possibility);
+				logger.info("Necessity = " + reportJSON.necessity);
 				
-				if(a instanceof SubClassOfAxiom && reportCSV.necessity > 1.0/3.0) {
+				if(a instanceof SubClassOfAxiom && reportJSON.necessity > 1.0/3.0) {
 					SubClassOfAxiom sa = (SubClassOfAxiom) a;
-					SubClassOfAxiom.maxTestTime.maxput(sa.timePredictor(), reportCSV.elapsedTime);
+					SubClassOfAxiom.maxTestTime.maxput(sa.timePredictor(), reportJSON.elapsedTime);
 				}
-				// Edit CSV file
-				if(writer!=null && beanToCsv!=null) {
-					try {
-						beanToCsv.write(reportCSV);
-					} catch (CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
-						logger.error("OpenCSV error : " + e.getMessage());
-						e.printStackTrace();
-						System.exit(1);
-					}
-				}
-				// Edit XML file
-				if(marshaller!=null) {
-					// We write confirmations and exceptions if we found at least one confirmation or exception
-					if(reportCSV.numConfirmations > 0 && reportCSV.numConfirmations < 100 || reportCSV.numExceptions > 0 && reportCSV.numExceptions < 100) {
-						try {
-							marshaller.marshal(reportXML, xmlStream);
-							xmlStream.flush();
-						}
-						catch(JAXBException e) {
-							logger.error("Marshaling error while writing test report to the XML file:" + e.getMessage());
-							e.printStackTrace();
-						}
-						catch(IOException e) {
-							logger.error("I/O error while writing test report to the XML file:" + e.getMessage());
-							e.printStackTrace();
-						}
-					}
-				}
+				
+				json.append(axiomName, reportJSON.toJSON());
+				
 			}
 			else
 				logger.warn("Axiom type not supported yet!");
@@ -302,7 +253,8 @@ public class RDFMiner {
 		}
 		logger.info("Done testing axioms. Exiting.");
 		try {
-			writer.close();
+			output.write(json.toString());
+			output.close();
 		} catch (IOException e) {
 			logger.error("I/O error while closing CSV writer: " + e.getMessage());
 			e.printStackTrace();
