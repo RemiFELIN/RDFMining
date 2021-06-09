@@ -25,180 +25,188 @@ import com.i3s.app.rdfminer.RDFMiner;
  * @author Andrea G. B. Tettamanzi
  *
  */
-public class ComparableRDFNode implements RDFNode, Comparable<Object>
-{
+public class ComparableRDFNode implements RDFNode, Comparable<Object> {
 	private static Logger logger = Logger.getLogger(ComparableRDFNode.class.getName());
-	
+
 	/**
-	 * A reference to the actual instance of an RDF node encapsulated by this adapter.
+	 * A reference to the actual instance of an RDF node encapsulated by this
+	 * adapter.
 	 */
 	protected RDFNode node;
-	
+
 	/**
 	 * Creates a comparable RDF node from an existing RDF node.
 	 */
-	public ComparableRDFNode(RDFNode n)
-	{
+	public ComparableRDFNode(RDFNode n) {
 		node = n;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.jena.graph.FrontsNode#asNode()
 	 */
 	@Override
-	public Node asNode()
-	{
+	public Node asNode() {
 		return node.asNode();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.jena.rdf.model.RDFNode#isAnon()
 	 */
 	@Override
-	public boolean isAnon()
-	{
+	public boolean isAnon() {
 		return node.isAnon();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.jena.rdf.model.RDFNode#isLiteral()
 	 */
 	@Override
-	public boolean isLiteral()
-	{
+	public boolean isLiteral() {
 		return node.isLiteral();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.jena.rdf.model.RDFNode#isURIResource()
 	 */
 	@Override
-	public boolean isURIResource()
-	{
+	public boolean isURIResource() {
 		return node.isURIResource();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.jena.rdf.model.RDFNode#isResource()
 	 */
 	@Override
-	public boolean isResource()
-	{
+	public boolean isResource() {
 		return node.isResource();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.jena.rdf.model.RDFNode#as(java.lang.Class)
 	 */
 	@Override
-	public <T extends RDFNode> T as(Class<T> view)
-	{
+	public <T extends RDFNode> T as(Class<T> view) {
 		return node.as(view);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.jena.rdf.model.RDFNode#canAs(java.lang.Class)
 	 */
 	@Override
-	public <T extends RDFNode> boolean canAs(Class<T> view)
-	{
+	public <T extends RDFNode> boolean canAs(Class<T> view) {
 		return node.canAs(view);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.jena.rdf.model.RDFNode#getModel()
 	 */
 	@Override
-	public Model getModel()
-	{
+	public Model getModel() {
 		return node.getModel();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.jena.rdf.model.RDFNode#inModel(org.apache.jena.rdf.model.Model)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.jena.rdf.model.RDFNode#inModel(org.apache.jena.rdf.model.Model)
 	 */
 	@Override
-	public RDFNode inModel(Model m)
-	{
+	public RDFNode inModel(Model m) {
 		return node.inModel(m);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.jena.rdf.model.RDFNode#visitWith(org.apache.jena.rdf.model.RDFVisitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.jena.rdf.model.RDFNode#visitWith(org.apache.jena.rdf.model.
+	 * RDFVisitor)
 	 */
 	@Override
-	public Object visitWith(RDFVisitor rv)
-	{
+	public Object visitWith(RDFVisitor rv) {
 		return node.visitWith(rv);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.jena.rdf.model.RDFNode#asResource()
 	 */
 	@Override
-	public Resource asResource()
-	{
+	public Resource asResource() {
 		return node.asResource();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.jena.rdf.model.RDFNode#asLiteral()
 	 */
 	@Override
-	public Literal asLiteral()
-	{
+	public Literal asLiteral() {
 		return node.asLiteral();
 	}
-	
+
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return node.toString();
 	}
 
 	/**
 	 * Compares this RDF node to another object.
-	 * <p>The comparison is made by transforming both this RDF node and the compared object into
-	 * their natural string representations by means of their <code>toString</code> method and
-	 * then by comparing those strings.
+	 * <p>
+	 * The comparison is made by transforming both this RDF node and the compared
+	 * object into their natural string representations by means of their
+	 * <code>toString</code> method and then by comparing those strings.
 	 * 
 	 * @param that an object to be compared to
 	 * @return the result of the comparison
 	 */
 	@Override
-	public int compareTo(Object that)
-	{
+	public int compareTo(Object that) {
 		return node.toString().compareTo(that.toString());
 	}
 
 	/**
 	 * Returns the set of all concepts this RDF node is an explicit instance of.
-	 * <p>The result of this method consists of all the RDF nodes <var>C</var> such that
-	 * a triple <var>this node</var> <code>rdf:type</code> <var>C</var> exists.  
+	 * <p>
+	 * The result of this method consists of all the RDF nodes <var>C</var> such
+	 * that a triple <var>this node</var> <code>rdf:type</code> <var>C</var> exists.
 	 * 
 	 * @return the set of all concepts this RDF node is an explicit instance of
 	 */
-	public Set<ComparableRDFNode> getContainingClasses()
-	{
+	public Set<ComparableRDFNode> getContainingClasses() {
 		Set<ComparableRDFNode> result = new TreeSet<ComparableRDFNode>();
-	
-		String str = "DISTINCT ?class WHERE {\n" +
-				"\t<" + node + "> a ?class .\n" +
-				"\tFILTER ( ?class != owl:Thing )\n" +
-				"}";
+
+		String str = "DISTINCT ?class WHERE {\n" + "\t<" + node + "> a ?class .\n"
+				+ "\tFILTER ( ?class != owl:Thing )\n" + "}";
 		logger.info("Querying SPARQL endpoint for the containing classes of " + node + " with query:\n" + str);
 		RDFMiner.endpoint.select(str);
-	    while(RDFMiner.endpoint.hasNext())
-	    {
-	    	QuerySolution solution = RDFMiner.endpoint.next();
-	    	Iterator<String> i = solution.varNames();
-	    	if(i.hasNext())
-	    	{
-	    		String varName = i.next();
-	    		RDFNode node = solution.get(varName);
-	    		result.add(new ComparableRDFNode(node));
-	    	}
-	    }
+		while (RDFMiner.endpoint.hasNext()) {
+			QuerySolution solution = RDFMiner.endpoint.next();
+			Iterator<String> i = solution.varNames();
+			if (i.hasNext()) {
+				String varName = i.next();
+				RDFNode node = solution.get(varName);
+				result.add(new ComparableRDFNode(node));
+			}
+		}
 		logger.info("Found " + result.size() + " classes.");
 		return result;
 	}

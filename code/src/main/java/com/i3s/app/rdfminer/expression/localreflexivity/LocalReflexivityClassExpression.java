@@ -16,17 +16,15 @@ import Mapper.Symbol;
  * @author Andrea G. B. Tettamanzi
  *
  */
-public class LocalReflexivityClassExpression extends Expression
-{
+public class LocalReflexivityClassExpression extends Expression {
 
 	/**
-	 * Creates a new local reflexivity class expression based on the
-	 * provided functional-style syntax.
+	 * Creates a new local reflexivity class expression based on the provided
+	 * functional-style syntax.
 	 * 
-	 * @param syntax an expression in OWL 2 functional-style syntax. 
+	 * @param syntax an expression in OWL 2 functional-style syntax.
 	 */
-	public LocalReflexivityClassExpression(List<Symbol> role)
-	{
+	public LocalReflexivityClassExpression(List<Symbol> role) {
 		super();
 		subExpressions.add(ExpressionFactory.createProperty(role));
 		rootSymbol = "ObjectHasSelf";
@@ -37,12 +35,11 @@ public class LocalReflexivityClassExpression extends Expression
 	 * Instantiates the graph pattern for this local reflexivity class expression.
 	 * 
 	 * @param subject the expression replacing the <tt>?x</tt> SPARQL variable
-	 * @param object ignored
+	 * @param object  ignored
 	 * @return the SPARQL graph pattern for this expression
 	 */
 	@Override
-	public String createGraphPattern(String subject, String object)
-	{
+	public String createGraphPattern(String subject, String object) {
 		return subExpressions.get(0).createGraphPattern(subject, subject);
 	}
 

@@ -16,21 +16,22 @@ import Mapper.Symbol;
  * @author Andrea G. B. Tettamanzi
  *
  */
-public class UnionClassExpression extends UnionExpression
-{
+public class UnionClassExpression extends UnionExpression {
 
 	/**
-	 * Creates a new union class expression based on the provided functional-style syntax.
-	 * <p>This expression will be the union of its subexpressions.</p>
+	 * Creates a new union class expression based on the provided functional-style
+	 * syntax.
+	 * <p>
+	 * This expression will be the union of its subexpressions.
+	 * </p>
 	 * 
-	 * @param syntax an expression in OWL 2 functional-style syntax. 
+	 * @param syntax an expression in OWL 2 functional-style syntax.
 	 */
-	public UnionClassExpression(List<List<Symbol>> syntax)
-	{
+	public UnionClassExpression(List<List<Symbol>> syntax) {
 		super();
 		rootSymbol = "ObjectUnionOf";
 		Iterator<List<Symbol>> i = syntax.iterator();
-		while(i.hasNext())
+		while (i.hasNext())
 			subExpressions.add(ExpressionFactory.createClass(i.next()));
 		graphPattern = createGraphPattern("?x", "?y");
 	}

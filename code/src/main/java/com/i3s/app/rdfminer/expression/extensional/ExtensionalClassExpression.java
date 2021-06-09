@@ -26,34 +26,38 @@ import Mapper.Symbol;
  * @author Andrea G. B. Tettamanzi
  *
  */
-public class ExtensionalClassExpression extends ExtensionalExpression
-{
+public class ExtensionalClassExpression extends ExtensionalExpression {
 
 	/**
-	 * Creates a new extensional class expression based on the provided functional-style syntax.
-	 * <p>This expression will be the set of the nominals or literals given as its subexpressions.</p>
-	 * <p>The extension of this expression is pre-compiled based on the arguments of the
-	 * <code>ObjectOneOf</code> constructor.</p>
+	 * Creates a new extensional class expression based on the provided
+	 * functional-style syntax.
+	 * <p>
+	 * This expression will be the set of the nominals or literals given as its
+	 * subexpressions.
+	 * </p>
+	 * <p>
+	 * The extension of this expression is pre-compiled based on the arguments of
+	 * the <code>ObjectOneOf</code> constructor.
+	 * </p>
 	 * 
-	 * @param syntax an expression in OWL 2 functional-style syntax. 
+	 * @param syntax an expression in OWL 2 functional-style syntax.
 	 */
-	public ExtensionalClassExpression(List<List<Symbol>> syntax)
-	{
+	public ExtensionalClassExpression(List<List<Symbol>> syntax) {
 		super();
 		rootSymbol = "ObjectOneOf (";
 		extension = new TreeSet<RDFNodePair>();
 		Model m = RDFMiner.endpoint.tdb;
 
 		Iterator<List<Symbol>> i = syntax.iterator();
-		while(i.hasNext())
-		{
+		while (i.hasNext()) {
 			RDFNode r;
-			
+
 			Symbol sym = i.next().get(0);
 			rootSymbol += " " + sym;
-			// We create an RDF node from the symbol, by removing the "<" and ">" delimiters, unless it is a blank node
+			// We create an RDF node from the symbol, by removing the "<" and ">"
+			// delimiters, unless it is a blank node
 			String s = sym.getSymbolString();
-			if(s.startsWith("<"))
+			if (s.startsWith("<"))
 				r = m.createResource(s.substring(1, s.length() - 1));
 			else
 				r = m.createResource(new AnonId(s));
@@ -62,23 +66,22 @@ public class ExtensionalClassExpression extends ExtensionalExpression
 		rootSymbol += " )";
 		graphPattern = createGraphPattern("?x", "?y");
 	}
-	
+
 	/**
 	 * Instantiates the graph pattern for this extensional class expression.
 	 * 
 	 * @param subject the expression replacing the <tt>?x</tt> SPARQL variable
-	 * @param object this expression is ignored
+	 * @param object  this expression is ignored
 	 * @return the SPARQL graph pattern for this expression
 	 */
 	@Override
-	public String createGraphPattern(String subject, String object)
-	{
+	public String createGraphPattern(String subject, String object) {
 		String s = getFreshVariableName();
 		String p1 = getFreshVariableName();
 		String p2 = getFreshVariableName();
 		String o = getFreshVariableName();
-		return " { " + subject + " " + p1 + " " + o + " } UNION { " + s + " " + p2 + " " + subject + " } .\n" +
-				getFilter(subject, false) + " .\n";
+		return " { " + subject + " " + p1 + " " + o + " } UNION { " + s + " " + p2 + " " + subject + " } .\n"
+				+ getFilter(subject, false) + " .\n";
 	}
-	
+
 }

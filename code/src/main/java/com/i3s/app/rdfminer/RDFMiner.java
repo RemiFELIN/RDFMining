@@ -35,55 +35,61 @@ import Individuals.Phenotype;
 
 /**
  * The main class of the RDFMiner experimental tool.
- * <p>More information about OWL 2 may be found in the
- * <a href="http://www.w3.org/TR/2012/REC-owl2-quick-reference-20121211/">OWL2 Quick Reference, 2nd Edition</a>.</p>
+ * <p>
+ * More information about OWL 2 may be found in the
+ * <a href="http://www.w3.org/TR/2012/REC-owl2-quick-reference-20121211/">OWL2
+ * Quick Reference, 2nd Edition</a>.
+ * </p>
  * 
  * @author Andrea G. B. Tettamanzi
  *
  */
 public class RDFMiner {
-	
+
 	private static Logger logger = Logger.getLogger(RDFMiner.class.getName());
-	
+
 	public static CmdLineParameters parameters = new CmdLineParameters();
-	
-	final private static String PREFIXES =
-			"PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
-			"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-			"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-			"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-			"PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n" +
-			"PREFIX dc: <http://purl.org/dc/elements/1.1/>\n" +
-			"PREFIX : <http://dbpedia.org/resource/>\n" +
-			"PREFIX dbpedia2: <http://dbpedia.org/property/>\n" +
-			"PREFIX dbpedia: <http://dbpedia.org/>\n" +
-			"PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n" +
-			"PREFIX dbo: <http://dbpedia.org/ontology/>\n";
-	
+
+	final private static String PREFIXES = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
+			+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+			+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+			+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+			+ "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n" + "PREFIX dc: <http://purl.org/dc/elements/1.1/>\n"
+			+ "PREFIX : <http://dbpedia.org/resource/>\n" + "PREFIX dbpedia2: <http://dbpedia.org/property/>\n"
+			+ "PREFIX dbpedia: <http://dbpedia.org/>\n" + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n"
+			+ "PREFIX dbo: <http://dbpedia.org/ontology/>\n";
+
 	/**
 	 * A SPARQL endpoint which can be used to query the RDF repository.
 	 */
 	public static SparqlEndpoint endpoint;
-	
+
 	/**
-	 * An executor to be used to submit asynchronous tasks which might be subjected to a time-out. 
+	 * An executor to be used to submit asynchronous tasks which might be subjected
+	 * to a time-out.
 	 */
 	public static ExecutorService executor;
-	
+
 	/**
 	 * The output file in json
 	 */
 	public static FileWriter output;
-	
+
 	/**
 	 * A service native method to query for CPU usage.
-	 * <p>The name and implementation of this method are adapted from
-	 * <a href="http://www.javaworld.com/article/2077361/learn-java/profiling-cpu-usage-from-within-a-java-application.html">this
-	 * 2002 blog post</a>.</p>
-	 * <p>The implementation in C language of this native method is contained in the two source files
-	 * <code>rdfminer_RDFMiner.h</code> and <code>rdfminer_RDFMiner.c</code>.</p>
+	 * <p>
+	 * The name and implementation of this method are adapted from <a href=
+	 * "http://www.javaworld.com/article/2077361/learn-java/profiling-cpu-usage-from-within-a-java-application.html">this
+	 * 2002 blog post</a>.
+	 * </p>
+	 * <p>
+	 * The implementation in C language of this native method is contained in the
+	 * two source files <code>rdfminer_RDFMiner.h</code> and
+	 * <code>rdfminer_RDFMiner.c</code>.
+	 * </p>
 	 * 
-	 * @return the number of milliseconds of CPU time used by the current process so far
+	 * @return the number of milliseconds of CPU time used by the current process so
+	 *         far
 	 */
 	public static native long getProcessCPUTime();
 
@@ -91,122 +97,114 @@ public class RDFMiner {
 	 * The entry point of the RDF Miner application.
 	 */
 	public static void main(String[] args) {
-		
+
 		// Configure the log4j loggers:
 		PropertyConfigurator.configure(Global.LOG4J_PROPERTIES);
-		
-		// Parse the command-line parameters and options:
-        CmdLineParser parser = new CmdLineParser(parameters);
-        
-        // if you have a wider console, you could increase the value;
-        // here 80 is also the default
-        parser.getProperties().withUsageWidth(80);
 
-        try {
-            // parse the arguments.
-            parser.parseArgument(args);
-        }
-        catch(CmdLineException e) {
-            // if there's a problem in the command line, you'll get this 
-        	// exception. this will report an error message.
-            System.err.println(e.getMessage());
-            // print the list of available options
-            System.err.println();
-            parser.printUsage(System.err);
-            System.err.println();
-            return;
-        }
-        
-        if(RDFMiner.parameters.help) {
-        	// print the list of available options
-        	System.out.println();
-        	parser.printUsage(System.out);
-        	System.out.println();
-        	return;
-        }
-        
-        // Get environment variable from container (defined in Dockerfile)
+		// Parse the command-line parameters and options:
+		CmdLineParser parser = new CmdLineParser(parameters);
+
+		// if you have a wider console, you could increase the value;
+		// here 80 is also the default
+		parser.getProperties().withUsageWidth(80);
+
+		try {
+			// parse the arguments.
+			parser.parseArgument(args);
+		} catch (CmdLineException e) {
+			// if there's a problem in the command line, you'll get this
+			// exception. this will report an error message.
+			System.err.println(e.getMessage());
+			// print the list of available options
+			System.err.println();
+			parser.printUsage(System.err);
+			System.err.println();
+			return;
+		}
+
+		if (RDFMiner.parameters.help) {
+			// print the list of available options
+			System.out.println();
+			parser.printUsage(System.out);
+			System.out.println();
+			return;
+		}
+
+		// Get environment variable from container (defined in Dockerfile)
 		logger.info("This is RDF Miner, version " + System.getenv("RDFMINER_VERSION"));
-		// Load rdfminer_RDFMINER.so generated by ./compile_c_code.sh (see /scripts folder)
+		// Load rdfminer_RDFMINER.so generated by ./compile_c_code.sh (see /scripts
+		// folder)
 		System.loadLibrary("rdfminer_RDFMiner");
 		// Set SPARQL Endpoit
 		endpoint = new SparqlEndpoint(Global.SPARQL_ENDPOINT, PREFIXES);
-		
+
 		// Create an empty json object which will be fill with our results
 		JSONObject json = new JSONObject();
-		
+
 		try {
 			output = new FileWriter(Global.OUTPUT_PATH + parameters.resultFile + ".json");
-		}
-		catch(/*JAXBException | */IOException e) {
+		} catch (/* JAXBException | */IOException e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 			System.exit(1);
 		}
-		
+
 		AxiomGenerator generator = null;
 		BufferedReader axiomFile = null;
-		
-		if(parameters.axiomFile==null) {
-			if(parameters.useRandomAxiomGenerator) {
+
+		if (parameters.axiomFile == null) {
+			if (parameters.useRandomAxiomGenerator) {
 				logger.info("Initializing the random axiom generator with grammar " + parameters.grammarFile + "...");
 				generator = new RandomAxiomGenerator(parameters.grammarFile);
-			}
-			else if(parameters.subclassList!=null) {
+			} else if (parameters.subclassList != null) {
 				logger.info("Initializing the increasing TP axiom generator...");
 				generator = new IncreasingTimePredictorAxiomGenerator(parameters.subclassList);
-			}
-			else {
+			} else {
 				logger.info("Initializing the candidate axiom generator...");
 				generator = new CandidateAxiomGenerator(parameters.grammarFile);
 			}
-		}
-		else {
+		} else {
 			logger.info("Reading axioms from file " + parameters.axiomFile + "...");
 			try {
 				// Try to read the status file:
 				axiomFile = new BufferedReader(new FileReader(parameters.axiomFile));
-			}
-			catch(IOException e) {
+			} catch (IOException e) {
 				logger.error("Could not open file " + parameters.axiomFile);
 				return;
 			}
 		}
-		
+
 		executor = Executors.newSingleThreadExecutor();
-		
-		while(true) {
-			
+
+		while (true) {
+
 			Axiom a = null;
 			String axiomName = null;
 			long t0 = getProcessCPUTime();
-			
-			if(generator!=null) {
+
+			if (generator != null) {
 				Phenotype axiom = generator.nextAxiom();
-				if(axiom==null)
+				if (axiom == null)
 					break;
 				axiomName = axiom.getStringNoSpace();
 				logger.info("Testing axiom: " + axiomName);
 				try {
 					a = AxiomFactory.create(axiom);
-				}
-				catch (QueryExceptionHTTP httpError) {
+				} catch (QueryExceptionHTTP httpError) {
 					logger.error("HTTP Error " + httpError.getMessage() + " making a SPARQL query.");
 					httpError.printStackTrace();
 					System.exit(1);
-				}
-				catch (JenaException jenaException) {
+				} catch (JenaException jenaException) {
 					logger.error("Jena Exception " + jenaException.getMessage() + " making a SPARQL query.");
 					jenaException.printStackTrace();
 					System.exit(1);
 				}
-			}
-			else {
+			} else {
 				try {
 					axiomName = axiomFile.readLine();
-					if(axiomName==null)
+					if (axiomName == null)
 						break;
-					if(axiomName.isEmpty())
+					if (axiomName.isEmpty())
 						break;
 					logger.info("Testing axiom: " + axiomName);
 					a = AxiomFactory.create(axiomName);
@@ -216,11 +214,11 @@ public class RDFMiner {
 					System.exit(1);
 				}
 			}
-		
+
 			// long t = System.currentTimeMillis();
 			long t = getProcessCPUTime();
-			
-			if(a != null) {
+
+			if (a != null) {
 				// Save a JSON report of the test
 				AxiomTestJSON reportJSON = new AxiomTestJSON();
 				reportJSON.elapsedTime = t - t0;
@@ -230,24 +228,25 @@ public class RDFMiner {
 				reportJSON.possibility = a.possibility().doubleValue();
 				reportJSON.necessity = a.necessity().doubleValue();
 				reportJSON.isTimeout = a.isTimeout;
-				if(a.numConfirmations>0 && a.numConfirmations<100) reportJSON.confirmations = a.confirmations;
-				if(a.numExceptions>0 && a.numExceptions<100) reportJSON.exceptions = a.exceptions;
+				if (a.numConfirmations > 0 && a.numConfirmations < 100)
+					reportJSON.confirmations = a.confirmations;
+				if (a.numExceptions > 0 && a.numExceptions < 100)
+					reportJSON.exceptions = a.exceptions;
 
 				// print useful results
 				logger.info("Num. confirmations: " + a.numConfirmations);
 				logger.info("Num. exceptions: " + a.numExceptions);
 				logger.info("Possibility = " + reportJSON.possibility);
 				logger.info("Necessity = " + reportJSON.necessity);
-				
-				if(a instanceof SubClassOfAxiom && reportJSON.necessity > 1.0/3.0) {
+
+				if (a instanceof SubClassOfAxiom && reportJSON.necessity > 1.0 / 3.0) {
 					SubClassOfAxiom sa = (SubClassOfAxiom) a;
 					SubClassOfAxiom.maxTestTime.maxput(sa.timePredictor(), reportJSON.elapsedTime);
 				}
-				
+
 				json.append(axiomName, reportJSON.toJSON());
-				
-			}
-			else
+
+			} else
 				logger.warn("Axiom type not supported yet!");
 			logger.info("Test completed in " + (t - t0) + " ms.");
 		}
@@ -262,5 +261,5 @@ public class RDFMiner {
 		}
 		System.exit(0);
 	}
-	
+
 }

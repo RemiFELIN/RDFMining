@@ -5,6 +5,14 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * 
+ * This class is used to map all results on a object and generate a {@link org.json.JSONObject}
+ * of it
+ * 
+ * @author Rémi FELIN
+ *
+ */
 public class AxiomTestJSON {
 
 	public int referenceCardinality;
@@ -15,7 +23,7 @@ public class AxiomTestJSON {
 	public long elapsedTime; // the time it took to test the axiom, in ms.
 	public boolean isTimeout;
 	public List<String> exceptions, confirmations;
-	
+
 	public AxiomTestJSON() {
 		referenceCardinality = numConfirmations = numExceptions = 0;
 		possibility = necessity = 0.0;
@@ -23,7 +31,7 @@ public class AxiomTestJSON {
 		exceptions = confirmations = null;
 		isTimeout = false;
 	}
-	
+
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		json.put("referenceCardinality", referenceCardinality);
@@ -33,10 +41,13 @@ public class AxiomTestJSON {
 		json.put("necessity", necessity);
 		json.put("elapsedTime", elapsedTime);
 		json.put("isTimeout", isTimeout);
-		// if exceptions or confirmations list are not empty, they are defined and so they are not null
-		if(exceptions != null) json.put("exceptions", new JSONArray(exceptions));
-		if(confirmations != null) json.put("confirmations", new JSONArray(confirmations));
+		// if exceptions or confirmations list are not empty, they are defined and so
+		// they are not null
+		if (exceptions != null)
+			json.put("exceptions", new JSONArray(exceptions));
+		if (confirmations != null)
+			json.put("confirmations", new JSONArray(confirmations));
 		return json;
 	}
-	
+
 }
