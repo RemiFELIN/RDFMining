@@ -138,30 +138,27 @@ public class RDFMiner {
 		// Set SPARQL Endpoit
 		endpoint = new SparqlEndpoint(Global.SPARQL_ENDPOINT, PREFIXES);
 
-		// Create an empty json object which will be fill with our results
-		JSONObject json = new JSONObject();
-
-		try {
-			output = new FileWriter(Global.OUTPUT_PATH + parameters.resultFile + ".json");
-		} catch (/* JAXBException | */IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-			System.exit(1);
-		}
-
 		AxiomGenerator generator = null;
 		BufferedReader axiomFile = null;
 
+		// Create an empty JSON object which will be fill with our results
+		JSONObject json = new JSONObject();
+
 		if (parameters.axiomFile == null) {
-			if (parameters.useRandomAxiomGenerator) {
-				logger.info("Initializing the random axiom generator with grammar " + parameters.grammarFile + "...");
-				generator = new RandomAxiomGenerator(parameters.grammarFile);
-			} else if (parameters.subclassList != null) {
-				logger.info("Initializing the increasing TP axiom generator...");
-				generator = new IncreasingTimePredictorAxiomGenerator(parameters.subclassList);
+			if (parameters.axiom == null) {
+				if (parameters.useRandomAxiomGenerator) {
+					logger.info(
+							"Initializing the random axiom generator with grammar " + parameters.grammarFile + "...");
+					generator = new RandomAxiomGenerator(parameters.grammarFile);
+				} else if (parameters.subclassList != null) {
+					logger.info("Initializing the increasing TP axiom generator...");
+					generator = new IncreasingTimePredictorAxiomGenerator(parameters.subclassList);
+				} else {
+					logger.info("Initializing the candidate axiom generator...");
+					generator = new CandidateAxiomGenerator(parameters.grammarFile);
+				}
 			} else {
-				logger.info("Initializing the candidate axiom generator...");
-				generator = new CandidateAxiomGenerator(parameters.grammarFile);
+				logger.info("launch test on a single axiom");
 			}
 		} else {
 			logger.info("Reading axioms from file " + parameters.axiomFile + "...");
@@ -175,6 +172,19 @@ public class RDFMiner {
 		}
 
 		executor = Executors.newSingleThreadExecutor();
+
+		if (parameters.axiom == null) {
+			// as the test of a single axiom is return on standard output, we don't need to
+			// write
+			// file of the results
+			try {
+				output = new FileWriter(Global.OUTPUT_PATH + parameters.resultFile + ".json");
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
 
 		while (true) {
 
@@ -201,7 +211,14 @@ public class RDFMiner {
 				}
 			} else {
 				try {
-					axiomName = axiomFile.readLine();
+					if (axiomFile == null && parameters.axiom != null) {
+						axiomName = parameters.axiom;
+					} else if (axiomFile != null && parameters.axiom == null) {
+						axiomName = axiomFile.readLine();
+					} else {
+						logger.error("'-a' and '-sa' are used at the same time");
+						System.exit(1);
+					}
 					if (axiomName == null)
 						break;
 					if (axiomName.isEmpty())
@@ -232,32 +249,40 @@ public class RDFMiner {
 					reportJSON.confirmations = a.confirmations;
 				if (a.numExceptions > 0 && a.numExceptions < 100)
 					reportJSON.exceptions = a.exceptions;
+				
+				// fill json results
+				json.append(axiomName, reportJSON.toJSON());
 
 				// print useful results
 				logger.info("Num. confirmations: " + a.numConfirmations);
 				logger.info("Num. exceptions: " + a.numExceptions);
-				logger.info("Possibility = " + reportJSON.possibility);
-				logger.info("Necessity = " + reportJSON.necessity);
+				logger.info("Possibility = " + a.possibility().doubleValue());
+				logger.info("Necessity = " + a.necessity().doubleValue());
 
-				if (a instanceof SubClassOfAxiom && reportJSON.necessity > 1.0 / 3.0) {
+				if (a instanceof SubClassOfAxiom && a.necessity().doubleValue() > 1.0 / 3.0) {
 					SubClassOfAxiom sa = (SubClassOfAxiom) a;
-					SubClassOfAxiom.maxTestTime.maxput(sa.timePredictor(), reportJSON.elapsedTime);
+					SubClassOfAxiom.maxTestTime.maxput(sa.timePredictor(), t - t0);
 				}
 
-				json.append(axiomName, reportJSON.toJSON());
-
+				if(parameters.axiom != null) {
+					System.out.println("[RES]" + json.toString());
+					break;
+				}
+				
 			} else
 				logger.warn("Axiom type not supported yet!");
 			logger.info("Test completed in " + (t - t0) + " ms.");
 		}
 		logger.info("Done testing axioms. Exiting.");
-		try {
-			output.write(json.toString());
-			output.close();
-		} catch (IOException e) {
-			logger.error("I/O error while closing CSV writer: " + e.getMessage());
-			e.printStackTrace();
-			System.exit(1);
+		if (parameters.axiom == null) {
+			try {
+				output.write(json.toString());
+				output.close();
+			} catch (IOException e) {
+				logger.error("I/O error while closing CSV writer: " + e.getMessage());
+				e.printStackTrace();
+				System.exit(1);
+			}
 		}
 		System.exit(0);
 	}

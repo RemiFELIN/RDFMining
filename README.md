@@ -42,7 +42,7 @@
  -d (--dynamic-timeout) ANGULAR_COEFF : use a dynamic time-out for axiom
                                         testing (default: 0.0)
  -g (--grammar) GRAMMAR               : use this file as the axiom grammar
-                                        (default: /home/remicode/resources/OWL2A
+                                        (default: /rdfminer/code/resources/OWL2A
                                         xiom-test.bnf)
  -o (--output) RESULTFILE             : name of output file (without
                                         extension): the name 'results' is
@@ -52,6 +52,7 @@
                                         (default: false)
  -s (--subclasslist) FILE             : test subClassOf axioms generated from
                                         the list of subclasses in the given file
+ -sa (--single-axiom) AXIOM           : test a single axiom given
  -t (--timeout) MINUTES               : use this time-out (in minutes) for
                                         axiom testing (default: 0)
 ```

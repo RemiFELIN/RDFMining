@@ -23,6 +23,9 @@ public class CmdLineParameters {
 	@Option(name = "-a", aliases = { "--axioms" }, usage = "test axioms contained in this file", metaVar = "AXIOMFILE")
 	public String axiomFile = null;
 
+	@Option(name = "-sa", aliases = { "--single-axiom" }, usage = "test a single axiom given", metaVar = "AXIOM")
+	public String axiom = null;
+	
 	/**
 	 * The angular coefficient to be used for dynamic time capping of axiom test.
 	 * <p>

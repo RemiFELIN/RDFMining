@@ -84,14 +84,14 @@ public class SubClassOfAxiom extends Axiom {
 		else
 			superClassComplement = new ComplementClassExpression(superClass);
 
-		System.out.println("\nsub-class = " + subClass + "; graph pattern =");
-		System.out.println(SparqlEndpoint.prettyPrint(subClass.graphPattern));
+		// System.out.println("\nsub-class = " + subClass + "; graph pattern =");
+		// System.out.println(SparqlEndpoint.prettyPrint(subClass.graphPattern));
 
-		System.out.println("\nsuper-class = " + superClass + "; graph pattern =");
-		System.out.println(SparqlEndpoint.prettyPrint(superClass.graphPattern));
+		// System.out.println("\nsuper-class = " + superClass + "; graph pattern =");
+		// System.out.println(SparqlEndpoint.prettyPrint(superClass.graphPattern));
 
-		System.out.println("\n~super-class = " + superClassComplement + "; graph pattern =");
-		System.out.println(SparqlEndpoint.prettyPrint(superClassComplement.graphPattern));
+		// System.out.println("\n~super-class = " + superClassComplement + "; graph pattern =");
+		// System.out.println(SparqlEndpoint.prettyPrint(superClassComplement.graphPattern));
 
 		try {
 			update();
