@@ -24,6 +24,17 @@
 
 > **-v $(pwd)/[FOLDER_NAME]/:/rdfminer/io/** is very important to share input and output files between container and our machine, according to the official documentation of Docker. 
 
+## How to build a locale RDFMiner instance on Linux
+
+1. Clone this repository.
+2. On terminal, execute the script : ```./scripts/compile_c_code.sh```
+> IMPORTANT : you need to execute this line to set the correct HOME on your machine: ```export HOME=$(pwd)``` on the root of project.
+3. On terminal, move on **/code** folder and tap: ```mvn clean install```
+> Maven is required for this step.
+
+> If the Maven build is success, you must move on **/jar** folder to find the executable JAR.
+4. On the **/jar** folder, you can now launch the JAR with this synthax: ```java -Xmx4g -Djava.library.path=./../code/resources/. -jar rdfminer-1.0.jar [params]```
+
 ## Parameters
 
 ```
