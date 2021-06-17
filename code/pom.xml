@@ -17,19 +17,18 @@
 
   <repositories>
 	<repository>
-		<id>repo</id>
+		<id>local</id>
 		<name>dep-repository</name>
 		<url>file://${basedir}/../dep</url>
+	</repository>
+	<repository>
+		<id>topquadrant</id>
+		<name>spin-repository</name>
+		<url>http://topquadrant.com/repository/spin/</url>
 	</repository>
   </repositories>
 
   <dependencies>
-	<!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
-	<dependency>
-		<groupId>com.opencsv</groupId>
-		<artifactId>opencsv</artifactId>
-		<version>5.4</version>
-	</dependency>
     <!-- https://mvnrepository.com/artifact/args4j/args4j -->
 	<dependency>
 		<groupId>args4j</groupId>
@@ -88,6 +87,30 @@
 	    <groupId>org.json</groupId>
 	    <artifactId>json</artifactId>
 	    <version>20210307</version>
+	</dependency>
+	<!-- http://topquadrant.com/repository/spin/ -->
+	<dependency>
+	    <groupId>org.topbraid</groupId>
+	    <artifactId>spin</artifactId>
+	    <version>2.0.0</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+	<dependency>
+		<groupId>org.apache.poi</groupId>
+		<artifactId>poi</artifactId>
+		<version>3.17</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+	<dependency>
+		<groupId>org.apache.poi</groupId>
+		<artifactId>poi-ooxml</artifactId>
+		<version>3.17</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/net.sourceforge.jexcelapi/jxl -->
+	<dependency>
+		<groupId>net.sourceforge.jexcelapi</groupId>
+		<artifactId>jxl</artifactId>
+		<version>2.6.12</version>
 	</dependency>
 	<!-- 						JENA 							 -->
 	<!-- https://mvnrepository.com/artifact/org.apache.jena/jena -->

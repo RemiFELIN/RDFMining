@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.log4j.Logger;
 
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.axiom.Axiom;
@@ -15,11 +16,6 @@ import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.expression.complement.ComplementClassExpression;
 import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
-
-// import org.apache.log4j.Logger;
-
-//import com.hp.hpl.jena.query.QuerySolution;
-//import com.hp.hpl.jena.rdf.model.RDFNode;
 
 import Mapper.Symbol;
 
@@ -30,8 +26,8 @@ import Mapper.Symbol;
  *
  */
 public class DisjointClassesAxiom extends Axiom {
-	// private static Logger logger =
-	// Logger.getLogger(DisjointClassesAxiom.class.getName());
+	
+	private static Logger logger = Logger.getLogger(DisjointClassesAxiom.class.getName());
 
 	/**
 	 * An array of class expressions which are declared to be mutually disjoint.
@@ -96,6 +92,32 @@ public class DisjointClassesAxiom extends Axiom {
 		return gp;
 	}
 
+
+	protected String nonConfirmationGraphPattern(int i, int j) {
+		String dc = Expression.getFreshVariableName();
+		final String graphPattern1 = "{ " + disjointClass[i].graphPattern + " \n";
+		final String graphPattern2 = disjointClass[j].createGraphPattern("?y", "y") + " \n";
+		String gp = graphPattern1;
+		gp += "?x" + " a " + dc + ".\n  ";
+		gp += "?y" + " a " + dc + ".\n";
+		gp += graphPattern2;
+		gp += "}\n";
+
+		return gp;
+	}
+
+	protected String nonConfirmationGraphPattern2(int i, int j) {
+		String dc = Expression.getFreshVariableName();
+		final String graphPattern3 = "{ " + disjointClass[j].graphPattern + " \n";
+		final String graphPattern4 = disjointClass[i].createGraphPattern("?y", "y") + " \n";
+		String gp2 = graphPattern3;
+		gp2 += "?x" + " a " + dc + ".\n";
+		gp2 += "?y" + " a " + dc + ".\n";
+		gp2 += graphPattern4;
+		gp2 += "}\n";
+		return gp2;
+	}
+	
 	/**
 	 * Updates the counts used to compute the possibility and necessity degrees.
 	 * <p>
@@ -119,45 +141,104 @@ public class DisjointClassesAxiom extends Axiom {
 				refCardGraphPattern += " UNION ";
 			refCardGraphPattern += "{ " + disjointClass[i].graphPattern + " }";
 		}
-		referenceCardinality = RDFMiner.endpoint.count("?x", refCardGraphPattern);
 
-		String confirmationGraphPattern = "";
+		int generality1 = 0;
+		int generality2 = 0;
+		int k = 0;
+		while (k < disjointClass.length) {
+			String generalityGraphPattern = "";
+			String generalityGraphPattern2 = "";
+			generalityGraphPattern += "{ " + disjointClass[k].graphPattern + " }";
+			// logger.info("generatlity1: " + generalityGraphPattern);
+
+			generalityGraphPattern2 += "{ " + disjointClass[k + 1].graphPattern + " }";
+			// logger.info("generatlity2: " + generalityGraphPattern2);
+			// logger.info ("enpoint.url: " + endpoint.url);
+
+			// ----compute the cost of GP
+			generality1 = RDFMiner.endpoint.count("?x", generalityGraphPattern);
+			generality2 = RDFMiner.endpoint.count("?x", generalityGraphPattern2);
+			if (generality1 > generality2)
+				generality = generality2;
+			else
+				generality = generality1;
+			k = k + 2;
+		}
+		logger.info("Generality :" + generality);
+		if (generality != 0) {
+			referenceCardinality = RDFMiner.endpoint.count("?x", refCardGraphPattern);
+			// skipping computing the reference cardinality when generality=0
+			logger.info("number referenceCardinality: " + referenceCardinality);
+			String exceptionGraphPattern = "";
+			for (int i = 0; i < disjointClass.length; i++)
+				exceptionGraphPattern += disjointClass[i].graphPattern + "\n";
+			numExceptions = RDFMiner.endpoint.count("?x", exceptionGraphPattern);
+			// logger.info(exceptionGraphPattern);
+			logger.info("number of exception: " + numExceptions);
+			logger.info(".................................................");
+			if (numExceptions > 0 && numExceptions < 100) {
+				// query the exceptions
+				// RDFMiner.endpoint.select("TO DO");
+				while (RDFMiner.endpoint.hasNext()) {
+					QuerySolution solution = RDFMiner.endpoint.next();
+					RDFNode x = solution.get("x");
+					exceptions.add(Expression.sparqlEncode(x));
+				}
+			}
+			numConfirmations = referenceCardinality - numExceptions;
+		} else
+			referenceCardinality = 0;
+	}
+
+	public void updateVolker() {
+		confirmations = new ArrayList<String>();
+		exceptions = new ArrayList<String>();
+
+		String refCardGraphPattern = "";
 		for (int i = 0; i < disjointClass.length; i++) {
 			if (i > 0)
-				confirmationGraphPattern += " UNION ";
-			confirmationGraphPattern += "{ ";
-			for (int j = 0; j < disjointClass.length; j++) {
-				if (j == i)
-					confirmationGraphPattern += disjointClass[j].graphPattern + "\n";
-				else
-					confirmationGraphPattern += disjunctionGraphPattern(j, i, "?x", "?y");
-			}
-			confirmationGraphPattern += " }";
-		}
-		numConfirmations = RDFMiner.endpoint.count("?x", confirmationGraphPattern);
-		if (numConfirmations > 0 && numConfirmations < 100) {
-			// query the confirmations
-			RDFMiner.endpoint.select("TO DO");
-			while (RDFMiner.endpoint.hasNext()) {
-				QuerySolution solution = RDFMiner.endpoint.next();
-				RDFNode x = solution.get("x");
-				confirmations.add(Expression.sparqlEncode(x));
-			}
+				refCardGraphPattern += " UNION ";
+			refCardGraphPattern += "{ " + disjointClass[i].graphPattern + " }";
 		}
 
+		int generality1 = 0;
+		int generality2 = 0;
+		int k = 0;
+		while (k < disjointClass.length) {
+			String generalityGraphPattern = "";
+			String generalityGraphPattern2 = "";
+			generalityGraphPattern += "{ " + disjointClass[k].graphPattern + " }";
+			generalityGraphPattern2 += "{ " + disjointClass[k + 1].graphPattern + " }";
+			generality1 = RDFMiner.endpoint.count("?x", generalityGraphPattern);
+			generality2 = RDFMiner.endpoint.count("?x", generalityGraphPattern2);
+			if (generality1 > generality2)
+				generality = generality2;
+			else
+				generality = generality1;
+			k = k + 2;
+		}
+		logger.info("Generality :" + generality);
+		referenceCardinality = RDFMiner.endpoint.count("?x", refCardGraphPattern);
+		logger.info("number referenceCardinality: " + referenceCardinality);
 		String exceptionGraphPattern = "";
 		for (int i = 0; i < disjointClass.length; i++)
 			exceptionGraphPattern += disjointClass[i].graphPattern + "\n";
 		numExceptions = RDFMiner.endpoint.count("?x", exceptionGraphPattern);
+		logger.info("number of exception: " + numExceptions);
+		logger.info(".............................................................");
 		if (numExceptions > 0 && numExceptions < 100) {
 			// query the exceptions
-			RDFMiner.endpoint.select("TO DO");
 			while (RDFMiner.endpoint.hasNext()) {
 				QuerySolution solution = RDFMiner.endpoint.next();
 				RDFNode x = solution.get("x");
 				exceptions.add(Expression.sparqlEncode(x));
 			}
 		}
+		numConfirmations = referenceCardinality - numExceptions;
+	}
+
+	public Expression[] getExpression() {
+		return disjointClass;
 	}
 
 }

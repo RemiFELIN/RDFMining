@@ -5,8 +5,12 @@
 // import org.apache.log4j.Logger;
 package com.i3s.app.rdfminer.axiom;
 
+import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
+
 import Individuals.GEChromosome;
+import Individuals.Genotype;
 import Individuals.Phenotype;
+import Mapper.GEGrammar;
 import Util.Random.MersenneTwisterFast;
 import Util.Random.RandomNumberGenerator;
 
@@ -52,27 +56,44 @@ public class RandomAxiomGenerator extends AxiomGenerator {
 	public Phenotype nextAxiom() {
 		GEChromosome chromosome;
 		boolean valid;
-
 		do {
-
 			chromosome = new GEChromosome(1000);
 			chromosome.setMaxCodonValue(Integer.MAX_VALUE);
 			chromosome.setMaxChromosomeLength(1000);
 			for (int i = 0; i < 1000; i++)
 				chromosome.add(Math.abs(random.nextInt()));
-
 			grammar.setGenotype(chromosome);
 			grammar.setPhenotype(new Phenotype());
-
 			valid = grammar.genotype2Phenotype(true);
-
-			/*
-			 * if(!valid) logger.warn("Invalid derivation!"); logger.info("Codons: " +
-			 * grammar.getUsedCodons() + "\n\tWraps: " + grammar.getUsedWraps() +
-			 * "\n\tMax current tree depth: " + grammar.getMaxCurrentTreeDepth() +
-			 * "\n\tName: " + grammar.getName());
-			 */ } while (!valid);
+		} while (!valid);
 		return grammar.getPhenotype();
+	}
+
+	
+	public GEIndividual axiomIndividual(GEChromosome chromosome, int generation) {
+		GEIndividual individual;
+		boolean valid;
+		int i = 1;
+		do {
+			grammar.setGenotype(chromosome);
+			grammar.setPhenotype(new Phenotype());
+			valid = grammar.genotype2Phenotype(true);
+			i++;
+		} while ((!valid) && (i < grammar.getMaxWraps()));
+		Genotype gp = new Genotype(1, chromosome);
+		GEGrammar gr = (GEGrammar) grammar;
+		individual = new GEIndividual();
+		individual.setMapper(gr);
+		individual.setGenotype(gp);
+		individual.setPhenotype(grammar.getPhenotype());
+		individual.setValid(true);
+		individual.setUsedCodons(chromosome.getUsedGenes());
+		individual.setUsedWraps(grammar.getUsedWraps() - 1);
+		individual.setAge(generation);
+		if (valid == true) {
+			individual.setMapped(true);
+		}
+		return individual;
 	}
 
 }

@@ -15,6 +15,8 @@ import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QueryParseException;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFactory;
+import org.apache.jena.query.ResultSetRewindable;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
@@ -79,13 +81,14 @@ public class SparqlEndpoint implements Iterator<QuerySolution> {
 	/**
 	 * The result of the current query.
 	 */
-	ResultSet resultSet;
+	public ResultSet resultSet;
+	ResultSetRewindable results;
 
 	/**
 	 * The response time of the "SELECT" SPARQL Request on remote service (in ms)
 	 */
 	public static long selectResponseTime;
-
+	
 	/**
 	 * Create a new SPARQL endpoint.
 	 * <p>
@@ -108,6 +111,15 @@ public class SparqlEndpoint implements Iterator<QuerySolution> {
 			endpoint = url;
 			tdb = ModelFactory.createDefaultModel();
 		}
+		prefixes = prefix;
+		queryExecution = null;
+		resultSet = null;
+	}
+
+	public SparqlEndpoint(Model model, String prefix) {
+		// logger.warn("Using the Spin model");
+		endpoint = null;
+		tdb = model;
 		prefixes = prefix;
 		queryExecution = null;
 		resultSet = null;
@@ -150,6 +162,19 @@ public class SparqlEndpoint implements Iterator<QuerySolution> {
 		}
 	}
 
+	public void select2(String sparql) {
+		try {
+			String str = prefixes + "SELECT " + sparql;
+			Query query = QueryFactory.create(str);
+			prepare(query);
+			// resultSet = queryExecution.execSelect();
+			resultSet = ResultSetFactory.copyResults(queryExecution.execSelect());
+		} catch (Exception e) {
+			handleException(e, "making the following query:\nSELECT " + SparqlEndpoint.prettyPrint(sparql));
+		}
+	}
+
+	
 	/**
 	 * Execute an ASK query
 	 * 
@@ -349,5 +374,25 @@ public class SparqlEndpoint implements Iterator<QuerySolution> {
 			}
 		}
 		return pretty;
+	}
+
+	/**
+	 * Execute a CONSTRUCT query.
+	 * 
+	 * @param sparql The query string, to go after the "CONSTRUCT " keyword.
+	 */
+	public void construct(String sparql) {
+		try {
+			String str = prefixes + "CONSTRUCT " + sparql;
+			Query query = QueryFactory.create(str);
+			prepare(query);
+			tdb = queryExecution.execConstruct();
+		} catch (Exception e) {
+			handleException(e, "making the following query:\nCONSTRUCT " + SparqlEndpoint.prettyPrint(sparql));
+		}
+	}
+
+	public ResultSet getResultset() {
+		return this.resultSet;
 	}
 }

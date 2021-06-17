@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.i3s.app.rdfminer.fuzzy.TruthDegree;
 
+import Mapper.Symbol;
+
 /**
  * An abstract class at the top of the hierarchy of OWL 2 axioms.
  * <p>
@@ -35,6 +37,8 @@ public abstract class Axiom {
 	 * are relevant for testing whether this axiom is possible or necessary or not.
 	 * <p>
 	 */
+	public List<List<Symbol>> argumentClasses;
+	public int generality = 0;
 	public int referenceCardinality = 0;
 
 	/**
@@ -77,6 +81,13 @@ public abstract class Axiom {
 	 */
 	public boolean isTimeout = false;
 
+	/* The structure of GP in axiom */
+	protected int num_UNION_Operators = 0;
+	protected int num_FILTER_Operators = 0;
+	protected int num_Triples = 0;
+	protected int num_Variables = 0;
+	protected int num_Instances_predicates = 0;
+
 	/**
 	 * Updates the counts used to compute the possibility and necessity degrees.
 	 */
@@ -110,5 +121,20 @@ public abstract class Axiom {
 			y = Math.sqrt(1.0 - x * x);
 		}
 		return new TruthDegree(y);
+	}
+
+	/**
+	 * Compute the cost of the GP
+	 * 
+	 * @return
+	 */
+	public double costGP() {
+		if (generality > 0) {
+			return Math.sqrt(
+					Math.sqrt((2 * num_UNION_Operators + num_FILTER_Operators + 1) * (num_Variables + 1) * num_Triples))
+					* Math.sqrt(Math.sqrt(num_Instances_predicates));
+		} else {
+			return 1;
+		}
 	}
 }

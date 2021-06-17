@@ -45,6 +45,11 @@ RUN echo "\n********** compile rdfminer_RDFMiner.so" && \
 RUN echo "\n********** MAVEN: install RDFMiner 1.0\n" && \
     cd $HOME/code && \
     mvn clean install
+    
+# Uninstall GCC and Maven
+RUN apt-get remove gcc maven -y && \
+    apt autoremove -y && \
+    apt-get clean
 
 # chmod 777 run.sh file
 RUN chmod +x $HOME/scripts/run.sh

@@ -41,6 +41,7 @@ import Util.Enums;
  *
  */
 public abstract class AxiomGenerator {
+	
 	private static Logger logger = Logger.getLogger(AxiomGenerator.class.getName());
 
 	/**

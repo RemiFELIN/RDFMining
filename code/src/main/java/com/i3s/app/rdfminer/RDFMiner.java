@@ -50,7 +50,7 @@ public class RDFMiner {
 
 	public static CmdLineParameters parameters = new CmdLineParameters();
 
-	final private static String PREFIXES = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
+	public final static String PREFIXES = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
 			+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 			+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 			+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -92,6 +92,8 @@ public class RDFMiner {
 	 *         far
 	 */
 	public static native long getProcessCPUTime();
+	
+	public static String[][] Predicate_Table;
 
 	/**
 	 * The entry point of the RDF Miner application.

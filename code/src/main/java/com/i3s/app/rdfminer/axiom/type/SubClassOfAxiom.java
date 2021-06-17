@@ -26,9 +26,6 @@ import com.i3s.app.rdfminer.sparql.RDFNodePair;
 import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 import com.i3s.app.rdfminer.tools.TimeMap;
 
-//import com.hp.hpl.jena.query.QuerySolution;
-//import com.hp.hpl.jena.rdf.model.RDFNode;
-
 import Mapper.Symbol;
 
 /**
