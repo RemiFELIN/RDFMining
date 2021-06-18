@@ -225,7 +225,7 @@ public class SubClassOfAxiom extends Axiom {
 				long timeOut = RDFMiner.parameters.timeOut;
 				timeOut += (long) Math.round(RDFMiner.parameters.dynTimeOut * timePredictor);
 				logger.warn("Time Out = " + timeOut);
-
+				
 				// Prepare the call to be spawned as a new thread:
 				Future<Integer> future = RDFMiner.executor.submit(new Callable<Integer>() {
 					public Integer call() {

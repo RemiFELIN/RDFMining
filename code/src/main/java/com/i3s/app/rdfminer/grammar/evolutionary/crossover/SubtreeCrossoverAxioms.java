@@ -19,18 +19,14 @@ public class SubtreeCrossoverAxioms extends SubtreeCrossover {
 
 	public SubtreeCrossoverAxioms(double prob, RandomNumberGenerator rng) {
 		super(prob, rng);
-		// TODO Auto-generated constructor stub
 	}
 
-	public GEIndividual[] CrossoverTree(GEIndividual Parent1, GEIndividual Parent2) {
-		// TODO Auto-generated method stub
+	public GEIndividual[] crossoverTree(GEIndividual parent1, GEIndividual parent2) {
 		GEIndividual i1, i2;
-		i1 = new GEIndividual(Parent1);
-		i2 = new GEIndividual(Parent2);
+		i1 = new GEIndividual(parent1);
+		i2 = new GEIndividual(parent2);
 
-		// System.out.println("i1= " + i1);
-		// System.out.println("i2= " + i2);
-		GEIndividual[] ListChild = new GEIndividual[2];
+		GEIndividual[] childs = new GEIndividual[2];
 
 		// Turn the genotype into a tree. The tree nodes will state which
 		// codons each branch used to determine its child production
@@ -39,11 +35,8 @@ public class SubtreeCrossoverAxioms extends SubtreeCrossover {
 		// System.out.println("Tree1 " + tree1);
 		// System.out.println("Tree2 " + tree2);
 		// Don't operate on invalids
-		if (tree1 != null && tree2 != null && (this.rand.nextDouble() < this.probability)) // Only crossover based on a
-																							// probability that a
-																							// crossover should occur
-		{
-
+		if (tree1 != null && tree2 != null && (this.rand.nextDouble() < this.probability)) {
+			// Only crossover based on a probability that a crossover should occur
 			// Helper: get the chromosomes
 			GEChromosome chromosome1 = (GEChromosome) i1.getGenotype().get(0);
 			GEChromosome chromosome2 = (GEChromosome) i2.getGenotype().get(0);
@@ -67,7 +60,6 @@ public class SubtreeCrossoverAxioms extends SubtreeCrossover {
 			while (node2 == null) {
 
 				assert pickCount > 0 && pickCount <= chromosome1.getUsedGenes() : pickCount;
-
 				// Pick random points from the genotype for crossover
 				// The random point chosen from individual 2 is a only a starting
 				// point from which a matching type will be searched. The search
@@ -159,9 +151,9 @@ public class SubtreeCrossoverAxioms extends SubtreeCrossover {
 			((GEIndividual) i1).invalidate();
 			((GEIndividual) i2).invalidate();
 		}
-		ListChild[0] = (GEIndividual) i1;
+		childs[0] = (GEIndividual) i1;
 		// System.out.println("ListChild i1= " + ListChild[0]);
-		ListChild[1] = (GEIndividual) i2;
+		childs[1] = (GEIndividual) i2;
 		// System.out.println("i2= " + ListChild[1]);
 		int Mutationpoint1[] = new int[1];
 		int Mutationpoint2[] = new int[1];
@@ -192,7 +184,7 @@ public class SubtreeCrossoverAxioms extends SubtreeCrossover {
 		 * System.out.println("Child 2 mapped " + Boolean.toString(i2.isMapped()));
 		 * System.out.println("i1= " + i1); System.out.println("i2= " + i2);
 		 */
-		return ListChild;
+		return childs;
 
 	}
 

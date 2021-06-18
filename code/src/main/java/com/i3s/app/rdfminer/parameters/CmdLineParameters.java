@@ -112,7 +112,7 @@ public class CmdLineParameters {
 							// chromosomes;
 
 	@Option(name = "-se", aliases = {
-			"--typeselect" }, usage = "use as this value as the type of parent selection operation", metaVar = "TYPE_SELECTIOn")
+			"--typeselect" }, usage = "use as this value as the type of parent selection operation", metaVar = "TYPE_SELECTION")
 	public int typeselect = 2; // 1- Roulette wheel; 2- truncation; 3- Tournament ; other numbers- normal way
 
 	@Option(name = "-cr", aliases = {
@@ -130,11 +130,11 @@ public class CmdLineParameters {
 	 */
 
 	@Option(name = "-el", aliases = {
-			"--elitism" }, usage = "use as this value as the choose of elitism selection", metaVar = "ELITISM_SELECTIOn")
+			"--elitism" }, usage = "use as this value as the choose of elitism selection", metaVar = "ELITISM_SELECTION")
 	public int elitism = 1; // 0- not applying etilism method; 1- applying etilism method
 
 	@Option(name = "-seez", aliases = {
-			"--sizeelitie" }, usage = "use as this value as the size of elitism selection", metaVar = "TYPE_SELECTIOn")
+			"--sizeelitie" }, usage = "use as this value as the size of elitism selection", metaVar = "TYPE_SELECTION")
 	public double sizeElite = 0.02;
 
 	@Option(name = "-div", aliases = {

@@ -32,7 +32,7 @@ public class CandidatePopulation {
 	protected int size;
 	protected int generation;
 	protected RandomAxiomGenerator generator;
-	protected GEChromosome[] ListChromosome;
+	protected GEChromosome[] chromosomes;
 	protected int maxlenChromosome;
 	protected int maxWrapp;
 	protected int maxvalCodon;
@@ -40,44 +40,35 @@ public class CandidatePopulation {
 	protected int initlenChromosome;
 
 	public CandidatePopulation(int size, RandomAxiomGenerator generator, int typeInitialization,
-			GEChromosome[] ListChromosome, int initlenChromosome, int maxvalCodon, int maxWrapp) {
-		this.size = size; // size of the population
-		// this.generation=generation; //current generation
+			GEChromosome[] chromosomes, int initlenChromosome, int maxvalCodon, int maxWrapp) {
+		// size of the population
+		this.size = size;
 		this.generator = generator;
-		this.ListChromosome = ListChromosome;
-		// this.maxlenChromosome=maxlenChromosome;
+		this.chromosomes = chromosomes;
 		this.maxvalCodon = maxvalCodon;
 		this.maxWrapp = maxWrapp;
 		this.typeInitialization = typeInitialization;
 		this.initlenChromosome = initlenChromosome;
 	}
 
-	public ArrayList<GEIndividual> Initialize(Reader buffer, int curGeneration)
+	public ArrayList<GEIndividual> initialize(Reader buffer, int curGeneration)
 			throws NumberFormatException, IndexOutOfBoundsException, IOException {
 		GEChromosome chromosome;
-
 		GEIndividual individual;
 		// RandomNumberGenerator random;
-
-		/*
-		 * developed only in the case of random initialization - typeInitialization=1
-		 * Later need to develop other type of initialization.
-		 */
-
+	    // TODO developed only in the case of random initialization - typeInitialization=1 ... Later need to develop other type of initialization.
 		if (buffer != null) {
 			int intch;
 			String st = "";
 			char ch;
 			int m = 0;
 			ArrayList<Integer> chr = new ArrayList<Integer>();
-
 			while ((intch = buffer.read()) != -1) {
 				ch = (char) intch;
 				if (ch != '\n') {
-					if (ch != ',')
+					if (ch != ',') {
 						st += ch;
-					else {
-
+					} else {
 						chr.add(Integer.parseInt(st));
 						st = "";
 					}
@@ -87,34 +78,28 @@ public class CandidatePopulation {
 					chromosome.setMaxChromosomeLength(1000);
 					for (int i = 0; i < chr.size(); i++)
 						chromosome.add(chr.get(i));
-					ListChromosome[m] = chromosome;
+					chromosomes[m] = chromosome;
 					chr = new ArrayList<Integer>();
 					m++;
 				}
 			}
 		}
-
 		else {
-
-			this.ListChromosome = InitializeListChromosome();
+			this.chromosomes = initializeListChromosome();
 		}
-		logger.info("number chromosome created: " + ListChromosome.length);
+		logger.info("number chromosome created: " + chromosomes.length);
 		ArrayList<GEIndividual> CandidatePopulation = new ArrayList<GEIndividual>(size);
 
 		int j = 0;
 		while (j < size) {
-			if (generator != null)
-
-			{
-				individual = generator.axiomIndividual(ListChromosome[j], curGeneration);
+			if (generator != null) {
+				individual = generator.axiomIndividual(chromosomes[j], curGeneration);
 				CandidatePopulation.add(individual);
 				Phenotype axiom = CandidatePopulation.get(j).getPhenotype();
 				Genotype gp = CandidatePopulation.get(j).getGenotype();
 				Chromosome chro = gp.get(0);
-
 				if (axiom == null)
 					break;
-
 				logger.info("Generation: " + CandidatePopulation.get(j).getAge());
 				logger.info("Individual: " + CandidatePopulation.get(j));
 				logger.info("Chromosome: " + chro);
@@ -122,84 +107,61 @@ public class CandidatePopulation {
 				logger.info("------------------------------------------------------------------------------");
 				j++;
 			}
-
 		}
 		logger.info("number of individual created: " + CandidatePopulation.size());
 		return CandidatePopulation;
 	}
 
-	GEChromosome[] GetListChromosome() {
-
-		return ListChromosome;
+	public GEChromosome[] getListChromosome() {
+		return chromosomes;
 	}
 
-	public ArrayList<GEIndividual> Renew(ArrayList<GEIndividual> ListCrossover, int curGeneration,
-			ArrayList<GEIndividual> etilism_Population) {
-
-		ArrayList<GEIndividual> NewPopulation = new ArrayList<GEIndividual>();
-		if (etilism_Population != null)
-
-			for (int i1 = 0; i1 < etilism_Population.size(); i1++) {
-
-				etilism_Population.get(i1).setAge(curGeneration + 1);
-				NewPopulation.add(etilism_Population.get(i1));
+	public ArrayList<GEIndividual> renew(ArrayList<GEIndividual> listCrossover, int curGeneration,
+			ArrayList<GEIndividual> etilismPopulation) {
+		ArrayList<GEIndividual> newPopulation = new ArrayList<GEIndividual>();
+		if (etilismPopulation != null) {
+			for (int i1 = 0; i1 < etilismPopulation.size(); i1++) {
+				etilismPopulation.get(i1).setAge(curGeneration + 1);
+				newPopulation.add(etilismPopulation.get(i1));
 			}
-
-		for (int i2 = 0; i2 < ListCrossover.size(); i2++) {
-			ListCrossover.get(i2).setAge(curGeneration + 1);
-			NewPopulation.add(ListCrossover.get(i2));
-
 		}
-
-		/*
-		 * for (int i3=0; i3<ListMutation.size(); i3++) {
-		 * ListCrossover.get(i3).setAge(curGeneration+1);
-		 * NewPopulation.add(ListMutation.get(i3));
-		 * 
-		 * }
-		 */
-
-		// CandidatePopulation CanPop = new
-		// CandidatePopulation(j,curGeneration,generator,typeInitialization,
-		// ListChromosome,initlenChromosome, maxlenChromosome,maxvalCodon,maxWrapp);
-
-		// SimplePopulation NewCandidatePopulation =CanPop.create();
-		return NewPopulation;
+		for (int i2 = 0; i2 < listCrossover.size(); i2++) {
+			listCrossover.get(i2).setAge(curGeneration + 1);
+			newPopulation.add(listCrossover.get(i2));
+		}
+		return newPopulation;
 	}
 
-	public void AddBestIndividual(SimplePopulation Etilism_Population) {
+	public void addBestIndividual(SimplePopulation etilismPopulation) {
 		int i = 0;
-		while (i < Etilism_Population.size()) {
-			ListChromosome[i] = (GEChromosome) Etilism_Population.get(i).getGenotype().get(0);
+		while (i < etilismPopulation.size()) {
+			chromosomes[i] = (GEChromosome) etilismPopulation.get(i).getGenotype().get(0);
 			i++;
 		}
 	}
 
-	public GEChromosome[] InitializeListChromosome() {
+	public GEChromosome[] initializeListChromosome() {
 		RandomNumberGenerator random;
 		random = new MersenneTwisterFast(System.currentTimeMillis() & 0xFFFFFFFF);
 		GEChromosome chromosome;
 		int maxLenChromosome = 1000;
 		int n = 0;
-		while (n < size)
-
-		{
+		while (n < size) {
 			chromosome = new GEChromosome(initlenChromosome);
 			chromosome.setMaxCodonValue(maxvalCodon);
 			chromosome.setMaxChromosomeLength(maxLenChromosome);
 			for (int i = 0; i < initlenChromosome; i++) {
-				chromosome.add(Math.abs(random.nextInt(maxvalCodon)));// typeInitialization=1
-
+				// typeInitialization = 1
+				chromosome.add(Math.abs(random.nextInt(maxvalCodon)));
 			}
-			ListChromosome[n] = chromosome;
+			chromosomes[n] = chromosome;
 			logger.info(chromosome);
 			n++;
 		}
-		return ListChromosome;
+		return chromosomes;
 	}
 
-	public GEIndividual CreateNewAxiom(GEChromosome chromosome) {
-
+	public GEIndividual createNewAxiom(GEChromosome chromosome) {
 		GEIndividual individual = new GEIndividual();
 		RandomNumberGenerator random;
 		random = new MersenneTwisterFast(System.currentTimeMillis() & 0xFFFFFFFF);
@@ -208,14 +170,12 @@ public class CandidatePopulation {
 		chromosome.setMaxCodonValue(maxvalCodon);
 		chromosome.setMaxChromosomeLength(maxLenChromosome);
 		for (int i = 0; i < initlenChromosome; i++) {
-			chromosome.add(Math.abs(random.nextInt(maxvalCodon)));// typeInitialization=1
+			// typeInitialization = 1
+			chromosome.add(Math.abs(random.nextInt(maxvalCodon)));
 		}
-		if (generator != null)
-
-		{
+		if (generator != null) {
 			individual = generator.axiomIndividual(chromosome, generation);
 		}
-
 		return individual;
 	}
 
@@ -228,7 +188,8 @@ public class CandidatePopulation {
 		chromosome.setMaxCodonValue(maxvalCodon);
 		chromosome.setMaxChromosomeLength(maxLenChromosome);
 		for (int i = 0; i < initlenChromosome; i++) {
-			chromosome.add(Math.abs(random.nextInt(maxvalCodon)));// typeInitialization=1
+			// typeInitialization = 1
+			chromosome.add(Math.abs(random.nextInt(maxvalCodon)));
 		}
 		return chromosome;
 	}

@@ -49,7 +49,7 @@ public class FitnessEvaluation {
 	 * 
 	 */
 
-	void update(ArrayList<GEIndividual> population, int curGeneration, int totalGeneration, WritableSheet sheet)
+	public void update(ArrayList<GEIndividual> population, int curGeneration, int totalGeneration, WritableSheet sheet)
 			throws JAXBException, IOException, SQLException, Exception {
 		int i = 0;
 		if (sheet == null) {

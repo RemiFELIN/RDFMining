@@ -17,71 +17,54 @@ import Individuals.Individual;
  */
 public class EliteSelection extends EliteOperationSelection {
 
-	protected ArrayList<GEIndividual> ElitedPopulation;
+	protected ArrayList<GEIndividual> elitedPopulation;
 
-	EliteSelection(int size) {
+	public EliteSelection(int size) {
 		super(size);
-
 	}
 
-	void ParentsSelection_Elitism(ArrayList<GEIndividual> CandidatePopulation) {
-
+	public void setParentsSelectionElitism(ArrayList<GEIndividual> candidatePopulation) {
 		List<Individual> listCandidate = new ArrayList<Individual>();
-		for (int i = 0; i < CandidatePopulation.size(); i++)
-			listCandidate.add(CandidatePopulation.get(i));
-
+		for (int i = 0; i < candidatePopulation.size(); i++)
+			listCandidate.add(candidatePopulation.get(i));
 		doOperation(listCandidate);
-		// int SelectedPopsize= getSelectedPopulation().size();
-		/*
-		 * for (int k=1; k<= SelectedPopsize; k++) { logger.info("individual " + k );
-		 * logger.info(getSelectedPopulation().get(k-1).getGenotype());
-		 * logger.info(getSelectedPopulation().get(k-1).getFitness().getDouble());
-		 * logger.info(getSelectedPopulation().get(k-1)); logger.info(
-		 * "-----------------------------------------------------------------------------------------"
-		 * ); }
-		 */
-
 		ArrayList<GEIndividual> SelectedPopulation = new ArrayList<GEIndividual>();
 		for (int i = 0; i < getSelectedPopulation().size(); i++) {
 			SelectedPopulation.add((GEIndividual) getSelectedPopulation().get(i));
 		}
 		setElitedPopulation(SelectedPopulation);
-
 	}
 
-	public ArrayList<GEIndividual> SetupSelectedPopulation(ArrayList<GEIndividual> CandidatePopulation)
-
-	{
-		ArrayList<GEIndividual> SelectedPopulation = new ArrayList<GEIndividual>(
-				CandidatePopulation.size() - ElitedPopulation.size());
+	public ArrayList<GEIndividual> setupSelectedPopulation(ArrayList<GEIndividual> candidatePopulation) {
+		ArrayList<GEIndividual> selectedPopulation = new ArrayList<GEIndividual>(
+				candidatePopulation.size() - elitedPopulation.size());
 		int tmp = 0;
-
 		String elite;
 		String can;
-		int PopSize = CandidatePopulation.size();
-		int ElitePopSize = ElitedPopulation.size();
+		int PopSize = candidatePopulation.size();
+		int ElitePopSize = elitedPopulation.size();
 		for (int i = 0; i < PopSize; i++) {
 			tmp = 0;
 			for (int k = 0; k < ElitePopSize; k++) {
-				elite = ElitedPopulation.get(k).getGenotype().get(0).toString();
-				can = CandidatePopulation.get(i).getGenotype().get(0).toString();
-				if (elite.equals(can))
+				elite = elitedPopulation.get(k).getGenotype().get(0).toString();
+				can = candidatePopulation.get(i).getGenotype().get(0).toString();
+				if (elite.equals(can)) {
 					tmp++;
+				}
 			}
 			if (tmp == 0) {
-				SelectedPopulation.add(CandidatePopulation.get(i));
+				selectedPopulation.add(candidatePopulation.get(i));
 			}
 		}
-
-		return SelectedPopulation;
+		return selectedPopulation;
 	}
 
 	void setElitedPopulation(ArrayList<GEIndividual> ElitedPopulation) {
-		this.ElitedPopulation = ElitedPopulation;
+		this.elitedPopulation = ElitedPopulation;
 	}
 
-	ArrayList<GEIndividual> getElitedPopulation() {
-		return ElitedPopulation;
+	public ArrayList<GEIndividual> getElitedPopulation() {
+		return elitedPopulation;
 	}
 
 }

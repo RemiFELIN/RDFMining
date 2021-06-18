@@ -329,32 +329,20 @@ public class TwoPointCrossover extends CrossoverOperation {
 	 * 
 	 * @param fixedCrossoverPoint crossverpoint fixation
 	 */
-	//@SuppressWarnings({ "SameParameterValue" })
 	public void setFixedCrossoverPoint(boolean fixedCrossoverPoint) {
 		this.fixedCrossoverPoint = fixedCrossoverPoint;
 	}
 
-	GEChromosome[] Crossover(GEChromosome c1, GEChromosome c2) {
-		// GEChromosome c1 = (GEChromosome) Individual1.getGenotype().get(0);
-		// GEChromosome c2 = (GEChromosome) Individual2.getGenotype().get(0);
-
+	public GEChromosome[] crossover(GEChromosome c1, GEChromosome c2) {
 		makeNewChromosome(c1, c2, c1.size(), c2.size());
-
-		GEChromosome[] ListChromosome = new GEChromosome[2];
-		ListChromosome[0] = c1;
-		ListChromosome[1] = c2;
-		// Genotype g1 = new Genotype();
-		// Genotype g2 = new Genotype();
-
-		// g1.add(c1);
-		// g2.add(c2);
-		// Individual1.setGenotype(g1);
-		// Individual2.setGenotype(g2);
-
-		return ListChromosome;
+		GEChromosome[] chromosomes = new GEChromosome[2];
+		chromosomes[0] = c1;
+		chromosomes[1] = c2;
+		return chromosomes;
 	}
 
 	public static void main(String[] args) {
+		// a simple test of crossover
 		TwoPointCrossover cop = new TwoPointCrossover(new MersenneTwisterFast(), 1);
 		cop.setFixedCrossoverPoint(false);
 		GEChromosome c1 = new GEChromosome(10);
@@ -362,9 +350,7 @@ public class TwoPointCrossover extends CrossoverOperation {
 
 		for (int i = 0; i < 20; i++) {
 			c1.add(1);
-
 			c2.add(2);
-
 		}
 
 		cop.makeNewChromosome(c1, c2, c1.size(), c2.size());
@@ -418,6 +404,5 @@ public class TwoPointCrossover extends CrossoverOperation {
 
 		System.out.println(c1.toString());
 		System.out.println(c2.toString());
-
 	}
 }

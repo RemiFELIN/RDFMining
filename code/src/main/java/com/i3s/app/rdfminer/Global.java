@@ -23,7 +23,11 @@ public class Global {
 	 * SPARQL Endpoint : our Virtuoso server endpoint
 	 */
 	public static final String SPARQL_ENDPOINT = "http://134.59.130.136:8890/sparql";
-	// public static final String DBPEDIA_SERVER = "http://dbpedia.org/";
+	
+	/**
+	 * Local SPARQL Endpoint
+	 */
+	public static final String LOCAL_SPARQL_ENDPOINT = "http://localhost:8890/sparql";
 
 	/**
 	 * Output path : corresponding to '/rdfminer/io/' in container

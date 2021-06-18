@@ -7,10 +7,6 @@ import java.util.ArrayList;
 
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 
-//import Individuals.Individual;
-//import Individuals.GEIndividual;
-//import Individuals.Populations.SimplePopulation;
-
 /**
  * @author NGUYEN Thu Huong
  *
@@ -18,31 +14,23 @@ import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
  */
 public class TruncationSelection extends EliteSelection {
 
-	/**
-	 * 
-	 */
 	public TruncationSelection(int size) {
-		// TODO Auto-generated constructor stub
 		super(size);
 	}
 
-	public ArrayList<GEIndividual> SetupSelectedPopulation(ArrayList<GEIndividual> CandidatePopulation, int Popsize) {
-		ArrayList<GEIndividual> SelectedPopulation = new ArrayList<GEIndividual>();
-
+	public ArrayList<GEIndividual> setupSelectedPopulation(ArrayList<GEIndividual> candidatePopulation, int popSize) {
+		ArrayList<GEIndividual> selectedPopulation = new ArrayList<GEIndividual>();
 		int i = 0;
 		int k;
-		// int Popsize= CandidatePopulation.size();
-		int ElitePopsize = ElitedPopulation.size();
-		while (i < Popsize) {
+		int elitePopsize = elitedPopulation.size();
+		while (i < popSize) {
 			k = 0;
-			while (k < ElitePopsize && i < Popsize) {
-				SelectedPopulation.add((GEIndividual) ElitedPopulation.get(k));
+			while (k < elitePopsize && i < popSize) {
+				selectedPopulation.add((GEIndividual) elitedPopulation.get(k));
 				k++;
 				i++;
 			}
-
 		}
-
-		return SelectedPopulation;
+		return selectedPopulation;
 	}
 }
