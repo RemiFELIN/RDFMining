@@ -93,8 +93,8 @@ public class CandidateAxiomGenerator extends AxiomGenerator {
 	 * 
 	 * @param fileName the name of the file containing the grammar.
 	 */
-	public CandidateAxiomGenerator(String fileName) {
-		super(fileName);
+	public CandidateAxiomGenerator(String fileName, boolean v2) {
+		super(fileName, v2);
 		logger.warn("Grammar Successfully Initialized");
 
 		Rule rule = grammar.findRule("Class");

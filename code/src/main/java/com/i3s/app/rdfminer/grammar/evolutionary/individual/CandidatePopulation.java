@@ -100,15 +100,18 @@ public class CandidatePopulation {
 				Chromosome chro = gp.get(0);
 				if (axiom == null)
 					break;
-				logger.info("Generation: " + CandidatePopulation.get(j).getAge());
-				logger.info("Individual: " + CandidatePopulation.get(j));
-				logger.info("Chromosome: " + chro);
-				logger.info("Used wraps: " + individual.getUsedWraps());
-				logger.info("------------------------------------------------------------------------------");
+				// logger.info("Generation: " + CandidatePopulation.get(j).getAge());
+				// logger.info("Individual: " + CandidatePopulation.get(j));
+				// logger.info("Chromosome: " + chro);
+				// logger.info("Used wraps: " + individual.getUsedWraps());
+				// logger.info(" ");
 				j++;
+			} else {
+				logger.error("RandomAxiomGenerator is null");
+				System.exit(0);
 			}
 		}
-		logger.info("number of individual created: " + CandidatePopulation.size());
+		logger.info("Number of individual created: " + CandidatePopulation.size());
 		return CandidatePopulation;
 	}
 
@@ -155,7 +158,7 @@ public class CandidatePopulation {
 				chromosome.add(Math.abs(random.nextInt(maxvalCodon)));
 			}
 			chromosomes[n] = chromosome;
-			logger.info(chromosome);
+			// logger.info(chromosome);
 			n++;
 		}
 		return chromosomes;
@@ -179,7 +182,7 @@ public class CandidatePopulation {
 		return individual;
 	}
 
-	public GEChromosome CreateChromosome() {
+	public GEChromosome createChromosome() {
 		RandomNumberGenerator random;
 		random = new MersenneTwisterFast(System.currentTimeMillis() & 0xFFFFFFFF);
 		int maxLenChromosome = 1000;

@@ -59,13 +59,13 @@ public class LaunchWithoutGE {
 				if (parameters.useRandomAxiomGenerator) {
 					logger.info(
 							"Initializing the random axiom generator with grammar " + parameters.grammarFile + "...");
-					generator = new RandomAxiomGenerator(parameters.grammarFile);
+					generator = new RandomAxiomGenerator(parameters.grammarFile, false);
 				} else if (parameters.subclassList != null) {
 					logger.info("Initializing the increasing TP axiom generator...");
 					generator = new IncreasingTimePredictorAxiomGenerator(parameters.subclassList);
 				} else {
 					logger.info("Initializing the candidate axiom generator...");
-					generator = new CandidateAxiomGenerator(parameters.grammarFile);
+					generator = new CandidateAxiomGenerator(parameters.grammarFile, false);
 				}
 			} else {
 				logger.info("launch test on a single axiom");
@@ -108,7 +108,7 @@ public class LaunchWithoutGE {
 				axiomName = axiom.getStringNoSpace();
 				logger.info("Testing axiom: " + axiomName);
 				try {
-					a = AxiomFactory.create(axiom);
+					a = AxiomFactory.create(axiom, RDFMiner.endpoint);
 				} catch (QueryExceptionHTTP httpError) {
 					logger.error("HTTP Error " + httpError.getMessage() + " making a SPARQL query.");
 					httpError.printStackTrace();
@@ -133,7 +133,7 @@ public class LaunchWithoutGE {
 					if (axiomName.isEmpty())
 						break;
 					logger.info("Testing axiom: " + axiomName);
-					a = AxiomFactory.create(axiomName);
+					a = AxiomFactory.create(axiomName, RDFMiner.endpoint);
 				} catch (IOException e) {
 					logger.error("Could not read the next axiom.");
 					e.printStackTrace();

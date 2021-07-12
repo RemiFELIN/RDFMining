@@ -1,0 +1,1 @@
+select count(*) from load_list where ll_state=2;

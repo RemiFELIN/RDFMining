@@ -23,7 +23,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
-import com.i3s.app.rdfminer.Statistics;
 import com.i3s.app.rdfminer.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.grammar.evolutionary.EATools;
 import com.i3s.app.rdfminer.grammar.evolutionary.fitness.FitnessEvaluation;
@@ -34,6 +33,7 @@ import com.i3s.app.rdfminer.grammar.evolutionary.selection.TruncationSelection;
 import com.i3s.app.rdfminer.grammar.evolutionary.selection.TypeSelection;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
 import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
+import com.i3s.app.rdfminer.statistics.Statistics;
 
 import Individuals.GEChromosome;
 import jxl.Workbook;
@@ -62,7 +62,7 @@ public class LaunchWithGE {
 	 * @throws SQLException 
 	 * @throws JAXBException 
 	 */
-	public static void run(CmdLineParameters parameters, FileWriter output) throws JAXBException, SQLException, Exception {
+	public static void run(CmdLineParameters parameters, FileWriter output) throws Exception {
 
 		RDFMiner.endpoint = new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, PREFIXES);
 
@@ -77,22 +77,10 @@ public class LaunchWithGE {
 				// if a randomly generated Axiom already exists then continue
 				// to generate a new Axioms based on BNF
 				logger.info("Initializing the random axiom generator with grammar " + parameters.grammarFile + "...");
-				generator = new RandomAxiomGenerator(parameters.grammarFile);
+				generator = new RandomAxiomGenerator(parameters.grammarFile, false);
 			}
-		} 
-		/* else {
-			// if there exists Axiom in the file
-			logger.info("Reading axioms from file " + parameters.axiomFile + "...");
-			try {
-				// Try to read the status file
-				BufferedReader axiomFile = null;
-				axiomFile = new BufferedReader(new FileReader(parameters.axiomFile));
-			} catch (IOException e) {
-				logger.error("Could not open file " + parameters.axiomFile);
-				return;
-			}
-		} */
-
+		}
+		
 		RDFMiner.executor = Executors.newSingleThreadExecutor();
 
 		/* GRAMMATICAL EVOLUTIONARY */
@@ -110,7 +98,8 @@ public class LaunchWithGE {
 		logger.info("MAXIMUM WRAPPING: " + parameters.maxWrapp);
 		logger.info("CROSSOVER PROBABILITY: " + parameters.proCrossover);
 		logger.info("MUTATION PROBABILITY: " + parameters.proMutation);
-
+		logger.info("========================================================");
+		
 		GEChromosome[] chromosomes = new GEChromosome[parameters.populationsize];
 
 		ArrayList<GEIndividual> candidatePopulation;
@@ -126,11 +115,9 @@ public class LaunchWithGE {
 		int flag = 0;
 		Reader buffer;
 		File tempFile = new File(parameters.Bufferfile + "_size" + parameters.populationsize + ".txt");
-		boolean exists = tempFile.exists();
-		if (!exists) {
+		if (!tempFile.exists()) {
 			buffer = null;
-			curCheckpoint = 1;
-			curGeneration = 1;
+			curCheckpoint = curGeneration = 1;
 		} else {
 			FileInputStream reader = new FileInputStream(
 					parameters.Bufferfile + "_size" + parameters.populationsize + ".txt");
@@ -149,8 +136,7 @@ public class LaunchWithGE {
 			curCheckpoint = Integer.parseInt(st);
 			// logger.info("cur_checkpoint from buffer: " + cur_checkpoint);
 		}
-		logger.info("==================================================================");
-		logger.info("INITIALIZING CANDIDATE POPULATION IN GENERATION: " + curGeneration);
+		logger.info("Initializing candidate population in generation " + curGeneration + "...");
 		CandidatePopulation canPop = new CandidatePopulation(parameters.populationsize, generator,
 				parameters.typeInitialization, chromosomes, parameters.initlenChromosome, parameters.maxvalCodon,
 				parameters.maxWrapp);
@@ -163,14 +149,19 @@ public class LaunchWithGE {
 		File fileStatisticsResult = new File(parameters.StatisticsResult);
 
 		while (curCheckpoint <= parameters.checkpoint) {
+			logger.info("Generation: " + curGeneration);
+			// logger.info("[DEBUG] parameters.checkpoint: " + parameters.checkpoint);
 			FitnessEvaluation fit = new FitnessEvaluation();
 			if ((curGeneration == 1) || ((buffer != null) && (flag == 0))) {
 				// if1
-				logger.info("==================================================================");
-				logger.info("BEGIN EVALUATING INDIVIDUALS...");
-				logger.info("CALLING FitnessEvaluation -------------------->");
+				// logger.info("===");
+				logger.info("Begin evaluating individuals...");
+				// logger.info("CALLING FitnessEvaluation: ");
 				fit.update(candidatePopulation, curGeneration, parameters.numGeneration, null);
 			}
+			// logger.info("[DEBUG] parameters.populationsize: " + parameters.populationsize);
+			// logger.info("[DEBUG] curGeneration: " + curGeneration);
+			// logger.info("[DEBUG] parameters.k_base: " + parameters.k_base);
 			if (parameters.populationsize * curGeneration == parameters.k_base * curCheckpoint) {
 				// if2
 				try {
@@ -254,22 +245,23 @@ public class LaunchWithGE {
 					row = sheet.createRow(rowNum++);
 					row.createCell(0).setCellValue("ELITE SIZE");
 					row.createCell(1).setCellValue(parameters.sizeElite);
-				} else
+				} else {
 					row.createCell(1).setCellValue("NO");
-
+				}
+				
 				switch (parameters.typeselect) {
-				case 1:
-					typeSelection = "Roulette Wheel selection method";
-					break;
-				case 2:
-					typeSelection = "Truncation selection method";
-					break;
-				case 3:
-					typeSelection = "Tournament selection method";
-					break;
-				case 4:
-					typeSelection = "Normal selection method";
-					break;
+					case 1:
+						typeSelection = "Roulette Wheel selection method";
+						break;
+					case 2:
+						typeSelection = "Truncation selection method";
+						break;
+					case 3:
+						typeSelection = "Tournament selection method";
+						break;
+					case 4:
+						typeSelection = "Normal selection method";
+						break;
 				}
 				row = sheet.createRow(rowNum++);
 				row.createCell(0).setCellValue("SELECTION METHOD");
@@ -340,22 +332,22 @@ public class LaunchWithGE {
 					// chromosome) to new population. The rest done classical way. it
 					// prevents losing the best found solution
 					// if5
-					logger.info("========================================================================");
-					logger.info("SELECTING ELITE INDIVIDUALS>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-					logger.info("==================================================================");
-					logger.info(" SELECTING + " + (int) (parameters.sizeElite * 100)
-							+ " % ELITE INDIVIDUALS FOR THE NEW POPULATION ");
+					// logger.info("========================================================================");
+					logger.info("Selecting elite individuals...");
+					// logger.info("==================================================================");
+					logger.info("Selecting + " + (int) (parameters.sizeElite * 100)
+							+ "% elite individuals for the new population");
 					logger.info("The size of elite population: " + sizeElite);
-					logger.info("..................................................");
+					// logger.info(" ");
 					EliteSelection elite = new EliteSelection(sizeElite);
 					elite.setParentsSelectionElitism(distinctCandidatePopulation);
 					EATools.setPopulation(selectedPopulation, elite.setupSelectedPopulation(distinctCandidatePopulation));
 					etilismPopulation = elite.getElitedPopulation();
-					for (int i = 0; i < etilismPopulation.size(); i++) {
+					/* for (int i = 0; i < etilismPopulation.size(); i++) {
 						logger.info(etilismPopulation.get(i).getPhenotype().toString());
 						logger.info(etilismPopulation.get(i).getGenotype().toString());
 						logger.info(etilismPopulation.get(i).getFitness().getDouble());
-					}
+					} */
 				} else {
 					EATools.setPopulation(selectedPopulation, candidatePopulation);
 					sizeElite = 0;
@@ -365,6 +357,7 @@ public class LaunchWithGE {
 					case TypeSelection.ROULETTE_WHEEL:
 						// Roulette wheel method 
 						// if6
+						logger.info("Type selection: Roulette Wheel");
 						EATools.setPopulation(crossoverPopulation, EATools.rouletteWheel(selectedPopulation));
 						break;
 					case TypeSelection.TRUNCATION:
@@ -374,17 +367,18 @@ public class LaunchWithGE {
 						truncation.setParentsSelectionElitism(selectedPopulation);
 						crossoverPopulation = truncation.setupSelectedPopulation(selectedPopulation,
 								parameters.populationsize - sizeElite);
-						logger.info("==================================================================");
-						logger.info("Truncation population " + crossoverPopulation.size());
-						for (int t1 = 0; t1 < crossoverPopulation.size(); t1++) {
-							logger.info("axiom:" + crossoverPopulation.get(t1).getPhenotype().toString());
-							logger.info("phenotype:" + crossoverPopulation.get(t1).getGenotype().toString());
-							logger.info("fitness:" + crossoverPopulation.get(t1).getFitness().getDouble());
-						}
+						// logger.info("===");
+						logger.info("Truncation population: " + crossoverPopulation.size());
+						/* for (int t1 = 0; t1 < crossoverPopulation.size(); t1++) {
+							logger.info("axiom: " + crossoverPopulation.get(t1).getPhenotype().toString());
+							logger.info("phenotype: " + crossoverPopulation.get(t1).getGenotype().toString());
+							logger.info("fitness: " + crossoverPopulation.get(t1).getFitness().getDouble());
+						} */
 						break;
 					case TypeSelection.TOURNAMENT:
 						// Tournament method
 						// if8
+						logger.info("Type selection: Tournament");
 						EATools.setPopulation(crossoverPopulation, EATools.tournament(selectedPopulation));
 					default:
 						// Normal crossover way - All individual of the current generation
@@ -402,13 +396,13 @@ public class LaunchWithGE {
 					crossoverList.add((GEIndividual) crossoverPopulation.get(i));
 				}
 				java.util.Collections.shuffle(crossoverList);
-				logger.info("========================================================================");
-				logger.info("PERFORMING CROSSOVER & MUTATION>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+				// logger.info(" ");
+				logger.info("Performing Crossover & Mutation...");
 				ArrayList<GEIndividual> listCrossover = new ArrayList<GEIndividual>();
 				EATools.setResultList(listCrossover, EATools.crossover(crossoverList, parameters.proCrossover, parameters.proMutation,
 						curGeneration, generator, parameters.diversity, parameters.numGeneration));
-				logger.info("=========================================================");
-				logger.info("List after Crossover & Mutation:");
+				// logger.info(" ");
+				// logger.info("List after Crossover & Mutation: ");
 				candidatePopulation = canPop.renew(listCrossover, curGeneration, etilismPopulation);
 				curGeneration++; // turn to the next generation
 
@@ -425,7 +419,7 @@ public class LaunchWithGE {
 				}
 				writer.close();
 			} else {
-				logger.info("EVOLUTIONARY PROCESS IS DONE!");
+				logger.info("Evolutionary process is done...");
 				break;
 			}
 		}

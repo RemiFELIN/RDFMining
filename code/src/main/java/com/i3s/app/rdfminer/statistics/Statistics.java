@@ -1,4 +1,4 @@
-package com.i3s.app.rdfminer;
+package com.i3s.app.rdfminer.statistics;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

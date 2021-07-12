@@ -14,6 +14,7 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
+import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.grammar.DLGEGrammar;
@@ -62,7 +63,7 @@ public abstract class AxiomGenerator {
 	 * 
 	 * @param fileName the name of the file containing the grammar.
 	 */
-	public AxiomGenerator(String fileName) {
+	public AxiomGenerator(String fileName, boolean v2) {
 		// Set up the grammar to be used for generating the axioms:
 		grammar = new DLGEGrammar(fileName);
 		grammar.setDerivationTreeType(DerivationTree.class.getName());
@@ -72,36 +73,19 @@ public abstract class AxiomGenerator {
 		// System.out.println(grammar);
 		logger.info("Grammar loaded. Adding dynamic productions...");
 
-		// Add dynamically-generated productions for the six primitive non-terminals
-		// N.B.: To circumvent the limit imposed by Virtuoso on the number of results,
-		// we split each query into 16 queries, based on the MD5 hash of the results.
-		// Actually, this is useful only if we use a remote SPARQL endpoint...
-		for (int hexDigit = 0; hexDigit < 0x10; hexDigit++) {
-			String h = String.format("\"%x\"", hexDigit);
-			logger.warn("Querying with FILTER(strStarts(MD5(?x), " + h + "))...");
-			generateProductions("Class",
-					"DISTINCT ?class WHERE { ?_ a ?class . FILTER( strStarts(MD5(str(?class)), " + h + ") ) }");
-			if (!(this instanceof CandidateAxiomGenerator)) {
-				// If it is a CandidateAxiomGenerator that is being constructed,
-				// the following dynamic productions are not needed.
-				generateProductions("Class-other-than-owl:Thing",
-						"DISTINCT ?class WHERE { ?_ a ?class . FILTER ( ?class != owl:Thing ) FILTER( strStarts(MD5(str(?class)), "
-								+ h + ") ) }");
-				generateProductions("ObjectProperty",
-						"DISTINCT ?prop WHERE { ?subj ?prop ?obj . FILTER ( isIRI(?obj) ) FILTER( strStarts(MD5(str(?prop)), "
-								+ h + ") ) }");
-				generateProductions("DataProperty",
-						"DISTINCT ?prop WHERE { ?subj ?prop ?obj . FILTER ( isLiteral(?obj) ) FILTER( strStarts(MD5(str(?prop)), "
-								+ h + ") ) }");
-				generateProductions("NamedIndividual",
-						"DISTINCT ?ind WHERE { ?ind a ?class . FILTER ( isIRI(?ind) ) FILTER( strStarts(MD5(str(?ind)), "
-								+ h + ") ) }");
-				generateProductions("Literal",
-						"DISTINCT ?obj WHERE { ?subj ?prop ?obj . FILTER ( isLiteral(?obj) ) FILTER( strStarts(MD5(str(?obj)), "
-								+ h + ") ) }");
+		if(v2) {
+			logger.info("AxiomGenerator v2.0 used ...");
+			for(int hexDigit = 0; hexDigit<0x10; hexDigit++)
+			{
+				String h = String.format("\"%x\"", hexDigit);
+				logger.warn("Querying with FILTER(strStarts(MD5(?x), " + h + "))...");
+				generateProductions("Class", "distinct ?class where {?class a owl:Class. FILTER(contains(str(?class), \"http://\")). FILTER( strStarts(MD5(str(?class))  , " + h + ") )  }");
+				generateProductions("ObjectPropertyOf","DISTINCT ?prop WHERE { ?subj ?prop ?obj. FILTER ( isIRI(?obj) ).FILTER( strStarts(MD5(str(?prop)), " + h + ") ) }");
 			}
+		} else {
+			extract();
 		}
-
+		
 	}
 
 	/**
@@ -109,7 +93,7 @@ public abstract class AxiomGenerator {
 	 * different name.
 	 */
 	public static String cacheName(String symbol, String sparql) {
-		return String.format("%s%08x.cache", symbol, sparql.hashCode());
+		return String.format(Global.CACHE_PATH + "%s%08x.cache", symbol, sparql.hashCode());
 	}
 
 	/**
@@ -194,6 +178,39 @@ public abstract class AxiomGenerator {
 
 	}
 
+	public void extract() {
+		logger.info("AxiomGenerator v1.0 used ...");
+		// Add dynamically-generated productions for the six primitive non-terminals
+		// N.B.: To circumvent the limit imposed by Virtuoso on the number of results,
+		// we split each query into 16 queries, based on the MD5 hash of the results.
+		// Actually, this is useful only if we use a remote SPARQL endpoint...
+		for (int hexDigit = 0; hexDigit < 0x10; hexDigit++) {
+			String h = String.format("\"%x\"", hexDigit);
+			logger.warn("Querying with FILTER(strStarts(MD5(?x), " + h + "))...");
+			generateProductions("Class",
+					"DISTINCT ?class WHERE { ?_ a ?class . FILTER( strStarts(MD5(str(?class)), " + h + ") ) }");
+			if (!(this instanceof CandidateAxiomGenerator)) {
+				// If it is a CandidateAxiomGenerator that is being constructed,
+				// the following dynamic productions are not needed.
+				generateProductions("Class-other-than-owl:Thing",
+						"DISTINCT ?class WHERE { ?_ a ?class . FILTER ( ?class != owl:Thing ) FILTER( strStarts(MD5(str(?class)), "
+								+ h + ") ) }");
+				generateProductions("ObjectProperty",
+						"DISTINCT ?prop WHERE { ?subj ?prop ?obj . FILTER ( isIRI(?obj) ) FILTER( strStarts(MD5(str(?prop)), "
+								+ h + ") ) }");
+				generateProductions("DataProperty",
+						"DISTINCT ?prop WHERE { ?subj ?prop ?obj . FILTER ( isLiteral(?obj) ) FILTER( strStarts(MD5(str(?prop)), "
+								+ h + ") ) }");
+				generateProductions("NamedIndividual",
+						"DISTINCT ?ind WHERE { ?ind a ?class . FILTER ( isIRI(?ind) ) FILTER( strStarts(MD5(str(?ind)), "
+								+ h + ") ) }");
+				generateProductions("Literal",
+						"DISTINCT ?obj WHERE { ?subj ?prop ?obj . FILTER ( isLiteral(?obj) ) FILTER( strStarts(MD5(str(?obj)), "
+								+ h + ") ) }");
+			}
+		}
+	}
+	
 	public ContextFreeGrammar getGrammar() {
 		return grammar;
 	}

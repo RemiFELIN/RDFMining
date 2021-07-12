@@ -6,13 +6,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
+
+import org.apache.jena.atlas.lib.Timer;
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.engine.http.QueryExceptionHTTP;
 import org.apache.log4j.Logger;
 
+import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.axiom.Axiom;
 import com.i3s.app.rdfminer.axiom.AxiomFactory;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
+import com.i3s.app.rdfminer.launcher.LaunchWithGE;
+import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
+
 import Individuals.FitnessPackage.BasicFitness;
 import Mapper.Symbol;
 import jxl.write.Label;
@@ -39,48 +46,36 @@ public class FitnessEvaluation {
 	double generality = 0.0;
 	double complexity_penalty = 0.0;
 
-	public FitnessEvaluation() {
-
-	}
-
-	/*
-	 * Updates the fitness values based on the possibility and necessity degrees
-	 * fitness= cardinality * (possibility + necessity)/2
-	 * 
-	 */
-
 	public void update(ArrayList<GEIndividual> population, int curGeneration, int totalGeneration, WritableSheet sheet)
 			throws JAXBException, IOException, SQLException, Exception {
 		int i = 0;
-		if (sheet == null) {
+		SparqlEndpoint endpoint;
+		if (sheet != null) {
+			endpoint = new SparqlEndpoint(Global.SPARQL_ENDPOINT, LaunchWithGE.PREFIXES);
+			logger.info("Evaluating axioms against to the RDF Data of the whole DBPedia");
 		} else {
-			logger.info("EVALUATING AXIOMS AGAINST TO THE RDF DATA oF THE WHOLE DBPEDIA");
+			endpoint = RDFMiner.endpoint;
 		}
 		String arg1 = "";
 		String arg2 = "";
 		String axiom = "";
 		double f = 0;
-		// String result_collate=""; // contains the result of the collation of Axioms
-		// with Gold standard matrix
-		int Popsize = population.size();
+		int popSize = population.size();
 		int Row = 1;
-		while (i < Popsize) {
-
+		Timer timer = new Timer();
+		long finalTime = 0;
+		while (i < popSize) {
+			timer.startTimer();
 			GEIndividual indivi = (GEIndividual) population.get(i);
 			if (population.get(0).getPhenotype() == null)
 				break;
 			axiom = population.get(i).getPhenotype().getStringNoSpace();
-			logger.info(
-					"....................................................................................................................................................");
-			logger.info(axiom);
+			// logger.info(" ");
+			// logger.info(axiom);
 			if (indivi.isMapped()) {
-
 				try {
-
-					a = AxiomFactory.create(indivi.getPhenotype());
+					a = AxiomFactory.create(indivi.getPhenotype(), endpoint);
 					List<List<Symbol>> arguments = a.argumentClasses;
-					// logger.info("Argument of axioms:"+ arguments.get(0) + " and " +
-					// arguments.get(1));
 					List<String> complexClass1 = new ArrayList<String>();
 					int SizeArg0 = arguments.get(0).size();
 					for (int k = 0; k < SizeArg0; k++) {
@@ -99,20 +94,6 @@ public class FitnessEvaluation {
 						}
 					}
 
-					/*
-					 * checkGoldStandard=
-					 * GoldStandardComparison.CheckDisjointnessComplexClasses(complexClass1,
-					 * complexClass2, goldstandard.getGoldStandard());
-					 * 
-					 * logger.info("GoldStandard collation: " + checkGoldStandard ); if
-					 * (Integer.parseInt(checkGoldStandard)>0) { result_collate = "disjointness";
-					 * numTrueGoldStandard++; indivi.setEvaluated(true); } else { result_collate =
-					 * "not disjointness"; indivi.setEvaluated(false); }
-					 * writer.println("Gold standard collation: " + result_collate + "(" +
-					 * checkGoldStandard + ")");
-					 */
-
-					// t=System.currentTimeMillis();
 				} // try
 				catch (QueryExceptionHTTP httpError) {
 					logger.error("HTTP Error " + httpError.getMessage() + " making a SPARQL query.");
@@ -126,128 +107,54 @@ public class FitnessEvaluation {
 				} // catch 2
 				generality = a.generality;
 				if (a != null) {
-					// Save an XML report of the test:
-
 					possibility = a.possibility().doubleValue();
-					// necessity = a.necessity().doubleValue();
-
-					// logger.info("Time to evaluate fitness: " + dt + "ms");
-
-					logger.info("Reference Cardinality: " + a.referenceCardinality + "			num_Confirmation: "
-							+ a.numConfirmations + "			Exception: " + a.numExceptions);
-					logger.info("Generality: " + a.generality);
-					logger.info("Possibility " + possibility);
-					// logger.info("time testing: " + a.timeTesting);
+					// logger.info("Reference Cardinality: " + a.referenceCardinality);
+					// logger.info("N. confirmation: " + a.numConfirmations);
+					// logger.info("N. exception: " + a.numExceptions);
+					// logger.info("Generality: " + a.generality);
+					// logger.info("Possibility: " + possibility);
 					if (sheet == null) {
-						// complexity_penalty=a.costGP();
-						// logger.info("Complexity penalty: " + complexity_penalty);
-						// f=a.possibility().doubleValue() *
-						// Math.pow(a.generality,2)*10/complexity_penalty;
 						f = a.possibility().doubleValue() * a.generality;
-						logger.info("Fitness: " + f);
+						// logger.info("Fitness: " + f);
 					}
-
-					/*
-					 * report.elapsedTime = dt; report.referenceCardinality =
-					 * a.referenceCardinality; report.numConfirmations = a.numConfirmations;
-					 * report.numExceptions = a.numExceptions; report.possibility = possibility;
-					 * report.necessity = necessity;
-					 */
-					// int midpoint = (totalGeneration/2) + 1;
-					// if (curGeneration < midpoint)
-
-					// f=a.generality/a.timeTesting;
-					// else
-
-					// f = a.generality*(a.possibility().doubleValue() +
-					// a.necessity().doubleValue())/2;
-					// indivi.setAxiom(a);
-				} // if
-
-				// }
-				else {
-
+				} else {
 					f = 0;
-					// complexity_penalty=0;
 				}
 			} else {
-
 				f = 0;
-				// complexity_penalty=0;
 			}
-			/*
-			 * FitnessAxioms fit2 = new FitnessAxioms(f,possibility,
-			 * necessity,population.get(i)); fit2.setIndividual(population.get(i));
-			 * fit2.getIndividual().setValid(true); population.get(i).setFitness(fit2);
-			 */
+			
 			BasicFitness fit = new BasicFitness(f, population.get(i));
 			fit.setIndividual(population.get(i));
 			fit.getIndividual().setValid(true);
 			population.get(i).setFitness(fit);
-
 			if (sheet != null) {
-
-				// Row= sheet.getRows();
-				// sheet.addCell(new Label(0, Row, axiom));
 				if (indivi.isMapped()) {
-
-					// double ARI = a.possibility().doubleValue() + a.necessity().doubleValue() - 1;
 					sheet.addCell(new Number(7, Row, a.possibility().doubleValue()));
-					// sheet.addCell(new Number(10, Row, a.necessity().doubleValue()));
-					// sheet.addCell(new Number(11, Row, ARI));
 					sheet.addCell(new Number(8, Row, a.referenceCardinality));
 					sheet.addCell(new Number(9, Row, a.generality));
-					// sheet.addCell(new Number(11, Row, a.costGP()));
 				}
-
-				// sheet.addCell(new Number(12, Row, indivi.getFitness().getDouble()));
 				Row++;
 			}
-			// if (f>0) {numSuccessAxioms ++;}
-			// marshaller.marshal(report, xmlStream);
-			// xmlStream.flush();
 			i++;
+			System.out.print("### Progress: " + (i * 100) / popSize + "%	Request time: " + timer.read() + "ms " + "###\r");
+			finalTime += timer.endTimer();
 		}
-
-		// st.StopVirtuoso();
-
+		logger.info("Done ! duration: " + finalTime + "ms");
 	}
 
-	/*
-	 * int getnumSuccessAxioms() // return the number of axioms being mapped
-	 * successfully. { return numSuccessAxioms; }
-	 */
-	/*
-	 * int getnumTrueGoldStandard() // return the number of axioms being
-	 * disjointness following to the Gold Standard { return numTrueGoldStandard; }
-	 */
-
-	public void update2(GEIndividual indivi, /* GoldStandardComparison goldstandard, */ int curGeneration,
-			int totalGeneration) throws IOException, InterruptedException // evaluation fitness for each individual
-
-	{
+	public void update2(GEIndividual indivi, int curGeneration, int totalGeneration)
+			throws IOException, InterruptedException {
+		// evaluation fitness for each individual
 		String arg1 = "";
 		String arg2 = "";
-		// String checkGoldStandard="";
 		double f = 0;
-		// int midpoint= (totalGeneration/2) + 1;
-		logger.info("axiom: " + indivi.getPhenotype().getStringNoSpace());
-		logger.info("chromosome:" + indivi.getGenotype().toString());
-
-		// st.StopVirtuoso();
-
+		// logger.info("axiom: " + indivi.getPhenotype().getStringNoSpace());
+		// logger.info("chromosome: " + indivi.getGenotype().toString());
 		if (indivi.isMapped()) {
-
 			try {
-				// st.StartVirtuoso();
-
-				a = AxiomFactory.create(indivi.getPhenotype());
-
-				// st.StopVirtuoso();
-
+				a = AxiomFactory.create(indivi.getPhenotype(), RDFMiner.endpoint);
 				List<List<Symbol>> arguments = a.argumentClasses;
-				// logger.info("Argument of axioms:"+ arguments.get(0) + " and " +
-				// arguments.get(1));
 				List<String> complexClass1 = new ArrayList<String>();
 				int SizeArg0 = arguments.get(0).size();
 				for (int k = 0; k < SizeArg0; k++) {
@@ -265,16 +172,6 @@ public class FitnessEvaluation {
 						complexClass2.add(arg2);
 					}
 				}
-
-				/*
-				 * checkGoldStandard=
-				 * GoldStandardComparison.CheckDisjointnessComplexClasses(complexClass1,
-				 * complexClass2, goldstandard.getGoldStandard());
-				 * 
-				 * // logger.info("GoldStandard collation: " + checkGoldStandard ); if
-				 * (Integer.parseInt(checkGoldStandard)>0) { indivi.setEvaluated(true); } else {
-				 * indivi.setEvaluated(false); }
-				 */
 			} // try
 			catch (QueryExceptionHTTP httpError) {
 				logger.error("HTTP Error " + httpError.getMessage() + " making a SPARQL query.");
@@ -288,60 +185,28 @@ public class FitnessEvaluation {
 			} // catch 2
 
 			if (a != null) {
-				// logger.info("mapped=YES");
 				referenceCardinality = a.referenceCardinality;
-				// logger.info("referenceCardinality: " + referenceCardinality);
-				// logger.info("confirmation:" + a.numConfirmations);
-				// logger.info("numExceptions:" + a.numExceptions);
 				possibility = a.possibility().doubleValue();
-				// logger.info("possibility " + possibility);
 				necessity = a.necessity().doubleValue();
-				// logger.info("necessity : " + necessity );
-				// indivi.setAxiom(a);
 				generality = a.generality;
-				// logger.info("generality " + generality);
-				// logger.info("hereeeee");
-				// complexity_penalty=a.costGP();
-				// logger.info("complexity: " + complexity_penalty);
-				// if (curGeneration < midpoint)
-				// f=generality/a.timeTesting;
-				// else
-				// f=Math.pow(generality,2)*possibility*10/complexity_penalty;
 				f = generality * possibility;
-
-			} // if(a!=null)
-
-			else {
-				// dt=t-t0;
+			} else {
 				referenceCardinality = 0;
-				// complexity_penalty=0;
 				generality = 0;
 				possibility = 0;
-				// necessity=0;
 				f = 0;
-
-			} // end else
-
-		} // if(indivi.isMapped ==true
-		else // else (indivi.isMapped =false)
-		{
+			}
+		} else {
 			referenceCardinality = 0;
-			// complexity_penalty=0;
 			possibility = 0;
 			necessity = 0;
 			generality = 0;
 			f = 0;
 		}
-
 		BasicFitness fit = new BasicFitness(f, indivi);
 		fit.setIndividual(indivi);
 		fit.getIndividual().setValid(true);
 		indivi.setFitness(fit);
-		// logger.info("fitness: " + f);
-
-		// logger.info("Fitness:" + population.get(i).getFitness().getDouble());
-		// logger.info("Fitness:" + fit.getDouble());
-
 	}
 
 	public static String removeCharAt(String s, int pos) {
@@ -353,53 +218,25 @@ public class FitnessEvaluation {
 
 		String axiom = "";
 		String chromosome = "";
-		// String result_collate="";
-		logger.info("==================================================================");
-		logger.info("CANDIDATE POPULATION IN GENERATION: " + curGeneration);
+		// logger.info(" ");
+		// logger.info("CANDIDATE POPULATION IN GENERATION: " + curGeneration);
 		int index = Population.size();
 		int Row;
-		for (int i = 0; i < index; i++)
-
-		{
+		for (int i = 0; i < index; i++) {
 			axiom = Population.get(i).getPhenotype().getStringNoSpace();
 			chromosome = Population.get(i).getGenotype().toString();
 			GEIndividual indivi = (GEIndividual) Population.get(i);
 			if (Population.get(0).getPhenotype() == null)
 				break;
-			/*
-			 * report.generation= population.get(i).getAge(); report.axiom =axiom;
-			 * report.chromosome= chromosome;
-			 * report.mapped=String.valueOf(indivi.isMapped());
-			 */
-			// writer.println("................................................................................................................................................");
-			// writer.println(axiom);
-			// writer.println();
-
-			// writer.println(chromosome.substring(1, chromosome.length()-1));
-			// writer.println("Mapped: " + String.valueOf(indivi.isMapped()));
-
-			logger.info(axiom);
-			logger.info(chromosome.substring(1, chromosome.length() - 1));
-			logger.info("Mapped: " + String.valueOf(indivi.isMapped()));
-			/*
-			 * if(indivi.isEvaluated()) { result_collate="disjointness";
-			 * numTrueGoldStandard++; } else result_collate = "not disjointness";
-			 * 
-			 * logger.info("GoldStandard collation: " + result_collate );
-			 * 
-			 * writer.println("Gold standard collation: " + result_collate);
-			 */
-
-			logger.info("Fitness: " + indivi.getFitness().getDouble());
-
+			// logger.info(axiom);
+			// logger.info(chromosome.substring(1, chromosome.length() - 1));
+			// logger.info("Mapped: " + String.valueOf(indivi.isMapped()));
+			// logger.info("Fitness: " + indivi.getFitness().getDouble());
 			if (sheet != null) {
-
 				Row = sheet.getRows();
 				sheet.addCell(new Label(0, Row, axiom));
 				if (indivi.isMapped()) {
-					Axiom a = AxiomFactory.create(indivi.getPhenotype());
-					// double ARI = a.possibility().doubleValue() + a.necessity().doubleValue() - 1;
-					// complexity_penalty=a.costGP();
+					Axiom a = AxiomFactory.create(indivi.getPhenotype(), RDFMiner.endpoint);
 					sheet.addCell(new Number(1, Row, a.possibility().doubleValue()));
 					// sheet.addCell(new Number(2, Row, a.necessity().doubleValue()));
 					// sheet.addCell(new Number(3, Row, ARI));

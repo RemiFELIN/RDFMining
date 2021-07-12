@@ -9,6 +9,7 @@ import java.util.List;
 import com.i3s.app.rdfminer.axiom.type.DisjointClassesAxiom;
 import com.i3s.app.rdfminer.axiom.type.SubClassOfAxiom;
 import com.i3s.app.rdfminer.grammar.DLFactory;
+import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 
 import Mapper.Symbol;
 import Util.Enums;
@@ -93,18 +94,19 @@ public class AxiomFactory extends DLFactory {
 	 * @param syntax an axiom definition in OWL 2 functional-style syntax.
 	 * @return the corresponding axiom.
 	 */
-	public static Axiom create(List<Symbol> syntax) {
+	public static Axiom create(List<Symbol> syntax, SparqlEndpoint endpoint) {
 		Axiom axiom = null;
 		List<List<Symbol>> arguments = parseArguments(syntax);
 
 		if (syntax.get(0).equals("SubClassOf")) {
 			require(arguments.size() == 2);
-			axiom = new SubClassOfAxiom(arguments.get(0), arguments.get(1));
+			axiom = new SubClassOfAxiom(arguments.get(0), arguments.get(1), endpoint);
 		} else if (syntax.get(0).equals("EquivalentClasses")) {
 			// TO DO
 		} else if (syntax.get(0).equals("DisjointClasses")) {
 			require(arguments.size() > 1);
-			axiom = new DisjointClassesAxiom(arguments);
+			axiom = new DisjointClassesAxiom(arguments, endpoint);
+			axiom.argumentClasses = arguments;
 		} else if (syntax.get(0).equals("DisjointUnion")) {
 			// TO DO
 		}
@@ -183,7 +185,7 @@ public class AxiomFactory extends DLFactory {
 	 * @param str
 	 * @return
 	 */
-	public static Axiom create(String str) {
+	public static Axiom create(String str, SparqlEndpoint endpoint) {
 		List<Symbol> list = new ArrayList<Symbol>();
 		String symbol = "";
 		boolean blank = false;
@@ -207,7 +209,7 @@ public class AxiomFactory extends DLFactory {
 			list.add(new Symbol(symbol, Enums.SymbolType.TSymbol));
 		// for(int i = 0; i<list.size(); i++)
 		// System.out.println("symbol " + i + " = " + list.get(i));
-		return create(list);
+		return create(list, endpoint);
 	}
 
 }

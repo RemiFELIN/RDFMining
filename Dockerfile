@@ -4,7 +4,7 @@
 FROM debian:stretch
 
 # Setup RDFMiner version
-ENV RDFMINER_VERSION=1.0
+ENV RDFMINER_VERSION=1.1
 
 # Setup HOME environment variable
 ENV HOME=/rdfminer/

@@ -59,8 +59,8 @@ public class EATools {
 		for (i = 0; i < n; i++) {
 			fr1[i] = -1;
 		}
-		logger.info("Count the number of occurrences of each chromosome");
-		logger.info("================================================================");
+		// logger.info("Count the number of occurrences of each chromosome");
+		// logger.info("===");
 		for (i = 0; i < n; i++) {
 			bienDem = 1;
 			for (j = i + 1; j < n; j++) {
@@ -342,7 +342,6 @@ public class EATools {
 		RDFMiner.endpoint.select(sparql);
 		ResultSet rs = RDFMiner.endpoint.getResultset();
 		ArrayList<String> predicates = new ArrayList<String>();
-
 		int i = 0;
 		while (rs.hasNext()) {
 			p = rs.next().get("p").toString();
@@ -352,7 +351,7 @@ public class EATools {
 		}
 		String[][] arr = new String[i + 1][3];
 		int j = 0;
-		logger.info("size list " + predicates.size());
+		logger.info("size of predicates list: " + predicates.size());
 		while (j < predicates.size()) {
 			p = predicates.get(j);
 			gp = "?s <" + p + "> ?o";

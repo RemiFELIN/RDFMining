@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.i3s.app.rdfminer;
+package com.i3s.app.goldStandard;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -70,8 +70,10 @@ public class SubClassOfAxiom extends Axiom {
 	 * 
 	 * @param subClassExpression   the functional-style expression of the subclass
 	 * @param superClassExpression the functional-style expression of the superclass
+	 * @param endpoint             the sparql endpoint used for the queries
 	 */
-	public SubClassOfAxiom(List<Symbol> subClassExpression, List<Symbol> superClassExpression) {
+	public SubClassOfAxiom(List<Symbol> subClassExpression, List<Symbol> superClassExpression,
+			SparqlEndpoint endpoint) {
 
 		subClass = ExpressionFactory.createClass(subClassExpression);
 		superClass = ExpressionFactory.createClass(superClassExpression);
@@ -81,23 +83,14 @@ public class SubClassOfAxiom extends Axiom {
 		else
 			superClassComplement = new ComplementClassExpression(superClass);
 
-		// System.out.println("\nsub-class = " + subClass + "; graph pattern =");
-		// System.out.println(SparqlEndpoint.prettyPrint(subClass.graphPattern));
-
-		// System.out.println("\nsuper-class = " + superClass + "; graph pattern =");
-		// System.out.println(SparqlEndpoint.prettyPrint(superClass.graphPattern));
-
-		// System.out.println("\n~super-class = " + superClassComplement + "; graph pattern =");
-		// System.out.println(SparqlEndpoint.prettyPrint(superClassComplement.graphPattern));
-
 		try {
-			update();
+			update(endpoint);
 		} catch (IllegalStateException e) {
 			// This is the conventional unchecked exception thrown by the
 			// Sparql endpoint if an HTTP 504 Gateway Time-out occurs.
 			// In that case, we try a slower, but safer, naive update as the last resort:
 			logger.warn("Trying a naive update: this is going to take some time...");
-			naive_update();
+			naive_update(endpoint);
 		}
 	}
 
@@ -130,13 +123,13 @@ public class SubClassOfAxiom extends Axiom {
 	 * </p>
 	 * 
 	 */
-	public void naive_update() {
+	public void naive_update(SparqlEndpoint endpoint) {
 		referenceCardinality = numConfirmations = numExceptions = 0;
 		confirmations = new ArrayList<String>();
 		exceptions = new ArrayList<String>();
 		Set<RDFNodePair> extension = subClass.extension();
 
-		int numIntersectingClasses = RDFMiner.endpoint.count("?D", subClass.graphPattern + " ?x a ?D . ");
+		int numIntersectingClasses = endpoint.count("?D", subClass.graphPattern + " ?x a ?D . ");
 		timePredictor = referenceCardinality * numIntersectingClasses;
 
 		Iterator<RDFNodePair> i = extension.iterator();
@@ -192,21 +185,20 @@ public class SubClassOfAxiom extends Axiom {
 	 * </p>
 	 */
 	@Override
-	public void update() {
+	public void update(SparqlEndpoint endpoint) {
 		confirmations = new ArrayList<String>();
 		exceptions = new ArrayList<String>();
-		referenceCardinality = RDFMiner.endpoint.count("?x", subClass.graphPattern);
-		int numIntersectingClasses = RDFMiner.endpoint.count("?D", subClass.graphPattern + " ?x a ?D . ");
+		referenceCardinality = endpoint.count("?x", subClass.graphPattern);
+		int numIntersectingClasses = endpoint.count("?D", subClass.graphPattern + " ?x a ?D . ");
 		logger.warn("No. of Intersecting Classes = " + numIntersectingClasses);
 		timePredictor = referenceCardinality * numIntersectingClasses;
 		logger.warn("Time Predictor = " + timePredictor);
-		numConfirmations = RDFMiner.endpoint.count("?x", subClass.graphPattern + "\n" + superClass.graphPattern);
+		numConfirmations = endpoint.count("?x", subClass.graphPattern + "\n" + superClass.graphPattern);
 		if (numConfirmations > 0 && numConfirmations < 100) {
 			// query the confirmations
-			RDFMiner.endpoint
-					.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\n" + superClass.graphPattern + " }");
-			while (RDFMiner.endpoint.hasNext()) {
-				QuerySolution solution = RDFMiner.endpoint.next();
+			endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\n" + superClass.graphPattern + " }");
+			while (endpoint.hasNext()) {
+				QuerySolution solution = endpoint.next();
 				RDFNode x = solution.get("x");
 				confirmations.add(Expression.sparqlEncode(x));
 			}
@@ -225,13 +217,13 @@ public class SubClassOfAxiom extends Axiom {
 				long timeOut = RDFMiner.parameters.timeOut;
 				timeOut += (long) Math.round(RDFMiner.parameters.dynTimeOut * timePredictor);
 				logger.warn("Time Out = " + timeOut);
-				
+
 				// Prepare the call to be spawned as a new thread:
 				Future<Integer> future = RDFMiner.executor.submit(new Callable<Integer>() {
 					public Integer call() {
 						logger.info("Starting exceptions query...");
-						return new Integer(RDFMiner.endpoint.count("?x",
-								subClass.graphPattern + "\n" + superClassComplement.graphPattern));
+						return new Integer(
+								endpoint.count("?x", subClass.graphPattern + "\n" + superClassComplement.graphPattern));
 					}
 				});
 
@@ -245,17 +237,17 @@ public class SubClassOfAxiom extends Axiom {
 			} else {
 				logger.warn("Time Out = 0");
 				// This is the EKAW 2014 version, without time-out:
-				numExceptions = RDFMiner.endpoint.count("?x",
+				numExceptions = endpoint.count("?x",
 						subClass.graphPattern + "\n" + superClassComplement.graphPattern);
 				// Log the response time
 				logger.info("Exceptions query finished - time: " + SparqlEndpoint.selectResponseTime + "");
 			}
 			if (numExceptions > 0 && numExceptions < 100) {
 				// retrieve the exceptions
-				RDFMiner.endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\n"
+				endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\n"
 						+ superClassComplement.graphPattern + " }");
-				while (RDFMiner.endpoint.hasNext()) {
-					QuerySolution solution = RDFMiner.endpoint.next();
+				while (endpoint.hasNext()) {
+					QuerySolution solution = endpoint.next();
 					RDFNode x = solution.get("x");
 					exceptions.add(Expression.sparqlEncode(x));
 				}
@@ -274,10 +266,10 @@ public class SubClassOfAxiom extends Axiom {
 			numExceptions = referenceCardinality - numConfirmations;
 			// If numExceptions E ]0,100[ then we must make a simple query ("closed world")
 			// to get all the exceptions with this method
-			RDFMiner.endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\nFILTER NOT EXISTS {\n"
+			endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\nFILTER NOT EXISTS {\n"
 					+ superClass.graphPattern + " \n}\n}");
-			while (RDFMiner.endpoint.hasNext()) {
-				QuerySolution solution = RDFMiner.endpoint.next();
+			while (endpoint.hasNext()) {
+				QuerySolution solution = endpoint.next();
 				RDFNode x = solution.get("x");
 				exceptions.add(Expression.sparqlEncode(x));
 			}
@@ -298,6 +290,12 @@ public class SubClassOfAxiom extends Axiom {
 	 */
 	public long timePredictor() {
 		return timePredictor;
+	}
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

@@ -62,22 +62,23 @@ public class CmdLineParameters {
 	@Option(name = "-t", aliases = {
 			"--timeout" }, usage = "use this time-out (in minutes) for axiom testing", metaVar = "MINUTES")
 	public long timeOut = 0;
-
-	// receives other command line parameters than options
-	@Argument
-	public List<String> arguments = new ArrayList<String>();
 	
-	/**
-	 * List of parameters as the input for GE operation
-	 * 
-	 */
-
+	//**************************************************//
+	// List of parameters as the input for GE operation //
+	//**************************************************//
+	
+	@Option(name = "-ge", aliases = {
+			"--grammatical-evolution" }, usage = "activate the grammatical evolution for the axiom's extraction", metaVar = "GRAMMATICAL_EVOLUTION")
+	public boolean grammaticalEvolution;
+	
 	@Option(name = "-ps", aliases = {
-			"--populationSize" }, usage = "use as this value as the initial size of population", metaVar = "POPULATION_SIZE")
+			"--population-size" }, usage = "use as this value as the initial size of population", metaVar = "POPULATION_SIZE")
 	public int populationsize = 200;
-	@Option(name = "-gn", aliases = {
-			"--generationNumber" }, usage = "use as this value as the number of generation", metaVar = "GENERATION_NUMBER")
+	
+	@Option(name = "-ngen", aliases = {
+			"--n-generation" }, usage = "use as this value as the number of generation", metaVar = "GENERATION_NUMBER")
 	public int numGeneration = 5;
+	
 	@Option(name = "-init", aliases = {
 			"--initlen" }, usage = "use as this value as the initial length of chromosome", metaVar = "INITLEN_CHROMOSOME")
 	public int initlenChromosome = 20;
@@ -164,5 +165,9 @@ public class CmdLineParameters {
 
 	@Option(name = "-ckp", aliases = { "--Checkpoint" }, usage = "Checkpoint", metaVar = "CHECK_POINT")
 	public int checkpoint = 3;
+	
+	// receives other command line parameters than options
+	@Argument
+	public List<String> arguments = new ArrayList<String>();
 	
 }

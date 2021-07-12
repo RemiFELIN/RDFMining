@@ -164,7 +164,7 @@ public class SubtreeCrossoverAxioms extends SubtreeCrossover {
 			Mutationpoint1[0] = 0;
 		} else {
 			Mutationpoint1[0] = (int) i2.getGenotype().get(0).getLength() / 2;
-			System.out.println("fail tree!!!");
+			// System.out.println("fail tree!!!");
 		}
 		i1.setMutationPoints(Mutationpoint1);
 

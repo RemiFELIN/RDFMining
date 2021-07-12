@@ -41,8 +41,8 @@ public class RandomAxiomGenerator extends AxiomGenerator {
 	 * 
 	 * @param fileName the name of the file containing the grammar.
 	 */
-	public RandomAxiomGenerator(String fileName) {
-		super(fileName);
+	public RandomAxiomGenerator(String fileName, boolean v2) {
+		super(fileName, v2);
 
 		// Set up a pseudo-random number generator
 		random = new MersenneTwisterFast(System.currentTimeMillis() & 0xFFFFFFFF);

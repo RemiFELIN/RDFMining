@@ -117,7 +117,6 @@ public class SparqlEndpoint implements Iterator<QuerySolution> {
 	}
 
 	public SparqlEndpoint(Model model, String prefix) {
-		// logger.warn("Using the Spin model");
 		endpoint = null;
 		tdb = model;
 		prefixes = prefix;

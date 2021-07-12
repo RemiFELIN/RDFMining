@@ -22,7 +22,7 @@ import Mapper.Symbol;
 /**
  * A class that represents a <code>DisjointClasses</code> axiom.
  * 
- * @author Andrea G. B. Tettamanzi
+ * @author Andrea G. B. Tettamanzi & Thu Huong Nguyen
  *
  */
 public class DisjointClassesAxiom extends Axiom {
@@ -47,7 +47,7 @@ public class DisjointClassesAxiom extends Axiom {
 	 * @param subClassExpression   the functional-style expression of the subclass
 	 * @param superClassExpression the functional-style expression of the superclass
 	 */
-	public DisjointClassesAxiom(List<List<Symbol>> arguments) {
+	public DisjointClassesAxiom(List<List<Symbol>> arguments, SparqlEndpoint endpoint) {
 		disjointClass = new Expression[arguments.size()];
 		disjointClassComplement = new Expression[disjointClass.length];
 		for (int i = 0; i < disjointClass.length; i++) {
@@ -57,15 +57,9 @@ public class DisjointClassesAxiom extends Axiom {
 				disjointClassComplement[i] = disjointClass[i].subExpressions.get(0);
 			else
 				disjointClassComplement[i] = new ComplementClassExpression(disjointClass[i]);
-
-			System.out.println("\nclass_" + i + " = " + disjointClass[i] + "; graph pattern =");
-			System.out.println(SparqlEndpoint.prettyPrint(disjointClass[i].graphPattern));
-
-			System.out.println("\n~class_" + i + " = " + disjointClassComplement[i] + "; graph pattern =");
-			System.out.println(SparqlEndpoint.prettyPrint(disjointClassComplement[i].graphPattern));
 		}
 
-		update();
+		update(endpoint);
 	}
 
 	/**
@@ -131,7 +125,7 @@ public class DisjointClassesAxiom extends Axiom {
 	 * </p>
 	 */
 	@Override
-	public void update() {
+	public void update(SparqlEndpoint endpoint) {
 		confirmations = new ArrayList<String>();
 		exceptions = new ArrayList<String>();
 
@@ -149,38 +143,32 @@ public class DisjointClassesAxiom extends Axiom {
 			String generalityGraphPattern = "";
 			String generalityGraphPattern2 = "";
 			generalityGraphPattern += "{ " + disjointClass[k].graphPattern + " }";
-			// logger.info("generatlity1: " + generalityGraphPattern);
-
 			generalityGraphPattern2 += "{ " + disjointClass[k + 1].graphPattern + " }";
-			// logger.info("generatlity2: " + generalityGraphPattern2);
-			// logger.info ("enpoint.url: " + endpoint.url);
-
 			// ----compute the cost of GP
-			generality1 = RDFMiner.endpoint.count("?x", generalityGraphPattern);
-			generality2 = RDFMiner.endpoint.count("?x", generalityGraphPattern2);
+			generality1 = endpoint.count("?x", generalityGraphPattern);
+			generality2 = endpoint.count("?x", generalityGraphPattern2);
 			if (generality1 > generality2)
 				generality = generality2;
 			else
 				generality = generality1;
 			k = k + 2;
 		}
-		logger.info("Generality :" + generality);
+		// logger.info("Generality: " + generality);
 		if (generality != 0) {
-			referenceCardinality = RDFMiner.endpoint.count("?x", refCardGraphPattern);
+			referenceCardinality = endpoint.count("?x", refCardGraphPattern);
 			// skipping computing the reference cardinality when generality=0
-			logger.info("number referenceCardinality: " + referenceCardinality);
+			// logger.info("Number referenceCardinality: " + referenceCardinality);
 			String exceptionGraphPattern = "";
 			for (int i = 0; i < disjointClass.length; i++)
 				exceptionGraphPattern += disjointClass[i].graphPattern + "\n";
-			numExceptions = RDFMiner.endpoint.count("?x", exceptionGraphPattern);
-			// logger.info(exceptionGraphPattern);
-			logger.info("number of exception: " + numExceptions);
-			logger.info(".................................................");
+			numExceptions = endpoint.count("?x", exceptionGraphPattern);
+			// logger.info("Number of exception: " + numExceptions);
+			// logger.info(" ");
 			if (numExceptions > 0 && numExceptions < 100) {
 				// query the exceptions
-				// RDFMiner.endpoint.select("TO DO");
-				while (RDFMiner.endpoint.hasNext()) {
-					QuerySolution solution = RDFMiner.endpoint.next();
+				// endpoint.select("TO DO");
+				while (endpoint.hasNext()) {
+					QuerySolution solution = endpoint.next();
 					RDFNode x = solution.get("x");
 					exceptions.add(Expression.sparqlEncode(x));
 				}
@@ -190,7 +178,7 @@ public class DisjointClassesAxiom extends Axiom {
 			referenceCardinality = 0;
 	}
 
-	public void updateVolker() {
+	public void updateVolker(SparqlEndpoint endpoint) {
 		confirmations = new ArrayList<String>();
 		exceptions = new ArrayList<String>();
 
@@ -209,27 +197,27 @@ public class DisjointClassesAxiom extends Axiom {
 			String generalityGraphPattern2 = "";
 			generalityGraphPattern += "{ " + disjointClass[k].graphPattern + " }";
 			generalityGraphPattern2 += "{ " + disjointClass[k + 1].graphPattern + " }";
-			generality1 = RDFMiner.endpoint.count("?x", generalityGraphPattern);
-			generality2 = RDFMiner.endpoint.count("?x", generalityGraphPattern2);
+			generality1 = endpoint.count("?x", generalityGraphPattern);
+			generality2 = endpoint.count("?x", generalityGraphPattern2);
 			if (generality1 > generality2)
 				generality = generality2;
 			else
 				generality = generality1;
 			k = k + 2;
 		}
-		logger.info("Generality :" + generality);
-		referenceCardinality = RDFMiner.endpoint.count("?x", refCardGraphPattern);
-		logger.info("number referenceCardinality: " + referenceCardinality);
+		// logger.info("Generality :" + generality);
+		referenceCardinality = endpoint.count("?x", refCardGraphPattern);
+		// logger.info("number referenceCardinality: " + referenceCardinality);
 		String exceptionGraphPattern = "";
 		for (int i = 0; i < disjointClass.length; i++)
 			exceptionGraphPattern += disjointClass[i].graphPattern + "\n";
-		numExceptions = RDFMiner.endpoint.count("?x", exceptionGraphPattern);
-		logger.info("number of exception: " + numExceptions);
-		logger.info(".............................................................");
+		numExceptions = endpoint.count("?x", exceptionGraphPattern);
+		// logger.info("number of exception: " + numExceptions);
+		// logger.info(".............................................................");
 		if (numExceptions > 0 && numExceptions < 100) {
 			// query the exceptions
-			while (RDFMiner.endpoint.hasNext()) {
-				QuerySolution solution = RDFMiner.endpoint.next();
+			while (endpoint.hasNext()) {
+				QuerySolution solution = endpoint.next();
 				RDFNode x = solution.get("x");
 				exceptions.add(Expression.sparqlEncode(x));
 			}
@@ -240,5 +228,8 @@ public class DisjointClassesAxiom extends Axiom {
 	public Expression[] getExpression() {
 		return disjointClass;
 	}
+
+	@Override
+	public void update() {}
 
 }
