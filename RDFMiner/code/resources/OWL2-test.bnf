@@ -1,0 +1,144 @@
+# Productions for the subset of OWL 2 that has already been implemented
+# This is for testing the code under development
+
+Axiom := ClassAxiom
+# | ObjectPropertyAxiom
+# | HasKey | Assertion
+
+# Class := (determined at runtime via a SPARQL query)
+
+# Class-other-than-owl:Thing := (determined at runtime via a SPARQL query)
+
+# ObjectProperty := (determined at runtime via a SPARQL query)
+
+Individual := NamedIndividual
+# | AnonymousIndividual
+
+# NamedIndividual := (determined at runtime via a SPARQL query)
+
+# This is a simplification of the real definition, suited to the project's needs:
+# AnonymousIndividual := '_:' LowerCaseLetter
+# LowerCaseLetter := 'a' | 'b' | 'c' | 'd' | 'e' | 'f' |
+#    'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' |
+#    'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
+
+ObjectPropertyExpression := ObjectProperty | InverseObjectProperty
+
+InverseObjectProperty := 'ObjectInverseOf' '(' ObjectProperty ')'
+
+
+zeroOrOne  := '0' | '1'
+
+subClassExpression :=
+    Class-other-than-owl:Thing |
+    subObjectIntersectionOf | subObjectUnionOf | ObjectOneOf |
+    subObjectSomeValuesFrom | ObjectHasValue
+# This is not part of the RL fragment; I have added it to test the LocalReflexivityClassExpression class:
+    | ObjectHasSelf
+
+subObjectIntersectionOf := 'ObjectIntersectionOf' '(' subClassExpression ' ' subClassExpression { ' ' subClassExpression } ')'
+
+subObjectUnionOf := 'ObjectUnionOf' '(' subClassExpression ' ' subClassExpression { ' ' subClassExpression } ')'
+
+subObjectSomeValuesFrom :=
+    'ObjectSomeValuesFrom' '(' ObjectPropertyExpression ' ' subClassExpression ')' |
+    'ObjectSomeValuesFrom' '(' ObjectPropertyExpression ' ' 'owl:Thing' ')'
+
+superClassExpression :=
+    Class-other-than-owl:Thing |
+    superObjectIntersectionOf | superObjectComplementOf | superObjectAllValuesFrom |
+    ObjectHasValue | superObjectMaxCardinality
+# This is not part of the RL fragment; I have added it to test the LocalReflexivityClassExpression class:
+    | ObjectHasSelf
+
+superObjectIntersectionOf := 'ObjectIntersectionOf' '(' superClassExpression ' ' superClassExpression { ' ' superClassExpression } ')'
+
+superObjectComplementOf := 'ObjectComplementOf' '(' subClassExpression ')'
+
+superObjectAllValuesFrom := 'ObjectAllValuesFrom' '(' ObjectPropertyExpression ' ' superClassExpression ')'
+
+superObjectMaxCardinality :=
+    'ObjectMaxCardinality' '(' zeroOrOne ' ' ObjectPropertyExpression [ ' ' subClassExpression ] ')' |
+    'ObjectMaxCardinality' '(' zeroOrOne ' ' ObjectPropertyExpression ' ' 'owl:Thing' ')'
+
+equivClassExpression :=
+    Class-other-than-owl:Thing |
+    equivObjectIntersectionOf |
+    ObjectHasValue
+
+equivObjectIntersectionOf := 'ObjectIntersectionOf' '(' equivClassExpression ' ' equivClassExpression { ' ' equivClassExpression } ')'
+
+ObjectOneOf := 'ObjectOneOf' '(' Individual { ' ' Individual }')'
+
+ObjectHasValue := 'ObjectHasValue' '(' ObjectPropertyExpression ' ' Individual ')'
+
+# This is not part of the RL fragment; I have added it to test the LocalReflexivityClassExpression class:
+ObjectHasSelf := 'ObjectHasSelf' '(' ObjectPropertyExpression ')'
+
+
+
+ClassAxiom := SubClassOf
+# | EquivalentClasses | DisjointClasses
+
+SubClassOf := 'SubClassOf' '(' subClassExpression ' ' superClassExpression ')'
+
+EquivalentClasses := 'EquivalentClasses' '(' equivClassExpression ' ' equivClassExpression { ' ' equivClassExpression } ')'
+
+DisjointClasses := 'DisjointClasses' '(' subClassExpression ' ' subClassExpression { ' ' subClassExpression } ')'
+
+
+
+ObjectPropertyAxiom :=
+    SubObjectPropertyOf | EquivalentObjectProperties |
+    DisjointObjectProperties | InverseObjectProperties |
+    ObjectPropertyDomain | ObjectPropertyRange |
+    FunctionalObjectProperty | InverseFunctionalObjectProperty |
+    IrreflexiveObjectProperty |
+    SymmetricObjectProperty | AsymmetricObjectProperty |
+    TransitiveObjectProperty
+
+SubObjectPropertyOf := 'SubObjectPropertyOf' '(' subObjectPropertyExpression ' ' superObjectPropertyExpression ')'
+subObjectPropertyExpression := ObjectPropertyExpression | propertyExpressionChain
+propertyExpressionChain := 'ObjectPropertyChain' '(' ObjectPropertyExpression ' ' ObjectPropertyExpression { ' ' ObjectPropertyExpression } ')'
+superObjectPropertyExpression := ObjectPropertyExpression
+
+EquivalentObjectProperties := 'EquivalentObjectProperties' '(' ObjectPropertyExpression ' ' ObjectPropertyExpression { ' ' ObjectPropertyExpression } ')'
+
+DisjointObjectProperties := 'DisjointObjectProperties' '(' ObjectPropertyExpression ' ' ObjectPropertyExpression { ' ' ObjectPropertyExpression } ')'
+
+InverseObjectProperties := 'InverseObjectProperties' '(' ObjectPropertyExpression ' ' ObjectPropertyExpression ')'
+
+ObjectPropertyDomain := 'ObjectPropertyDomain' '(' ObjectPropertyExpression ' ' superClassExpression ')'
+
+ObjectPropertyRange := 'ObjectPropertyRange' '(' ObjectPropertyExpression ' ' superClassExpression ')'
+
+FunctionalObjectProperty := 'FunctionalObjectProperty' '(' ObjectPropertyExpression ')'
+
+InverseFunctionalObjectProperty := 'InverseFunctionalObjectProperty' '(' ObjectPropertyExpression ')'
+
+IrreflexiveObjectProperty := 'IrreflexiveObjectProperty' '(' ObjectPropertyExpression ')'
+
+SymmetricObjectProperty := 'SymmetricObjectProperty' '(' ObjectPropertyExpression ')'
+
+AsymmetricObjectProperty := 'AsymmetricObjectProperty' '(' ObjectPropertyExpression ')'
+
+TransitiveObjectProperty := 'TransitiveObjectProperty' '(' ObjectPropertyExpression ')'
+
+HasKey := 'HasKey' '(' subClassExpression '(' { ' ' ObjectPropertyExpression } ')' '()' ')'
+
+Assertion :=
+    SameIndividual | DifferentIndividuals | ClassAssertion |
+    ObjectPropertyAssertion | NegativeObjectPropertyAssertion
+
+sourceIndividual := Individual
+targetIndividual := Individual
+
+SameIndividual := 'SameIndividual' '(' Individual ' ' Individual { ' ' Individual } ')'
+
+DifferentIndividuals := 'DifferentIndividuals' '(' Individual ' ' Individual { ' ' Individual } ')'
+
+ClassAssertion := 'ClassAssertion' '(' superClassExpression ' ' Individual ')'
+
+ObjectPropertyAssertion := 'ObjectPropertyAssertion' '(' ObjectPropertyExpression ' ' sourceIndividual ' ' targetIndividual ')'
+
+NegativeObjectPropertyAssertion := 'NegativeObjectPropertyAssertion' '(' ObjectPropertyExpression ' ' sourceIndividual ' ' targetIndividual ')'

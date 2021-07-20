@@ -1,0 +1,1 @@
+select count(*) from db.dba.load_list where ll_state=2;

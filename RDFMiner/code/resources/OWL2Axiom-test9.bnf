@@ -1,0 +1,28 @@
+# Test grammar, based on OWL 2
+
+# Set of productions for generating Axioms: DisjointClass(ClassExpression, ClassExpression)
+# Extracted and adapted from the complete grammar of the functional-style syntax defined in
+# http://www.w3.org/TR/2012/REC-owl2-syntax-20121211/
+# 
+# The version 9 was modified by Nguyen Thu Huong
+
+Axiom := ClassAxiom
+
+ClassAxiom := DisjointClasses
+
+DisjointClasses := 'DisjointClasses' '(' ClassExpression ' ' NonAtomicIntersectionExpression ')' 
+ 
+#---------------------------------------------------------------
+ClassExpression := ObjectSomeValuesFrom | ObjectAllValuesFrom | ObjectIntersectionOf | Class
+
+NonAtomicIntersectionExpression := ObjectSomeValuesFrom | ObjectAllValuesFrom
+
+ObjectIntersectionOf := 'ObjectIntersectionOf' '(' Class ' ' Class ')'
+
+ObjectSomeValuesFrom := 'ObjectSomeValuesFrom' '(' ObjectPropertyOf ' ' Class ')'
+
+ObjectAllValuesFrom := 'ObjectAllValuesFrom' '(' ObjectPropertyOf ' ' Class ')'
+
+
+#--------------------------------------------------------------
+# PRIMITIVES:

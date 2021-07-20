@@ -1,0 +1,219 @@
+----------------------- REVIEW 1 ---------------------
+PAPER: 59
+TITLE: Testing OWL Axioms Against RDF Facts: A possibilistic approach based on falsifiability
+AUTHORS: Andrea Tettamanzi, Catherine Faron Zucker and Fabien Gandon
+
+OVERALL EVALUATION: -1 (weak reject)
+REVIEWER'S CONFIDENCE: 4 (high)
+Interest to the Knowledge Engineering and Knowledge Management Community: 4 (good)
+Novelty: 3 (fair)
+Technical quality: 2 (poor)
+Evaluation: 2 (poor)
+Clarity and presentation: 3 (fair)
+
+----------- REVIEW -----------
+The paper describe the revision of an approach to associate a degree of
+validity to an DL axiom. The original method is based on a probabilistic
+theory. The authors highlights some problems in this approach, mainly
+concerning the closed world assumption and proposes a modification of the
+approach based on the so called possibilistic theory.
+
+The main idea of the probabilistic approach is to measure the "goodness" of
+an axiom by counting how many facts are contained in an RDF repositories,
+w.r.t., those that can be inferred by the axiom itself. This measure however
+has been proved to be to rough and a more sophisticated formula has been
+proposed. However also these new formula takes into account only
+"confirmations" of an axioms and does not consider "contradictions" of the
+axioms. Or better, it treats absence of confirmation as a "contradiction".
+This facts suggests the authors to proposes an alternative measure that takes
+in consideration the three aspects when an axiom "phi" is evaluated:
+- a logical consequence of phi is present in the rdf repository
+- a logical consequence of phi is not present in the RDF repository
+- the negation of a logical consequence of phi (i.e. a contradiction of phi)
+is present in the rdf repository.
+
+The author proposes three main critiques to the probabilistic approach:
+- The first critique says that the probabilistic approach does not take into
+account the 1.1% of the cases. As admitted by the authors, this is not a very
+serious problem and it can be fixed easily
+- I honestly was not able to capture the second critique. It is based on a
+Byes formula in a form which I cannot recognise. I cannot follow the
+argument.
+- The third critique is applicable also to the possibilistic approach. Indeed
+one cannot assume that the fact that there are errors and mis classifications
+in the resources used for tests will affect any approach that counts on such
+a resources for checking the validity of an axioms.
+Therefore, I'm not fully convinced by the arguments against the probabilistic
+approach proposed in the paper.
+
+The introduction of the possibilistic approach is clear enough, however the
+axioms which need to be satisfied by a possibility function need to be better
+justified. Furthermore, I don't see the point of introducing axioms for a
+function, when you are not proving properties for *all* the functions that
+satisfy the set of axioms. The author actually select one particular
+function, and for their purpose it was sufficient to show that this function
+makes sense.
+
+The definition of u_{\neg\phi} is not clear.
+ From property (2) for instance it looks like
+if \phi is "A subclassof B" then \neg\phi is "A subClassOf \neg B"
+For instance let us consider the following A-box
+
+{A(1), B(1), A(2), notB(2), A(3), C(3), A(4), B(4), notC(4), B(5) }
+
+and the axiom phi = "A subclassof B". then
+\not\phi = "A subclassof \not B". and
+
+u_\phi = u_{\not\phi} = {B(1), B(2), B(3), B(4), B(5)}
+
+u^+_\phi = u^-_\not\phi = {B(1), B(4)}
+u^-_\phi = u^+_\not\phi = {B(2)}
+
+If \neg\phi is interpreted as \neg(A subclassof B), then, as also explained
+by the author in a successive section, the definiiton of neg\phi is not
+expressible in DL, and I don't see what is the meaning of the above
+properties.
+
+A more fondamental problem of the approach proposed by the author, is that in
+order to evaluate the degree of validity of an axiom, they need to assume
+that a set of other axioms already holds. In particular in most of the
+ontologies in order to infer "contraditory" facts in the A-box, one need to
+have disjoint axioms in the T-box. This was highlighted also by the proposed
+example. But here there is a chicken-and-egg problem, and in particular, when
+we test the quality of an ontology we are not testing the quality of each
+single axiom assuming that the other are good. Rather, one is interested in
+understanding globally how is the ontology and which are the most critical
+axioms. So if we are evaluating an ontology that contains the two axioms "A
+subclass B" and "B disjoint C", why should we assume that the second is
+correct and evaluate only the first one?
+
+Finally the evaluation is not completely convincing. The author developed
+themselves a set of axioms and decided with some "commonsense criteria" that
+some are true and other are false. It is well known that there no a unique
+criteria for deciding if an axiom is correct or not, so I believe it would
+have been much better if the author would have considered an external
+resource of "true axioms". Also the comparison with the probabilistic
+approach does not highlight a big difference. 7/380 is about 2%, which is
+clearly not significant expecially when you consider a ground truth which
+might contain biases.
+
+
+----------------------- REVIEW 2 ---------------------
+PAPER: 59
+TITLE: Testing OWL Axioms Against RDF Facts: A possibilistic approach based on falsifiability
+AUTHORS: Andrea Tettamanzi, Catherine Faron Zucker and Fabien Gandon
+
+OVERALL EVALUATION: 1 (weak accept)
+REVIEWER'S CONFIDENCE: 3 (medium)
+Interest to the Knowledge Engineering and Knowledge Management Community: 4 (good)
+Novelty: 4 (good)
+Technical quality: 3 (fair)
+Evaluation: 4 (good)
+Clarity and presentation: 3 (fair)
+
+----------- REVIEW -----------
+This paper suggests a means to enrich ontologies with axioms learned from a knowledge base (sets of semantic facts). Whereas most approaches rely on ILP (Inductive Logic Programming) which is based on the evaluation of probabilities, the authors suggest to refer to possibility measures (and correlated necessity measures) to get better results in the selection of candidate axioms to be added to the ontology. The paper aims at demonstrating the feasibility of the possibilistic approach, at asserting the gain it may bring to the task of testing candidate axioms for ontology learning.
+This work is also a means to validate the ontology and the KB.
+The authors decided to focus on single axioms, more precisely on subsumption axioms, to carry out their demonstration.
+Their propose a theoretical definition of the way they will identify true and false facts related to a given axiom. An experiment is carried out on a subset of dbpedia.
+
+The paper suffers from minor errors in the technical options, and is not really convincing about the theoretical reasons that motivate to shift to possibilities instead of using probabilities. For instance, the conclusion about the objectivity / subjectivity of the possibility and probability theories is not that obvious to follow (I had some difficulty in understanding your claims here). Nevertheless, the approach is original and leads to a nice study. Moreover, practical results prove that the option is relevant and produces significant discrimination between the axioms to classify them either true or false.
+
+The SPARQL query 13 proposed to look for examples of concept negations is an interesting option. The questions raised by the selection of a good query to identify counterexamples concern a larger set of studies than ontology enrichment.
+
+One may regret that you do not use some inference engine to get more facts from existing DBPedia triples. Using the inference capabilities on subsets of DBPedia that include the concepts that you are scoring, you could get more relevant sets of positive and negative examples for the axioms under evaluation.
+
+changes required in the final version
+
+- page 6 : the definitions of content(phi) and Uphi are not convincing and most of all they differ from what is actually evaluated later on in section 5 where phi is supposed to be subClassOf(C D) . In fact, the inference subClassOf(C D) is equivalent to C(a) -> D(a) with C(a) in the RDF store. So it is true that content( subClassOf(C D) ) = all a such as C(a) is in BS. But then content (phi) is not the set of consequences of phi (which would be D(a) in this case) as said in your definition. Content(phi) is not an assertion psi such that you can derive psi from Phi. It looks as if content(phi) took only positive inferences into account.
+
+page 6, definition 8 : use |content(phi)| instead of ||content(phi)|| (single vertical bar)
+
+- in the evaluation section, you present results comparing possibilities and probability measures. Why didn't you run an ILP algorithm on your data to compare the axioms learned in both cases?
+
+
+----------------------- REVIEW 3 ---------------------
+PAPER: 59
+TITLE: Testing OWL Axioms Against RDF Facts: A possibilistic approach based on falsifiability
+AUTHORS: Andrea Tettamanzi, Catherine Faron Zucker and Fabien Gandon
+
+OVERALL EVALUATION: 1 (weak accept)
+REVIEWER'S CONFIDENCE: 3 (medium)
+Interest to the Knowledge Engineering and Knowledge Management Community: 4 (good)
+Novelty: 3 (fair)
+Technical quality: 3 (fair)
+Evaluation: 4 (good)
+Clarity and presentation: 3 (fair)
+
+----------- REVIEW -----------
+The authors describe an alternative approach towards
+automatic knowledge base enrichment,
+which is based on possibility theory.
+The main reasons why this alternative approach is worthwhile is
+that the authors have derived good evaluation outcomes when compared to
+existing approaches.
+
+I find (the entire) section 2 to be the weakest spot of the paper.
+This section makes the following claims regarding existing probabilistic
+approaches:
+(1) They make a closed-world assumption by treating absence of confirmation
+as refutation.
+(2) They do not take "our expectations of what people are likely to say"
+into account.
+(3) They do not perform well on collaboratively constructed datasets,
+since they rely on a notion of representativeness.
+
+The first point is only very partially mitigated by the newly introduced
+approach. Even though the reason for this is -- partially -- the lack of
+disjointness statements in most real-world datasets,
+the 'solution' the authors give for this in section 4 is at best
+a pragmatic one (something the authors btw admit on page 10).
+So clearly, the here introduced approach does *not* fully support the OWA,
+and this should be stated much more clearly in a final version of the paper
+(this is also true for the abstract which specifically mentions the OWA).
+
+I find point (2) to be a particularly weak one.
+Why would a dataset reflect expectation of what people are likely to say?
+Firstly, this may only be true for datasets that express common sense knowledge.
+Secondly, what people are likely to say and what they are expected
+to be likely to say may both be context-dependent.
+Thirdly, the authors seem to implicitly assume that expectations
+of what people are likely to say are in line with -- or are at least
+indicative of -- what people are indeed likely to say.
+It is not entirely clear to me that this is at all the case.
+Such a claim should be substantiated by evidence that comes from actual dataset,
+not from more generic remarks about natural language use
+and common sense reasoning (i.e., the Lakoff reference).
+
+I do not think the third point is well argued for either.
+The concept of a potential set of "real" facts is already quite problematic.
+Even if we assume this concept to be somewhat clear,
+the fact that a dataset is collaboratively created does not imply
+that the actual set of constructed statements -- at any point in time --
+is less indicative of the potential set of "real" statements
+than would have been the case has the dataset not been constructed
+collaboratively.
+As with the previous argument, this one needs more evidence,
+e.g. evidence consisting of observations of datasets that change over time,
+indicating that for collaboratively constructed datasets
+the previously added facts are indeed representative for (most of)
+the newly added facts, while the same is not the case for datasets
+that have been constructed with a tight planning in mind.
+
+As far as the rest of the article is concerned,
+I believe the possibilistic approach is described in a clear way
+(sections 3 and 4),
+and the evaluation results are very promising (section 5).
+However, as indicated above, I believe this to the *only* main contribution
+of this paper.
+I was not convinced that it solves the probability theory's dependence
+on the CWA in a meaningful way.
+I still believe that the evaluation results all by themselves
+do warrant a full publication in EKAW.
+
+Since the paper relies so heavily on the evaluation results,
+I would have liked to see both the implementation framework
+and the evaluation results to have been made available to the reviewers.
+This would have put them into an even better position to assess the merit
+of the article.
+

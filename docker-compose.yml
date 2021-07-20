@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+    # The main service : RDFMiner v1.2
+    # developed by Andrea G. B. Tettamanzi, Thu Huong Nguyen and Rémi Felin
+    rdfminer:
+        restart: always
+        image: rdfminer:1.2
+        build:
+            context: ./RDFMiner/.
+        depends_on:
+            - virtuoso
+    virtuoso:
+        restart: always
+        image: virtuoso:1.0
+        build:
+            context: ./Virtuoso/.
+        ports:
+            - "8890:8890"
+        volumes:
+            - /home/remi/Bureau/dev/RDFMining/Virtuoso/shared:/data
+# volumes:
+#     volume_virtuoso:

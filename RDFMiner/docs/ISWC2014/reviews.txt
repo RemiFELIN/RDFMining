@@ -1,0 +1,255 @@
+----------------------- REVIEW 1 ---------------------
+PAPER: 176
+TITLE: Testing OWL Axioms Against RDF Facts: A possibilistic approach based on falsifiability
+AUTHORS: Andrea G. B. Tettamanzi, Catherine Faron-Zucker and Fabien Gandon
+
+OVERALL EVALUATION: -1 (weak reject)
+Interest to the Semantic Web Community: 3 (fair)
+Novelty: 3 (fair)
+Technical quality: 3 (fair)
+Evaluation: 3 (fair)
+Clarity and presentation: 3 (fair)
+I nominate this paper for best paper award: 1 (no)
+
+----------- REVIEW -----------
+This paper proposes a new method for testing OWL axioms. It uses a possibility candidate axiom scoring heuristics to test subclass axioms. The possibility-based method overcomes some problems that occur in probability-based candidate axiom scoring method, i.e., the coverage of Wikipedia is far from being uniform. The experiment results show that the possibility-based method performs better than the probability-based method. Compared with the probability-based method, the possibility-based one consider the open world assumption of the Semantic Web. This is perhaps the reason why it performs better.
+
+However, in my opinion, there are some problems to be fixed.
+
+1 In section 4.3, equation 13 and equation 14 should be shown to satisfy the seven postulates in page 9, especially postulate 5 and postulate 6.Because postulate 5 and postulate 6 may be the main factor to overcome the key argument for rejecting a probabilistic-based method which is mentioned about in paragraph 4 of page 6 
+
+2 In section 4.3, equation 14 should satisfy the postulate 2 and postulate 4.however, there is no parameter about the number of counterexample of ∅ so it may not convince if the number of counterexample of ∅>0 then N(∅) = 0 in postulate 2 and the monotony in postulate 4.
+
+3 In section 5, it may be incorrect to use equation 17 as the best approximation to negation. With incomplete data and open world assumption, equation 17 can only express that x belonging to class C is unknown. From my view, equation 17 still preserves the close word semantics. Because not exist assertion is only effective in a fixed domain but the domain in open world assumption may be larger or not fixed.
+
+After the rebuttal, we found some problems with the paper. In OWA, equation 17 is not suited to find counterexamples. The results of equation 17 not only include counterexamples but also contain unknown data. So equation 13 must consider the unknown data. For example, if there are no common instances between class B and class C, In CWA we can suggest that the instances in class B be counterexamples of class C. But in OWA, we consider that the instances in class B may contain counterexamples of class C and unknown data. We do not know the unknown data is positive examples or counterexamples. So in OWA, the results of equation 17 or equation 20 cannot be directly used for equation 13. For this reason, using integer to estimate necessity may be incorrect.
+
+
+----------------------- REVIEW 2 ---------------------
+PAPER: 176
+TITLE: Testing OWL Axioms Against RDF Facts: A possibilistic approach based on falsifiability
+AUTHORS: Andrea G. B. Tettamanzi, Catherine Faron-Zucker and Fabien Gandon
+
+OVERALL EVALUATION: 1 (weak accept)
+Interest to the Semantic Web Community: 4 (good)
+Novelty: 4 (good)
+Technical quality: 3 (fair)
+Evaluation: 2 (poor)
+Clarity and presentation: 3 (fair)
+I nominate this paper for best paper award: 1 (no)
+
+----------- REVIEW -----------
+This paper presents a very innovative work about knowledge structuring. The method contributes to automatically build a knowledge base from RDF datasets. The approach relies on possibility theory to score alternative SubClassOf axioms using the RDF dataset. 
+THis work is presented as an alternative to ontologies because it promotes bottom-up knowledge modelling.
+
+THe paper would need to be a little more precise regarding the evaluation and the argumentation about why the possibilistic approach followed here is an answer to the limitations of
+the probabilistic approach described page 5.
+
+Nevertheless, it is a very innovatuve work that would deserve being presented at ISWC.
+
+see attached document for details.<This review contains an attachment, see the file
+review_2.pdf attached to this letter.>
+
+
+----------------------- REVIEW 3 ---------------------
+PAPER: 176
+TITLE: Testing OWL Axioms Against RDF Facts: A possibilistic approach based on falsifiability
+AUTHORS: Andrea G. B. Tettamanzi, Catherine Faron-Zucker and Fabien Gandon
+
+OVERALL EVALUATION: -2 (reject)
+Interest to the Semantic Web Community: 2 (poor)
+Novelty: 2 (poor)
+Technical quality: 2 (poor)
+Evaluation: 2 (poor)
+Clarity and presentation: 2 (poor)
+I nominate this paper for best paper award: 1 (no)
+
+----------- REVIEW -----------
+This paper is a very unscholarly philosophy paper with some minor technical stuff hidden from the middle to the end.
+
+The foundation of the lack of scholarliness is a profound unfamiliarity with philosophy of science before, after, and even of Popper. For example:
+
+"The problem of induction is the question whether, or under which conditions, and to what degree, inductive inferences are justified. Karl Popper is the one philosopher that made the most valuable contribution to our understanding of the problem of induction, by proposing the principle of falsifiability [14], which lies at the foundation of his critical rationalism: all knowledge is provisional, conjectural, hypothetical—we can never finally prove our scientific theories, we can merely (provisionally) confirm or (conclusively) refute them."
+
+It's as if Kuhn, Feyerabend, and Lakatos (to take just the immediate successors…not to mention Quine, Putnam, Kitcher, Hempel, Cartwright and a slew of other folks, including feminist (e.g., harding) and critical theorists) didn't even exist. To put it another way, if there is anything more discredited than Popper's falsification account, it's hard to say what it would be. The idea that refutation is conclusive is obviously bonkers (we can *always* reject a putatively falsifying statement as erroneous or anomolous -- and that's much much closer to how science works).
+
+(And it's not just Popper, consider the following:
+
+"The difficulties highlighted in the previous section suggest that a more principled approach is needed. To solve them, we should turn to epistemology, the branch of philosophy that studies how knowledge is acquired."
+
+Well, yes, sorta, though I'd say most epistemology is concerned with the nature of knowledge with acquisition being rather abstract for the most part (i.e., the a priori/a posteriori distinction can be thought of as about acquisition, but not in any practical way…it's about the source or grounding conditions). And, you don't use any significant epistemology thereafter! It's just a bit of boasting.
+
+And it takes 6 pages in total and one full page specifically devoted to it, to get to uφ = ∥content(φ)∥. (12) which is *immediate*. I mean, what else could be possibly falsifying of a proposition than the entailments it specifically contributes to?
+
+(Note that this is not reasonably sophisticated. A new proposition might reveal a problem with *another* statement in a knowledge base which only is reveal when combined with the new proposition. We always have a  choice of what to reject.)
+
+"A hypothesis should be regarded as all the more necessary as it is explicitly supported by facts and not contradicted by any fact; and all the more possible as it is not contradicted by facts."
+
+Ok, "more necessary" seems weird esp. as it seems it can be more and more necessary while being less and less possible. Maybe you inherited this terminological mess from possibility theory, but it's not great.
+
+Postulates 6 and 7 are not well justified. Indeed, *one* confirmatory or disconfirmatory fact generally *doesn't* produce the most joy (in real science). Usually, we expect a *critical mass* of evidence.
+
+"However, unlike interpretation domains, RDF stores are incomplete and pos- sibly noisy. The open-world hypothesis must be made; therefore, absence of sup- porting evidence does not necessarily contradict an axiom, and an axiom might hold even in the face of a few counterexamples (exceptions or possible mistakes)."
+
+Incompleteness works with the OWA, but that has nothing to do with defeasibility (?) or noisiness (i.e., a counterexample is not necessarily a counterexample).
+
+In terms of the experiment, I have a hard time understanding what it is you think you are evaluating. For generated subsumptions, it seems like you are engaged in a naive abduction approach, but there's no comparison to existing abduction approaches. The results discussion is confusing, e.g.,:
+
+"For 28 axioms, a negative ARI signals the presence of erroneous facts: for example, SubClassOf(dbo:LaunchPad dbo:Infrastructure) is falsified by :USA, SubClassOf(dbo:Brain dbo:AnatomicalStructure) by :Brain [sic], SubClassOf(dbo:Train dbo:MeanOfTransportation) by :New Jersey Transit rail op- erations and :ALWEG, SubClassOf(dbo:ProgrammingLanguage dbo:Software) by :Ajax, SubClassOf(dbo:PoliticalParty dbo:Organisation) by :Guelphs and Ghibellines, :New People’s Army, :-,8 and :Syrian, etc.:
+
+What are the facts? ":Brain" isn't a fact, but a term.
+
+If we strip away the elaborate and convoluted motivation, there's not a lot of there there.
+
+--- Response to author rebuttal ---
+
+I'm really sorry that we seem to be more in conflict. I hope this extended reply will make clear my position and you'll read it in a charitable tone even if I strictly stray from that. I don't think it's controversial to say that Popper was not the last word in philosophy of science, in induction, or in epistemology and that his views do not dominate any of these for many decades now. This doesn't mean he wasn't awesome. He clearly was. But your claims about him and implicit (and explicit!) appeals to his authority are not justifiable and the major grounds for my rejection.
+
+-------------
+"That ours is not a Philosophy paper"
+
+Then why not just drop all the contentious philosophical content?
+
+ "is clearly witnessed by the fact that it does not make any philosophical claim."
+
+Er..
+	"We will propose an evaluation of the degree of corroboration of axioms based on possibility theory, using such a setting to formalize some key ideas from Karl Popper’s approach to epistemology, like the notions of logical content of a theory and of falsification."
+
+You are claiming something about Popper's approach to epistemology.
+
+"“can we apply the falsifiability criterion, which lays at the foundations of the scientific method, to the task of testing candidate axioms for ontology learning?”"
+
+You claim, wrongly, that the falsifiability criterion lays at the foundations of "the" scientific method>
+
+	"To solve them, we should turn to epistemology, the branch of philosophy that studies how knowledge is acquired."
+
+You claim that the problems raised are solvable by appeal to a specific epistemological theory, although you treat it as if it were a consensus view.
+
+	"The problem of induction is the question whether, or under which conditions, and to what degree, inductive inferences are justified."
+
+This is a bit odd in it's formulation, but again a philosophical claim.
+
+"Karl Popper is the one philosopher that made the most valuable contribution to our understanding of the problem of induction,"
+
+This is a strong philosophical claim both about induction and about the history of philosophy. It's also, at best, misleading, e.g., http://plato.stanford.edu/entries/induction-problem/#KarPopVieInd
+	"One of the most influential and controversial views on the problem of induction has been that of Karl Popper, announced and argued in The Logic of Scientific Discovery (LSD). Popper held that induction has no place in the logic of science. Science in his view is a deductive process in which scientists formulate hypotheses and theories that they test by deriving particular observable consequences. Theories are not confirmed or verified. They may be falsified and rejected or tentatively accepted if corroborated in the absence of falsification by the proper kinds of tests:
+	[A] theory of induction is superfluous. It has no function in a logic of science.
+	The best we can say of a hypothesis is that up to now it has been able to show its worth, and that it has been more successful than other hypotheses although, in principle, it can never be justified, verified, or even shown to be probable. This appraisal of the hypothesis relies solely upon deductive consequences (predictions) which may be drawn from the hypothesis: There is no need even to mention “induction”. (LSD, 315)
+Popper gave two formulations of the problem of induction; the first is the establishment of the truth of a theory by empirical evidence; the second, slightly weaker, is the justification of a preference for one theory over another as better supported by empirical evidence. Both of these he declared insoluble, on the grounds, roughly put, that scientific theories have infinite scope and no finite evidence can ever adjudicate among them (LSD, 253–254; Grattan-Guiness 2004)"
+
+It's misleading, to say the least, because (in this setting) Popper rejects induction! His solution to the problem of induction (i.e., how to justify it) is to say "We don't need it so who cares?" (In the end, he seems to be a Humean. Obviously, anything I put here has to be partial given the enormous amount of Popper and the huge evolution in his work.)
+	http://plato.stanford.edu/entries/popper/#ProDem
+"Popper is unusual amongst contemporary philosophers in that heaccepts the validity of the Humean critique of induction, and indeed, goes beyond it in arguing that induction is never actually used in science."
+In any case, I trust there's no need to go on. Your paper, in spite of not being a philosophy paper (here we agree) is rife with philosophical claims (here we disagree). You have a responsibility to present these reasonably, which I do not feel you've met.
+
+
+
+"Arguments from Philosophy in Section 3 are just used to motivate and justify the proposed heuristics, which is our real contribution."
+
+I agree on what your contribution is, but that doesn't make these other parts irrelevant. I feel that you could entirely separate out and eliminate the philosophical content and have a paper (we can discuss whether the residual contribution is enough for presentation at ISWC of course, but that's a separate issue). However, with the content as it is I find it unacceptable.
+
+"As for the allegation that Popper's idea of falsification has been discredited, neither Lakatos nor Kuhn have ever rejected it; at most, they have clarified and fine-tuned it."
+
+This is a philosophical claim. Alas, it's pretty obvious wrong for many versions of "clarified" and "fine-tuned" it. Also, you ignored 7 of my examples  
+
+If we just take a pretty standard understanding of incommensurability, it's clear that there is no falsification involved in, say, the adoption of relativistic mechanics over Newtonian. Scientific revolutions are exactly not falsification (or even rationally motivated) changes in theory. Now, Lakatos did regard himself as the heir to Popper and working in a Popperian idiom (at least), there remain huge differences even as construed by Lakatos:
+
+http://en.wikipedia.org/wiki/Imre_Lakatos#Research_programmes
+"Lakatos saw himself as merely extending Popper's ideas, which changed over time and were interpreted by many in conflicting ways. He contrasted Popper, the "naive falsificationist" who demanded unconditional rejection of any theory in the face of any anomaly (an interpretation Lakatos saw as erroneous but that he nevertheless referred to often); Popper1, the more nuanced and conservatively interpreted philosopher; and Popper2, the "sophisticated methodological falsificationist" that Lakatos claims is the logical extension of the correctly interpreted ideas of Popper1 (and who is therefore essentially Lakatos himself). It is, therefore, very difficult to determine which ideas and arguments concerning the research programme should be credited to whom."
+
+"Pretending that according to Popper a counterexample is enough to reject a theory is caricatural."
+
+I did not pretend to this. Here's what I wrote:
+
+"The idea that refutation is conclusive is obviously bonkers (we can *always* reject a putatively falsifying statement as erroneous or anomolous -- and that's much much closer to how science works)."
+
+It isn't that "a counterexample" is enough, it's that *no* counterexample or set of counterexamples is enough. Its the *always* that's key.
+
+"Popper never stated anything like that and was well aware that a putative falsifier may be rejected."
+
+But he thinks there are critical tests, yes?
+
+" Neither does our heuristics rely on such caricatural account: it does not declare an axiom impossible just because of one counterexample; we have the notion of selective confirmation; finally, possibility and necessity are matters of degree (which agrees with the idea of having a critical mass)."
+
+To the degree you have confirmation, I'd argue you aren't Popperian.
+
+"Since ours is not a paper on Philosophy of Science, a critical discussion of Popper's precursors and successors would be completely off-topic and useless."
+
+Look, either you commit to what you write or you don't. If you don't, then drop it. If you do, you're on the hook to defend it properly. You don't get to escape your obligation by claiming that doing it properly is out of scope (then, you at least need to *qualify* your discussion to indicate this! instead of the categorical overstatements you in fact give). This is especially important when dealing with an audience that doesn't have the necessary background (on average) to understand and correct your overstatements.
+
+And there are easy fixes, yes? "We're using a Popperian style approach" is fine (if correct). "We're using a Popperian style approach because that's how Science Works" needs a lot more defending (and is doing a lot more work for you).
+
+"Even if you don't like it, the alleged "terminological mess" of possibility theory dates from the 70s and has gained a solid scientific acceptance through an impressive number of peer-reviewed publications."
+
+? Just for the record, I'm not disputing possibility theory per se. It's fine. I'm aware of it. I like it just fine. But I trust the problems with "more necessary" are obvious, esp. to an unfamiliar ear. (Being necessary is categorical. While I understand that possibility theory has a necessity value that varies and these can be compared and thus "more or less necessary" is fairly natural, I'd prefer either a qualification or the use of "closer or further from necessary". But it may be idiosyncratic to me. I used to be really bothered by the use of "ontology" in computer science or even "axiom" in the OWL specs.
+
+""What are the facts?" Of course, :Brain is an individual. When we say it contradicts subClassOf(dbo:Brain dbo:AnatomicalStructure), it is because there is a fact ":Brain a dbo:Brain" and another fact ":Brain a :C" where :C does not share any instance with dbo:AnatomicalStructure."
+
+Sorry, this still isn't clear to me. For example:
+
+	"For 28 axioms, a negative ARI signals the presence of erroneous facts: for example, 
+		SubClassOf(dbo:LaunchPad dbo:Infrastructure) is falsified by :USA,
+		SubClassOf(dbo:Brain dbo:AnatomicalStructure) by :Brain [sic],"
+
+I was expecting
+	SubClassOf(dbo:Brain dbo:AnatomicalStructure) by :Brain a :C,
+or something like this. Do you mean that the subsumption was contradicted by some facts about :Brain? (Do you see my issue? The thing which you say is falsifying isn't syntactically a fact; if you're using it as shorthand, I  missed that explanation.)
+
+
+----------------------- REVIEW 4 ---------------------
+PAPER: 176
+TITLE: Testing OWL Axioms Against RDF Facts: A possibilistic approach based on falsifiability
+AUTHORS: Andrea G. B. Tettamanzi, Catherine Faron-Zucker and Fabien Gandon
+
+OVERALL EVALUATION: -2 (reject)
+Interest to the Semantic Web Community: 5 (excellent)
+Novelty: 4 (good)
+Technical quality: 1 (very poor)
+Evaluation: 3 (fair)
+Clarity and presentation: 3 (fair)
+I nominate this paper for best paper award: 1 (no)
+
+----------- REVIEW -----------
+The main problem I have with this paper is that I found some formulas to be problematic.
+
+In OWL content(phi) may give you an infinite set.
+You only have to consider
+
+phi1= Man SUBCLASSOF Person
+phi2= Person SUBCLASSOF EXISTS hasFather.Man
+phi3= Man(Adam)
+
+
+content(phi1 | phi2,phi3) is an infinite set
+likewise if you switch the roles of phi1 and phi2
+
+Thus, the numerics do not work out subsequently.
+Then, this might be solved if one restricts the approach to 
+syntactically restricted formulas. But it is a bit unclear which ones
+are really considered "basic".
+
+
+
+
+In (13)5.-6
+all u are integer. Hence the expression du
+(for differentiating) does not make sense.
+
+
+Since these formulas constitute the core of the work, I do not see how to repair this
+(unless you go to a much weaker ontology language that has only finitely many consequences)
+
+
+-------------------------  METAREVIEW  ------------------------
+PAPER: 176
+TITLE: Testing OWL Axioms Against RDF Facts: A possibilistic approach based on falsifiability
+
+We reject the paper because of technical issues as outlined in the updated reviews.
+
+Please note that there has been a somewhat excited debate about the philosoph/non-philosophy of the paper.
+The authors may note that we have not taken this discussion into account when deriving the final verdict of the paper.
+Though for a revision of the paper, it might be good to avoid some of these discussions entirely by phrasing them a bit differently.
+
+Advice for authors: I always tell my students. You have to bring convincing arguments. You do not need to show how you derived these convincing argument for yourself (maybe in some suboptimal way; cf. the famous anectode about Kekule https://en.wikipedia.org/wiki/Benzene of how he came up with the idea of the structure of Benzene). E.g. I would think that the idea of falsification in knowledge bases will remain valid, even in spite of the fact that philosophy of science has been further developed since Popper.
+
+

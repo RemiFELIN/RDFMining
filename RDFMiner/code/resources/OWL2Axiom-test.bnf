@@ -1,0 +1,234 @@
+# Test grammar, based on OWL 2
+#
+
+# Maximal set of productions for generating Axioms
+# Extracted and adapted from the complete grammar of the functional-style syntax defined in
+# http://www.w3.org/TR/2012/REC-owl2-syntax-20121211/
+# by Andrea G. B. Tettamanzi
+
+Axiom := ClassAxiom
+# | ObjectPropertyAxiom | DataPropertyAxiom | HasKey | Assertion
+
+
+ClassAxiom := SubClassOf
+# | EquivalentClasses | DisjointClasses | DisjointUnion
+
+SubClassOf := 'SubClassOf' '(' subClassExpression ' ' superClassExpression ')'
+subClassExpression := ClassExpression
+superClassExpression := ClassExpression
+
+EquivalentClasses := 'EquivalentClasses' '(' ClassExpression ' ' ClassExpression { ' ' ClassExpression } ')'
+
+DisjointClasses := 'DisjointClasses' '(' ClassExpression ' ' ClassExpression { ' ' ClassExpression } ')'
+
+DisjointUnion := 'DisjointUnion' '(' Class ' ' disjointClassExpressions ')'
+disjointClassExpressions := ClassExpression ' ' ClassExpression { ' ' ClassExpression }
+
+
+ObjectPropertyAxiom :=
+  SubObjectPropertyOf | EquivalentObjectProperties |
+  DisjointObjectProperties | InverseObjectProperties |
+  ObjectPropertyDomain | ObjectPropertyRange |
+  FunctionalObjectProperty | InverseFunctionalObjectProperty |
+  ReflexiveObjectProperty | IrreflexiveObjectProperty |
+  SymmetricObjectProperty | AsymmetricObjectProperty |
+  TransitiveObjectProperty
+
+SubObjectPropertyOf := 'SubObjectPropertyOf' '(' subObjectPropertyExpression ' ' superObjectPropertyExpression ')'
+subObjectPropertyExpression := ObjectPropertyExpression | propertyExpressionChain
+propertyExpressionChain := 'ObjectPropertyChain' '(' ObjectPropertyExpression ' '
+  ObjectPropertyExpression { ' ' ObjectPropertyExpression } ')'
+superObjectPropertyExpression := ObjectPropertyExpression
+
+EquivalentObjectProperties := 'EquivalentObjectProperties' '(' ObjectPropertyExpression ' '
+  ObjectPropertyExpression { ' ' ObjectPropertyExpression } ')'
+
+DisjointObjectProperties := 'DisjointObjectProperties' '(' ObjectPropertyExpression ' '
+  ObjectPropertyExpression { ' ' ObjectPropertyExpression } ')'
+
+ObjectPropertyDomain := 'ObjectPropertyDomain' '(' ObjectPropertyExpression ' ' ClassExpression ')'
+
+ObjectPropertyRange := 'ObjectPropertyRange' '(' ObjectPropertyExpression ' ' ClassExpression ')'
+
+InverseObjectProperties := 'InverseObjectProperties' '(' ObjectPropertyExpression ' ' ObjectPropertyExpression ')'
+
+FunctionalObjectProperty := 'FunctionalObjectProperty' '(' ObjectPropertyExpression ')'
+
+InverseFunctionalObjectProperty := 'InverseFunctionalObjectProperty' '(' ObjectPropertyExpression ')'
+
+ReflexiveObjectProperty := 'ReflexiveObjectProperty' '(' ObjectPropertyExpression ')'
+
+IrreflexiveObjectProperty := 'IrreflexiveObjectProperty' '(' ObjectPropertyExpression ')'
+
+SymmetricObjectProperty := 'SymmetricObjectProperty' '(' ObjectPropertyExpression ')'
+
+AsymmetricObjectProperty := 'AsymmetricObjectProperty' '(' ObjectPropertyExpression ')'
+
+TransitiveObjectProperty := 'TransitiveObjectProperty' '(' ObjectPropertyExpression ')'
+
+
+DataPropertyAxiom :=
+  SubDataPropertyOf | EquivalentDataProperties | DisjointDataProperties |
+  DataPropertyDomain | DataPropertyRange | FunctionalDataProperty
+
+SubDataPropertyOf := 'SubDataPropertyOf' '(' subDataPropertyExpression ' ' superDataPropertyExpression ')'
+subDataPropertyExpression := DataPropertyExpression
+superDataPropertyExpression := DataPropertyExpression
+
+EquivalentDataProperties := 'EquivalentDataProperties' '(' DataPropertyExpression ' '
+  DataPropertyExpression { ' ' DataPropertyExpression } ')'
+
+DisjointDataProperties := 'DisjointDataProperties' '(' DataPropertyExpression ' '
+  DataPropertyExpression { ' ' DataPropertyExpression } ')'
+
+DataPropertyDomain := 'DataPropertyDomain' '(' DataPropertyExpression ' ' ClassExpression ')'
+
+DataPropertyRange := 'DataPropertyRange' '(' DataPropertyExpression ' ' DataRange ')'
+
+FunctionalDataProperty := 'FunctionalDataProperty' '(' DataPropertyExpression ')'
+
+
+HasKey := 'HasKey' '(' ClassExpression '(' { ObjectPropertyExpression } ')'
+  '(' { DataPropertyExpression } ')' ')'
+
+
+Assertion :=
+  SameIndividual | DifferentIndividuals | ClassAssertion |
+  ObjectPropertyAssertion | NegativeObjectPropertyAssertion |
+  DataPropertyAssertion | NegativeDataPropertyAssertion
+
+SameIndividual := 'SameIndividual' '(' Individual ' ' Individual { ' ' Individual } ')'
+
+DifferentIndividuals := 'DifferentIndividuals' '(' Individual ' ' Individual { ' ' Individual } ')'
+
+ClassAssertion := 'ClassAssertion' '(' ClassExpression ' ' Individual ')'
+
+ObjectPropertyAssertion := 'ObjectPropertyAssertion' '(' ObjectPropertyExpression ' '
+  Individual ' ' Individual ')'
+
+NegativeObjectPropertyAssertion := 'NegativeObjectPropertyAssertion' '(' ObjectPropertyExpression ' '
+  Individual ' ' Individual ')'
+
+DataPropertyAssertion := 'DataPropertyAssertion' '(' DataPropertyExpression ' '
+  Individual ' ' Literal ')'
+
+NegativeDataPropertyAssertion := 'NegativeDataPropertyAssertion' '(' DataPropertyExpression ' '
+  Individual ' ' Literal ')'
+
+#-----------------------------------------------------------
+
+Individual := NamedIndividual
+# | AnonymousIndividual
+# Blank nodes give problems when constructing SPARQL queries which I don't understand
+# Therefore, for the time being I'm not allowing anonymous individuals...
+
+# This is a simplification of the real definition, suited to the project's needs:
+AnonymousIndividual := '_:' LowerCaseLetter
+LowerCaseLetter := 'a' | 'b' | 'c' | 'd' | 'e' | 'f' |
+   'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' |
+   'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
+
+
+ObjectPropertyExpression := ObjectProperty | InverseObjectProperty
+InverseObjectProperty := 'ObjectInverseOf' '(' ObjectProperty ')'
+
+
+DataPropertyExpression := DataProperty
+
+
+DataRange :=  Datatype |
+  DataIntersectionOf |
+  DataUnionOf |
+  DataComplementOf |
+  DataOneOf |
+  DatatypeRestriction
+
+Datatype :=
+  'rdfs:Literal' |
+  'owl:rational' | 'owl:real' | 'xsd:double' | 'xsd:float' | 'xsd:decimal' | 'xsd:integer' |
+  'xsd:long' | 'xsd:int' | 'xsd:short' | 'xsd:byte' | 'xsd:nonNegativeInteger' | 'xsd:nonPositiveInteger' |
+  'xsd:positiveInteger' | 'xsd:negativeInteger' | 'xsd:unsignedLong' | 'xsd:unsignedInt' |
+  'xsd:unsignedShort' | 'xsd:unsignedByte' |
+  'rdf:PlainLiteral' | 'xsd:string' | 'xsd:NCName' | 'xsd:Name' | 'xsd:NMTOKEN' | 'xsd:token' |
+  'xsd:language' | 'xsd:normalizedString' |
+  'xsd:boolean' |
+  'xsd:base64Binary' | 'xsd:hexBinary' |
+  'xsd:anyURI' |
+  'xsd:dateTime' | 'xsd:dateTimeStamp' |
+  'rdf:XMLLiteral'
+
+DataIntersectionOf := 'DataIntersectionOf' '(' DataRange ' ' DataRange { ' ' DataRange } ')'
+
+DataUnionOf := 'DataUnionOf' '(' DataRange ' ' DataRange { ' ' DataRange } ')'
+
+DataComplementOf := 'DataComplementOf' '(' DataRange ')'
+
+DataOneOf := 'DataOneOf' '(' Literal { ' ' Literal } ')'
+
+DatatypeRestriction := 'DatatypeRestriction' '(' Datatype ' ' Facet ' ' Literal
+  { ' ' Facet ' ' Literal } ')'
+
+Facet := 'xsd:minInclusive' | 'xsd:maxInclusive' | 'xsd:minExclusive' | 'xsd:maxExclusive' |
+  'xsd:minLength' | 'xsd:maxLength' | 'xsd:length' | 'xsd:pattern' | 'rdf:langRange'
+
+
+ClassExpression := Class |
+  ObjectIntersectionOf | ObjectUnionOf | ObjectComplementOf | ObjectOneOf |
+  ObjectSomeValuesFrom | ObjectAllValuesFrom | ObjectHasValue | ObjectHasSelf |
+  ObjectMinCardinality | ObjectMaxCardinality | ObjectExactCardinality
+#  | DataSomeValuesFrom | DataAllValuesFrom | DataHasValue |
+#  DataMinCardinality | DataMaxCardinality | DataExactCardinality
+
+ObjectIntersectionOf := 'ObjectIntersectionOf' '(' ClassExpression ' ' ClassExpression
+  { ' ' ClassExpression } ')'
+
+ObjectUnionOf := 'ObjectUnionOf' '(' ClassExpression ' ' ClassExpression { ' ' ClassExpression } ')'
+
+ObjectComplementOf := 'ObjectComplementOf' '(' ClassExpression ')'
+
+ObjectOneOf := 'ObjectOneOf' '(' Individual { ' ' Individual }')'
+
+ObjectSomeValuesFrom := 'ObjectSomeValuesFrom' '(' ObjectPropertyExpression ' ' ClassExpression ')'
+
+ObjectAllValuesFrom := 'ObjectAllValuesFrom' '(' ObjectPropertyExpression ' ' ClassExpression ')'
+
+ObjectHasValue := 'ObjectHasValue' '(' ObjectPropertyExpression ' ' Individual ')'
+
+ObjectHasSelf := 'ObjectHasSelf' '(' ObjectPropertyExpression ')'
+
+ObjectMinCardinality := 'ObjectMinCardinality' '(' nonNegativeInteger ' ' ObjectPropertyExpression
+  [ ' ' ClassExpression ] ')'
+
+ObjectMaxCardinality := 'ObjectMaxCardinality' '(' nonNegativeInteger ' ' ObjectPropertyExpression
+  [ ' ' ClassExpression ] ')'
+
+ObjectExactCardinality := 'ObjectExactCardinality' '(' nonNegativeInteger ' ' ObjectPropertyExpression
+  [ ' ' ClassExpression ] ')'
+
+DataSomeValuesFrom := 'DataSomeValuesFrom' '(' DataPropertyExpression { ' ' DataPropertyExpression }
+  ' ' DataRange ')'
+
+DataAllValuesFrom := 'DataAllValuesFrom' '(' DataPropertyExpression { ' ' DataPropertyExpression }
+  ' ' DataRange ')'
+
+DataHasValue := 'DataHasValue' '(' DataPropertyExpression ' ' Literal ')'
+
+DataMinCardinality := 'DataMinCardinality' '(' nonNegativeInteger ' ' DataPropertyExpression
+  [ ' ' DataRange ] ')'
+
+DataMaxCardinality := 'DataMaxCardinality' '(' nonNegativeInteger ' ' DataPropertyExpression
+  [ ' ' DataRange ] ')'
+
+DataExactCardinality := 'DataExactCardinality' '(' nonNegativeInteger ' ' DataPropertyExpression
+  [ ' ' DataRange ] ')'
+
+# Probably it doesn't make sense to generate all possible naturals.
+# Therefore, we limit ourselves to "reasonably small" numbers, up to twelve:
+nonNegativeInteger := '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12'
+
+# PRIMITIVES:
+# Class :=
+# ObjectProperty :=
+# DataProperty :=
+# Literal :=
+# NamedIndividual :=

@@ -1,0 +1,37 @@
+-Reviewer 1
+
+The authors introduced a possibility theory based framework for OWL 2 axiom testing RDF facts. The aim of this framework is to assign a degree of possibility and necessity to an axiom, given available evidence in form of facts contained in RDF data. This work is to overcome the limits of the classical scoring heuristics, based on statistical inference and mainly the probability theory.
+The authors report a practical application of their contribution by testing SubClassOf axioms over the DBpedia RDF dataset.
+
+The idea of using possibility theory is well argued in section 3. The novice possibilistic framework for axiom scoring is well formulated in section 4 through proved theorems and an intuitive definition of the acceptance/rejection index (ARI). The practical application of the abovementioned framework is extensively explained in section 5 where real RDF data.
+
+However, the reviewer has some minor comments that should improve the paper quality:
+- The keywords should be enriched with the terms “OWL 2” and “axioms”.
+- To make the introduction easier to read, authors should present a motivating example, instead of presenting related works. These latter, in our opinion, should move to a separate section entitled “related works” where authors present the classic probabilistic heuristics, as well as their own previous works ([15] and [16]). Such a modification will alleviate the introduction and make the paper well structured.
+- English errors are very rare:
+o L215: “R, R_i, S, S_i objects or data properties” instead of “… object…”
+o L473: “In other words” instead of “In words”
+o L588: “Axes” instead of “axis”
+- References lack DOIs as recommended by the journal. Years are missing in references 21 and 25. Reference 30 seems to be incomplete
+
+-Reviewer 2
+
+The authors present a framework to assess OWL 2 axioms out from the observed evidences (the data). Currently, they focus on the subsumption axioms, but the developed framework can be extended for further axioms (as pointed out in the future work). 
+
+The issues and the solution that the authors propose are really interesting, and I have to say that I have really enjoyed reviewing the paper. I would just raise some minor concerns to the authors about the current state of the paper: 
+
+- I miss some kind of quantitative comparison to other probabilistic approaches. Section 3 is really interesting and well argued and supported; however, it would be interesting to show/illustrate some differences in the final decisions between the probabilistic approaches and the proposed one. 
+
+- Following with the comparison, which would be the overhead introduced by considering the possibilistic approach instead of a simpler probabilistic model? The fact that the authors have had to add a threshold to calculate the supports is what motivates this question. 
+
+- I would like to know the authors' opinion about why the more time the support calculation takes, the less are the chances for the axiom to be accepted. Intuitively, this would happen (high time consumption) when many instances are supporting/not supporting the axiom, so, in principle, the particular outcome would not be dependent on the time (and, in this case, the more data supporting, the more robust the decision should be). 
+
+- Are the dumps used in the experiments fully realised/materialized? 
+
+Minor typo: 
+
+- page 12, point 3, e) and f) => should not it be c \in I(K) instead of c \in C? 
+
+- page 32, maybe something is missing in the sentence: "This, despite the fact that in [15] a number of potential issues were pointed out with the subsumption axioms of the DBPedia ontology". 
+
+
