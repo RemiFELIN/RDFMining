@@ -9,11 +9,11 @@ RUN mkdir $VIRTUOSO
 COPY virtuoso.ini $VIRTUOSO
 COPY ./db $VIRTUOSO/data
 COPY ./sql $VIRTUOSO/sql
-COPY ./sh $VIRTUOSO/sh
+COPY ./scripts $VIRTUOSO/scripts
 COPY ./vads $VIRTUOSO/vads
 
-RUN chmod +x $VIRTUOSO/sh/* && \
+RUN chmod +x $VIRTUOSO/scripts/* && \
     # Run fetch_db script
-    sh $VIRTUOSO/sh/fetch_db.sh 
+    sh $VIRTUOSO/scripts/fetch_db.sh 
 
-ENTRYPOINT ["/bin/bash", "/virtuoso/sh/run.sh"]
+ENTRYPOINT ["/bin/bash", "/virtuoso/scripts/run.sh"]

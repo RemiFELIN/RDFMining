@@ -101,6 +101,7 @@ public class AxiomFactory extends DLFactory {
 		if (syntax.get(0).equals("SubClassOf")) {
 			require(arguments.size() == 2);
 			axiom = new SubClassOfAxiom(arguments.get(0), arguments.get(1), endpoint);
+			axiom.argumentClasses = arguments;
 		} else if (syntax.get(0).equals("EquivalentClasses")) {
 			// TO DO
 		} else if (syntax.get(0).equals("DisjointClasses")) {

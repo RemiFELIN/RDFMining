@@ -22,25 +22,29 @@
 
 > Remember to check if the build phase worked well with ```sudo docker images```
 
-> Output: 
 ```REPOSITORY          TAG             IMAGE ID       CREATED         SIZE
 virtuoso            1.0             c219208b4923   11 hours ago    1.95GB
 rdfminer            1.2             ba016286e4dc   17 hours ago    880MB
 ...
 ```
 
-### Virtuoso
+3. Once the build phase is completed, we need to create and start the *Virtuoso* service : ```sudo docker-compose up``` to launch *Virtuoso* and *RDFMiner* containers
 
-3. Once the build phase is completed, we need to create and start the *Virtuoso* service : ```sudo docker-compose up virtuoso```
+> You can check with : ```sudo docker-compose ps```
+```
+        Name                      Command               State                Ports              
+------------------------------------------------------------------------------------------------
+rdfmining_rdfminer_1   ./rdfminer/scripts/run.sh  ...   Up                                      
+rdfmining_virtuoso_1   /bin/bash /virtuoso/script ...   Up      1111/tcp, 0.0.0.0:8890->8890/tcp
+```
 
-### RDFMiner
+4. Put all the files you need (e.g. your .bnf grammar) in the **/IO** folder.
+5. Once this phase is complete, you can launch the container : ```sudo docker-compose exec rdfminer ./rdfminer/scripts/run.sh [PARAMETERS]```
 
-4. Create a folder (anywhere on your machine) which contains your files (axioms, grammar, ...). 
-> For the following step, let's assume that you have created the folder **shared** which contains a file ***axioms.txt***
-5. Once this phase is complete, you can launch the container : ```sudo docker run -it -v $(pwd)/shared/:/rdfminer/io/ rdfminer:1.0 -a /rdfminer/io/axioms.txt```
+> For instance :
+
+```sudo docker-compose exec rdfminer ./rdfminer/scripts/run.sh -ge -r -g /rdfminer/io/OWL2Axiom-test9.bnf -bf /rdfminer/io/test/buffer -sre /rdfminer/io/test/stat-results.xlsx -fax /rdfminer/io/test/axioms-results.xlsx -ps 2000 -kb 20000 -ckp 3 -pc 0.8 -pm 0.01 -sez 0.7 -el 1 -seez 0.02 -init 6 -div 1 -mxw 1 -se 2```
 > The container takes the same parameters as RDFMiner jar file
-
-> **-v $(pwd)/[FOLDER_NAME]/:/rdfminer/io/** is very important to share input and output files between container and our machine, according to the official documentation of Docker. 
 
 ## Parameters
 
