@@ -12,6 +12,9 @@ services:
         command: launch
         volumes:
             - /home/remi/Bureau/dev/RDFMining/IO:/rdfminer/io
+        networks:
+            rdfminer_network:
+                ipv4_address: 172.19.0.3
     virtuoso:
         restart: always
         image: virtuoso:1.0
@@ -21,8 +24,11 @@ services:
             - "8890:8890"
         volumes:
             - /home/remi/Bureau/dev/RDFMining/Virtuoso/data:/data
-#         networks:
-#             - rdfminer_network
-# networks:
-#     rdfminer_network:
-#         driver: bridge
+        networks:
+            rdfminer_network:
+                ipv4_address: 172.19.0.2
+networks:
+    rdfminer_network:
+        ipam:
+            config:
+                - subnet: 172.19.0.0/24
