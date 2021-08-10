@@ -21,7 +21,7 @@ import Mapper.Symbol;
  * for having different subclasses for different types of axioms.
  * </p>
  * 
- * @author Andrea G. B. Tettamanzi
+ * @author Andrea G. B. Tettamanzi & NGUYEN Thu Huong
  *
  */
 public abstract class Axiom {
@@ -39,7 +39,7 @@ public abstract class Axiom {
 	 * <p>
 	 */
 	public List<List<Symbol>> argumentClasses;
-	public int generality = 0;
+	public double generality = 0;
 	public int referenceCardinality = 0;
 
 	/**

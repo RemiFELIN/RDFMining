@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -63,6 +65,12 @@ public class SubClassOfAxiom extends Axiom {
 	 * SubClassOf axiom.
 	 */
 	public static TimeMap maxTestTime = new TimeMap();
+	
+	/**
+	 * An executor to be used to submit asynchronous tasks which might be subjected
+	 * to a time-out.
+	 */
+//	public static ExecutorService executor;
 
 	/**
 	 * Create a new <code>SubClassOf</code> object expression axiom from the two
@@ -82,7 +90,7 @@ public class SubClassOfAxiom extends Axiom {
 			superClassComplement = superClass.subExpressions.get(0);
 		else
 			superClassComplement = new ComplementClassExpression(superClass);
-
+//		System.out.println("------\nsubClass: " + subClass.getGraphPattern() + "\n---\nsuperClass: " + superClass.getGraphPattern() + "\n------");
 		try {
 			update(endpoint);
 		} catch (IllegalStateException e) {
@@ -129,7 +137,7 @@ public class SubClassOfAxiom extends Axiom {
 		exceptions = new ArrayList<String>();
 		Set<RDFNodePair> extension = subClass.extension();
 
-		int numIntersectingClasses = endpoint.count("?D", subClass.graphPattern + " ?x a ?D . ");
+		int numIntersectingClasses = endpoint.count("?D", subClass.graphPattern + " ?x a ?D . ", 0);
 		timePredictor = referenceCardinality * numIntersectingClasses;
 
 		Iterator<RDFNodePair> i = extension.iterator();
@@ -188,99 +196,78 @@ public class SubClassOfAxiom extends Axiom {
 	public void update(SparqlEndpoint endpoint) {
 		confirmations = new ArrayList<String>();
 		exceptions = new ArrayList<String>();
-		referenceCardinality = endpoint.count("?x", subClass.graphPattern);
-		int numIntersectingClasses = endpoint.count("?D", subClass.graphPattern + " ?x a ?D . ");
-		logger.warn("No. of Intersecting Classes = " + numIntersectingClasses);
+//		Future<Integer> future = null;
+//		System.out.println("subClass: " + subClass.graphPattern + "\nsuperClass: " + superClass.graphPattern);
+		// to fix
+		referenceCardinality = endpoint.count("?x", subClass.graphPattern, 0);
+		logger.info("referenceCardinality = " + referenceCardinality);
+		int numIntersectingClasses = endpoint.count("?D", subClass.graphPattern + " ?x a ?D . ", 0);
+		logger.info("No. of Intersecting Classes = " + numIntersectingClasses);
 		timePredictor = referenceCardinality * numIntersectingClasses;
-		logger.warn("Time Predictor = " + timePredictor);
-		numConfirmations = endpoint.count("?x", subClass.graphPattern + "\n" + superClass.graphPattern);
+//		logger.warn("Time Predictor = " + timePredictor);
+		numConfirmations = endpoint.count("?x", subClass.graphPattern + "\n" + superClass.graphPattern, 0);
+//		System.out.println("pattern conf. : \n" + subClass.graphPattern + "\n" + superClass.graphPattern);
 		if (numConfirmations > 0 && numConfirmations < 100) {
+			logger.info(numConfirmations + " confirmation(s) found ! retrieving in collection ...");
 			// query the confirmations
-			endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\n" + superClass.graphPattern + " }");
+			endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\n" + superClass.graphPattern + " }", 0);
 			while (endpoint.hasNext()) {
 				QuerySolution solution = endpoint.next();
 				RDFNode x = solution.get("x");
 				confirmations.add(Expression.sparqlEncode(x));
 			}
 		}
+		// Now, let's compute the exceptions for this axiom 
 		if (numConfirmations == referenceCardinality) {
 			// No need to count the exceptions: there can't be any!
 			numExceptions = 0;
 			return;
-		}
-		// Since the query to count exception is complex and may take very long to
-		// execute,
-		// we execute it with the user-supplied time out.
-		try {
-			if (RDFMiner.parameters.timeOut > 0 || RDFMiner.parameters.dynTimeOut != 0.0) {
-				// Compute the time-out (in minutes):
-				long timeOut = RDFMiner.parameters.timeOut;
-				timeOut += (long) Math.round(RDFMiner.parameters.dynTimeOut * timePredictor);
-				logger.warn("Time Out = " + timeOut);
-
-				// Prepare the call to be spawned as a new thread:
-				Future<Integer> future = RDFMiner.executor.submit(new Callable<Integer>() {
-					public Integer call() {
-						logger.info("Starting exceptions query...");
-						return new Integer(
-								endpoint.count("?x", subClass.graphPattern + "\n" + superClassComplement.graphPattern));
-					}
-				});
-
-				// Here, we assume that the contract of this method w.r.t. the semantics of the
-				// time-out
-				// is the same as the wait() method of class Object, i.e., a time-out of zero
-				// means no time-out.
-				numExceptions = future.get(timeOut, TimeUnit.MINUTES);
-				// If no exceptions are raised
-				logger.info("Exceptions query finished - time: " + SparqlEndpoint.selectResponseTime + "");
-			} else {
-				logger.warn("Time Out = 0");
-				// This is the EKAW 2014 version, without time-out:
-				numExceptions = endpoint.count("?x",
-						subClass.graphPattern + "\n" + superClassComplement.graphPattern);
-				// Log the response time
-				logger.info("Exceptions query finished - time: " + SparqlEndpoint.selectResponseTime + "");
-			}
-			if (numExceptions > 0 && numExceptions < 100) {
-				// retrieve the exceptions
-				endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\n"
-						+ superClassComplement.graphPattern + " }");
-				while (endpoint.hasNext()) {
-					QuerySolution solution = endpoint.next();
-					RDFNode x = solution.get("x");
-					exceptions.add(Expression.sparqlEncode(x));
-				}
-			}
-		} catch (InterruptedException | TimeoutException e) {
-			// If the query times out, it is very likely that it would end up
-			// having a large number of exceptions. Therefore, we take the reference
-			// cardinality minus the number of confirmations as the conventional
-			// number of exceptions in this case.
-			// We take the same action also in case of interruption.
-			if (e instanceof TimeoutException) {
+		} else if (RDFMiner.parameters.timeOut > 0 || RDFMiner.parameters.dynTimeOut != 0.0) {
+			// Since the query to count exception is complex and may take very long to
+			// execute,
+			// we execute it with the user-supplied time out.
+			// Compute the time-out (in minutes):
+			long timeOut = RDFMiner.parameters.timeOut;
+			timeOut += (long) Math.round(RDFMiner.parameters.dynTimeOut * timePredictor);
+			// Here, we assume that the contract of this method w.r.t. the semantics of the
+			// time-out is the same as the wait() method of class Object, i.e., a time-out of zero
+			// means no time-out.
+			numExceptions = endpoint.count("?x", subClass.graphPattern + "\n" + superClassComplement.graphPattern, (int) timeOut);
+			// numExceptions = future.get(timeOut, TimeUnit.SECONDS);
+			// If no exceptions are raised
+			logger.info("Exceptions query finished - time spent: " + SparqlEndpoint.selectResponseTime + "ms.");
+			if ( SparqlEndpoint.selectResponseTime > ((int) timeOut * 1000)) {
 				logger.warn("Timeout is reached");
-			} else {
-				logger.warn("The thread has been interrupted");
+				// If the query times out, it is very likely that it would end up
+				// having a large number of exceptions. Therefore, we take the reference
+				// cardinality minus the number of confirmations as the conventional
+				// number of exceptions in this case.
+				numExceptions = referenceCardinality - numConfirmations;
+				// Specify isTimeout for this axiom
+				isTimeout = true;
 			}
-			numExceptions = referenceCardinality - numConfirmations;
-			// If numExceptions E ]0,100[ then we must make a simple query ("closed world")
-			// to get all the exceptions with this method
-			endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\nFILTER NOT EXISTS {\n"
-					+ superClass.graphPattern + " \n}\n}");
+		} else {
+			// logger.warn("Time Out = 0 s");
+			// This is the EKAW 2014 version, without time-out:
+			numExceptions = endpoint.count("?x",
+					subClass.graphPattern + "\n" + superClassComplement.graphPattern, 0);
+			// Log the response time
+			logger.info("Exceptions query finished - time spent: " + SparqlEndpoint.selectResponseTime + "ms.");
+		}
+		// We don't need to compute exceptions if we get a timeout from exceptions SPARQL request
+		if (numExceptions > 0 && numExceptions < 100 && !isTimeout) {
+			logger.info(numExceptions + " exception(s) found ! retrieving in collection ...");
+			// retrieve the exceptions
+			endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\n"
+					+ superClassComplement.graphPattern + " }", 0);
 			while (endpoint.hasNext()) {
 				QuerySolution solution = endpoint.next();
 				RDFNode x = solution.get("x");
 				exceptions.add(Expression.sparqlEncode(x));
 			}
-			// Specify isTimeout for this axiom
-			isTimeout = true;
-		} catch (ExecutionException e) {
-			Throwable cause = e.getCause();
-			if (cause instanceof IllegalStateException)
-				throw (IllegalStateException) cause;
-			throw new RuntimeException(cause);
 		}
+		logger.info("Possibility = " + possibility().doubleValue());
+		logger.info("Necessity = " + necessity().doubleValue());
 	}
 
 	/**
@@ -293,9 +280,6 @@ public class SubClassOfAxiom extends Axiom {
 	}
 
 	@Override
-	public void update() {
-		// TODO Auto-generated method stub
-
-	}
+	public void update() {}
 
 }

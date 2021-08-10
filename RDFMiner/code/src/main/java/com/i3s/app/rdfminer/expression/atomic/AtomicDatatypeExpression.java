@@ -32,6 +32,7 @@ public class AtomicDatatypeExpression extends Expression {
 		super();
 		rootSymbol = syntax.get(0).getSymbolString();
 		graphPattern = createGraphPattern("?x", "?y");
+		// System.out.println("AtomicDatatypeExpression: graphPattern = \n" + graphPattern);
 	}
 
 	/**

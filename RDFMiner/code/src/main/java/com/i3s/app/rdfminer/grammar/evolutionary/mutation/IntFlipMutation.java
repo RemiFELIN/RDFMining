@@ -113,7 +113,7 @@ public class IntFlipMutation extends MutationOperation {
 		((GEIndividual) operand).invalidate();
 		operand = rd.axiomIndividual(chr2, curGeneration);
 		FitnessEvaluation fit = new FitnessEvaluation();
-		fit.updateIndividual(operand, curGeneration, totalGeneration);
+		fit.updateIndividual(operand);
 		// }
 		return operand;
 	}

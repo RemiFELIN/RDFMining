@@ -21,6 +21,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.shared.Lock;
+import org.apache.jena.sparql.ARQException;
 import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
 import org.apache.jena.tdb.TDBFactory;
 import org.apache.log4j.Logger;
@@ -47,6 +48,7 @@ import com.i3s.app.rdfminer.Global;
  *
  */
 public class SparqlEndpoint implements Iterator<QuerySolution> {
+	
 	private static Logger logger = Logger.getLogger(SparqlEndpoint.class.getName());
 
 	/**
@@ -56,7 +58,7 @@ public class SparqlEndpoint implements Iterator<QuerySolution> {
 	 * machine is to be used
 	 * </p>
 	 */
-	String endpoint;
+	public String endpoint;
 
 	/**
 	 * The RDF model corresponding to the TDB on the local machine.
@@ -71,18 +73,17 @@ public class SparqlEndpoint implements Iterator<QuerySolution> {
 	/**
 	 * The prefixes that will be used to query the SPARQL endpoint.
 	 */
-	String prefixes;
+	public String prefixes;
 
 	/**
 	 * The current query execution.
 	 */
-	QueryEngineHTTP queryExecution;
+	public QueryEngineHTTP queryExecution;
 
 	/**
 	 * The result of the current query.
 	 */
 	public ResultSet resultSet;
-	ResultSetRewindable results;
 
 	/**
 	 * The response time of the "SELECT" SPARQL Request on remote service (in ms)
@@ -128,9 +129,12 @@ public class SparqlEndpoint implements Iterator<QuerySolution> {
 	 * Prepare the execution of the given query.
 	 */
 	protected void prepare(Query query) {
+//		System.out.println("[PREPARE]\n" + query.toString() + "\n[/PREPARE]");
 		// Close a pre-existing query, if any, to free resources:
-		if (queryExecution != null)
+		if (queryExecution != null) {
 			queryExecution.close();
+			resultSet = null;
+		}
 		// Prepare the execution context for the given query:
 		if (endpoint != null) {
 			queryExecution = (QueryEngineHTTP) QueryExecutionFactory.createServiceRequest(endpoint, query);
@@ -144,24 +148,31 @@ public class SparqlEndpoint implements Iterator<QuerySolution> {
 	 * Execute a SELECT query.
 	 * 
 	 * @param sparql The query string, to go after the "SELECT " keyword.
+	 * @param timeout a timeout to compute result (in seconds)
 	 */
-	public void select(String sparql) {
+	public void select(String sparql, int timeout) {
 		try {
 			String str = prefixes + "SELECT " + sparql;
 			Query query = QueryFactory.create(str);
 			prepare(query);
+			// set a timeout if is not equals to 0
+			if(timeout != 0) {
+				queryExecution.addParam("timeout", Integer.toString(timeout * 1000));
+			}
+//			System.out.println(query);
 			// Set a timer to compute the result time of each query
 			Timer timer = new Timer();
 			timer.startTimer();
 			// execution of SPARQL "SELECT" request
 			resultSet = queryExecution.execSelect();
+//			System.out.println("time: " + timer.read());
 			selectResponseTime = timer.endTimer();
 		} catch (Exception e) {
 			handleException(e, "making the following query:\nSELECT " + SparqlEndpoint.prettyPrint(sparql));
 		}
 	}
 
-	public void select2(String sparql) {
+	public void selectAndCopyResults(String sparql) {
 		try {
 			String str = prefixes + "SELECT " + sparql;
 			Query query = QueryFactory.create(str);
@@ -178,9 +189,10 @@ public class SparqlEndpoint implements Iterator<QuerySolution> {
 	 * Execute an ASK query
 	 * 
 	 * @param graphPattern The graph pattern
+	 * @param timeout a timeout to compute result (in seconds)
 	 * @return
 	 */
-	public boolean ask(String graphPattern) {
+	public boolean ask(String graphPattern, int timeout) {
 		boolean result = false;
 		try {
 			String str = prefixes + "ASK { " + graphPattern + " }";
@@ -190,7 +202,7 @@ public class SparqlEndpoint implements Iterator<QuerySolution> {
 		} catch (QueryException q) {
 			logger.warn("An ASK query failed: graph pattern =\n " + graphPattern
 					+ "\nTrying with the corresponding SELECT...");
-			select("* WHERE { " + graphPattern + " }");
+			select("* WHERE { " + graphPattern + " }", timeout);
 			result = hasNext();
 		} catch (Exception e) {
 			handleException(e, "making the following query:\nASK { " + SparqlEndpoint.prettyPrint(graphPattern) + " }");
@@ -212,10 +224,11 @@ public class SparqlEndpoint implements Iterator<QuerySolution> {
 	 * @param x            the name of a SPARQL variable that must be bound in the
 	 *                     graph pattern
 	 * @param graphPattern a graph pattern
+	 * @param timeout a timeout to compute result (in seconds)
 	 * @return the count
 	 */
-	public int count(String x, String graphPattern) {
-		select("(count(DISTINCT " + x + ") AS ?n) WHERE { " + graphPattern + " }");
+	public int count(String x, String graphPattern, int timeout) {
+		select("(count(DISTINCT " + x + ") AS ?n) WHERE { " + graphPattern + " }", timeout);
 		if (hasNext()) {
 			QuerySolution solution = next();
 			RDFNode n = solution.get("n");
@@ -230,10 +243,22 @@ public class SparqlEndpoint implements Iterator<QuerySolution> {
 	public boolean hasNext() {
 		boolean hasIt = false;
 		try {
-			if (resultSet != null)
+			if (resultSet != null) {
+//				try {
 				hasIt = resultSet.hasNext();
+//					System.out.println("Ok !");
+//				} catch(ARQException e) {
+					// Fix :
+					// ARQException: ResultSet no longer valid (QueryExecution has been closed)
+//					logger.warn("result set no longer valid...");
+//					System.out.println("TEST:\n- hasIt: " + hasIt + "\n- endpoint: " + endpoint + "\nFIN DU TEST");
+					// We let hasIt to false, then return false and set the count to 0
+//					return false;
+//				}
+			}
 		} catch (Exception e) {
-			handleException(e, "checking whether another solution is available.");
+			// handleException(e, "checking whether another solution is available.");
+			logger.warn("result set no longer valid...");
 		}
 		if (!hasIt && endpoint == null) {
 			try {
@@ -391,7 +416,7 @@ public class SparqlEndpoint implements Iterator<QuerySolution> {
 		}
 	}
 
-	public ResultSet getResultset() {
+	public ResultSet getResultSet() {
 		return this.resultSet;
 	}
 }

@@ -95,7 +95,7 @@ public class GoldStandardMatrix {
 				+ rootClass + ">}";
 		logger.info("Querying SPARQL endpoint for the number of subclasses of the class : <" + rootClass
 				+ "> with query:\nSELECT " + SparqlEndpoint.prettyPrint(sparql_countClasses));
-		endpoint.select(sparql_countClasses);
+		endpoint.select(sparql_countClasses, 0);
 		QuerySolution solution1 = endpoint.next();
 		Iterator<String> t = solution1.varNames();
 		String varName1 = t.next();
@@ -106,7 +106,7 @@ public class GoldStandardMatrix {
 				+ ">}";
 		logger.info("Querying SPARQL endpoint for symbol <Class> with query:\nSELECT "
 				+ SparqlEndpoint.prettyPrint(sparql_listClasses));
-		endpoint.select(sparql_listClasses);
+		endpoint.select(sparql_listClasses, 0);
 
 		int dem = 0;
 		String[][] M = new String[n][n];
@@ -177,7 +177,7 @@ public class GoldStandardMatrix {
 
 	static ArrayList<RDFNode> ResultQuery(SparqlEndpoint endpoint, String sparql) {
 		ArrayList<RDFNode> arrRDFNode = new ArrayList<RDFNode>();
-		endpoint.select(sparql);
+		endpoint.select(sparql, 0);
 		while (endpoint.hasNext()) {
 			QuerySolution solution = endpoint.next();
 			Iterator<String> i = solution.varNames();

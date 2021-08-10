@@ -134,7 +134,7 @@ public class SampleDBpediaExtraction {
 		// String graphcount="<" + data + "> ?r ?o";
 
 		String strcount = "?o";
-		int countriples = endpoint.count(strcount, graphcount);
+		int countriples = endpoint.count(strcount, graphcount, 0);
 		logger.info("online triples:" + countriples);
 		pickednumber_triples = (int) (Math.sqrt(propotion) * Double.valueOf(countriples));
 		if ((pickednumber_triples < 1) && (countriples != 0)) {
@@ -142,7 +142,7 @@ public class SampleDBpediaExtraction {
 		}
 		logger.info("picked number of triples:" + pickednumber_triples);
 
-		endpoint.select2(str);
+		endpoint.selectAndCopyResults(str);
 		logger.info(str);
 		// }
 		logger.info("Querry to pick up objects");
@@ -202,7 +202,7 @@ public class SampleDBpediaExtraction {
 		// String graphcount2= "?s ?r <" + data +">." ;
 
 		logger.info(graphcount2);
-		int countriples2 = endpoint.count(strcount2, graphcount2);
+		int countriples2 = endpoint.count(strcount2, graphcount2, 0);
 		logger.info("online triples:" + countriples2);
 		logger.info("Querry to pick up subjects");
 		pickednumber_triples = (int) (Math.sqrt(propotion) * Double.valueOf(countriples2));
@@ -210,7 +210,7 @@ public class SampleDBpediaExtraction {
 			pickednumber_triples = 1;
 		}
 		logger.info("Number triple pickup:" + pickednumber_triples);
-		endpoint.select2(str2);
+		endpoint.selectAndCopyResults(str2);
 		logger.info(str2);
 
 		ResultSet result2 = endpoint.resultSet;

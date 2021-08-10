@@ -8,9 +8,8 @@ import java.util.List;
 
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.RDFNode;
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 
-import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.axiom.Axiom;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
@@ -27,7 +26,7 @@ import Mapper.Symbol;
  */
 public class DisjointClassesAxiom extends Axiom {
 	
-	private static Logger logger = Logger.getLogger(DisjointClassesAxiom.class.getName());
+//	private static Logger logger = Logger.getLogger(DisjointClassesAxiom.class.getName());
 
 	/**
 	 * An array of class expressions which are declared to be mutually disjoint.
@@ -145,8 +144,8 @@ public class DisjointClassesAxiom extends Axiom {
 			generalityGraphPattern += "{ " + disjointClass[k].graphPattern + " }";
 			generalityGraphPattern2 += "{ " + disjointClass[k + 1].graphPattern + " }";
 			// ----compute the cost of GP
-			generality1 = endpoint.count("?x", generalityGraphPattern);
-			generality2 = endpoint.count("?x", generalityGraphPattern2);
+			generality1 = endpoint.count("?x", generalityGraphPattern, 0);
+			generality2 = endpoint.count("?x", generalityGraphPattern2, 0);
 			if (generality1 > generality2)
 				generality = generality2;
 			else
@@ -155,13 +154,13 @@ public class DisjointClassesAxiom extends Axiom {
 		}
 		// logger.info("Generality: " + generality);
 		if (generality != 0) {
-			referenceCardinality = endpoint.count("?x", refCardGraphPattern);
+			referenceCardinality = endpoint.count("?x", refCardGraphPattern, 0);
 			// skipping computing the reference cardinality when generality=0
 			// logger.info("Number referenceCardinality: " + referenceCardinality);
 			String exceptionGraphPattern = "";
 			for (int i = 0; i < disjointClass.length; i++)
 				exceptionGraphPattern += disjointClass[i].graphPattern + "\n";
-			numExceptions = endpoint.count("?x", exceptionGraphPattern);
+			numExceptions = endpoint.count("?x", exceptionGraphPattern, 0);
 			// logger.info("Number of exception: " + numExceptions);
 			// logger.info(" ");
 			if (numExceptions > 0 && numExceptions < 100) {
@@ -197,8 +196,8 @@ public class DisjointClassesAxiom extends Axiom {
 			String generalityGraphPattern2 = "";
 			generalityGraphPattern += "{ " + disjointClass[k].graphPattern + " }";
 			generalityGraphPattern2 += "{ " + disjointClass[k + 1].graphPattern + " }";
-			generality1 = endpoint.count("?x", generalityGraphPattern);
-			generality2 = endpoint.count("?x", generalityGraphPattern2);
+			generality1 = endpoint.count("?x", generalityGraphPattern, 0);
+			generality2 = endpoint.count("?x", generalityGraphPattern2, 0);
 			if (generality1 > generality2)
 				generality = generality2;
 			else
@@ -206,12 +205,12 @@ public class DisjointClassesAxiom extends Axiom {
 			k = k + 2;
 		}
 		// logger.info("Generality :" + generality);
-		referenceCardinality = endpoint.count("?x", refCardGraphPattern);
+		referenceCardinality = endpoint.count("?x", refCardGraphPattern, 0);
 		// logger.info("number referenceCardinality: " + referenceCardinality);
 		String exceptionGraphPattern = "";
 		for (int i = 0; i < disjointClass.length; i++)
 			exceptionGraphPattern += disjointClass[i].graphPattern + "\n";
-		numExceptions = endpoint.count("?x", exceptionGraphPattern);
+		numExceptions = endpoint.count("?x", exceptionGraphPattern, 0);
 		// logger.info("number of exception: " + numExceptions);
 		// logger.info(".............................................................");
 		if (numExceptions > 0 && numExceptions < 100) {

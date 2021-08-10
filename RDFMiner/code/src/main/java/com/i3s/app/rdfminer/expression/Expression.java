@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
+import com.i3s.app.rdfminer.Global;
 
 /**
  * This abstract class represent an OWL 2 expression.
@@ -171,7 +172,7 @@ public abstract class Expression {
 		// but remove the prefix and the closing ">":
 		String[] s = rootSymbol.split("/");
 		String name = s[s.length - 1];
-		return String.format("%s-%08x.cache", name.substring(0, name.length() - 1), toString().hashCode());
+		return String.format(Global.CACHE_PATH + "%s-%08x.cache", name.substring(0, name.length() - 1), toString().hashCode());
 	}
 
 	/**
@@ -220,7 +221,7 @@ public abstract class Expression {
 							String h = String.format("\"%x\"", hexDigit);
 
 							RDFMiner.endpoint.select("DISTINCT ?x WHERE { " + graphPattern
-									+ " FILTER( strStarts(MD5(str(?x)), " + h + ") ) }");
+									+ " FILTER( strStarts(MD5(str(?x)), " + h + ") ) }", 0);
 							while (RDFMiner.endpoint.hasNext()) {
 								QuerySolution solution = RDFMiner.endpoint.next();
 
@@ -327,7 +328,7 @@ public abstract class Expression {
 		String x = pair.x != null ? sparqlEncode(pair.x) : "?x";
 		String y = pair.y != null ? sparqlEncode(pair.y) : "?y";
 
-		return RDFMiner.endpoint.ask(createGraphPattern(x, y));
+		return RDFMiner.endpoint.ask(createGraphPattern(x, y), 0);
 	}
 
 	@Override
@@ -343,6 +344,10 @@ public abstract class Expression {
 		}
 
 		return s;
+	}
+
+	public String getGraphPattern() {
+		return graphPattern;
 	}
 
 }

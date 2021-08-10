@@ -26,6 +26,7 @@ import com.i3s.app.rdfminer.RDFMiner;
  *
  */
 public class ComparableRDFNode implements RDFNode, Comparable<Object> {
+	
 	private static Logger logger = Logger.getLogger(ComparableRDFNode.class.getName());
 
 	/**
@@ -33,12 +34,15 @@ public class ComparableRDFNode implements RDFNode, Comparable<Object> {
 	 * adapter.
 	 */
 	protected RDFNode node;
-
+	
+	public SparqlEndpoint endpoint;
+	
 	/**
 	 * Creates a comparable RDF node from an existing RDF node.
 	 */
-	public ComparableRDFNode(RDFNode n) {
-		node = n;
+	public ComparableRDFNode(RDFNode node, SparqlEndpoint endpoint) {
+		this.node = node;
+		this.endpoint = endpoint;
 	}
 
 	/*
@@ -197,14 +201,14 @@ public class ComparableRDFNode implements RDFNode, Comparable<Object> {
 		String str = "DISTINCT ?class WHERE {\n" + "\t<" + node + "> a ?class .\n"
 				+ "\tFILTER ( ?class != owl:Thing )\n" + "}";
 		logger.info("Querying SPARQL endpoint for the containing classes of " + node + " with query:\n" + str);
-		RDFMiner.endpoint.select(str);
-		while (RDFMiner.endpoint.hasNext()) {
-			QuerySolution solution = RDFMiner.endpoint.next();
+		endpoint.select(str, 0);
+		while (endpoint.hasNext()) {
+			QuerySolution solution = endpoint.next();
 			Iterator<String> i = solution.varNames();
 			if (i.hasNext()) {
 				String varName = i.next();
 				RDFNode node = solution.get(varName);
-				result.add(new ComparableRDFNode(node));
+				result.add(new ComparableRDFNode(node, endpoint));
 			}
 		}
 		logger.info("Found " + result.size() + " classes.");

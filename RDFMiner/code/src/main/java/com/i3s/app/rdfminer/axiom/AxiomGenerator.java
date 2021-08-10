@@ -138,7 +138,7 @@ public abstract class AxiomGenerator {
 
 			logger.info("Querying SPARQL endpoint for symbol <" + symbol + "> with query:\nSELECT "
 					+ SparqlEndpoint.prettyPrint(sparql));
-			RDFMiner.endpoint.select(sparql);
+			RDFMiner.endpoint.select(sparql, 0);
 			PrintStream cache = null;
 			try {
 				cache = new PrintStream(cacheName(symbol, sparql));
@@ -195,7 +195,7 @@ public abstract class AxiomGenerator {
 				generateProductions("Class-other-than-owl:Thing",
 						"DISTINCT ?class WHERE { ?_ a ?class . FILTER ( ?class != owl:Thing ) FILTER( strStarts(MD5(str(?class)), "
 								+ h + ") ) }");
-				generateProductions("ObjectProperty",
+				generateProductions("ObjectPropertyOf",
 						"DISTINCT ?prop WHERE { ?subj ?prop ?obj . FILTER ( isIRI(?obj) ) FILTER( strStarts(MD5(str(?prop)), "
 								+ h + ") ) }");
 				generateProductions("DataProperty",

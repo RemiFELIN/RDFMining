@@ -95,9 +95,10 @@ public class AxiomFactory extends DLFactory {
 	 * @return the corresponding axiom.
 	 */
 	public static Axiom create(List<Symbol> syntax, SparqlEndpoint endpoint) {
+		
 		Axiom axiom = null;
 		List<List<Symbol>> arguments = parseArguments(syntax);
-
+		
 		if (syntax.get(0).equals("SubClassOf")) {
 			require(arguments.size() == 2);
 			axiom = new SubClassOfAxiom(arguments.get(0), arguments.get(1), endpoint);

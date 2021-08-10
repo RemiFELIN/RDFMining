@@ -19,6 +19,7 @@ import com.i3s.app.rdfminer.grammar.evolutionary.crossover.TypeCrossover;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.grammar.evolutionary.mutation.IntFlipMutation;
 import com.i3s.app.rdfminer.grammar.evolutionary.selection.ProportionalRouletteWheel;
+import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 
 import Individuals.GEChromosome;
 import Individuals.Genotype;
@@ -172,7 +173,7 @@ public class EATools {
 
 	public static ArrayList<GEIndividual> crossover(ArrayList<GEIndividual> canPop, double proCrossover,
 			double proMutation, int curGeneration, RandomAxiomGenerator rd, int diversity, int totalGeneration)
-			throws IOException, InterruptedException {
+			 {
 
 		ArrayList<GEIndividual> individuals = new ArrayList<GEIndividual>();
 		int SizePop = canPop.size();
@@ -180,6 +181,7 @@ public class EATools {
 		int m = 0;
 
 		while (m <= index - 1) {
+//			System.out.println("mut: " + m + "/" + (index - 1));
 			RandomNumberGenerator rand = new MersenneTwisterFast();
 			GEIndividual parent1 = ((GEIndividual) canPop.get(m));
 			GEIndividual parent2 = (GEIndividual) canPop.get(m + 1);
@@ -188,40 +190,44 @@ public class EATools {
 			GEChromosome c1, c2;
 
 			switch (RDFMiner.parameters.typecrossover) {
-			case TypeCrossover.SINGLE_POINT_CROSSOVER:
-				// Single-point crossover
-				SinglePointCrossoverAxiom spc = new SinglePointCrossoverAxiom(proCrossover, rand);
-				spc.setFixedCrossoverPoint(false);
-				c1 = new GEChromosome((GEChromosome) parent1.getGenotype().get(0));
-				c2 = new GEChromosome((GEChromosome) parent2.getGenotype().get(0));
-				chromosomes = spc.crossover(c1, c2);
-				child1 = rd.axiomIndividual(chromosomes[0], curGeneration);
-				child2 = rd.axiomIndividual(chromosomes[1], curGeneration);
-				break;
-			case TypeCrossover.SUBTREE_CROSSOVER:
-				// subtree crossover
-				SubtreeCrossoverAxioms sca = new SubtreeCrossoverAxioms(proCrossover, rand);
-				GEIndividual[] inds = sca.crossoverTree(parent1, parent2);
-				child1 = inds[0];
-				child2 = inds[1];
-				break;
-			default:
-				// Two point crossover
-				TwoPointCrossover tpc = new TwoPointCrossover(proCrossover, rand);
-				tpc.setFixedCrossoverPoint(true);
-				c1 = new GEChromosome((GEChromosome) parent1.getGenotype().get(0));
-				c2 = new GEChromosome((GEChromosome) parent2.getGenotype().get(0));
-				chromosomes = tpc.crossover(c1, c2);
-				child1 = rd.axiomIndividual(chromosomes[0], curGeneration);
-				child2 = rd.axiomIndividual(chromosomes[1], curGeneration);
-				break;
+				case TypeCrossover.SINGLE_POINT_CROSSOVER:
+					// Single-point crossover
+					SinglePointCrossoverAxiom spc = new SinglePointCrossoverAxiom(proCrossover, rand);
+					spc.setFixedCrossoverPoint(false);
+					c1 = new GEChromosome((GEChromosome) parent1.getGenotype().get(0));
+					c2 = new GEChromosome((GEChromosome) parent2.getGenotype().get(0));
+					chromosomes = spc.crossover(c1, c2);
+					child1 = rd.axiomIndividual(chromosomes[0], curGeneration);
+					child2 = rd.axiomIndividual(chromosomes[1], curGeneration);
+					break;
+				case TypeCrossover.SUBTREE_CROSSOVER:
+					// subtree crossover
+					SubtreeCrossoverAxioms sca = new SubtreeCrossoverAxioms(proCrossover, rand);
+					GEIndividual[] inds = sca.crossoverTree(parent1, parent2);
+					child1 = inds[0];
+					child2 = inds[1];
+					break;
+				default:
+					// Two point crossover
+					TwoPointCrossover tpc = new TwoPointCrossover(proCrossover, rand);
+					tpc.setFixedCrossoverPoint(true);
+					c1 = new GEChromosome((GEChromosome) parent1.getGenotype().get(0));
+					c2 = new GEChromosome((GEChromosome) parent2.getGenotype().get(0));
+					chromosomes = tpc.crossover(c1, c2);
+					child1 = rd.axiomIndividual(chromosomes[0], curGeneration);
+					child2 = rd.axiomIndividual(chromosomes[1], curGeneration);
+					break;
 			}
 
 			RandomNumberGenerator rand1 = new MersenneTwisterFast();
 			IntFlipMutation mutation = new IntFlipMutation(proMutation, rand1);
 
-			child1 = mutation.doOperation(child1, rd, curGeneration, totalGeneration, child1.getMutationPoints());
-			child2 = mutation.doOperation(child2, rd, curGeneration, totalGeneration, child2.getMutationPoints());
+			try {
+				child1 = mutation.doOperation(child1, rd, curGeneration, totalGeneration, child1.getMutationPoints());
+				child2 = mutation.doOperation(child2, rd, curGeneration, totalGeneration, child2.getMutationPoints());
+			} catch (IOException | InterruptedException e) {
+				e.printStackTrace();
+			} 
 			// logger.info("child1 after mutation:" + child1 );
 			// logger.info("child2 after mutation:" + child2 );
 			if (diversity == 1) {
@@ -338,12 +344,12 @@ public class EATools {
 		}
 	}
 
-	public static String[][] setTablesPredicates(Logger logger) {
+	public static String[][] setTablesPredicates(Logger logger, SparqlEndpoint endpoint) {
 		String sparql = "distinct ?p where {?s ?p ?o}";
 		String p = "";
 		String gp = "";
-		RDFMiner.endpoint.select(sparql);
-		ResultSet rs = RDFMiner.endpoint.getResultset();
+		endpoint.select(sparql, 0);
+		ResultSet rs = endpoint.getResultSet();
 		ArrayList<String> predicates = new ArrayList<String>();
 		int i = 0;
 		while (rs.hasNext()) {
@@ -360,7 +366,7 @@ public class EATools {
 			gp = "?s <" + p + "> ?o";
 			logger.info("p= " + p);
 			arr[j][0] = p;
-			int c = RDFMiner.endpoint.count("?s", gp);
+			int c = endpoint.count("?s", gp, 0);
 			int d = 0;
 			arr[j][1] = String.valueOf(c);
 			arr[j][2] = String.valueOf(d);

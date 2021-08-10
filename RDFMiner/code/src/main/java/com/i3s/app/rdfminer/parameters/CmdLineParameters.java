@@ -9,6 +9,8 @@ import java.util.List;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
+import com.i3s.app.rdfminer.Global;
+
 /**
  * A container of command line parameters and options.
  * 
@@ -49,8 +51,8 @@ public class CmdLineParameters {
 	public String grammarFile = System.getenv("HOME") + "code/resources/OWL2Axiom-test.bnf";
 
 	@Option(name = "-o", aliases = {
-			"--output" }, usage = "name of output file (without extension): the name 'results' is chosen if -o is not used", metaVar = "RESULTFILE")
-	public String resultFile = "results";
+			"--output" }, usage = "path of output file", metaVar = "RESULTFILE")
+	public String resultFile = Global.OUTPUT_PATH + "results.json";
 
 	@Option(name = "-r", aliases = { "--random" }, usage = "test randomly generated axioms")
 	public boolean useRandomAxiomGenerator = false;
@@ -60,7 +62,7 @@ public class CmdLineParameters {
 	public String subclassList = null;
 
 	@Option(name = "-t", aliases = {
-			"--timeout" }, usage = "use this time-out (in minutes) for axiom testing", metaVar = "MINUTES")
+			"--timeout" }, usage = "use this time-out (in seconds) for axiom testing", metaVar = "SECONDS")
 	public long timeOut = 0;
 	
 	//**************************************************//
@@ -154,7 +156,7 @@ public class CmdLineParameters {
 
 	@Option(name = "-sre", aliases = {
 			"--StatisticsResult" }, usage = "use as this value as the name of output statistics result file", metaVar = "STATISTICS_RESULT")
-	public String StatisticsResult = "StatisticsResult.xlsx";
+	public String StatisticsResult = "StatisticsResult.json";
 
 	@Option(name = "-fax", aliases = {
 			"--FileAxioms" }, usage = "use as this value as the name of output statistics axioms", metaVar = "STATISTICS_AXIOMS")

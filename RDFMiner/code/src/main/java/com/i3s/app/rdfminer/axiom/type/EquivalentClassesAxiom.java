@@ -43,7 +43,7 @@ public class EquivalentClassesAxiom extends Axiom {
 	 * 
 	 *
 	 */
-	public EquivalentClassesAxiom(List<List<Symbol>> arguments) {
+	public EquivalentClassesAxiom(List<List<Symbol>> arguments, SparqlEndpoint endpoint) {
 		equivalentClass = new Expression[arguments.size()];
 		equivalentClassComplement = new Expression[equivalentClass.length];
 		for (int i = 0; i < equivalentClass.length; i++) {
@@ -61,7 +61,7 @@ public class EquivalentClassesAxiom extends Axiom {
 			System.out.println(SparqlEndpoint.prettyPrint(equivalentClassComplement[i].graphPattern));
 		}
 
-		update();
+		update(endpoint);
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class EquivalentClassesAxiom extends Axiom {
 	 * </p>
 	 */
 	@Override
-	public void update() {
+	public void update(SparqlEndpoint endpoint) {
 		confirmations = new ArrayList<String>();
 		exceptions = new ArrayList<String>();
 
@@ -111,7 +111,7 @@ public class EquivalentClassesAxiom extends Axiom {
 				refCardGraphPattern += " UNION ";
 			refCardGraphPattern += "{ " + equivalentClass[i].graphPattern + " }";
 		}
-		referenceCardinality = RDFMiner.endpoint.count("?x", refCardGraphPattern);
+		referenceCardinality = endpoint.count("?x", refCardGraphPattern, 0);
 
 		String confirmationGraphPattern = "";
 		for (int i = 0; i < equivalentClass.length; i++) {
@@ -126,30 +126,35 @@ public class EquivalentClassesAxiom extends Axiom {
 			}
 			confirmationGraphPattern += " }";
 		}
-		numConfirmations = RDFMiner.endpoint.count("?x", confirmationGraphPattern);
-		if (numConfirmations > 0 && numConfirmations < 100) {
-			// query the confirmations
-			RDFMiner.endpoint.select("TO DO");
-			while (RDFMiner.endpoint.hasNext()) {
-				QuerySolution solution = RDFMiner.endpoint.next();
-				RDFNode x = solution.get("x");
-				confirmations.add(Expression.sparqlEncode(x));
-			}
-		}
+		numConfirmations = endpoint.count("?x", confirmationGraphPattern, 0);
+//		if (numConfirmations > 0 && numConfirmations < 100) {
+//			// query the confirmations
+//			RDFMiner.endpoint.select("TO DO", 0);
+//			while (RDFMiner.endpoint.hasNext()) {
+//				QuerySolution solution = RDFMiner.endpoint.next();
+//				RDFNode x = solution.get("x");
+//				confirmations.add(Expression.sparqlEncode(x));
+//			}
+//		}
 
 		String exceptionGraphPattern = "";
 		for (int i = 0; i < equivalentClass.length; i++)
 			exceptionGraphPattern += equivalentClass[i].graphPattern + "\n";
-		numExceptions = RDFMiner.endpoint.count("?x", exceptionGraphPattern);
-		if (numExceptions > 0 && numExceptions < 100) {
-			// query the exceptions
-			RDFMiner.endpoint.select("TO DO");
-			while (RDFMiner.endpoint.hasNext()) {
-				QuerySolution solution = RDFMiner.endpoint.next();
-				RDFNode x = solution.get("x");
-				exceptions.add(Expression.sparqlEncode(x));
-			}
-		}
+		numExceptions = endpoint.count("?x", exceptionGraphPattern, 0);
+//		if (numExceptions > 0 && numExceptions < 100) {
+//			// query the exceptions
+//			RDFMiner.endpoint.select("TO DO", 0);
+//			while (RDFMiner.endpoint.hasNext()) {
+//				QuerySolution solution = RDFMiner.endpoint.next();
+//				RDFNode x = solution.get("x");
+//				exceptions.add(Expression.sparqlEncode(x));
+//			}
+//		}
+	}
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
 	}
 
 }

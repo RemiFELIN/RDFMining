@@ -28,6 +28,7 @@ public class ValueRestrictionClassExpression extends Expression {
 	public ValueRestrictionClassExpression(List<Symbol> role, List<Symbol> concept) {
 		super();
 		rootSymbol = "ObjectAllValuesFrom";
+//		System.out.println("ValueRestrictionClassExpression: role / concept:\n" + role + " / " + concept);
 		subExpressions.add(ExpressionFactory.createProperty(role));
 		subExpressions.add(ExpressionFactory.createClass(concept));
 		graphPattern = createGraphPattern("?x", "?y");

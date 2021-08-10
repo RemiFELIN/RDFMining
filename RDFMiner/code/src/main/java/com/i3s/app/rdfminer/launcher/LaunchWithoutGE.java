@@ -4,11 +4,14 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.engine.http.QueryExceptionHTTP;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.i3s.app.rdfminer.Global;
@@ -20,7 +23,7 @@ import com.i3s.app.rdfminer.axiom.CandidateAxiomGenerator;
 import com.i3s.app.rdfminer.axiom.IncreasingTimePredictorAxiomGenerator;
 import com.i3s.app.rdfminer.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.axiom.type.SubClassOfAxiom;
-import com.i3s.app.rdfminer.output.AxiomTestJSON;
+import com.i3s.app.rdfminer.output.AxiomJSON;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
 import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 
@@ -39,21 +42,23 @@ public class LaunchWithoutGE {
 			+ "PREFIX dbpedia: <http://dbpedia.org/>\n" + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n"
 			+ "PREFIX dbo: <http://dbpedia.org/ontology/>\n";
 	
+	private List<JSONObject> axioms;
+	
 	/**
 	 * The first version of RDFMiner launcher
 	 */
-	public static void run(CmdLineParameters parameters, FileWriter output) {
+	public void run(CmdLineParameters parameters) {
 		
 		AxiomGenerator generator = null;
 		BufferedReader axiomFile = null;
 
 		// Create an empty JSON object which will be fill with our results
-		JSONObject json = new JSONObject();
+		RDFMiner.axiomsList = new JSONArray();
+		axioms = new ArrayList<>();
 
 		// Set SPARQL Endpoit
 		RDFMiner.endpoint = new SparqlEndpoint(Global.SPARQL_ENDPOINT, PREFIXES);
-
-
+		
 		if (parameters.axiomFile == null) {
 			if (parameters.axiom == null) {
 				if (parameters.useRandomAxiomGenerator) {
@@ -80,14 +85,24 @@ public class LaunchWithoutGE {
 				return;
 			}
 		}
-
+		
+		// ShutDownHook
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				// Save results in output file
+				if (parameters.axiom == null)
+					writeAndFinish();
+			}
+		});
+				
 		RDFMiner.executor = Executors.newSingleThreadExecutor();
 
 		if (parameters.axiom == null) {
 			// as the test of a single axiom is return on standard output, we don't need to
 			// write file of the results
 			try {
-				output = new FileWriter(Global.OUTPUT_PATH + parameters.resultFile + ".json");
+				RDFMiner.output = new FileWriter(parameters.resultFile);
 			} catch (IOException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
@@ -112,10 +127,12 @@ public class LaunchWithoutGE {
 				} catch (QueryExceptionHTTP httpError) {
 					logger.error("HTTP Error " + httpError.getMessage() + " making a SPARQL query.");
 					httpError.printStackTrace();
+					writeAndFinish();
 					System.exit(1);
 				} catch (JenaException jenaException) {
 					logger.error("Jena Exception " + jenaException.getMessage() + " making a SPARQL query.");
 					jenaException.printStackTrace();
+					writeAndFinish();
 					System.exit(1);
 				}
 			} else {
@@ -135,6 +152,7 @@ public class LaunchWithoutGE {
 					logger.info("Testing axiom: " + axiomName);
 					a = AxiomFactory.create(axiomName, RDFMiner.endpoint);
 				} catch (IOException e) {
+					writeAndFinish();
 					logger.error("Could not read the next axiom.");
 					e.printStackTrace();
 					System.exit(1);
@@ -146,7 +164,8 @@ public class LaunchWithoutGE {
 
 			if (a != null) {
 				// Save a JSON report of the test
-				AxiomTestJSON reportJSON = new AxiomTestJSON();
+				AxiomJSON reportJSON = new AxiomJSON();
+				reportJSON.axiom = axiomName;
 				reportJSON.elapsedTime = t - t0;
 				reportJSON.referenceCardinality = a.referenceCardinality;
 				reportJSON.numConfirmations = a.numConfirmations;
@@ -160,13 +179,13 @@ public class LaunchWithoutGE {
 					reportJSON.exceptions = a.exceptions;
 
 				// fill json results
-				json.append(axiomName, reportJSON.toJSON());
+				RDFMiner.axiomsList.put(reportJSON.toJSON());
 
 				// print useful results
 				logger.info("Num. confirmations: " + a.numConfirmations);
 				logger.info("Num. exceptions: " + a.numExceptions);
-				logger.info("Possibility = " + a.possibility().doubleValue());
-				logger.info("Necessity = " + a.necessity().doubleValue());
+//				logger.info("Possibility = " + a.possibility().doubleValue());
+//				logger.info("Necessity = " + a.necessity().doubleValue());
 
 				if (a instanceof SubClassOfAxiom && a.necessity().doubleValue() > 1.0 / 3.0) {
 					SubClassOfAxiom sa = (SubClassOfAxiom) a;
@@ -174,7 +193,7 @@ public class LaunchWithoutGE {
 				}
 
 				if (parameters.axiom != null) {
-					System.out.println("[RES]" + json.toString());
+					System.out.println("[RES]" + RDFMiner.results.toString());
 					break;
 				}
 
@@ -183,17 +202,30 @@ public class LaunchWithoutGE {
 			logger.info("Test completed in " + (t - t0) + " ms.");
 		}
 		logger.info("Done testing axioms. Exiting.");
-		if (parameters.axiom == null) {
-			try {
-				output.write(json.toString());
-				output.close();
-			} catch (IOException e) {
-				logger.error("I/O error while closing CSV writer: " + e.getMessage());
-				e.printStackTrace();
-				System.exit(1);
-			}
-		}
+//		if (parameters.axiom == null) {
+//			try {
+//				output.write(RDFMiner.results.toString());
+//				output.close();
+//			} catch (IOException e) {
+//				logger.error("I/O error while closing JSON writer: " + e.getMessage());
+//				e.printStackTrace();
+//				System.exit(1);
+//			}
+//			writeAndFinish();
+//		}
 		System.exit(0);
+	}
+	
+	public void writeAndFinish() {
+		try {
+			logger.warn("Shutting down RDFMiner ...");
+			RDFMiner.output.write(RDFMiner.axiomsList.toString());
+			RDFMiner.output.close();
+		} catch (IOException e) {
+			logger.error("I/O error while closing JSON writer: " + e.getMessage());
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 
 }

@@ -33,7 +33,7 @@ public class Global {
 	/**
 	 * Output path : corresponding to '/rdfminer/io/' in container
 	 */
-	public static final String OUTPUT_PATH = System.getenv("HOME") + "io/";
+	public static final String OUTPUT_PATH = System.getenv("HOME") + "/io/";
 	
 	/**
 	 * .cache files folder path
