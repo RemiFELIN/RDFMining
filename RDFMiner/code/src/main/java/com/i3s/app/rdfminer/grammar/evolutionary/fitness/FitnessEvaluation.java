@@ -76,7 +76,7 @@ public class FitnessEvaluation {
 			// logger.info(axiom);
 			if (indivi.isMapped()) {
 				try {
-					System.out.println("[AXIOM] " + indivi.getPhenotype());
+					System.out.println("[AXIOM " + i + "/" + popSize + "] " + indivi.getPhenotype());
 //					System.out.println("> " + i + "/" + popSize);
 					axiom = AxiomFactory.create(indivi.getPhenotype(), endpoint);
 					System.out.println();
@@ -301,8 +301,11 @@ public class FitnessEvaluation {
 	public double setFitness(Axiom axiom) {
 		// Evaluate axioms with generality formula or (initial) formula with necessity
 		if (generality != 0) {
+			axiom.fitness = axiom.possibility().doubleValue() * axiom.generality;
 			return axiom.possibility().doubleValue() * axiom.generality;
 		} else {
+			axiom.fitness = axiom.referenceCardinality
+					* ((axiom.possibility().doubleValue() + axiom.necessity().doubleValue()) / 2);
 			return axiom.referenceCardinality
 					* ((axiom.possibility().doubleValue() + axiom.necessity().doubleValue()) / 2);
 		}

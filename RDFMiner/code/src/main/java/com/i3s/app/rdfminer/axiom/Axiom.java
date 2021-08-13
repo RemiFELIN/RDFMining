@@ -40,8 +40,9 @@ public abstract class Axiom {
 	 */
 	public List<List<Symbol>> argumentClasses;
 	public double generality = 0;
+	public double fitness = 0.0;
 	public int referenceCardinality = 0;
-
+	
 	/**
 	 * The number of facts in the RDF store that explicitly support/confirm the
 	 * axiom.

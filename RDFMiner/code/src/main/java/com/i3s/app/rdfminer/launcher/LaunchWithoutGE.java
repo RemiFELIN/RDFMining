@@ -173,6 +173,8 @@ public class LaunchWithoutGE {
 				reportJSON.possibility = a.possibility().doubleValue();
 				reportJSON.necessity = a.necessity().doubleValue();
 				reportJSON.isTimeout = a.isTimeout;
+				reportJSON.generality = a.generality;
+				reportJSON.fitness = a.fitness;
 				if (a.numConfirmations > 0 && a.numConfirmations < 100)
 					reportJSON.confirmations = a.confirmations;
 				if (a.numExceptions > 0 && a.numExceptions < 100)
