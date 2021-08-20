@@ -28,7 +28,7 @@ public class Global {
 	 * Local SPARQL Endpoint
 	 */
 	// public static final String LOCAL_SPARQL_ENDPOINT = "http://localhost:8890/sparql";
-	public static final String LOCAL_SPARQL_ENDPOINT = "http://172.19.0.2:8890/sparql";
+	public static final String LOCAL_SPARQL_ENDPOINT = "http://172.19.0.2:9000/sparql";
 
 	/**
 	 * Output path : corresponding to '/rdfminer/io/' in container

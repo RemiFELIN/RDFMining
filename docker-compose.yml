@@ -21,7 +21,7 @@ services:
         build:
             context: ./Virtuoso/.
         ports:
-            - "8890:8890"
+            - "9000:9000"
         volumes:
             - /home/remi/Bureau/dev/RDFMining/Virtuoso/data:/data
         networks:
