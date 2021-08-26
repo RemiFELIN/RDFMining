@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
@@ -174,9 +175,9 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 		Set<RDFNodePair> classes = new TreeSet<RDFNodePair>();
 
 		logger.warn("Querying DBpedia with query " + sparql);
-		RDFMiner.endpoint.select(sparql, 0);
-		while (RDFMiner.endpoint.hasNext()) {
-			QuerySolution solution = RDFMiner.endpoint.next();
+		ResultSet result = RDFMiner.endpoint.select(sparql, 0);
+		while (result.hasNext()) {
+			QuerySolution solution = result.next();
 
 			RDFNode x = solution.get("class");
 			RDFNode y = solution.get("y");

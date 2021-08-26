@@ -9,6 +9,7 @@ import java.util.List;
 import com.i3s.app.rdfminer.axiom.type.DisjointClassesAxiom;
 import com.i3s.app.rdfminer.axiom.type.SubClassOfAxiom;
 import com.i3s.app.rdfminer.grammar.DLFactory;
+import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 
 import Mapper.Symbol;
@@ -94,20 +95,20 @@ public class AxiomFactory extends DLFactory {
 	 * @param syntax an axiom definition in OWL 2 functional-style syntax.
 	 * @return the corresponding axiom.
 	 */
-	public static Axiom create(List<Symbol> syntax, SparqlEndpoint endpoint) {
+	public static Axiom create(GEIndividual individual, List<Symbol> syntax, SparqlEndpoint endpoint) {
 		
 		Axiom axiom = null;
 		List<List<Symbol>> arguments = parseArguments(syntax);
 		
 		if (syntax.get(0).equals("SubClassOf")) {
 			require(arguments.size() == 2);
-			axiom = new SubClassOfAxiom(arguments.get(0), arguments.get(1), endpoint);
+			axiom = new SubClassOfAxiom(individual, arguments.get(0), arguments.get(1), endpoint);
 			axiom.argumentClasses = arguments;
 		} else if (syntax.get(0).equals("EquivalentClasses")) {
 			// TO DO
 		} else if (syntax.get(0).equals("DisjointClasses")) {
 			require(arguments.size() > 1);
-			axiom = new DisjointClassesAxiom(arguments, endpoint);
+			axiom = new DisjointClassesAxiom(individual, arguments, endpoint);
 			axiom.argumentClasses = arguments;
 		} else if (syntax.get(0).equals("DisjointUnion")) {
 			// TO DO
@@ -187,7 +188,7 @@ public class AxiomFactory extends DLFactory {
 	 * @param str
 	 * @return
 	 */
-	public static Axiom create(String str, SparqlEndpoint endpoint) {
+	public static Axiom create(GEIndividual individual, String str, SparqlEndpoint endpoint) {
 		List<Symbol> list = new ArrayList<Symbol>();
 		String symbol = "";
 		boolean blank = false;
@@ -211,7 +212,7 @@ public class AxiomFactory extends DLFactory {
 			list.add(new Symbol(symbol, Enums.SymbolType.TSymbol));
 		// for(int i = 0; i<list.size(); i++)
 		// System.out.println("symbol " + i + " = " + list.get(i));
-		return create(list, endpoint);
+		return create(individual, list, endpoint);
 	}
 
 }

@@ -348,8 +348,8 @@ public class EATools {
 		String sparql = "distinct ?p where {?s ?p ?o}";
 		String p = "";
 		String gp = "";
-		endpoint.select(sparql, 0);
-		ResultSet rs = endpoint.getResultSet();
+		ResultSet rs = endpoint.select(sparql, 0);
+//		ResultSet rs = endpoint.getResultSet();
 		ArrayList<String> predicates = new ArrayList<String>();
 		int i = 0;
 		while (rs.hasNext()) {

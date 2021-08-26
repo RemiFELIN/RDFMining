@@ -47,7 +47,7 @@ public class RDFMiner {
 	 * An executor to be used to submit asynchronous tasks which might be subjected
 	 * to a time-out.
 	 */
-	public static ExecutorService executor;
+//	public static ExecutorService executor;
 
 	/**
 	 * The output file in json

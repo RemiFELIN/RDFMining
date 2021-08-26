@@ -142,12 +142,12 @@ public class SampleDBpediaExtraction {
 		}
 		logger.info("picked number of triples:" + pickednumber_triples);
 
-		endpoint.selectAndCopyResults(str);
+		ResultSet result1 = endpoint.selectAndCopyResults(str);
 		logger.info(str);
 		// }
 		logger.info("Querry to pick up objects");
 
-		ResultSet result1 = endpoint.resultSet;
+//		ResultSet result1 = endpoint.resultSet;
 		// int numbertriples_onlinedbpedia_object=0;
 		cur_num = 0;
 		while (result1.hasNext() && cur_num < pickednumber_triples) {
@@ -210,10 +210,9 @@ public class SampleDBpediaExtraction {
 			pickednumber_triples = 1;
 		}
 		logger.info("Number triple pickup:" + pickednumber_triples);
-		endpoint.selectAndCopyResults(str2);
 		logger.info(str2);
 
-		ResultSet result2 = endpoint.resultSet;
+		ResultSet result2 = endpoint.selectAndCopyResults(str2);
 		// int numbertriples_onlinedbpedia_subject=0;
 		cur_num = 0;
 		while (result2.hasNext() && cur_num < pickednumber_triples) {

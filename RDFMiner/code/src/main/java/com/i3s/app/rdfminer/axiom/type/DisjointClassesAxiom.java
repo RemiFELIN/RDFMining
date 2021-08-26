@@ -14,6 +14,7 @@ import com.i3s.app.rdfminer.axiom.Axiom;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.expression.complement.ComplementClassExpression;
+import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 
 import Mapper.Symbol;
@@ -46,7 +47,8 @@ public class DisjointClassesAxiom extends Axiom {
 	 * @param subClassExpression   the functional-style expression of the subclass
 	 * @param superClassExpression the functional-style expression of the superclass
 	 */
-	public DisjointClassesAxiom(List<List<Symbol>> arguments, SparqlEndpoint endpoint) {
+	public DisjointClassesAxiom(GEIndividual individual, List<List<Symbol>> arguments, SparqlEndpoint endpoint) {
+		this.individual = individual;
 		disjointClass = new Expression[arguments.size()];
 		disjointClassComplement = new Expression[disjointClass.length];
 		for (int i = 0; i < disjointClass.length; i++) {
@@ -163,15 +165,15 @@ public class DisjointClassesAxiom extends Axiom {
 			numExceptions = endpoint.count("?x", exceptionGraphPattern, 0);
 			// logger.info("Number of exception: " + numExceptions);
 			// logger.info(" ");
-			if (numExceptions > 0 && numExceptions < 100) {
+//			if (numExceptions > 0 && numExceptions < 100) {
 				// query the exceptions
 				// endpoint.select("TO DO");
-				while (endpoint.hasNext()) {
-					QuerySolution solution = endpoint.next();
-					RDFNode x = solution.get("x");
-					exceptions.add(Expression.sparqlEncode(x));
-				}
-			}
+//				while (endpoint.hasNext()) {
+//					QuerySolution solution = endpoint.next();
+//					RDFNode x = solution.get("x");
+//					exceptions.add(Expression.sparqlEncode(x));
+//				}
+//			}
 			numConfirmations = referenceCardinality - numExceptions;
 		} else
 			referenceCardinality = 0;
@@ -213,14 +215,14 @@ public class DisjointClassesAxiom extends Axiom {
 		numExceptions = endpoint.count("?x", exceptionGraphPattern, 0);
 		// logger.info("number of exception: " + numExceptions);
 		// logger.info(".............................................................");
-		if (numExceptions > 0 && numExceptions < 100) {
-			// query the exceptions
-			while (endpoint.hasNext()) {
-				QuerySolution solution = endpoint.next();
-				RDFNode x = solution.get("x");
-				exceptions.add(Expression.sparqlEncode(x));
-			}
-		}
+//		if (numExceptions > 0 && numExceptions < 100) {
+//			// query the exceptions
+//			while (endpoint.hasNext()) {
+//				QuerySolution solution = endpoint.next();
+//				RDFNode x = solution.get("x");
+//				exceptions.add(Expression.sparqlEncode(x));
+//			}
+//		}
 		numConfirmations = referenceCardinality - numExceptions;
 	}
 

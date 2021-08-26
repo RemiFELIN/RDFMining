@@ -53,8 +53,8 @@ public class CostGP {
 	static int count_FILTER_Operator() {
 		int count = 0;
 		String GP = "(count(DISTINCT ?t) AS ?n)  where {\n " + "?t a sp:Filter. \n" + " }";
-		endpoint_spin.select(GP, 0);
-		ResultSet rs = endpoint_spin.getResultSet();
+		ResultSet rs = endpoint_spin.select(GP, 0);
+//		ResultSet rs = endpoint_spin.getResultSet();
 		if (rs.hasNext()) {
 			count = rs.next().get("n").asLiteral().getInt();
 		}
@@ -65,8 +65,8 @@ public class CostGP {
 	static int count_Triples() {
 		int count = 0;
 		String GP = "(count(DISTINCT ?t) AS ?n)  where {\n " + "?t sp:subject ?s. \n" + " }";
-		endpoint_spin.select(GP, 0);
-		ResultSet rs = endpoint_spin.getResultSet();
+		ResultSet rs = endpoint_spin.select(GP, 0);
+//		ResultSet rs = endpoint_spin.getResultSet();
 		if (rs.hasNext()) {
 			count = rs.next().get("n").asLiteral().getInt();
 		}
@@ -77,8 +77,8 @@ public class CostGP {
 	static int count_UNION_Operator() {
 		int count = 0;
 		String GP = "(count(DISTINCT ?t) AS ?n)  where {\n " + "?t a sp:Union. \n" + " }";
-		endpoint_spin.select(GP, 0);
-		ResultSet rs = endpoint_spin.getResultSet();
+		ResultSet rs = endpoint_spin.select(GP, 0);
+//		ResultSet rs = endpoint_spin.getResultSet();
 		if (rs.hasNext()) {
 			count = rs.next().get("n").asLiteral().getInt();
 		}
@@ -90,8 +90,8 @@ public class CostGP {
 		int count = 0;
 		String GP = "?x (count(?t) as ?c) where {\n" + "?x a sp:notExists ;\n"
 				+ "sp:elements/rdf:rest*/rdf:first ?t. \n" + "?t sp:subject ?s. \n" + "}\n" + "group by ?x";
-		endpoint_spin.select(GP, 0);
-		ResultSet rs = endpoint_spin.getResultSet();
+		ResultSet rs = endpoint_spin.select(GP, 0);
+//		ResultSet rs = endpoint_spin.getResultSet();
 		while (rs.hasNext()) {
 			QuerySolution r = rs.next();
 			System.out.println(r.toString());
@@ -105,8 +105,8 @@ public class CostGP {
 		int count = 0;
 		String GP = "?x (count(?t) as ?c) where {\n" + "?x a sp:Union ;\n" + "sp:elements/rdf:rest*/rdf:first ?exp.\n"
 				+ "?exp rdf:rest*/rdf:first ?t.\n" + "?t sp:subject ?s.\n" + "}\n" + "group by ?x";
-		endpoint_spin.select(GP, 0);
-		ResultSet rs = endpoint_spin.getResultSet();
+		ResultSet rs = endpoint_spin.select(GP, 0);
+//		ResultSet rs = endpoint_spin.getResultSet();
 		while (rs.hasNext()) {
 			QuerySolution r = rs.next();
 			// System.out.println(r.toString());
@@ -119,8 +119,8 @@ public class CostGP {
 	static int count_Variables() {
 		int count = 0;
 		String GP = "(count(distinct ?v) as ?c)  where {\n" + "?t sp:object ?o.\n" + "?o sp:varName ?v.\n" + "}\n";
-		endpoint_spin.select(GP, 0);
-		ResultSet rs = endpoint_spin.getResultSet();
+		ResultSet rs = endpoint_spin.select(GP, 0);
+//		ResultSet rs = endpoint_spin.getResultSet();
 		while (rs.hasNext()) {
 			QuerySolution r = rs.next();
 			// System.out.println(r.toString());
@@ -134,8 +134,8 @@ public class CostGP {
 
 		String GP = "distinct ?p where {\n" + "?t sp:predicate ?p.\n" + "}\n";
 		ArrayList<String> list = new ArrayList<String>();
-		endpoint_spin.select(GP, 0);
-		ResultSet rs = endpoint_spin.getResultSet();
+		ResultSet rs = endpoint_spin.select(GP, 0);
+//		ResultSet rs = endpoint_spin.getResultSet();
 		while (rs.hasNext()) {
 			QuerySolution r = rs.next();
 			// System.out.println("list predicates " + r.get("p").toString());

@@ -13,7 +13,7 @@ import java.io.Reader;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
+//import java.util.concurrent.Executors;
 
 import javax.xml.bind.JAXBException;
 
@@ -43,10 +43,10 @@ import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 import com.i3s.app.rdfminer.statistics.Statistics;
 
 import Individuals.GEChromosome;
-import jxl.Workbook;
-import jxl.write.Label;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
+//import jxl.Workbook;
+//import jxl.write.Label;
+//import jxl.write.WritableSheet;
+//import jxl.write.WritableWorkbook;
 
 public class LaunchWithGE {
 
@@ -79,9 +79,9 @@ public class LaunchWithGE {
 		RDFMiner.stats = new StatJSON();
 		
 		RandomAxiomGenerator generator = null;
-		WritableWorkbook writeWorkbook = null;
-		WritableSheet sheet1 = null;
-		String FileAxioms = parameters.FileAxioms;
+//		WritableWorkbook writeWorkbook = null;
+//		WritableSheet sheet1 = null;
+//		String FileAxioms = parameters.FileAxioms;
 
 		if (parameters.axiomFile == null && parameters.useRandomAxiomGenerator) {
 			// if a randomly generated Axiom already exists then continue
@@ -108,7 +108,7 @@ public class LaunchWithGE {
 			}
 		});
 		
-		RDFMiner.executor = Executors.newSingleThreadExecutor();
+//		RDFMiner.executor = Executors.newSingleThreadExecutor();
 
 		/* GRAMMATICAL EVOLUTIONARY */
 		/* Parameters as the inputs of GE */
@@ -225,35 +225,12 @@ public class LaunchWithGE {
 				// logger.info("===");
 				logger.info("Begin evaluating individuals...");
 				// logger.info("CALLING FitnessEvaluation: ");
-				fit.updatePopulation(candidatePopulation, curGeneration, parameters.numGeneration, null, null);
+				fit.updatePopulation(candidatePopulation, curGeneration, false, null);
 			}
 			
 			if (parameters.populationsize * curGeneration == parameters.k_base * curCheckpoint) {
-				// if2
-				try {
-					File file = new File(FileAxioms + "_k" + parameters.k_base * curCheckpoint + "_size"
-							+ parameters.populationsize + ".xlsx");
-					file.createNewFile();
-					writeWorkbook = Workbook.createWorkbook(file);
 
-					sheet1 = writeWorkbook.createSheet("k= " + parameters.k_base * curCheckpoint, 0);
-					sheet1.addCell(new Label(0, 0, "Axiom"));
-					sheet1.addCell(new Label(1, 0, "Possibilitty"));
-					sheet1.addCell(new Label(2, 0, "necessity"));
-					sheet1.addCell(new Label(3, 0, "U_phi"));
-					sheet1.addCell(new Label(4, 0, "Generality"));
-					sheet1.addCell(new Label(5, 0, "Complexity_Penalty"));
-					sheet1.addCell(new Label(6, 0, "Fitness"));
-					sheet1.addCell(new Label(7, 0, "Mapped"));
-					sheet1.addCell(new Label(8, 0, "Possibility_DBpedia"));
-					sheet1.addCell(new Label(9, 0, "U_phi_DBpedia"));
-					sheet1.addCell(new Label(10, 0, "Generality_DBpedia"));
-					sheet1.addCell(new Label(11, 0, "necessity_DBPedia"));
-				} catch (IOException e) {
-					e.printStackTrace();
-
-				}
-				fit.display(candidatePopulation, curGeneration, sheet1, axioms, parameters.k_base * curCheckpoint);
+				fit.display(candidatePopulation, true, axioms, curCheckpoint);
 
 				ArrayList<GEIndividual> candidatePopulation2 = new ArrayList<GEIndividual>();
 				for (int l = 0; l < candidatePopulation.size(); l++) {
@@ -265,18 +242,19 @@ public class LaunchWithGE {
 					candidatePopulation2.add(indivi);
 				}
 
-				fit.updatePopulation(candidatePopulation2, curGeneration, parameters.numGeneration, sheet1, axioms);
+				fit.updatePopulation(candidatePopulation2, curGeneration, true, axioms);
 				for(JSONObject axiom : axioms) {
 					RDFMiner.axioms.add(axiom);
 				}
 				axioms.clear();
 				
-				writeWorkbook.write();
-				writeWorkbook.close();
+//				writeWorkbook.write();
+//				writeWorkbook.close();
 				curCheckpoint++;
-			} else {
-				fit.display(candidatePopulation, curGeneration, null, null, 0);
-			}
+			} 
+//			else {
+//				fit.display(candidatePopulation, false, null, 0);
+//			}
 			
 			ArrayList<GEIndividual> distinctCandidatePopulation = EATools.getDistinctPopulation(candidatePopulation);
 			ArrayList<GEIndividual> distinctGenotypeCandidatePopulation = EATools

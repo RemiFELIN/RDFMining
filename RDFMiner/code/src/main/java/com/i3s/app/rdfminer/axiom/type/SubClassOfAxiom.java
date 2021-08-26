@@ -7,15 +7,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+//import java.util.concurrent.Callable;
+//import java.util.concurrent.ExecutionException;
+//import java.util.concurrent.ExecutorService;
+//import java.util.concurrent.Executors;
+//import java.util.concurrent.Future;
+//import java.util.concurrent.TimeUnit;
+//import java.util.concurrent.TimeoutException;
 
+import org.apache.jena.atlas.lib.Timer;
 import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
@@ -24,6 +26,7 @@ import com.i3s.app.rdfminer.axiom.Axiom;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.expression.complement.ComplementClassExpression;
+import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
 import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 import com.i3s.app.rdfminer.tools.TimeMap;
@@ -66,6 +69,8 @@ public class SubClassOfAxiom extends Axiom {
 	 */
 	public static TimeMap maxTestTime = new TimeMap();
 	
+	public SparqlEndpoint endpoint;
+	
 	/**
 	 * An executor to be used to submit asynchronous tasks which might be subjected
 	 * to a time-out.
@@ -80,9 +85,10 @@ public class SubClassOfAxiom extends Axiom {
 	 * @param superClassExpression the functional-style expression of the superclass
 	 * @param endpoint             the sparql endpoint used for the queries
 	 */
-	public SubClassOfAxiom(List<Symbol> subClassExpression, List<Symbol> superClassExpression,
+	public SubClassOfAxiom(GEIndividual individual, List<Symbol> subClassExpression, List<Symbol> superClassExpression,
 			SparqlEndpoint endpoint) {
-
+		this.endpoint = endpoint;
+		this.individual = individual;
 		subClass = ExpressionFactory.createClass(subClassExpression);
 		superClass = ExpressionFactory.createClass(superClassExpression);
 		if (superClass instanceof ComplementClassExpression)
@@ -92,13 +98,14 @@ public class SubClassOfAxiom extends Axiom {
 			superClassComplement = new ComplementClassExpression(superClass);
 //		System.out.println("------\nsubClass: " + subClass.getGraphPattern() + "\n---\nsuperClass: " + superClass.getGraphPattern() + "\n------");
 		try {
-			update(endpoint);
+			logger.info("Starting update axiom ...");
+			update(this.endpoint);
 		} catch (IllegalStateException e) {
 			// This is the conventional unchecked exception thrown by the
 			// Sparql endpoint if an HTTP 504 Gateway Time-out occurs.
 			// In that case, we try a slower, but safer, naive update as the last resort:
 			logger.warn("Trying a naive update: this is going to take some time...");
-			naive_update(endpoint);
+			naive_update(this.endpoint);
 		}
 	}
 
@@ -194,6 +201,7 @@ public class SubClassOfAxiom extends Axiom {
 	 */
 	@Override
 	public void update(SparqlEndpoint endpoint) {
+		System.out.println("endpoint:" + endpoint);
 		confirmations = new ArrayList<String>();
 		exceptions = new ArrayList<String>();
 //		Future<Integer> future = null;
@@ -201,7 +209,9 @@ public class SubClassOfAxiom extends Axiom {
 		// to fix
 		referenceCardinality = endpoint.count("?x", subClass.graphPattern, 0);
 		logger.info("referenceCardinality = " + referenceCardinality);
+		System.out.println("tata");
 		int numIntersectingClasses = endpoint.count("?D", subClass.graphPattern + " ?x a ?D . ", 0);
+		System.out.println("tutu");
 		logger.info("No. of Intersecting Classes = " + numIntersectingClasses);
 		timePredictor = referenceCardinality * numIntersectingClasses;
 //		logger.warn("Time Predictor = " + timePredictor);
@@ -210,9 +220,9 @@ public class SubClassOfAxiom extends Axiom {
 		if (numConfirmations > 0 && numConfirmations < 100) {
 			logger.info(numConfirmations + " confirmation(s) found ! retrieving in collection ...");
 			// query the confirmations
-			endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\n" + superClass.graphPattern + " }", 0);
-			while (endpoint.hasNext()) {
-				QuerySolution solution = endpoint.next();
+			ResultSet cfs = endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\n" + superClass.graphPattern + " }", 0);
+			while (cfs.hasNext()) {
+				QuerySolution solution = cfs.next();
 				RDFNode x = solution.get("x");
 				confirmations.add(Expression.sparqlEncode(x));
 			}
@@ -226,17 +236,17 @@ public class SubClassOfAxiom extends Axiom {
 			// Since the query to count exception is complex and may take very long to
 			// execute,
 			// we execute it with the user-supplied time out.
-			// Compute the time-out (in minutes):
+			// Compute the time-out (in seconds):
 			long timeOut = RDFMiner.parameters.timeOut;
 			timeOut += (long) Math.round(RDFMiner.parameters.dynTimeOut * timePredictor);
-			// Here, we assume that the contract of this method w.r.t. the semantics of the
-			// time-out is the same as the wait() method of class Object, i.e., a time-out of zero
-			// means no time-out.
+			// Set a timer to compute the result time of each query
+			Timer timer = new Timer();
+			timer.startTimer();
 			numExceptions = endpoint.count("?x", subClass.graphPattern + "\n" + superClassComplement.graphPattern, (int) timeOut);
-			// numExceptions = future.get(timeOut, TimeUnit.SECONDS);
+			long timeSpent = timer.endTimer();
 			// If no exceptions are raised
-			logger.info("Exceptions query finished - time spent: " + SparqlEndpoint.selectResponseTime + "ms.");
-			if ( SparqlEndpoint.selectResponseTime > ((int) timeOut * 1000)) {
+			logger.info("Exceptions query finished - time spent: " + timeSpent + "ms.");
+			if ( timeSpent > ((int) timeOut * 1000)) {
 				logger.warn("Timeout is reached");
 				// If the query times out, it is very likely that it would end up
 				// having a large number of exceptions. Therefore, we take the reference
@@ -247,21 +257,25 @@ public class SubClassOfAxiom extends Axiom {
 				isTimeout = true;
 			}
 		} else {
+			// Set a timer to compute the result time of each query
+			Timer timer = new Timer();
+			timer.startTimer();
 			// logger.warn("Time Out = 0 s");
 			// This is the EKAW 2014 version, without time-out:
 			numExceptions = endpoint.count("?x",
 					subClass.graphPattern + "\n" + superClassComplement.graphPattern, 0);
+			long timeSpent = timer.endTimer();
 			// Log the response time
-			logger.info("Exceptions query finished - time spent: " + SparqlEndpoint.selectResponseTime + "ms.");
+			logger.info("Exceptions query finished - time spent: " + timeSpent + "ms.");
 		}
 		// We don't need to compute exceptions if we get a timeout from exceptions SPARQL request
 		if (numExceptions > 0 && numExceptions < 100 && !isTimeout) {
 			logger.info(numExceptions + " exception(s) found ! retrieving in collection ...");
 			// retrieve the exceptions
-			endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\n"
+			ResultSet exc = endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\n"
 					+ superClassComplement.graphPattern + " }", 0);
-			while (endpoint.hasNext()) {
-				QuerySolution solution = endpoint.next();
+			while (exc.hasNext()) {
+				QuerySolution solution = exc.next();
 				RDFNode x = solution.get("x");
 				exceptions.add(Expression.sparqlEncode(x));
 			}

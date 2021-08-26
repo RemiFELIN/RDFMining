@@ -6,7 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.engine.http.QueryExceptionHTTP;
@@ -23,7 +22,7 @@ import com.i3s.app.rdfminer.axiom.CandidateAxiomGenerator;
 import com.i3s.app.rdfminer.axiom.IncreasingTimePredictorAxiomGenerator;
 import com.i3s.app.rdfminer.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.axiom.type.SubClassOfAxiom;
-import com.i3s.app.rdfminer.output.AxiomJSON;
+//import com.i3s.app.rdfminer.output.AxiomJSON;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
 import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 
@@ -95,8 +94,6 @@ public class LaunchWithoutGE {
 					writeAndFinish();
 			}
 		});
-				
-		RDFMiner.executor = Executors.newSingleThreadExecutor();
 
 		if (parameters.axiom == null) {
 			// as the test of a single axiom is return on standard output, we don't need to
@@ -123,7 +120,7 @@ public class LaunchWithoutGE {
 				axiomName = axiom.getStringNoSpace();
 				logger.info("Testing axiom: " + axiomName);
 				try {
-					a = AxiomFactory.create(axiom, RDFMiner.endpoint);
+					a = AxiomFactory.create(null, axiom, RDFMiner.endpoint);
 				} catch (QueryExceptionHTTP httpError) {
 					logger.error("HTTP Error " + httpError.getMessage() + " making a SPARQL query.");
 					httpError.printStackTrace();
@@ -150,7 +147,7 @@ public class LaunchWithoutGE {
 					if (axiomName.isEmpty())
 						break;
 					logger.info("Testing axiom: " + axiomName);
-					a = AxiomFactory.create(axiomName, RDFMiner.endpoint);
+					a = AxiomFactory.create(null, axiomName, RDFMiner.endpoint);
 				} catch (IOException e) {
 					writeAndFinish();
 					logger.error("Could not read the next axiom.");
@@ -164,24 +161,24 @@ public class LaunchWithoutGE {
 
 			if (a != null) {
 				// Save a JSON report of the test
-				AxiomJSON reportJSON = new AxiomJSON();
-				reportJSON.axiom = axiomName;
-				reportJSON.elapsedTime = t - t0;
-				reportJSON.referenceCardinality = a.referenceCardinality;
-				reportJSON.numConfirmations = a.numConfirmations;
-				reportJSON.numExceptions = a.numExceptions;
-				reportJSON.possibility = a.possibility().doubleValue();
-				reportJSON.necessity = a.necessity().doubleValue();
-				reportJSON.isTimeout = a.isTimeout;
-				reportJSON.generality = a.generality;
-				reportJSON.fitness = a.fitness;
-				if (a.numConfirmations > 0 && a.numConfirmations < 100)
-					reportJSON.confirmations = a.confirmations;
-				if (a.numExceptions > 0 && a.numExceptions < 100)
-					reportJSON.exceptions = a.exceptions;
+//				AxiomJSON reportJSON = new AxiomJSON();
+//				reportJSON.axiom = axiomName;
+//				reportJSON.elapsedTime = t - t0;
+//				reportJSON.referenceCardinality = a.referenceCardinality;
+//				reportJSON.numConfirmations = a.numConfirmations;
+//				reportJSON.numExceptions = a.numExceptions;
+//				reportJSON.possibility = a.possibility().doubleValue();
+//				reportJSON.necessity = a.necessity().doubleValue();
+//				reportJSON.isTimeout = a.isTimeout;
+//				reportJSON.generality = a.generality;
+//				reportJSON.fitness = a.fitness;
+//				if (a.numConfirmations > 0 && a.numConfirmations < 100)
+//					reportJSON.confirmations = a.confirmations;
+//				if (a.numExceptions > 0 && a.numExceptions < 100)
+//					reportJSON.exceptions = a.exceptions;
 
 				// fill json results
-				RDFMiner.axiomsList.put(reportJSON.toJSON());
+				RDFMiner.axiomsList.put(a.toJSON());
 
 				// print useful results
 				logger.info("Num. confirmations: " + a.numConfirmations);

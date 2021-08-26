@@ -1,11 +1,16 @@
 package com.i3s.app.rdfminer.grammar.evolutionary.fitness;
 
-import java.io.IOException;
+//import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
-import org.apache.jena.shared.JenaException;
-import org.apache.jena.sparql.engine.http.QueryExceptionHTTP;
+//import org.apache.jena.shared.JenaException;
+//import org.apache.jena.sparql.engine.http.QueryExceptionHTTP;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -17,14 +22,15 @@ import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.launcher.LaunchWithGE;
 import com.i3s.app.rdfminer.output.AxiomJSON;
 import com.i3s.app.rdfminer.output.DBPediaJSON;
+//import com.i3s.app.rdfminer.output.DBPediaJSON;
 import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 
 import Individuals.FitnessPackage.BasicFitness;
-import jxl.write.Label;
-import jxl.write.Number;
-import jxl.write.WritableSheet;
-import jxl.write.WriteException;
-import jxl.write.biff.RowsExceededException;
+//import jxl.write.Label;
+//import jxl.write.Number;
+//import jxl.write.WritableSheet;
+//import jxl.write.WriteException;
+//import jxl.write.biff.RowsExceededException;
 
 /**
  * FitnessEvaluation - is the class to setup the fitness value for Axioms in the
@@ -33,7 +39,7 @@ import jxl.write.biff.RowsExceededException;
  * @author NGUYEN Thu Huong Oct.18
  */
 public class FitnessEvaluation {
-	
+
 	private static Logger logger = Logger.getLogger(FitnessEvaluation.class.getName());
 
 	protected Axiom axiom;
@@ -45,168 +51,97 @@ public class FitnessEvaluation {
 	double generality = 0.0;
 	double complexity_penalty = 0.0;
 
-	public void updatePopulation(ArrayList<GEIndividual> population, int curGeneration, int totalGeneration,
-			WritableSheet sheet, List<JSONObject> axioms) {
-		int i = 0;
+	public void updatePopulation(ArrayList<GEIndividual> population, int curGeneration,
+			boolean evaluate, List<JSONObject> axioms) {
+		
 		SparqlEndpoint endpoint;
-		if (sheet != null) {
+		if (evaluate) {
 			endpoint = new SparqlEndpoint(Global.SPARQL_ENDPOINT, LaunchWithGE.PREFIXES);
 			logger.info("Evaluating axioms against to the RDF Data of the whole DBPedia");
 		} else {
 			endpoint = RDFMiner.endpoint;
 		}
-//		String arg1 = "";
-//		String arg2 = "";
-//		String strAxiom = "";
-		double f = 0;
-		int popSize = population.size();
-		int Row = 1;
-//		Timer timer = new Timer();
-//		long finalTime = 0;
 
-		System.out.println();
-		while (i < popSize) {
-			// timer
-//			timer.startTimer();
-			GEIndividual indivi = (GEIndividual) population.get(i);
+		// We have a set of threads to compute each axioms
+		ExecutorService executor = Executors.newFixedThreadPool(4);
+		// Log the size of executor
+		logger.info("[n] thread(s) ready to be launched");
+		List<Future<Axiom>> futureAxioms = new ArrayList<>();
+		List<Callable<Axiom>> callables = new ArrayList<>();
+		List<Axiom> axiomList = new ArrayList<>();
+		
+		int i = 0;
+		while (i < population.size()) {
 			if (population.get(0).getPhenotype() == null)
 				break;
-//			strAxiom = population.get(i).getPhenotype().getStringNoSpace();
-			// logger.info(" ");
-			// logger.info(axiom);
-			if (indivi.isMapped()) {
-				try {
-					System.out.println("[AXIOM " + i + "/" + popSize + "] " + indivi.getPhenotype());
-//					System.out.println("> " + i + "/" + popSize);
-					axiom = AxiomFactory.create(indivi.getPhenotype(), endpoint);
-					System.out.println();
-//					List<List<Symbol>> arguments = axiom.argumentClasses;
-//
-//					List<String> complexClass1 = new ArrayList<String>();
-//					int SizeArg0 = arguments.get(0).size();
-//					for (int k = 0; k < SizeArg0; k++) {
-//						arg1 = arguments.get(0).get(k).getSymbolString();
-//						if (!arg1.equals("(") && !arg1.equals(")") && !arg1.equals(" ")) {
-//							complexClass1.add(arg1);
-//						}
-//					}
-//
-//					List<String> complexClass2 = new ArrayList<String>();
-//					int SizeArg1 = arguments.get(1).size();
-//					for (int l = 0; l < SizeArg1; l++) {
-//						arg2 = arguments.get(1).get(l).getSymbolString();
-//						if (!arg2.equals("(") && !arg2.equals(")") && !arg2.equals(" ")) {
-//							complexClass2.add(arg2);
-//						}
-//					}
-
-				} // try
-				catch (QueryExceptionHTTP httpError) {
-					logger.error("HTTP Error " + httpError.getMessage() + " making a SPARQL query.");
-					httpError.printStackTrace();
-					System.exit(1);
-				} // catch 1
-				catch (JenaException jenaException) {
-					logger.error("Jena Exception " + jenaException.getMessage() + " making a SPARQL query.");
-					jenaException.printStackTrace();
-					System.exit(1);
-				} // catch 2
-				generality = axiom.generality;
-				if (axiom != null) {
-					possibility = axiom.possibility().doubleValue();
-					// logger.info("Reference Cardinality: " + a.referenceCardinality);
-					// logger.info("N. confirmation: " + a.numConfirmations);
-					// logger.info("N. exception: " + a.numExceptions);
-					// logger.info("Generality: " + a.generality);
-					// logger.info("Possibility: " + possibility);
-					if (sheet == null) {
-//						f = axiom.possibility().doubleValue() * axiom.generality;
-						f = setFitness(axiom);
-						// logger.info("Fitness: " + f);
-					}
-				} else {
-					f = 0;
-				}
+			if (population.get(i).isMapped()) {
+				final int idx = i;
+				callables.add(new Callable<Axiom>() {
+					public Axiom call() throws Exception {
+						return AxiomFactory.create(population.get(idx), population.get(idx).getPhenotype(), endpoint);
+					};
+				});
 			} else {
-				f = 0;
-			}
-
-			BasicFitness fit = new BasicFitness(f, population.get(i));
-			fit.setIndividual(population.get(i));
-			fit.getIndividual().setValid(true);
-			population.get(i).setFitness(fit);
-			if (sheet != null) {
-				DBPediaJSON dbpedia = new DBPediaJSON();
-				if (indivi.isMapped()) {
-					try {
-						sheet.addCell(new Number(8, Row, axiom.possibility().doubleValue()));
-						sheet.addCell(new Number(9, Row, axiom.referenceCardinality));
-						sheet.addCell(new Number(10, Row, axiom.generality));
-						sheet.addCell(new Number(11, Row, axiom.necessity().doubleValue()));
-					} catch (WriteException e) {
-						e.printStackTrace();
-					}
-					dbpedia.possibility = axiom.possibility().doubleValue();
-					dbpedia.referenceCardinality = axiom.referenceCardinality;
-					dbpedia.generality = axiom.generality;
-					dbpedia.necessity = axiom.generality;
-				}
-				axioms.get(i).put("resultsFromDBPedia", dbpedia.toJSON());
-				Row++;
+				BasicFitness fit = new BasicFitness(0, population.get(i));
+				fit.setIndividual(population.get(i));
+				fit.getIndividual().setValid(true);
+				population.get(i).setFitness(fit);
 			}
 			i++;
-//			System.out.print("Evaluation>	Progress: " + (i * 100) / popSize + "%   Request time: " + timer.read()
-//					+ "ms   \r");
-//			finalTime += timer.endTimer();
 		}
-//		logger.info("Evaluation done ! duration: " + finalTime + "ms");
+		for(Callable<Axiom> callable : callables) {
+			executor.submit(callable);
+		}
+		// launch all the threads
+//		try {
+//			futureAxioms = executor.invokeAll(callables);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+		// We recover our axioms
+//		for (Future<Axiom> axiom : futureAxioms) {
+//			try {
+//				axiomList.add(axiom.get());
+//			} catch (InterruptedException | ExecutionException e) {
+//				e.printStackTrace();
+//				System.exit(0);
+//			}
+//		}
+		// After that, we can stop the executor
+		// population.clear();
+		executor.shutdown();
+		while(!executor.isTerminated()) {
+			System.out.print("Closing executor service ...\r");
+		}
+		// Update fitness of population
+		for(Axiom axiom : axiomList) {
+			BasicFitness fit = new BasicFitness(setFitness(axiom), axiom.individual);
+			fit.getIndividual().setValid(true);
+			axiom.individual.setFitness(fit);
+			population.add(axiom.individual);
+			// Now, we can fill our JSONObject
+			if(evaluate) {
+				// data about DBPedia
+				DBPediaJSON dbpedia = new DBPediaJSON();
+				dbpedia.possibility = axiom.possibility().doubleValue();
+				dbpedia.referenceCardinality = axiom.referenceCardinality;
+				dbpedia.generality = axiom.generality;
+				dbpedia.necessity = axiom.necessity().doubleValue();
+				for(JSONObject json : axioms) {
+					if(json.get("axiom") == axiom.axiomId) {
+						axioms.get(axioms.indexOf(json)).put("resultsFromDBPedia", dbpedia);
+					}
+				}
+			}
+		}
 	}
 
 	public void updateIndividual(GEIndividual indivi) {
-		// set a timer to compute time for each evaluation
-//		Timer timer = new Timer();
-//		timer.startTimer();
-		// evaluation fitness for each individual
-//		String arg1 = "";
-//		String arg2 = "";
+		
 		double f = 0;
-		// logger.info("axiom: " + indivi.getPhenotype().getStringNoSpace());
-		// logger.info("chromosome: " + indivi.getGenotype().toString());
+		
 		if (indivi.isMapped()) {
-			try {
-				System.out.println("[AXIOM] " + indivi.getPhenotype());
-				axiom = AxiomFactory.create(indivi.getPhenotype(), RDFMiner.endpoint);
-				System.out.println();
-//				List<List<Symbol>> arguments = axiom.argumentClasses;
-//				List<String> complexClass1 = new ArrayList<String>();
-//				int SizeArg0 = arguments.get(0).size();
-//				for (int k = 0; k < SizeArg0; k++) {
-//					arg1 = arguments.get(0).get(k).getSymbolString();
-//					if (!arg1.equals("(") && !arg1.equals(")") && !arg1.equals(" ")) {
-//						complexClass1.add(arg1);
-//					}
-//				}
-//
-//				List<String> complexClass2 = new ArrayList<String>();
-//				int SizeArg1 = arguments.get(1).size();
-//				for (int l = 0; l < SizeArg1; l++) {
-//					arg2 = arguments.get(1).get(l).getSymbolString();
-//					if (!arg2.equals("(") && !arg2.equals(")") && !arg2.equals(" ")) {
-//						complexClass2.add(arg2);
-//					}
-//				}
-			} // try
-			catch (QueryExceptionHTTP httpError) {
-				logger.error("HTTP Error " + httpError.getMessage() + " making a SPARQL query.");
-				httpError.printStackTrace();
-				System.exit(1);
-			} // catch 1
-			catch (JenaException jenaException) {
-				logger.error("Jena Exception " + jenaException.getMessage() + " making a SPARQL query.");
-				jenaException.printStackTrace();
-				System.exit(1);
-			} // catch 2
-
+			axiom = AxiomFactory.create(indivi, indivi.getPhenotype(), RDFMiner.endpoint);
 			if (axiom != null) {
 				referenceCardinality = axiom.referenceCardinality;
 				possibility = axiom.possibility().doubleValue();
@@ -239,60 +174,17 @@ public class FitnessEvaluation {
 		return s.substring(0, pos) + s.substring(pos + 1);
 	}
 
-	public void display(ArrayList<GEIndividual> population, int curGeneration, WritableSheet sheet,
-			List<JSONObject> axioms, int k) throws IOException, RowsExceededException, WriteException {
+	public void display(ArrayList<GEIndividual> population, boolean fill, List<JSONObject> axioms, int k) {
 
-		String axiom = "";
-//		String chromosome = "";
-		// logger.info(" ");
-		// logger.info("CANDIDATE POPULATION IN GENERATION: " + curGeneration);
 		int index = population.size();
-		int Row;
 		for (int i = 0; i < index; i++) {
-			axiom = population.get(i).getPhenotype().getStringNoSpace();
-//			chromosome = population.get(i).getGenotype().toString();
 			GEIndividual indivi = (GEIndividual) population.get(i);
 			if (population.get(0).getPhenotype() == null)
 				break;
-			// logger.info(axiom);
-			// logger.info(chromosome.substring(1, chromosome.length() - 1));
-			// logger.info("Mapped: " + String.valueOf(indivi.isMapped()));
-			// logger.info("Fitness: " + indivi.getFitness().getDouble());
-			if (sheet != null) {
-				// JSONObject axiomJson = new JSONObject();
-				AxiomJSON axiomJson = new AxiomJSON();
-				axiomJson.axiom = axiom;
-
-				Row = sheet.getRows();
-				sheet.addCell(new Label(0, Row, axiom));
-				if (indivi.isMapped()) {
-					Axiom a = AxiomFactory.create(indivi.getPhenotype(), RDFMiner.endpoint);
-					sheet.addCell(new Number(1, Row, a.possibility().doubleValue()));
-					sheet.addCell(new Number(2, Row, a.necessity().doubleValue()));
-					// sheet.addCell(new Number(3, Row, ARI));
-					sheet.addCell(new Number(3, Row, a.referenceCardinality));
-					sheet.addCell(new Number(4, Row, a.generality));
-					// sheet.addCell(new Number(4, Row, complexity_penalty));
-					// logger.info("complexity_penalty:" + complexity_penalty);
-
-					axiomJson.possibility = a.possibility().doubleValue();
-					axiomJson.necessity = a.necessity().doubleValue();
-					axiomJson.referenceCardinality = a.referenceCardinality;
-					axiomJson.generality = a.generality;
-					axiomJson.numConfirmations = a.numConfirmations;
-					axiomJson.confirmations = a.confirmations;
-					axiomJson.numExceptions = a.numExceptions;
-					axiomJson.exceptions = a.exceptions;
-					axiomJson.isTimeout = a.isTimeout;
-				}
-				sheet.addCell(new Number(6, Row, indivi.getFitness().getDouble()));
-				sheet.addCell(new Label(7, Row, Boolean.toString(indivi.isMapped())));
-
-				axiomJson.fitness = indivi.getFitness().getDouble();
-				axiomJson.isMapped = indivi.isMapped();
-				axiomJson.k = k;
-				// axiomJson.append(axiom, axiomProp.toJSON());
-				axioms.add(i, axiomJson.toJSON());
+			
+			if (fill && indivi.isMapped()) {
+				Axiom a = AxiomFactory.create(indivi, indivi.getPhenotype(), RDFMiner.endpoint);
+				axioms.add(a.toJSON());
 			}
 		}
 

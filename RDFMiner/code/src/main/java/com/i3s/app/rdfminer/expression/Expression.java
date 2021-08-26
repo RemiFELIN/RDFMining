@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.AnonId;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
@@ -220,10 +221,10 @@ public abstract class Expression {
 						for (int hexDigit = 0; hexDigit < 0x10; hexDigit++) {
 							String h = String.format("\"%x\"", hexDigit);
 
-							RDFMiner.endpoint.select("DISTINCT ?x WHERE { " + graphPattern
+							ResultSet result = RDFMiner.endpoint.select("DISTINCT ?x WHERE { " + graphPattern
 									+ " FILTER( strStarts(MD5(str(?x)), " + h + ") ) }", 0);
-							while (RDFMiner.endpoint.hasNext()) {
-								QuerySolution solution = RDFMiner.endpoint.next();
+							while (result.hasNext()) {
+								QuerySolution solution = result.next();
 
 								RDFNode x = solution.get("x");
 								RDFNode y = solution.get("y");

@@ -11,6 +11,7 @@ import java.io.PrintStream;
 import java.util.Iterator;
 
 import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
@@ -138,17 +139,17 @@ public abstract class AxiomGenerator {
 
 			logger.info("Querying SPARQL endpoint for symbol <" + symbol + "> with query:\nSELECT "
 					+ SparqlEndpoint.prettyPrint(sparql));
-			RDFMiner.endpoint.select(sparql, 0);
+			ResultSet result = RDFMiner.endpoint.select(sparql, 0);
 			PrintStream cache = null;
 			try {
 				cache = new PrintStream(cacheName(symbol, sparql));
 			} catch (FileNotFoundException e) {
 				logger.warn("Could not create cache for symbol " + symbol + ".");
 			}
-			while (RDFMiner.endpoint.hasNext()) {
+			while (result.hasNext()) {
 				Production prod = new Production();
 
-				QuerySolution solution = RDFMiner.endpoint.next();
+				QuerySolution solution = result.next();
 				Iterator<String> i = solution.varNames();
 				String separator = "";
 				while (i.hasNext()) {
