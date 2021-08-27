@@ -56,10 +56,13 @@ public class FitnessEvaluation {
 		
 		SparqlEndpoint endpoint;
 		if (evaluate) {
-			endpoint = new SparqlEndpoint(Global.SPARQL_ENDPOINT, LaunchWithGE.PREFIXES);
-			logger.info("Evaluating axioms against to the RDF Data of the whole DBPedia");
+			endpoint = RDFMiner.REMOTE_ENDPOINT;
+			logger.info("Evaluating axioms against to the RDF Data of the whole DBPedia.");
+			logger.info("Endpoint URL: " + endpoint.endpoint);
 		} else {
-			endpoint = RDFMiner.endpoint;
+			endpoint = RDFMiner.LOCAL_ENDPOINT;
+			logger.info("Evaluating axioms against to the RDF Data of the minimized DBPedia");
+			logger.info("Endpoint URL: " + endpoint.endpoint);
 		}
 
 		// We have a set of threads to compute each axioms
@@ -89,6 +92,7 @@ public class FitnessEvaluation {
 			}
 			i++;
 		}
+		
 		for(Callable<Axiom> callable : callables) {
 			executor.submit(callable);
 		}
@@ -141,7 +145,9 @@ public class FitnessEvaluation {
 		double f = 0;
 		
 		if (indivi.isMapped()) {
-			axiom = AxiomFactory.create(indivi, indivi.getPhenotype(), RDFMiner.endpoint);
+			
+			axiom = AxiomFactory.create(indivi, indivi.getPhenotype(), RDFMiner.LOCAL_ENDPOINT);
+
 			if (axiom != null) {
 				referenceCardinality = axiom.referenceCardinality;
 				possibility = axiom.possibility().doubleValue();
@@ -174,6 +180,7 @@ public class FitnessEvaluation {
 		return s.substring(0, pos) + s.substring(pos + 1);
 	}
 
+
 	public void display(ArrayList<GEIndividual> population, boolean fill, List<JSONObject> axioms, int k) {
 
 		int index = population.size();
@@ -181,9 +188,8 @@ public class FitnessEvaluation {
 			GEIndividual indivi = (GEIndividual) population.get(i);
 			if (population.get(0).getPhenotype() == null)
 				break;
-			
 			if (fill && indivi.isMapped()) {
-				Axiom a = AxiomFactory.create(indivi, indivi.getPhenotype(), RDFMiner.endpoint);
+				Axiom a = AxiomFactory.create(indivi, indivi.getPhenotype(), RDFMiner.LOCAL_ENDPOINT);
 				axioms.add(a.toJSON());
 			}
 		}

@@ -43,7 +43,7 @@ public class ExtensionalDatatypeExpression extends ExtensionalExpression {
 		super();
 		rootSymbol = "DataOneOf (";
 		extension = new TreeSet<RDFNodePair>();
-		Model m = RDFMiner.endpoint.tdb;
+		Model m = RDFMiner.REMOTE_ENDPOINT.tdb;
 
 		Iterator<List<Symbol>> i = syntax.iterator();
 		while (i.hasNext()) {

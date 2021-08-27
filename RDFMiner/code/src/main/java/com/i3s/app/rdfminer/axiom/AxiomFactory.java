@@ -95,8 +95,9 @@ public class AxiomFactory extends DLFactory {
 	 * @param syntax an axiom definition in OWL 2 functional-style syntax.
 	 * @return the corresponding axiom.
 	 */
+
 	public static Axiom create(GEIndividual individual, List<Symbol> syntax, SparqlEndpoint endpoint) {
-		
+
 		Axiom axiom = null;
 		List<List<Symbol>> arguments = parseArguments(syntax);
 		

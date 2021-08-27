@@ -24,7 +24,6 @@ import org.apache.log4j.Logger;
 //import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONObject;
 
-import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.grammar.evolutionary.EATools;
@@ -39,7 +38,6 @@ import com.i3s.app.rdfminer.output.GenerationJSON;
 import com.i3s.app.rdfminer.output.ResultsJSON;
 import com.i3s.app.rdfminer.output.StatJSON;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
-import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 import com.i3s.app.rdfminer.statistics.Statistics;
 
 import Individuals.GEChromosome;
@@ -52,17 +50,6 @@ public class LaunchWithGE {
 
 	private static Logger logger = Logger.getLogger(LaunchWithGE.class.getName());
 
-	final public static String PREFIXES = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
-			+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-			+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-			+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-			+ "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n" + "PREFIX dc: <http://purl.org/dc/elements/1.1/>\n"
-			+ "PREFIX dbr: <http://dbpedia.org/resource/>\n" + "PREFIX dbp: <http://dbpedia.org/property/>\n"
-			+ "PREFIX : <http://dbpedia.org/resource/>\n" + "PREFIX dbpedia2: <http://dbpedia.org/property/>\n"
-			+ "PREFIX dbpedia: <http://dbpedia.org/>\n" + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n"
-			+ "PREFIX dbo: <http://dbpedia.org/ontology/>\n" + "PREFIX ex:    <http://example.org/demo#> \n"
-			+ "PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> \n" + "PREFIX sp:    <http://spinrdf.org/sp#> \n";
-
 	/**
 	 * The second version of RDFMiner launcher, with Grammar Evolutionary
 	 * 
@@ -71,8 +58,6 @@ public class LaunchWithGE {
 	 * @throws JAXBException
 	 */
 	public void run(CmdLineParameters parameters) throws Exception {
-
-		RDFMiner.endpoint = new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, PREFIXES);
 
 		RDFMiner.results = new ResultsJSON();
 		RDFMiner.axioms = new ArrayList<>();
@@ -251,10 +236,7 @@ public class LaunchWithGE {
 //				writeWorkbook.write();
 //				writeWorkbook.close();
 				curCheckpoint++;
-			} 
-//			else {
-//				fit.display(candidatePopulation, false, null, 0);
-//			}
+			}
 			
 			ArrayList<GEIndividual> distinctCandidatePopulation = EATools.getDistinctPopulation(candidatePopulation);
 			ArrayList<GEIndividual> distinctGenotypeCandidatePopulation = EATools
@@ -348,7 +330,9 @@ public class LaunchWithGE {
 				for (int i = 0; i < crossoverPopulation.size(); i++) {
 					crossoverList.add((GEIndividual) crossoverPopulation.get(i));
 				}
+				// shuffle populations before crossover & mutation
 				java.util.Collections.shuffle(crossoverList);
+				
 				logger.info("Performing Crossover & Mutation...");
 				ArrayList<GEIndividual> listCrossover = new ArrayList<GEIndividual>();
 				EATools.setResultList(listCrossover,

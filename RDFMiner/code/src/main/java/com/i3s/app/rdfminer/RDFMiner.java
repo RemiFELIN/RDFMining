@@ -41,7 +41,9 @@ public class RDFMiner {
 	/**
 	 * A SPARQL endpoint which can be used to query the RDF repository.
 	 */
-	public static SparqlEndpoint endpoint;
+	public final static SparqlEndpoint LOCAL_ENDPOINT = new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, Global.LOCAL_PREFIXES);
+	
+	public final static SparqlEndpoint REMOTE_ENDPOINT = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
 
 	/**
 	 * An executor to be used to submit asynchronous tasks which might be subjected

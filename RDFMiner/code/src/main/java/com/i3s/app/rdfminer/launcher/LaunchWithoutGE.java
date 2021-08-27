@@ -6,14 +6,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.engine.http.QueryExceptionHTTP;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONObject;
-
-import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.axiom.Axiom;
 import com.i3s.app.rdfminer.axiom.AxiomFactory;
@@ -24,24 +22,11 @@ import com.i3s.app.rdfminer.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.axiom.type.SubClassOfAxiom;
 //import com.i3s.app.rdfminer.output.AxiomJSON;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
-import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
-
 import Individuals.Phenotype;
 
 public class LaunchWithoutGE {
 
 	private static Logger logger = Logger.getLogger(LaunchWithoutGE.class.getName());
-
-	public final static String PREFIXES = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
-			+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-			+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-			+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-			+ "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n" + "PREFIX dc: <http://purl.org/dc/elements/1.1/>\n"
-			+ "PREFIX : <http://dbpedia.org/resource/>\n" + "PREFIX dbpedia2: <http://dbpedia.org/property/>\n"
-			+ "PREFIX dbpedia: <http://dbpedia.org/>\n" + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n"
-			+ "PREFIX dbo: <http://dbpedia.org/ontology/>\n";
-	
-	private List<JSONObject> axioms;
 	
 	/**
 	 * The first version of RDFMiner launcher
@@ -53,10 +38,6 @@ public class LaunchWithoutGE {
 
 		// Create an empty JSON object which will be fill with our results
 		RDFMiner.axiomsList = new JSONArray();
-		axioms = new ArrayList<>();
-
-		// Set SPARQL Endpoit
-		RDFMiner.endpoint = new SparqlEndpoint(Global.SPARQL_ENDPOINT, PREFIXES);
 		
 		if (parameters.axiomFile == null) {
 			if (parameters.axiom == null) {
@@ -120,7 +101,7 @@ public class LaunchWithoutGE {
 				axiomName = axiom.getStringNoSpace();
 				logger.info("Testing axiom: " + axiomName);
 				try {
-					a = AxiomFactory.create(null, axiom, RDFMiner.endpoint);
+					a = AxiomFactory.create(null, axiom, RDFMiner.REMOTE_ENDPOINT);
 				} catch (QueryExceptionHTTP httpError) {
 					logger.error("HTTP Error " + httpError.getMessage() + " making a SPARQL query.");
 					httpError.printStackTrace();
@@ -147,7 +128,7 @@ public class LaunchWithoutGE {
 					if (axiomName.isEmpty())
 						break;
 					logger.info("Testing axiom: " + axiomName);
-					a = AxiomFactory.create(null, axiomName, RDFMiner.endpoint);
+					a = AxiomFactory.create(null, axiomName, RDFMiner.REMOTE_ENDPOINT);
 				} catch (IOException e) {
 					writeAndFinish();
 					logger.error("Could not read the next axiom.");

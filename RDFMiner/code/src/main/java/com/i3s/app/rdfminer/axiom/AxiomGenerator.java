@@ -139,16 +139,17 @@ public abstract class AxiomGenerator {
 
 			logger.info("Querying SPARQL endpoint for symbol <" + symbol + "> with query:\nSELECT "
 					+ SparqlEndpoint.prettyPrint(sparql));
-			ResultSet result = RDFMiner.endpoint.select(sparql, 0);
+
+			ResultSet result = RDFMiner.REMOTE_ENDPOINT.select(sparql, 0);
 			PrintStream cache = null;
 			try {
 				cache = new PrintStream(cacheName(symbol, sparql));
 			} catch (FileNotFoundException e) {
 				logger.warn("Could not create cache for symbol " + symbol + ".");
 			}
+			
 			while (result.hasNext()) {
 				Production prod = new Production();
-
 				QuerySolution solution = result.next();
 				Iterator<String> i = solution.varNames();
 				String separator = "";

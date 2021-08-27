@@ -99,7 +99,7 @@ public class SparqlEndpoint {
 			Dataset dataset = TDBFactory.createDataset(Global.DBPEDIA_TDB_PATH);
 			tdb = dataset.getDefaultModel();
 		} else {
-			logger.warn("A local TBD directory does not exists. Using the default SPARQL endpoint " + url);
+			logger.warn("Service created, using the default SPARQL endpoint " + url);
 			endpoint = url;
 			tdb = ModelFactory.createDefaultModel();
 		}

@@ -153,12 +153,11 @@ public class CandidateAxiomGenerator extends AxiomGenerator {
 	 */
 	protected Set<RDFNodePair> getNodes(String sparql) {
 		Set<RDFNodePair> classes = new TreeSet<RDFNodePair>();
-
 		logger.warn("Querying DBpedia with query " + sparql);
-		ResultSet result = RDFMiner.endpoint.select(sparql, 0);
+		ResultSet result = RDFMiner.REMOTE_ENDPOINT.select(sparql, 0);
+		
 		while (result.hasNext()) {
 			QuerySolution solution = result.next();
-
 			RDFNode x = solution.get("class");
 			RDFNode y = solution.get("y");
 			if (!Expression.sparqlEncode(x).equals(subClass.get(0).toString()))
