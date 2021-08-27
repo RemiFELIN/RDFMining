@@ -50,10 +50,13 @@ public class FitnessEvaluation {
 		int i = 0;
 		SparqlEndpoint endpoint;
 		if (sheet != null) {
-			endpoint = new SparqlEndpoint(Global.SPARQL_ENDPOINT, LaunchWithGE.PREFIXES);
-			logger.info("Evaluating axioms against to the RDF Data of the whole DBPedia");
+			endpoint = RDFMiner.REMOTE_ENDPOINT;
+			logger.info("Evaluating axioms against to the RDF Data of the whole DBPedia.");
+			logger.info("Endpoint URL: " + endpoint.endpoint);
 		} else {
-			endpoint = RDFMiner.endpoint;
+			endpoint = RDFMiner.LOCAL_ENDPOINT;
+			logger.info("Evaluating axioms against to the RDF Data of the minimized DBPedia");
+			logger.info("Endpoint URL: " + endpoint.endpoint);
 		}
 //		String arg1 = "";
 //		String arg2 = "";
@@ -69,14 +72,14 @@ public class FitnessEvaluation {
 			// timer
 //			timer.startTimer();
 			GEIndividual indivi = (GEIndividual) population.get(i);
-			if (population.get(0).getPhenotype() == null)
-				break;
+//			if (population.get(0).getPhenotype() == null)
+//				break;
 //			strAxiom = population.get(i).getPhenotype().getStringNoSpace();
 			// logger.info(" ");
 			// logger.info(axiom);
 			if (indivi.isMapped()) {
 				try {
-					System.out.println("[AXIOM " + i + "/" + popSize + "] " + indivi.getPhenotype());
+					System.out.println("[AXIOM " + (i+1) + "/" + popSize + "] " + indivi.getPhenotype());
 //					System.out.println("> " + i + "/" + popSize);
 					axiom = AxiomFactory.create(indivi.getPhenotype(), endpoint);
 					System.out.println();
@@ -175,7 +178,7 @@ public class FitnessEvaluation {
 		if (indivi.isMapped()) {
 			try {
 				System.out.println("[AXIOM] " + indivi.getPhenotype());
-				axiom = AxiomFactory.create(indivi.getPhenotype(), RDFMiner.endpoint);
+				axiom = AxiomFactory.create(indivi.getPhenotype(), RDFMiner.LOCAL_ENDPOINT);
 				System.out.println();
 //				List<List<Symbol>> arguments = axiom.argumentClasses;
 //				List<String> complexClass1 = new ArrayList<String>();
@@ -240,7 +243,7 @@ public class FitnessEvaluation {
 	}
 
 	public void display(ArrayList<GEIndividual> population, int curGeneration, WritableSheet sheet,
-			List<JSONObject> axioms, int k) throws IOException, RowsExceededException, WriteException {
+			List<JSONObject> axioms) throws IOException, RowsExceededException, WriteException {
 
 		String axiom = "";
 //		String chromosome = "";
@@ -266,7 +269,7 @@ public class FitnessEvaluation {
 				Row = sheet.getRows();
 				sheet.addCell(new Label(0, Row, axiom));
 				if (indivi.isMapped()) {
-					Axiom a = AxiomFactory.create(indivi.getPhenotype(), RDFMiner.endpoint);
+					Axiom a = AxiomFactory.create(indivi.getPhenotype(), RDFMiner.LOCAL_ENDPOINT);
 					sheet.addCell(new Number(1, Row, a.possibility().doubleValue()));
 					sheet.addCell(new Number(2, Row, a.necessity().doubleValue()));
 					// sheet.addCell(new Number(3, Row, ARI));
@@ -290,7 +293,7 @@ public class FitnessEvaluation {
 
 				axiomJson.fitness = indivi.getFitness().getDouble();
 				axiomJson.isMapped = indivi.isMapped();
-				axiomJson.k = k;
+				axiomJson.k = curGeneration;
 				// axiomJson.append(axiom, axiomProp.toJSON());
 				axioms.add(i, axiomJson.toJSON());
 			}

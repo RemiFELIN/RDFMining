@@ -22,14 +22,33 @@ public class Global {
 	/**
 	 * SPARQL Endpoint : our Virtuoso server endpoint
 	 */
-	public static final String SPARQL_ENDPOINT = "http://134.59.130.136:8890/sparql";
+	public static final String REMOTE_SPARQL_ENDPOINT = "http://134.59.130.136:8890/sparql";
+	
+	public final static String REMOTE_PREFIXES = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
+			+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+			+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+			+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+			+ "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n" + "PREFIX dc: <http://purl.org/dc/elements/1.1/>\n"
+			+ "PREFIX : <http://dbpedia.org/resource/>\n" + "PREFIX dbpedia2: <http://dbpedia.org/property/>\n"
+			+ "PREFIX dbpedia: <http://dbpedia.org/>\n" + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n"
+			+ "PREFIX dbo: <http://dbpedia.org/ontology/>\n";
 	
 	/**
 	 * Local SPARQL Endpoint
 	 */
-	// public static final String LOCAL_SPARQL_ENDPOINT = "http://localhost:8890/sparql";
-	public static final String LOCAL_SPARQL_ENDPOINT = "http://172.19.0.2:9000/sparql";
+	public static final String LOCAL_SPARQL_ENDPOINT = "http://172.19.0.2:8890/sparql";
 
+	final public static String LOCAL_PREFIXES = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
+			+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+			+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+			+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+			+ "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n" + "PREFIX dc: <http://purl.org/dc/elements/1.1/>\n"
+			+ "PREFIX dbr: <http://dbpedia.org/resource/>\n" + "PREFIX dbp: <http://dbpedia.org/property/>\n"
+			+ "PREFIX : <http://dbpedia.org/resource/>\n" + "PREFIX dbpedia2: <http://dbpedia.org/property/>\n"
+			+ "PREFIX dbpedia: <http://dbpedia.org/>\n" + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n"
+			+ "PREFIX dbo: <http://dbpedia.org/ontology/>\n" + "PREFIX ex:    <http://example.org/demo#> \n"
+			+ "PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> \n" + "PREFIX sp:    <http://spinrdf.org/sp#> \n";
+	
 	/**
 	 * Output path : corresponding to '/rdfminer/io/' in container
 	 */

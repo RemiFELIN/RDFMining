@@ -220,10 +220,10 @@ public abstract class Expression {
 						for (int hexDigit = 0; hexDigit < 0x10; hexDigit++) {
 							String h = String.format("\"%x\"", hexDigit);
 
-							RDFMiner.endpoint.select("DISTINCT ?x WHERE { " + graphPattern
+							RDFMiner.REMOTE_ENDPOINT.select("DISTINCT ?x WHERE { " + graphPattern
 									+ " FILTER( strStarts(MD5(str(?x)), " + h + ") ) }", 0);
-							while (RDFMiner.endpoint.hasNext()) {
-								QuerySolution solution = RDFMiner.endpoint.next();
+							while (RDFMiner.REMOTE_ENDPOINT.hasNext()) {
+								QuerySolution solution = RDFMiner.REMOTE_ENDPOINT.next();
 
 								RDFNode x = solution.get("x");
 								RDFNode y = solution.get("y");
@@ -301,7 +301,7 @@ public abstract class Expression {
 	 * @return the corresponding RDF node
 	 */
 	public static RDFNode sparqlDecode(String s) {
-		Model m = RDFMiner.endpoint.tdb;
+		Model m = RDFMiner.REMOTE_ENDPOINT.tdb;
 		RDFNode r = null;
 		if (s.startsWith("<"))
 			r = m.createResource(s.substring(1, s.length() - 1));
@@ -328,7 +328,7 @@ public abstract class Expression {
 		String x = pair.x != null ? sparqlEncode(pair.x) : "?x";
 		String y = pair.y != null ? sparqlEncode(pair.y) : "?y";
 
-		return RDFMiner.endpoint.ask(createGraphPattern(x, y), 0);
+		return RDFMiner.REMOTE_ENDPOINT.ask(createGraphPattern(x, y), 0);
 	}
 
 	@Override

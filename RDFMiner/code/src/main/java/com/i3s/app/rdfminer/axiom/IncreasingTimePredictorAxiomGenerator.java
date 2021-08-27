@@ -174,9 +174,9 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 		Set<RDFNodePair> classes = new TreeSet<RDFNodePair>();
 
 		logger.warn("Querying DBpedia with query " + sparql);
-		RDFMiner.endpoint.select(sparql, 0);
-		while (RDFMiner.endpoint.hasNext()) {
-			QuerySolution solution = RDFMiner.endpoint.next();
+		RDFMiner.REMOTE_ENDPOINT.select(sparql, 0);
+		while (RDFMiner.REMOTE_ENDPOINT.hasNext()) {
+			QuerySolution solution = RDFMiner.REMOTE_ENDPOINT.next();
 
 			RDFNode x = solution.get("class");
 			RDFNode y = solution.get("y");

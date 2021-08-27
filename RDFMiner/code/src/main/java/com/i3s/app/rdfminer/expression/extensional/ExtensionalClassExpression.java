@@ -46,7 +46,7 @@ public class ExtensionalClassExpression extends ExtensionalExpression {
 		super();
 		rootSymbol = "ObjectOneOf (";
 		extension = new TreeSet<RDFNodePair>();
-		Model m = RDFMiner.endpoint.tdb;
+		Model m = RDFMiner.REMOTE_ENDPOINT.tdb;
 
 		Iterator<List<Symbol>> i = syntax.iterator();
 		while (i.hasNext()) {

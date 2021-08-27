@@ -95,7 +95,6 @@ public class AxiomFactory extends DLFactory {
 	 * @return the corresponding axiom.
 	 */
 	public static Axiom create(List<Symbol> syntax, SparqlEndpoint endpoint) {
-		
 		Axiom axiom = null;
 		List<List<Symbol>> arguments = parseArguments(syntax);
 		
