@@ -303,7 +303,7 @@ public class LaunchWithGE {
 					 * logger.info(etilismPopulation.get(i).getFitness().getDouble()); }
 					 */
 				} else {
-					EATools.setPopulation(selectedPopulation, candidatePopulation);
+					EATools.setPopulation(selectedPopulation, distinctCandidatePopulation);
 					sizeElite = 0;
 				}
 
