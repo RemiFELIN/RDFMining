@@ -19,6 +19,7 @@ import org.apache.jena.atlas.lib.Timer;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
 import org.apache.log4j.Logger;
 
 import com.i3s.app.rdfminer.RDFMiner;
@@ -69,8 +70,6 @@ public class SubClassOfAxiom extends Axiom {
 	 */
 	public static TimeMap maxTestTime = new TimeMap();
 	
-	public SparqlEndpoint endpoint;
-	
 	/**
 	 * An executor to be used to submit asynchronous tasks which might be subjected
 	 * to a time-out.
@@ -87,7 +86,6 @@ public class SubClassOfAxiom extends Axiom {
 	 */
 	public SubClassOfAxiom(GEIndividual individual, List<Symbol> subClassExpression, List<Symbol> superClassExpression,
 			SparqlEndpoint endpoint) {
-		this.endpoint = endpoint;
 		this.individual = individual;
 		subClass = ExpressionFactory.createClass(subClassExpression);
 		superClass = ExpressionFactory.createClass(superClassExpression);
@@ -98,14 +96,13 @@ public class SubClassOfAxiom extends Axiom {
 			superClassComplement = new ComplementClassExpression(superClass);
 //		System.out.println("------\nsubClass: " + subClass.getGraphPattern() + "\n---\nsuperClass: " + superClass.getGraphPattern() + "\n------");
 		try {
-			logger.info("Starting update axiom ...");
-			update(this.endpoint);
+			update(endpoint);
 		} catch (IllegalStateException e) {
 			// This is the conventional unchecked exception thrown by the
 			// Sparql endpoint if an HTTP 504 Gateway Time-out occurs.
 			// In that case, we try a slower, but safer, naive update as the last resort:
 			logger.warn("Trying a naive update: this is going to take some time...");
-			naive_update(this.endpoint);
+			naive_update(endpoint);
 		}
 	}
 
@@ -143,7 +140,6 @@ public class SubClassOfAxiom extends Axiom {
 		confirmations = new ArrayList<String>();
 		exceptions = new ArrayList<String>();
 		Set<RDFNodePair> extension = subClass.extension();
-
 		int numIntersectingClasses = endpoint.count("?D", subClass.graphPattern + " ?x a ?D . ", 0);
 		timePredictor = referenceCardinality * numIntersectingClasses;
 
@@ -201,21 +197,24 @@ public class SubClassOfAxiom extends Axiom {
 	 */
 	@Override
 	public void update(SparqlEndpoint endpoint) {
-		System.out.println("endpoint:" + endpoint);
+//		System.out.println("endpoint:" + endpoint);
 		confirmations = new ArrayList<String>();
 		exceptions = new ArrayList<String>();
 //		Future<Integer> future = null;
 //		System.out.println("subClass: " + subClass.graphPattern + "\nsuperClass: " + superClass.graphPattern);
-		// to fix
+//		logger.info("avant");
 		referenceCardinality = endpoint.count("?x", subClass.graphPattern, 0);
+//		logger.info("après");
 		logger.info("referenceCardinality = " + referenceCardinality);
-		System.out.println("tata");
+//		logger.info("avant");
 		int numIntersectingClasses = endpoint.count("?D", subClass.graphPattern + " ?x a ?D . ", 0);
-		System.out.println("tutu");
+//		logger.info("après");
 		logger.info("No. of Intersecting Classes = " + numIntersectingClasses);
 		timePredictor = referenceCardinality * numIntersectingClasses;
 //		logger.warn("Time Predictor = " + timePredictor);
+//		logger.info("avant");
 		numConfirmations = endpoint.count("?x", subClass.graphPattern + "\n" + superClass.graphPattern, 0);
+//		logger.info("après");
 //		System.out.println("pattern conf. : \n" + subClass.graphPattern + "\n" + superClass.graphPattern);
 		if (numConfirmations > 0 && numConfirmations < 100) {
 			logger.info(numConfirmations + " confirmation(s) found ! retrieving in collection ...");

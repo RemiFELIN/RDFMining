@@ -210,6 +210,7 @@ public class LaunchWithGE {
 				// logger.info("===");
 				logger.info("Begin evaluating individuals...");
 				// logger.info("CALLING FitnessEvaluation: ");
+				logger.info("Evaluating axioms against to the RDF Data of the minimized DBPedia");
 				fit.updatePopulation(candidatePopulation, curGeneration, false, null);
 			}
 			
@@ -226,7 +227,7 @@ public class LaunchWithGE {
 					indivi.setMapped(candidatePopulation.get(l).isMapped());
 					candidatePopulation2.add(indivi);
 				}
-
+				logger.info("Evaluating axioms against to the RDF Data of the whole DBPedia.");
 				fit.updatePopulation(candidatePopulation2, curGeneration, true, axioms);
 				for(JSONObject axiom : axioms) {
 					RDFMiner.axioms.add(axiom);
@@ -277,7 +278,7 @@ public class LaunchWithGE {
 					 * logger.info(etilismPopulation.get(i).getFitness().getDouble()); }
 					 */
 				} else {
-					EATools.setPopulation(selectedPopulation, candidatePopulation);
+					EATools.setPopulation(selectedPopulation, distinctCandidatePopulation);
 					sizeElite = 0;
 				}
 

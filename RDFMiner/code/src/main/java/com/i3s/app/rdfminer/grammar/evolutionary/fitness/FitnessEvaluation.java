@@ -2,12 +2,15 @@ package com.i3s.app.rdfminer.grammar.evolutionary.fitness;
 
 //import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 //import org.apache.jena.shared.JenaException;
 //import org.apache.jena.sparql.engine.http.QueryExceptionHTTP;
@@ -19,8 +22,6 @@ import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.axiom.Axiom;
 import com.i3s.app.rdfminer.axiom.AxiomFactory;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
-import com.i3s.app.rdfminer.launcher.LaunchWithGE;
-import com.i3s.app.rdfminer.output.AxiomJSON;
 import com.i3s.app.rdfminer.output.DBPediaJSON;
 //import com.i3s.app.rdfminer.output.DBPediaJSON;
 import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
@@ -52,25 +53,14 @@ public class FitnessEvaluation {
 	double complexity_penalty = 0.0;
 
 	public void updatePopulation(ArrayList<GEIndividual> population, int curGeneration,
-			boolean evaluate, List<JSONObject> axioms) {
+			boolean evaluate, List<JSONObject> axioms) throws InterruptedException, ExecutionException {
 		
-		SparqlEndpoint endpoint;
-		if (evaluate) {
-			endpoint = RDFMiner.REMOTE_ENDPOINT;
-			logger.info("Evaluating axioms against to the RDF Data of the whole DBPedia.");
-			logger.info("Endpoint URL: " + endpoint.endpoint);
-		} else {
-			endpoint = RDFMiner.LOCAL_ENDPOINT;
-			logger.info("Evaluating axioms against to the RDF Data of the minimized DBPedia");
-			logger.info("Endpoint URL: " + endpoint.endpoint);
-		}
-
 		// We have a set of threads to compute each axioms
 		ExecutorService executor = Executors.newFixedThreadPool(4);
 		// Log the size of executor
-		logger.info("[n] thread(s) ready to be launched");
-		List<Future<Axiom>> futureAxioms = new ArrayList<>();
-		List<Callable<Axiom>> callables = new ArrayList<>();
+		logger.info("n thread(s) ready to be launched");
+		
+		Set<Callable<Axiom>> callables = new HashSet<Callable<Axiom>>();
 		List<Axiom> axiomList = new ArrayList<>();
 		
 		int i = 0;
@@ -81,7 +71,21 @@ public class FitnessEvaluation {
 				final int idx = i;
 				callables.add(new Callable<Axiom>() {
 					public Axiom call() throws Exception {
-						return AxiomFactory.create(population.get(idx), population.get(idx).getPhenotype(), endpoint);
+//						logger.info("Thread-ID: " + Thread.currentThread().getId());
+						logger.info("Starting update axiom ...");
+						SparqlEndpoint endpoint;
+						if (evaluate) {
+							endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
+//							logger.info("Evaluating axioms against to the RDF Data of the whole DBPedia.");
+//							logger.info("SparqlEndpoint : " + endpoint);
+						} else {
+							endpoint = new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, Global.LOCAL_PREFIXES);
+//							logger.info("Evaluating axioms against to the RDF Data of the minimized DBPedia");
+//							logger.info("SparqlEndpoint : " + endpoint);
+						}
+						Axiom axiom = AxiomFactory.create(population.get(idx), population.get(idx).getPhenotype(), endpoint);
+						logger.info("Axiom successfully evaluated !");
+						return axiom;
 					};
 				});
 			} else {
@@ -93,30 +97,25 @@ public class FitnessEvaluation {
 			i++;
 		}
 		
-		for(Callable<Axiom> callable : callables) {
-			executor.submit(callable);
-		}
-		// launch all the threads
-//		try {
-//			futureAxioms = executor.invokeAll(callables);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
+		// Submit tasks
+		List<Future<Axiom>> futureAxioms = executor.invokeAll(callables);
+		
 		// We recover our axioms
-//		for (Future<Axiom> axiom : futureAxioms) {
-//			try {
-//				axiomList.add(axiom.get());
-//			} catch (InterruptedException | ExecutionException e) {
-//				e.printStackTrace();
-//				System.exit(0);
-//			}
-//		}
-		// After that, we can stop the executor
-		// population.clear();
-		executor.shutdown();
-		while(!executor.isTerminated()) {
-			System.out.print("Closing executor service ...\r");
+		for (Future<Axiom> axiom : futureAxioms) {
+			System.out.println(axiom.toString() + " added !");
+			axiomList.add(axiom.get());
 		}
+		
+		executor.shutdown();
+		executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+		
+		// population.clear();
+//		try {
+//			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+//		} catch (InterruptedException e) {
+//			logger.warn("Executor service has been interrupted !");
+//			System.exit(1);
+//		}
 		// Update fitness of population
 		for(Axiom axiom : axiomList) {
 			BasicFitness fit = new BasicFitness(setFitness(axiom), axiom.individual);

@@ -73,7 +73,7 @@ public class SparqlEndpoint {
 	/**
 	 * The current query execution.
 	 */
-//	public QueryEngineHTTP queryExecution;
+	public QueryEngineHTTP queryExecution;
 
 	/**
 	 * The result of the current query.
@@ -94,14 +94,14 @@ public class SparqlEndpoint {
 	 */
 	public SparqlEndpoint(String url, String prefix) {
 		if (new File(Global.DBPEDIA_TDB_PATH).exists()) {
-			logger.warn("A local TBD directory exists. Using it as the SPARQL endpoint");
+//			logger.warn("A local TBD directory exists. Using it as the SPARQL endpoint");
 			endpoint = null;
 			Dataset dataset = TDBFactory.createDataset(Global.DBPEDIA_TDB_PATH);
 			tdb = dataset.getDefaultModel();
 		} else {
-			logger.warn("Service created, using the default SPARQL endpoint " + url);
+//			logger.warn("Service created, using the default SPARQL endpoint " + url);
 			endpoint = url;
-			tdb = ModelFactory.createDefaultModel();
+//			tdb = ModelFactory.createDefaultModel();
 		}
 		prefixes = prefix;
 //		queryExecution = null;
@@ -141,13 +141,13 @@ public class SparqlEndpoint {
 	 * @param sparql The query string, to go after the "SELECT " keyword.
 	 * @param timeout a timeout to compute result (in seconds)
 	 */
-	@SuppressWarnings("resource")
 	public ResultSet select(String sparql, int timeout) {
 		try {
 			String str = prefixes + "SELECT " + sparql;
 			Query query = QueryFactory.create(str);
 //			prepare(query);
-			QueryEngineHTTP queryExecution = new QueryEngineHTTP(endpoint, query);
+			queryExecution = new QueryEngineHTTP(endpoint, query);
+//			logger.warn("[INFO] :" + Runtime.getRuntime().freeMemory() + "/" + Runtime.getRuntime().totalMemory());
 			// set a timeout if is not equals to 0
 			if(timeout != 0) {
 				queryExecution.addParam("timeout", Integer.toString(timeout * 1000));
@@ -162,13 +162,12 @@ public class SparqlEndpoint {
 		return null;
 	}
 
-	@SuppressWarnings("resource")
 	public ResultSet selectAndCopyResults(String sparql) {
 		try {
 			String str = prefixes + "SELECT " + sparql;
 			Query query = QueryFactory.create(str);
 //			prepare(query);
-			QueryEngineHTTP queryExecution = new QueryEngineHTTP(endpoint, query);
+			queryExecution = new QueryEngineHTTP(endpoint, query);
 			// resultSet = queryExecution.execSelect();
 			ResultSet result = ResultSetFactory.copyResults(queryExecution.execSelect());
 //			queryExecution.close();
@@ -187,14 +186,13 @@ public class SparqlEndpoint {
 	 * @param timeout a timeout to compute result (in seconds)
 	 * @return
 	 */
-	@SuppressWarnings("resource")
 	public boolean ask(String graphPattern, int timeout) {
 		boolean result = false;
 		try {
 			String str = prefixes + "ASK { " + graphPattern + " }";
 			Query query = QueryFactory.create(str);
 //			prepare(query);
-			QueryEngineHTTP queryExecution = new QueryEngineHTTP(endpoint, query);
+			queryExecution = new QueryEngineHTTP(endpoint, query);
 			result = queryExecution.execAsk();
 //			queryExecution.close();
 		} catch (QueryException q) {
@@ -234,6 +232,7 @@ public class SparqlEndpoint {
 				tdb.leaveCriticalSection();
 			return n.asLiteral().getInt();
 		}
+		queryExecution.close();
 		return 0;
 	}
 
