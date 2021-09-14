@@ -10,6 +10,8 @@ import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.engine.http.QueryExceptionHTTP;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+
+import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.axiom.Axiom;
 import com.i3s.app.rdfminer.axiom.AxiomFactory;
@@ -20,6 +22,8 @@ import com.i3s.app.rdfminer.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.axiom.type.SubClassOfAxiom;
 import com.i3s.app.rdfminer.output.AxiomJSON;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
+import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
+
 import Individuals.Phenotype;
 
 public class LaunchWithoutGE {
@@ -30,6 +34,8 @@ public class LaunchWithoutGE {
 	 * The first version of RDFMiner launcher
 	 */
 	public void run(CmdLineParameters parameters) {
+		
+		RDFMiner.REMOTE_ENDPOINT = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
 		
 		AxiomGenerator generator = null;
 		BufferedReader axiomFile = null;

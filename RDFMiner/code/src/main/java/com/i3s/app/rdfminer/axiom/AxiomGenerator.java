@@ -138,7 +138,7 @@ public abstract class AxiomGenerator {
 
 			logger.info("Querying SPARQL endpoint for symbol <" + symbol + "> with query:\nSELECT "
 					+ SparqlEndpoint.prettyPrint(sparql));
-			RDFMiner.REMOTE_ENDPOINT.select(sparql, 0);
+			RDFMiner.LOCAL_ENDPOINT.select(sparql, 0);
 			PrintStream cache = null;
 			try {
 				cache = new PrintStream(cacheName(symbol, sparql));
