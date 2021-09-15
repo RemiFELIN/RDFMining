@@ -145,10 +145,10 @@ public abstract class AxiomGenerator {
 			} catch (FileNotFoundException e) {
 				logger.warn("Could not create cache for symbol " + symbol + ".");
 			}
-			while (RDFMiner.REMOTE_ENDPOINT.hasNext()) {
+			while (RDFMiner.LOCAL_ENDPOINT.hasNext()) {
 				Production prod = new Production();
 
-				QuerySolution solution = RDFMiner.REMOTE_ENDPOINT.next();
+				QuerySolution solution = RDFMiner.LOCAL_ENDPOINT.next();
 				Iterator<String> i = solution.varNames();
 				String separator = "";
 				while (i.hasNext()) {
