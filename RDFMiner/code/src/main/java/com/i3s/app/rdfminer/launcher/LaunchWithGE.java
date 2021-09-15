@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 //import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONObject;
 
+import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.grammar.evolutionary.EATools;
@@ -38,6 +39,7 @@ import com.i3s.app.rdfminer.output.GenerationJSON;
 import com.i3s.app.rdfminer.output.ResultsJSON;
 import com.i3s.app.rdfminer.output.StatJSON;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
+import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 import com.i3s.app.rdfminer.statistics.Statistics;
 
 import Individuals.GEChromosome;
@@ -58,7 +60,10 @@ public class LaunchWithGE {
 	 * @throws JAXBException
 	 */
 	public void run(CmdLineParameters parameters) throws Exception {
-
+		
+		RDFMiner.LOCAL_ENDPOINT = new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, Global.LOCAL_PREFIXES);
+		RDFMiner.REMOTE_ENDPOINT = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
+		
 		RDFMiner.results = new ResultsJSON();
 		RDFMiner.axioms = new ArrayList<>();
 		RDFMiner.stats = new StatJSON();

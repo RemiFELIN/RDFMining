@@ -36,7 +36,7 @@ public class Global {
 	/**
 	 * Local SPARQL Endpoint
 	 */
-	public static final String LOCAL_SPARQL_ENDPOINT = "http://172.19.0.2:8890/sparql";
+	public static final String LOCAL_SPARQL_ENDPOINT = "http://172.19.0.2:9000/sparql";
 
 	final public static String LOCAL_PREFIXES = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
 			+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
