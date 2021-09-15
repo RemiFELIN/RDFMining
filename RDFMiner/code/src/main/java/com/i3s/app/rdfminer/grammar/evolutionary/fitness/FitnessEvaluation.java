@@ -43,7 +43,7 @@ public class FitnessEvaluation {
 
 	private static Logger logger = Logger.getLogger(FitnessEvaluation.class.getName());
 
-	protected Axiom axiom;
+//	protected Axiom axiom;
 	protected long t0, t;
 	// protected int numSuccessAxioms=0;
 	double referenceCardinality = 0.0;
@@ -76,12 +76,8 @@ public class FitnessEvaluation {
 						SparqlEndpoint endpoint;
 						if (evaluate) {
 							endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
-//							logger.info("Evaluating axioms against to the RDF Data of the whole DBPedia.");
-//							logger.info("SparqlEndpoint : " + endpoint);
 						} else {
 							endpoint = new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, Global.LOCAL_PREFIXES);
-//							logger.info("Evaluating axioms against to the RDF Data of the minimized DBPedia");
-//							logger.info("SparqlEndpoint : " + endpoint);
 						}
 						Axiom axiom = AxiomFactory.create(population.get(idx), population.get(idx).getPhenotype(), endpoint);
 						logger.info("Axiom successfully evaluated !");
@@ -145,7 +141,7 @@ public class FitnessEvaluation {
 		
 		if (indivi.isMapped()) {
 			
-			axiom = AxiomFactory.create(indivi, indivi.getPhenotype(), RDFMiner.LOCAL_ENDPOINT);
+			Axiom axiom = AxiomFactory.create(indivi, indivi.getPhenotype(), RDFMiner.LOCAL_ENDPOINT);
 
 			if (axiom != null) {
 				referenceCardinality = axiom.referenceCardinality;

@@ -197,22 +197,15 @@ public class SubClassOfAxiom extends Axiom {
 	 */
 	@Override
 	public void update(SparqlEndpoint endpoint) {
-//		System.out.println("endpoint:" + endpoint);
+		
 		confirmations = new ArrayList<String>();
 		exceptions = new ArrayList<String>();
-//		Future<Integer> future = null;
-//		System.out.println("subClass: " + subClass.graphPattern + "\nsuperClass: " + superClass.graphPattern);
-//		logger.info("avant");
 		referenceCardinality = endpoint.count("?x", subClass.graphPattern, 0);
-//		logger.info("après");
 		logger.info("referenceCardinality = " + referenceCardinality);
-//		logger.info("avant");
 		int numIntersectingClasses = endpoint.count("?D", subClass.graphPattern + " ?x a ?D . ", 0);
-//		logger.info("après");
 		logger.info("No. of Intersecting Classes = " + numIntersectingClasses);
 		timePredictor = referenceCardinality * numIntersectingClasses;
 //		logger.warn("Time Predictor = " + timePredictor);
-//		logger.info("avant");
 		numConfirmations = endpoint.count("?x", subClass.graphPattern + "\n" + superClass.graphPattern, 0);
 //		logger.info("après");
 //		System.out.println("pattern conf. : \n" + subClass.graphPattern + "\n" + superClass.graphPattern);

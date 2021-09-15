@@ -15,7 +15,6 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFactory;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
 import org.apache.jena.tdb.TDBFactory;
@@ -74,7 +73,7 @@ public class SparqlEndpoint {
 	 * The current query execution.
 	 */
 	public QueryEngineHTTP queryExecution;
-
+	
 	/**
 	 * The result of the current query.
 	 */
@@ -232,7 +231,7 @@ public class SparqlEndpoint {
 				tdb.leaveCriticalSection();
 			return n.asLiteral().getInt();
 		}
-		queryExecution.close();
+//		queryExecution.close();
 		return 0;
 	}
 
