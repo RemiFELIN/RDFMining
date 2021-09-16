@@ -55,7 +55,7 @@ public class FitnessEvaluation {
 			boolean evaluate, List<JSONObject> axioms) throws InterruptedException, ExecutionException {
 		
 		// We have a set of threads to compute each axioms
-		ExecutorService executor = Executors.newFixedThreadPool(4);
+		ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
 		// Log the size of executor
 //		logger.info("n thread(s) ready to be launched");
 		
@@ -166,7 +166,7 @@ public class FitnessEvaluation {
 	}
 
 
-	public void display(ArrayList<GEIndividual> population, List<JSONObject> axioms, int ngen) {
+	public void display(ArrayList<GEIndividual> population, List<JSONObject> axioms, int ngen) throws InterruptedException {
 		int index = population.size();
 		Set<Callable<Void>> callables = new HashSet<Callable<Void>>();
 		for (int i = 0; i < index; i++) {
@@ -186,6 +186,11 @@ public class FitnessEvaluation {
 				}
 			});
 		}
+		ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
+		// Submit tasks
+		executor.invokeAll(callables);
+		executor.shutdown();
+		executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 	}
 
 	public double setFitness(Axiom axiom) {

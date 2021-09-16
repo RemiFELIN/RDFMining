@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.jena.query.ResultSet;
 import org.apache.log4j.Logger;
 
+import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.grammar.evolutionary.crossover.SinglePointCrossoverAxiom;
@@ -185,7 +186,7 @@ public class EATools {
 		int m = 0;
 
 		// We have a set of threads to compute each axioms
-		ExecutorService executor = Executors.newFixedThreadPool(4);
+		ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
 		Set<Callable<Void>> callables = new HashSet<Callable<Void>>();
 
 		while (m <= index - 1) {
