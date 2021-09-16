@@ -29,7 +29,7 @@ import Mapper.Symbol;
  *
  */
 public abstract class Axiom {
-	
+
 	public String axiomId;
 	
 	public GEIndividual individual;
@@ -153,6 +153,10 @@ public abstract class Axiom {
 		} else {
 			return 1;
 		}
+	}
+	
+	public GEIndividual getIndividual() {
+		return individual;
 	}
 
 	/**

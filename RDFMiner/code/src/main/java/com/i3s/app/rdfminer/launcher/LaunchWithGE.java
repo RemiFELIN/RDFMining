@@ -106,15 +106,17 @@ public class LaunchWithGE {
 		logger.info("PARAMETERS AS THE INPUTS OF GE");
 		logger.info("========================================================");
 		logger.info("POPULATION SIZE : " + parameters.populationsize);
-		logger.info("========================================================");
-		int maxnumGeneration = parameters.numGeneration;
-		logger.info("MAX GENERATION NUMBER: " + maxnumGeneration);
-		logger.info("GENERATION NUMBER: " + parameters.numGeneration);
-		logger.info("========================================================");
+		logger.info("TOTAL EFFORT : " + parameters.k_base);
+//		logger.info("========================================================");
+//		int maxnumGeneration = parameters.numGeneration;
+		logger.info("MAX GENERATION NUMBER: " + (parameters.k_base / parameters.populationsize));
+//		logger.info("GENERATION NUMBER: " + parameters.numGeneration);
+//		logger.info("========================================================");
 		logger.info("INITIALIZED LENGTH CHROMOSOME: " + parameters.initlenChromosome);
 		logger.info("MAXIMUM WRAPPING: " + parameters.maxWrapp);
 		logger.info("CROSSOVER PROBABILITY: " + parameters.proCrossover);
 		logger.info("MUTATION PROBABILITY: " + parameters.proMutation);
+		logger.info("TIME-CAP: " + parameters.timeOut + " secondes");
 		logger.info("========================================================");
 
 		GEChromosome[] chromosomes = new GEChromosome[parameters.populationsize];
@@ -167,7 +169,6 @@ public class LaunchWithGE {
 		
 //		ResultsJSON results = new ResultsJSON();
 //		StatJSON stats = null;
-		List<JSONObject> axioms = new ArrayList<>();
 		boolean isDefine = false;
 		
 		// Write in the Statistical Result File
@@ -207,6 +208,7 @@ public class LaunchWithGE {
 		}
 
 		while (curCheckpoint <= parameters.checkpoint) {
+			System.out.println("\n--------------------------------------------------------\n");
 			logger.info("Generation: " + curGeneration);
 			// logger.info("[DEBUG] parameters.checkpoint: " + parameters.checkpoint);
 			FitnessEvaluation fit = new FitnessEvaluation();
@@ -220,7 +222,9 @@ public class LaunchWithGE {
 			}
 			
 			if (parameters.populationsize * curGeneration == parameters.k_base * curCheckpoint) {
-
+				
+				List<JSONObject> axioms = new ArrayList<>();
+				
 				fit.display(candidatePopulation, true, axioms, curCheckpoint);
 
 				ArrayList<GEIndividual> candidatePopulation2 = new ArrayList<GEIndividual>();
@@ -234,11 +238,7 @@ public class LaunchWithGE {
 				}
 				logger.info("Evaluating axioms against to the RDF Data of the whole DBPedia.");
 				fit.updatePopulation(candidatePopulation2, curGeneration, true, axioms);
-				for(JSONObject axiom : axioms) {
-					RDFMiner.axioms.add(axiom);
-				}
-				axioms.clear();
-				
+				RDFMiner.axioms.addAll(axioms);
 //				writeWorkbook.write();
 //				writeWorkbook.close();
 				curCheckpoint++;
@@ -344,6 +344,7 @@ public class LaunchWithGE {
 				EATools.setResultList(listCrossover,
 						EATools.crossover(crossoverList, parameters.proCrossover, parameters.proMutation, curGeneration,
 								generator, parameters.diversity, parameters.numGeneration));
+				logger.info("Crossover & Mutation done");
 				// logger.info("List after Crossover & Mutation: ");
 				candidatePopulation = canPop.renew(listCrossover, curGeneration, etilismPopulation);
 				curGeneration++; // turn to the next generation

@@ -152,8 +152,8 @@ public class SparqlEndpoint {
 				queryExecution.addParam("timeout", Integer.toString(timeout * 1000));
 			}
 			// execution of SPARQL "SELECT" request
-			ResultSet result = queryExecution.execSelect();
-//			queryExecution.close();
+			ResultSet result = ResultSetFactory.copyResults(queryExecution.execSelect());
+			queryExecution.close();
 			return result;
 		} catch (Exception e) {
 			handleException(e, "making the following query:\nSELECT " + SparqlEndpoint.prettyPrint(sparql));
@@ -169,7 +169,7 @@ public class SparqlEndpoint {
 			queryExecution = new QueryEngineHTTP(endpoint, query);
 			// resultSet = queryExecution.execSelect();
 			ResultSet result = ResultSetFactory.copyResults(queryExecution.execSelect());
-//			queryExecution.close();
+			queryExecution.close();
 			return result;
 		} catch (Exception e) {
 			handleException(e, "making the following query:\nSELECT " + SparqlEndpoint.prettyPrint(sparql));
@@ -190,15 +190,15 @@ public class SparqlEndpoint {
 		try {
 			String str = prefixes + "ASK { " + graphPattern + " }";
 			Query query = QueryFactory.create(str);
-//			prepare(query);
 			queryExecution = new QueryEngineHTTP(endpoint, query);
 			result = queryExecution.execAsk();
-//			queryExecution.close();
+			queryExecution.close();
 		} catch (QueryException q) {
 			logger.warn("An ASK query failed: graph pattern =\n " + graphPattern
 					+ "\nTrying with the corresponding SELECT...");
 			ResultSet slct = select("* WHERE { " + graphPattern + " }", timeout);
 			result = slct.hasNext();
+			queryExecution.close();
 		} catch (Exception e) {
 			handleException(e, "making the following query:\nASK { " + SparqlEndpoint.prettyPrint(graphPattern) + " }");
 		} finally {
@@ -231,7 +231,6 @@ public class SparqlEndpoint {
 				tdb.leaveCriticalSection();
 			return n.asLiteral().getInt();
 		}
-//		queryExecution.close();
 		return 0;
 	}
 
@@ -408,6 +407,7 @@ public class SparqlEndpoint {
 //			prepare(query);
 			QueryEngineHTTP queryExecution = QueryExecutionFactory.createServiceRequest(endpoint, query);
 			tdb = queryExecution.execConstruct();
+			queryExecution.close();
 		} catch (Exception e) {
 			handleException(e, "making the following query:\nCONSTRUCT " + SparqlEndpoint.prettyPrint(sparql));
 		}

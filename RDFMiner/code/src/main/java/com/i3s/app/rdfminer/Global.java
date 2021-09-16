@@ -8,6 +8,15 @@ package com.i3s.app.rdfminer;
  *
  */
 public class Global {
+	
+	public static final String BANNER = "  _____  _____  ______   __  __ _____ _   _ ______ _____  \n"
+			+ " |  __ \\|  __ \\|  ____| |  \\/  |_   _| \\ | |  ____|  __ \\ \n"
+			+ " | |__) | |  | | |__    | \\  / | | | |  \\| | |__  | |__) |\n"
+			+ " |  _  /| |  | |  __|   | |\\/| | | | | . ` |  __| |  _  / \n"
+			+ " | | \\ \\| |__| | |      | |  | |_| |_| |\\  | |____| | \\ \\ \n"
+			+ " |_|  \\_\\_____/|_|      |_|  |_|_____|_| \\_|______|_|  \\_\\\n"
+			+ "                                                          \n"
+			+ "\033[0;1m" + " VERSION " + System.getenv("RDFMINER_VERSION") + "\033[0m" + "\n";
 
 	/**
 	 * Path to log4j.properties file
@@ -58,5 +67,7 @@ public class Global {
 	 * .cache files folder path
 	 */
 	public static final String CACHE_PATH = System.getenv("HOME") + "/caches/";
+	
+	public static final int NB_THREADS = Runtime.getRuntime().availableProcessors();
 	
 }

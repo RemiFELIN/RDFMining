@@ -58,7 +58,7 @@ public class FitnessEvaluation {
 		// We have a set of threads to compute each axioms
 		ExecutorService executor = Executors.newFixedThreadPool(4);
 		// Log the size of executor
-		logger.info("n thread(s) ready to be launched");
+//		logger.info("n thread(s) ready to be launched");
 		
 		Set<Callable<Axiom>> callables = new HashSet<Callable<Axiom>>();
 		List<Axiom> axiomList = new ArrayList<>();
@@ -72,7 +72,7 @@ public class FitnessEvaluation {
 				callables.add(new Callable<Axiom>() {
 					public Axiom call() throws Exception {
 //						logger.info("Thread-ID: " + Thread.currentThread().getId());
-						logger.info("Starting update axiom ...");
+//						logger.info("Starting update axiom ...");
 						SparqlEndpoint endpoint;
 						if (evaluate) {
 							endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
@@ -80,7 +80,7 @@ public class FitnessEvaluation {
 							endpoint = new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, Global.LOCAL_PREFIXES);
 						}
 						Axiom axiom = AxiomFactory.create(population.get(idx), population.get(idx).getPhenotype(), endpoint);
-						logger.info("Axiom successfully evaluated !");
+//						logger.info("Axiom successfully evaluated !");
 						return axiom;
 					};
 				});
@@ -98,7 +98,7 @@ public class FitnessEvaluation {
 		
 		// We recover our axioms
 		for (Future<Axiom> axiom : futureAxioms) {
-			System.out.println(axiom.toString() + " added !");
+//			System.out.println(axiom.toString() + " added !");
 			axiomList.add(axiom.get());
 		}
 		
@@ -122,13 +122,22 @@ public class FitnessEvaluation {
 			if(evaluate) {
 				// data about DBPedia
 				DBPediaJSON dbpedia = new DBPediaJSON();
-				dbpedia.possibility = axiom.possibility().doubleValue();
-				dbpedia.referenceCardinality = axiom.referenceCardinality;
-				dbpedia.generality = axiom.generality;
-				dbpedia.necessity = axiom.necessity().doubleValue();
-				for(JSONObject json : axioms) {
-					if(json.get("axiom") == axiom.axiomId) {
-						axioms.get(axioms.indexOf(json)).put("resultsFromDBPedia", dbpedia);
+				if(axiom.getIndividual().isMapped()) {
+					dbpedia.possibility = axiom.possibility().doubleValue();
+					dbpedia.referenceCardinality = axiom.referenceCardinality;
+					dbpedia.generality = axiom.generality;
+					dbpedia.necessity = axiom.necessity().doubleValue();
+					for(JSONObject json : axioms) {
+						if(json.get("axiom").equals(axiom.axiomId)) {
+							logger.info("\n\n\n       trouvé ! \n\n\n");
+							axioms.get(axioms.indexOf(json)).put("resultsFromDBPedia", dbpedia);
+						}
+					}
+				} else {
+					for(JSONObject json : axioms) {
+						if(json.get("axiom").equals(axiom.axiomId)) {
+							axioms.get(axioms.indexOf(json)).put("resultsFromDBPedia", dbpedia);
+						}
 					}
 				}
 			}
@@ -138,37 +147,20 @@ public class FitnessEvaluation {
 	public void updateIndividual(GEIndividual indivi) {
 		
 		double f = 0;
-		
 		if (indivi.isMapped()) {
-			
-			Axiom axiom = AxiomFactory.create(indivi, indivi.getPhenotype(), RDFMiner.LOCAL_ENDPOINT);
-
+			Axiom axiom = AxiomFactory.create(indivi, indivi.getPhenotype(), new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, Global.LOCAL_PREFIXES));
 			if (axiom != null) {
-				referenceCardinality = axiom.referenceCardinality;
-				possibility = axiom.possibility().doubleValue();
-				necessity = axiom.necessity().doubleValue();
-				generality = axiom.generality;
-//				f = generality * possibility;
 				f = setFitness(axiom);
 			} else {
-				referenceCardinality = 0;
-				generality = 0;
-				possibility = 0;
 				f = 0;
 			}
 		} else {
-			referenceCardinality = 0;
-			possibility = 0;
-			necessity = 0;
-			generality = 0;
 			f = 0;
 		}
 		BasicFitness fit = new BasicFitness(f, indivi);
 		fit.setIndividual(indivi);
 		fit.getIndividual().setValid(true);
 		indivi.setFitness(fit);
-//		System.out.print("Evaluation>	" + indivi.getPhenotype().getStringNoSpace().substring(0, 60)
-//				+ "... - Request time: " + timer.endTimer() + "ms   \r");
 	}
 
 	public static String removeCharAt(String s, int pos) {
@@ -176,19 +168,18 @@ public class FitnessEvaluation {
 	}
 
 
-	public void display(ArrayList<GEIndividual> population, boolean fill, List<JSONObject> axioms, int k) {
-
+	public void display(ArrayList<GEIndividual> population, boolean fill, List<JSONObject> axioms, int ngen) {
 		int index = population.size();
 		for (int i = 0; i < index; i++) {
 			GEIndividual indivi = (GEIndividual) population.get(i);
 			if (population.get(0).getPhenotype() == null)
 				break;
 			if (fill && indivi.isMapped()) {
-				Axiom a = AxiomFactory.create(indivi, indivi.getPhenotype(), RDFMiner.LOCAL_ENDPOINT);
+				Axiom a = AxiomFactory.create(indivi, indivi.getPhenotype(), new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, Global.LOCAL_PREFIXES));
+				a.generation = ngen;
 				axioms.add(a.toJSON());
 			}
 		}
-
 	}
 
 	public double setFitness(Axiom axiom) {
