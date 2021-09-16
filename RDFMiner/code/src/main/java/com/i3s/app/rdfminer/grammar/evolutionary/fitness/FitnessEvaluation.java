@@ -128,13 +128,13 @@ public class FitnessEvaluation {
 					dbpedia.necessity = axiom.necessity().doubleValue();
 					for(JSONObject json : axioms) {
 						if(json.get("axiom").equals(axiom.axiomId)) {
-							axioms.get(axioms.indexOf(json)).put("resultsFromDBPedia", dbpedia);
+							axioms.get(axioms.indexOf(json)).put("resultsFromDBPedia", dbpedia.toJSON());
 						}
 					}
 				} else {
 					for(JSONObject json : axioms) {
 						if(json.get("axiom").equals(axiom.axiomId)) {
-							axioms.get(axioms.indexOf(json)).put("resultsFromDBPedia", dbpedia);
+							axioms.get(axioms.indexOf(json)).put("resultsFromDBPedia", dbpedia.toJSON());
 						}
 					}
 				}
