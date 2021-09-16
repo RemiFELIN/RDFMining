@@ -18,7 +18,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import com.i3s.app.rdfminer.Global;
-import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.axiom.Axiom;
 import com.i3s.app.rdfminer.axiom.AxiomFactory;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
@@ -129,7 +128,6 @@ public class FitnessEvaluation {
 					dbpedia.necessity = axiom.necessity().doubleValue();
 					for(JSONObject json : axioms) {
 						if(json.get("axiom").equals(axiom.axiomId)) {
-							logger.info("\n\n\n       trouvé ! \n\n\n");
 							axioms.get(axioms.indexOf(json)).put("resultsFromDBPedia", dbpedia);
 						}
 					}
@@ -168,17 +166,25 @@ public class FitnessEvaluation {
 	}
 
 
-	public void display(ArrayList<GEIndividual> population, boolean fill, List<JSONObject> axioms, int ngen) {
+	public void display(ArrayList<GEIndividual> population, List<JSONObject> axioms, int ngen) {
 		int index = population.size();
+		Set<Callable<Void>> callables = new HashSet<Callable<Void>>();
 		for (int i = 0; i < index; i++) {
-			GEIndividual indivi = (GEIndividual) population.get(i);
-			if (population.get(0).getPhenotype() == null)
-				break;
-			if (fill && indivi.isMapped()) {
-				Axiom a = AxiomFactory.create(indivi, indivi.getPhenotype(), new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, Global.LOCAL_PREFIXES));
-				a.generation = ngen;
-				axioms.add(a.toJSON());
-			}
+			final int idx = i;
+			callables.add(new Callable<Void>() {
+				@Override
+				public Void call() throws Exception {
+					GEIndividual indivi = (GEIndividual) population.get(idx);
+//					if (population.get(0).getPhenotype() == null)
+//						break;
+					if (indivi.isMapped()) {
+						Axiom a = AxiomFactory.create(indivi, indivi.getPhenotype(), new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, Global.LOCAL_PREFIXES));
+						a.generation = ngen;
+						axioms.add(a.toJSON());
+					}
+					return null;
+				}
+			});
 		}
 	}
 

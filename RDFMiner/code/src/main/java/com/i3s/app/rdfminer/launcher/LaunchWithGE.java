@@ -225,7 +225,7 @@ public class LaunchWithGE {
 				
 				List<JSONObject> axioms = new ArrayList<>();
 				
-				fit.display(candidatePopulation, true, axioms, curCheckpoint);
+				fit.display(candidatePopulation, axioms, curCheckpoint);
 
 				ArrayList<GEIndividual> candidatePopulation2 = new ArrayList<GEIndividual>();
 				for (int l = 0; l < candidatePopulation.size(); l++) {
