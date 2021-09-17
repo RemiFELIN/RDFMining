@@ -9,14 +9,13 @@ import java.util.TreeSet;
 
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.RDFVisitor;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.log4j.Logger;
-
-import com.i3s.app.rdfminer.RDFMiner;
 
 /**
  * An adapter of RDFNode to make it comparable.
@@ -201,9 +200,9 @@ public class ComparableRDFNode implements RDFNode, Comparable<Object> {
 		String str = "DISTINCT ?class WHERE {\n" + "\t<" + node + "> a ?class .\n"
 				+ "\tFILTER ( ?class != owl:Thing )\n" + "}";
 		logger.info("Querying SPARQL endpoint for the containing classes of " + node + " with query:\n" + str);
-		endpoint.select(str, 0);
-		while (endpoint.hasNext()) {
-			QuerySolution solution = endpoint.next();
+		ResultSet rs = endpoint.select(str, 0);
+		while (rs.hasNext()) {
+			QuerySolution solution = rs.next();
 			Iterator<String> i = solution.varNames();
 			if (i.hasNext()) {
 				String varName = i.next();
@@ -217,7 +216,6 @@ public class ComparableRDFNode implements RDFNode, Comparable<Object> {
 
 	@Override
 	public boolean isStmtResource() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

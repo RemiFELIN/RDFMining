@@ -20,7 +20,7 @@ import com.i3s.app.rdfminer.axiom.CandidateAxiomGenerator;
 import com.i3s.app.rdfminer.axiom.IncreasingTimePredictorAxiomGenerator;
 import com.i3s.app.rdfminer.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.axiom.type.SubClassOfAxiom;
-import com.i3s.app.rdfminer.output.AxiomJSON;
+//import com.i3s.app.rdfminer.output.AxiomJSON;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
 import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 
@@ -79,8 +79,6 @@ public class LaunchWithoutGE {
 					writeAndFinish();
 			}
 		});
-				
-		RDFMiner.executor = Executors.newSingleThreadExecutor();
 
 		if (parameters.axiom == null) {
 			// as the test of a single axiom is return on standard output, we don't need to
@@ -107,7 +105,7 @@ public class LaunchWithoutGE {
 				axiomName = axiom.getStringNoSpace();
 				logger.info("Testing axiom: " + axiomName);
 				try {
-					a = AxiomFactory.create(axiom, RDFMiner.REMOTE_ENDPOINT);
+					a = AxiomFactory.create(null, axiom, RDFMiner.REMOTE_ENDPOINT);
 				} catch (QueryExceptionHTTP httpError) {
 					logger.error("HTTP Error " + httpError.getMessage() + " making a SPARQL query.");
 					httpError.printStackTrace();
@@ -134,7 +132,7 @@ public class LaunchWithoutGE {
 					if (axiomName.isEmpty())
 						break;
 					logger.info("Testing axiom: " + axiomName);
-					a = AxiomFactory.create(axiomName, RDFMiner.REMOTE_ENDPOINT);
+					a = AxiomFactory.create(null, axiomName, RDFMiner.REMOTE_ENDPOINT);
 				} catch (IOException e) {
 					writeAndFinish();
 					logger.error("Could not read the next axiom.");
@@ -148,22 +146,7 @@ public class LaunchWithoutGE {
 
 			if (a != null) {
 				// Save a JSON report of the test
-				AxiomJSON reportJSON = new AxiomJSON();
-				reportJSON.axiom = axiomName;
-				reportJSON.elapsedTime = t - t0;
-				reportJSON.referenceCardinality = a.referenceCardinality;
-				reportJSON.numConfirmations = a.numConfirmations;
-				reportJSON.numExceptions = a.numExceptions;
-				reportJSON.possibility = a.possibility().doubleValue();
-				reportJSON.necessity = a.necessity().doubleValue();
-				reportJSON.isTimeout = a.isTimeout;
-				reportJSON.generality = a.generality;
-				reportJSON.fitness = a.fitness;
-				reportJSON.confirmations = a.confirmations;
-				reportJSON.exceptions = a.exceptions;
-
-				// fill json results
-				RDFMiner.axiomsList.put(reportJSON.toJSON());
+				RDFMiner.axiomsList.put(a.toJSON());
 
 				// print useful results
 				logger.info("Num. confirmations: " + a.numConfirmations);
@@ -186,17 +169,6 @@ public class LaunchWithoutGE {
 			logger.info("Test completed in " + (t - t0) + " ms.");
 		}
 		logger.info("Done testing axioms. Exiting.");
-//		if (parameters.axiom == null) {
-//			try {
-//				output.write(RDFMiner.results.toString());
-//				output.close();
-//			} catch (IOException e) {
-//				logger.error("I/O error while closing JSON writer: " + e.getMessage());
-//				e.printStackTrace();
-//				System.exit(1);
-//			}
-//			writeAndFinish();
-//		}
 		System.exit(0);
 	}
 	

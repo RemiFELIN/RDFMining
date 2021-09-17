@@ -5,7 +5,11 @@ package com.i3s.app.rdfminer.axiom;
 
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import com.i3s.app.rdfminer.fuzzy.TruthDegree;
+import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 
 import Mapper.Symbol;
@@ -25,6 +29,11 @@ import Mapper.Symbol;
  *
  */
 public abstract class Axiom {
+
+	public String axiomId;
+	
+	public GEIndividual individual;
+	
 	/**
 	 * The cardinality of the universe of discourse for this axiom.
 	 * <p>
@@ -42,12 +51,18 @@ public abstract class Axiom {
 	public double generality = 0;
 	public double fitness = 0.0;
 	public int referenceCardinality = 0;
+	public int generation;
 	
 	/**
 	 * The number of facts in the RDF store that explicitly support/confirm the
 	 * axiom.
 	 */
 	public int numConfirmations = 0;
+	
+	/**
+	 *  the time it took to test the axiom, in ms.
+	 */
+	public long elapsedTime = 0L; 
 
 	/**
 	 * The number of facts in the RDF store that explicitly contradict the axiom.
@@ -139,6 +154,10 @@ public abstract class Axiom {
 			return 1;
 		}
 	}
+	
+	public GEIndividual getIndividual() {
+		return individual;
+	}
 
 	/**
 	 * Updates the counts used to compute the possibility and necessity degrees.
@@ -172,4 +191,26 @@ public abstract class Axiom {
 	 * </p>
 	 */
 	public void update(SparqlEndpoint endpoint) {}
+	
+	public JSONObject toJSON() {
+		JSONObject json = new JSONObject();
+		// v1.0
+		json.put("axiom", axiomId);
+		json.put("referenceCardinality", referenceCardinality);
+		json.put("numConfirmations", numConfirmations);
+		json.put("numExceptions", numExceptions);
+		json.put("possibility", possibility().doubleValue());
+		json.put("necessity", necessity().doubleValue());
+		json.put("elapsedTime", elapsedTime);
+		json.put("isTimeout", isTimeout);
+		json.put("exceptions", new JSONArray(exceptions));
+		json.put("confirmations", new JSONArray(confirmations));
+		// v1.3
+		json.put("generation", generation);
+		json.put("fitness", fitness);
+		json.put("generality", generality);
+		json.put("isMapped", individual.isMapped());
+		return json;
+	}
+	
 }

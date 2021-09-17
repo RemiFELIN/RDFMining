@@ -27,38 +27,9 @@ public class AxiomJSON extends JSONObject {
 	public boolean isTimeout;
 	public List<String> exceptions, confirmations = new ArrayList<>();
 	// v1.3
-	public int k;
-	// public double uPhi;
+	public int generation;
 	public double generality;
 	public double fitness;
 	public boolean isMapped;
-	// public JSONObject resultsFromDBPedia;
-
-	public JSONObject toJSON() {
-		JSONObject json = new JSONObject();
-		// v1.0
-		json.put("axiom", axiom);
-		json.put("referenceCardinality", referenceCardinality);
-		json.put("numConfirmations", numConfirmations);
-		json.put("numExceptions", numExceptions);
-		json.put("possibility", possibility);
-		json.put("necessity", necessity);
-		json.put("elapsedTime", elapsedTime);
-		json.put("isTimeout", isTimeout);
-		// if exceptions or confirmations list are not empty, they are defined and so
-		// they are not null
-		// if (exceptions != null)
-		json.put("exceptions", new JSONArray(exceptions));
-		// if (confirmations != null)
-		json.put("confirmations", new JSONArray(confirmations));
-		// v1.3
-		json.put("k", k);
-		// json.put("uPhi", uPhi);
-		json.put("fitness", fitness);
-		json.put("generality", generality);
-		json.put("isMapped", isMapped);
-		// json.put("resultsFromDBPedia", resultsFromDBPedia);
-		return json;
-	}
 
 }

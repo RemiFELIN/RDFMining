@@ -16,6 +16,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.*;
 
@@ -95,8 +96,8 @@ public class GoldStandardMatrix {
 				+ rootClass + ">}";
 		logger.info("Querying SPARQL endpoint for the number of subclasses of the class : <" + rootClass
 				+ "> with query:\nSELECT " + SparqlEndpoint.prettyPrint(sparql_countClasses));
-		endpoint.select(sparql_countClasses, 0);
-		QuerySolution solution1 = endpoint.next();
+		ResultSet result1 = endpoint.select(sparql_countClasses, 0);
+		QuerySolution solution1 = result1.next();
 		Iterator<String> t = solution1.varNames();
 		String varName1 = t.next();
 		RDFNode node1 = solution1.get(varName1);
@@ -106,13 +107,13 @@ public class GoldStandardMatrix {
 				+ ">}";
 		logger.info("Querying SPARQL endpoint for symbol <Class> with query:\nSELECT "
 				+ SparqlEndpoint.prettyPrint(sparql_listClasses));
-		endpoint.select(sparql_listClasses, 0);
+		ResultSet result2 = endpoint.select(sparql_listClasses, 0);
 
 		int dem = 0;
 		String[][] M = new String[n][n];
 		M[0][0] = "GOLD STANDARD";
-		while (endpoint.hasNext() && dem < n) {
-			QuerySolution solution = endpoint.next();
+		while (result2.hasNext() && dem < n) {
+			QuerySolution solution = result2.next();
 			Iterator<String> i = solution.varNames();
 			// String separator = "";
 			while (i.hasNext()) {
@@ -177,9 +178,9 @@ public class GoldStandardMatrix {
 
 	static ArrayList<RDFNode> ResultQuery(SparqlEndpoint endpoint, String sparql) {
 		ArrayList<RDFNode> arrRDFNode = new ArrayList<RDFNode>();
-		endpoint.select(sparql, 0);
-		while (endpoint.hasNext()) {
-			QuerySolution solution = endpoint.next();
+		ResultSet result = endpoint.select(sparql, 0);
+		while (result.hasNext()) {
+			QuerySolution solution = result.next();
 			Iterator<String> i = solution.varNames();
 
 			while (i.hasNext()) {

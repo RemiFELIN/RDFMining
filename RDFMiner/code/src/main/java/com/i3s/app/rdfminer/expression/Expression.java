@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.AnonId;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
@@ -149,7 +150,7 @@ public abstract class Expression {
 	 */
 	public abstract String createGraphPattern(String subject, String object);
 
-	/*
+	/**
 	 * Creates a fresh (i.e., not yet used) query variable name.
 	 */
 	public static String getFreshVariableName() {
@@ -219,12 +220,11 @@ public abstract class Expression {
 						PrintStream cache = new PrintStream(cacheName());
 						for (int hexDigit = 0; hexDigit < 0x10; hexDigit++) {
 							String h = String.format("\"%x\"", hexDigit);
-
-							RDFMiner.REMOTE_ENDPOINT.select("DISTINCT ?x WHERE { " + graphPattern
+							ResultSet result = RDFMiner.REMOTE_ENDPOINT.select("DISTINCT ?x WHERE { " + graphPattern
 									+ " FILTER( strStarts(MD5(str(?x)), " + h + ") ) }", 0);
-							while (RDFMiner.REMOTE_ENDPOINT.hasNext()) {
-								QuerySolution solution = RDFMiner.REMOTE_ENDPOINT.next();
-
+							
+							while (result.hasNext()) {
+								QuerySolution solution = result.next();
 								RDFNode x = solution.get("x");
 								RDFNode y = solution.get("y");
 								extension.add(new RDFNodePair(x, y));
@@ -342,7 +342,6 @@ public abstract class Expression {
 			}
 			s += " )";
 		}
-
 		return s;
 	}
 

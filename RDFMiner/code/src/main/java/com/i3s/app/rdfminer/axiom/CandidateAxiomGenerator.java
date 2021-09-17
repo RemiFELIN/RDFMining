@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
@@ -152,12 +153,11 @@ public class CandidateAxiomGenerator extends AxiomGenerator {
 	 */
 	protected Set<RDFNodePair> getNodes(String sparql) {
 		Set<RDFNodePair> classes = new TreeSet<RDFNodePair>();
-
 		logger.warn("Querying DBpedia with query " + sparql);
-		RDFMiner.REMOTE_ENDPOINT.select(sparql, 0);
-		while (RDFMiner.REMOTE_ENDPOINT.hasNext()) {
-			QuerySolution solution = RDFMiner.REMOTE_ENDPOINT.next();
-
+		ResultSet result = RDFMiner.REMOTE_ENDPOINT.select(sparql, 0);
+		
+		while (result.hasNext()) {
+			QuerySolution solution = result.next();
 			RDFNode x = solution.get("class");
 			RDFNode y = solution.get("y");
 			if (!Expression.sparqlEncode(x).equals(subClass.get(0).toString()))
