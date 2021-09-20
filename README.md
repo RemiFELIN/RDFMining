@@ -1,4 +1,4 @@
-![](https://github.com/RemiFELIN/RDFMining/tree/main/RDFMiner/docs/banner.png)
+![](RDFMiner/docs/banner.png)
 
 ## Requirements
 
