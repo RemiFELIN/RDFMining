@@ -2,7 +2,6 @@
  * 
  */
 
-// import org.apache.log4j.Logger;
 package com.i3s.app.rdfminer.axiom;
 
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
@@ -27,8 +26,6 @@ import Util.Random.RandomNumberGenerator;
  *
  */
 public class RandomAxiomGenerator extends AxiomGenerator {
-	// private static Logger logger =
-	// Logger.getLogger(RandomAxiomGenerator.class.getName());
 
 	/**
 	 * The random number generator used to generate axioms.
@@ -40,10 +37,10 @@ public class RandomAxiomGenerator extends AxiomGenerator {
 	 * grammar.
 	 * 
 	 * @param fileName the name of the file containing the grammar.
+	 * @throws InterruptedException 
 	 */
-	public RandomAxiomGenerator(String fileName, boolean v2) {
+	public RandomAxiomGenerator(String fileName, boolean v2) throws InterruptedException {
 		super(fileName, v2);
-
 		// Set up a pseudo-random number generator
 		random = new MersenneTwisterFast(System.currentTimeMillis() & 0xFFFFFFFF);
 	}

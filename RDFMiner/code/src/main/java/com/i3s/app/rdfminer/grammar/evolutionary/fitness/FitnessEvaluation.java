@@ -26,20 +26,31 @@ import Individuals.FitnessPackage.BasicFitness;
  * FitnessEvaluation - is the class to setup the fitness value for Axioms in the
  * specified population
  *
- * @author NGUYEN Thu Huong Oct.18
+ * @author NGUYEN Thu Huong Oct.18 & Rémi FELIN
  */
 public class FitnessEvaluation {
 
-//	private static Logger logger = Logger.getLogger(FitnessEvaluation.class.getName());
+	/**
+	 * Update a given population by using evaluation (possibility, fitness, ...) of
+	 * each individual and fill data
+	 * 
+	 * @param population       a given population
+	 * @param curGeneration    the current generation
+	 * @param evaluateOnFullDB true if the given population are evaluated of full
+	 *                         instance of DB, else false
+	 * @param axioms           the list of axioms in JSON format (used to return
+	 *                         results)
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	public void updatePopulation(ArrayList<GEIndividual> population, int curGeneration, boolean evaluateOnFullDB,
+			List<JSONObject> axioms) throws InterruptedException, ExecutionException {
 
-	public void updatePopulation(ArrayList<GEIndividual> population, int curGeneration,
-			boolean evaluate, List<JSONObject> axioms) throws InterruptedException, ExecutionException {
-		
 		Set<Callable<Axiom>> callables = new HashSet<Callable<Axiom>>();
 		List<Axiom> axiomList = new ArrayList<>();
-		
+
 		int i = 0;
-		
+
 		while (i < population.size()) {
 			if (population.get(0).getPhenotype() == null)
 				break;
@@ -48,12 +59,13 @@ public class FitnessEvaluation {
 				callables.add(new Callable<Axiom>() {
 					public Axiom call() throws Exception {
 						SparqlEndpoint endpoint;
-						if (evaluate) {
+						if (evaluateOnFullDB) {
 							endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
 						} else {
 							endpoint = new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, Global.LOCAL_PREFIXES);
 						}
-						Axiom axiom = AxiomFactory.create(population.get(idx), population.get(idx).getPhenotype(), endpoint);
+						Axiom axiom = AxiomFactory.create(population.get(idx), population.get(idx).getPhenotype(),
+								endpoint);
 						return axiom;
 					};
 				});
@@ -65,7 +77,7 @@ public class FitnessEvaluation {
 			}
 			i++;
 		}
-		
+
 		// We have a set of threads to compute each axioms
 		ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
 		// Submit tasks
@@ -79,23 +91,23 @@ public class FitnessEvaluation {
 		executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 
 		// Update fitness of population
-		for(Axiom axiom : axiomList) {
+		for (Axiom axiom : axiomList) {
 			BasicFitness fit = new BasicFitness(setFitness(axiom), axiom.individual);
 			fit.getIndividual().setValid(true);
 			axiom.individual.setFitness(fit);
 			population.add(axiom.individual);
 			// Now, we can fill our JSONObject
-			if(evaluate) {
+			if (evaluateOnFullDB) {
 				// data about full database of DBPedia
 				DBPediaJSON dbpedia = new DBPediaJSON();
-				if(axiom.getIndividual().isMapped()) {
+				if (axiom.getIndividual().isMapped()) {
 					dbpedia.possibility = axiom.possibility().doubleValue();
 					dbpedia.referenceCardinality = axiom.referenceCardinality;
 					dbpedia.generality = axiom.generality;
 					dbpedia.necessity = axiom.necessity().doubleValue();
-				} 
-				for(JSONObject json : axioms) {
-					if(json.get("axiom").equals(axiom.axiomId)) {
+				}
+				for (JSONObject json : axioms) {
+					if (json.get("axiom").equals(axiom.axiomId)) {
 						axioms.get(axioms.indexOf(json)).put("resultsFromFullDB", dbpedia.toJSON());
 					}
 				}
@@ -103,10 +115,16 @@ public class FitnessEvaluation {
 		}
 	}
 
+	/**
+	 * Update a given individual by using evaluation (possibility, fitness, ...)
+	 * 
+	 * @param indivi a given individual
+	 */
 	public void updateIndividual(GEIndividual indivi) {
 		double f = 0;
 		if (indivi.isMapped()) {
-			Axiom axiom = AxiomFactory.create(indivi, indivi.getPhenotype(), new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, Global.LOCAL_PREFIXES));
+			Axiom axiom = AxiomFactory.create(indivi, indivi.getPhenotype(),
+					new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, Global.LOCAL_PREFIXES));
 			if (axiom != null) {
 				f = setFitness(axiom);
 			} else {
@@ -121,12 +139,16 @@ public class FitnessEvaluation {
 		indivi.setFitness(fit);
 	}
 
-	public static String removeCharAt(String s, int pos) {
-		return s.substring(0, pos) + s.substring(pos + 1);
-	}
-
-	
-	public void display(ArrayList<GEIndividual> population, List<JSONObject> axioms, int ngen) throws InterruptedException {
+	/**
+	 * display a given population
+	 * 
+	 * @param population a given population
+	 * @param axioms     the list of axioms in JSON format (used to return results)
+	 * @param generation the current generation
+	 * @throws InterruptedException
+	 */
+	public void display(ArrayList<GEIndividual> population, List<JSONObject> axioms, int generation)
+			throws InterruptedException {
 		int index = population.size();
 		Set<Callable<Void>> callables = new HashSet<Callable<Void>>();
 		for (int i = 0; i < index; i++) {
@@ -138,8 +160,9 @@ public class FitnessEvaluation {
 					GEIndividual indivi = (GEIndividual) population.get(idx);
 					// if indivi is correctly formed
 					if (indivi.isMapped()) {
-						Axiom a = AxiomFactory.create(indivi, indivi.getPhenotype(), new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, Global.LOCAL_PREFIXES));
-						a.generation = ngen;
+						Axiom a = AxiomFactory.create(indivi, indivi.getPhenotype(),
+								new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, Global.LOCAL_PREFIXES));
+						a.generation = generation;
 						axioms.add(a.toJSON());
 					}
 					return null;
@@ -154,6 +177,14 @@ public class FitnessEvaluation {
 		executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 	}
 
+	/**
+	 * Compute the fitness of a given axiom by using generality (if it's not equal
+	 * to 0) or the {@link Axiom#possibility() possibility} and
+	 * {@link Axiom#necessity() necessity} values.
+	 * 
+	 * @param axiom a given {@link Axiom axiom}
+	 * @return
+	 */
 	public double setFitness(Axiom axiom) {
 		// Evaluate axioms with generality formula or (initial) formula with necessity
 		if (axiom.generality != 0) {
@@ -166,5 +197,9 @@ public class FitnessEvaluation {
 					* ((axiom.possibility().doubleValue() + axiom.necessity().doubleValue()) / 2);
 		}
 	}
+
+//	public static String removeCharAt(String s, int pos) {
+//		return s.substring(0, pos) + s.substring(pos + 1);
+//	}
 
 }

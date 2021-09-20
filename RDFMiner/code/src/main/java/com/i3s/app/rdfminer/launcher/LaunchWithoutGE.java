@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.concurrent.Executors;
-
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.engine.http.QueryExceptionHTTP;
 import org.apache.log4j.Logger;
@@ -20,7 +18,6 @@ import com.i3s.app.rdfminer.axiom.CandidateAxiomGenerator;
 import com.i3s.app.rdfminer.axiom.IncreasingTimePredictorAxiomGenerator;
 import com.i3s.app.rdfminer.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.axiom.type.SubClassOfAxiom;
-//import com.i3s.app.rdfminer.output.AxiomJSON;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
 import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 
@@ -32,10 +29,9 @@ public class LaunchWithoutGE {
 	
 	/**
 	 * The first version of RDFMiner launcher
+	 * @throws InterruptedException 
 	 */
-	public void run(CmdLineParameters parameters) {
-		
-		RDFMiner.REMOTE_ENDPOINT = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
+	public void run(CmdLineParameters parameters) throws InterruptedException {
 		
 		AxiomGenerator generator = null;
 		BufferedReader axiomFile = null;
@@ -49,9 +45,9 @@ public class LaunchWithoutGE {
 					logger.info(
 							"Initializing the random axiom generator with grammar " + parameters.grammarFile + "...");
 					generator = new RandomAxiomGenerator(parameters.grammarFile, false);
-				} else if (parameters.subclassList != null) {
+				} else if (parameters.subClassList != null) {
 					logger.info("Initializing the increasing TP axiom generator...");
-					generator = new IncreasingTimePredictorAxiomGenerator(parameters.subclassList);
+					generator = new IncreasingTimePredictorAxiomGenerator(parameters.subClassList);
 				} else {
 					logger.info("Initializing the candidate axiom generator...");
 					generator = new CandidateAxiomGenerator(parameters.grammarFile, false);
@@ -84,7 +80,7 @@ public class LaunchWithoutGE {
 			// as the test of a single axiom is return on standard output, we don't need to
 			// write file of the results
 			try {
-				RDFMiner.output = new FileWriter(parameters.resultFile);
+				RDFMiner.output = new FileWriter(RDFMiner.outputFolder + Global.RESULTS_FILENAME);
 			} catch (IOException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
@@ -105,7 +101,7 @@ public class LaunchWithoutGE {
 				axiomName = axiom.getStringNoSpace();
 				logger.info("Testing axiom: " + axiomName);
 				try {
-					a = AxiomFactory.create(null, axiom, RDFMiner.REMOTE_ENDPOINT);
+					a = AxiomFactory.create(null, axiom, new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES));
 				} catch (QueryExceptionHTTP httpError) {
 					logger.error("HTTP Error " + httpError.getMessage() + " making a SPARQL query.");
 					httpError.printStackTrace();
@@ -132,7 +128,7 @@ public class LaunchWithoutGE {
 					if (axiomName.isEmpty())
 						break;
 					logger.info("Testing axiom: " + axiomName);
-					a = AxiomFactory.create(null, axiomName, RDFMiner.REMOTE_ENDPOINT);
+					a = AxiomFactory.create(null, axiomName, new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES));
 				} catch (IOException e) {
 					writeAndFinish();
 					logger.error("Could not read the next axiom.");
@@ -151,9 +147,7 @@ public class LaunchWithoutGE {
 				// print useful results
 				logger.info("Num. confirmations: " + a.numConfirmations);
 				logger.info("Num. exceptions: " + a.numExceptions);
-//				logger.info("Possibility = " + a.possibility().doubleValue());
-//				logger.info("Necessity = " + a.necessity().doubleValue());
-
+				
 				if (a instanceof SubClassOfAxiom && a.necessity().doubleValue() > 1.0 / 3.0) {
 					SubClassOfAxiom sa = (SubClassOfAxiom) a;
 					SubClassOfAxiom.maxTestTime.maxput(sa.timePredictor(), t - t0);

@@ -16,10 +16,12 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
+import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
+import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 
 //import com.hp.hpl.jena.query.QuerySolution;
 //import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -53,7 +55,7 @@ import Util.Enums;
  * time-predictor value.
  * </p>
  * 
- * @author Andrea G. B. Tettamanzi
+ * @author Andrea G. B. Tettamanzi & Rémi FELIN
  *
  */
 public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
@@ -174,7 +176,8 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 	protected Set<RDFNodePair> getNodes(String sparql) {
 		Set<RDFNodePair> classes = new TreeSet<RDFNodePair>();
 		logger.warn("Querying DBpedia with query " + sparql);
-		ResultSet result = RDFMiner.REMOTE_ENDPOINT.select(sparql, 0);
+		SparqlEndpoint endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
+		ResultSet result = endpoint.select(sparql, 0);
 		while (result.hasNext()) {
 			QuerySolution solution = result.next();
 			RDFNode x = solution.get("class");
@@ -192,8 +195,8 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 	 */
 	public Phenotype nextAxiom() {
 		// First of all, save the previous status to file:
-		if (subClass != null) // ... except for the first time
-		{
+		if (subClass != null) {
+			// ... except for the first time
 			try {
 				PrintStream status = new PrintStream(statusFileName);
 				status.println(subClass.get(0).toString());

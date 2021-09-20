@@ -31,17 +31,11 @@ package com.i3s.app.rdfminer.grammar.evolutionary.crossover;
 
 import Individuals.GEChromosome;
 import Individuals.GEIndividual;
-import Individuals.Genotype;
 import Individuals.Individual;
-import Individuals.Populations.SimplePopulation;
-import Mapper.GEGrammar;
-import Operator.CrossoverModule;
 import Operator.Operations.CrossoverOperation;
 import Util.Constants;
-import Util.Random.MersenneTwisterFast;
 import Util.Random.RandomNumberGenerator;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -277,10 +271,10 @@ public class TwoPointCrossover extends CrossoverOperation {
 			point2 = ThreadLocalRandom.current().nextInt(4, p2maxXOPoint / 2);
 			point3 = ThreadLocalRandom.current().nextInt(p1maxXOPoint / 2, p1maxXOPoint);
 			point4 = ThreadLocalRandom.current().nextInt(p2maxXOPoint / 2, p2maxXOPoint);
-			System.out.println("point1: " + point1);
-			System.out.println("point2: " + point2);
-			System.out.println("point3: " + point3);
-			System.out.println("point4: " + point4);
+//			System.out.println("point1: " + point1);
+//			System.out.println("point2: " + point2);
+//			System.out.println("point3: " + point3);
+//			System.out.println("point4: " + point4);
 			xoPoints[0] = point1;
 			xoPoints[1] = point2;
 			xoPoints[2] = point3;
@@ -341,68 +335,68 @@ public class TwoPointCrossover extends CrossoverOperation {
 		return chromosomes;
 	}
 
-	public static void main(String[] args) {
-		// a simple test of crossover
-		TwoPointCrossover cop = new TwoPointCrossover(new MersenneTwisterFast(), 1);
-		cop.setFixedCrossoverPoint(false);
-		GEChromosome c1 = new GEChromosome(10);
-		GEChromosome c2 = new GEChromosome(10);
-
-		for (int i = 0; i < 20; i++) {
-			c1.add(1);
-			c2.add(2);
-		}
-
-		cop.makeNewChromosome(c1, c2, c1.size(), c2.size());
-
-		Genotype g1 = new Genotype();
-		Genotype g2 = new Genotype();
-		g1.add(c1);
-		g2.add(c2);
-		GEIndividual i1 = new GEIndividual();
-		GEIndividual i2 = new GEIndividual();
-		i1.setMapper(new GEGrammar());
-		i1.setGenotype(g1);
-		i2.setMapper(new GEGrammar());
-		i2.setGenotype(g2);
-
-		ArrayList<Individual> aI = new ArrayList<Individual>(2);
-		aI.add(i1);
-		aI.add(i2);
-
-		cop.doOperation(aI);
-
-		System.out.println();
-		System.out.println("Testing operation crossover");
-		System.out.println();
-		c1 = (GEChromosome) i1.getGenotype().get(0);
-		c2 = (GEChromosome) i2.getGenotype().get(0);
-
-		System.out.println(c1.toString());
-		System.out.println(c2.toString());
-
-		CrossoverModule cm = new CrossoverModule(new MersenneTwisterFast(), cop);
-
-		SimplePopulation p = new SimplePopulation();
-		p.add(i1);
-		p.add(i2);
-		cm.setPopulation(p);
-		long st = System.currentTimeMillis();
-		for (int i = 1; i < 100000000; i += 20) {
-
-			cm.perform();
-
-		}
-		long et = System.currentTimeMillis();
-		System.out.println("Done running: Total time(Ms) for " + 100000000 + " generations was" + (et - st));
-		System.out.println();
-		System.out.println("Testing module crossover");
-		System.out.println();
-
-		c1 = (GEChromosome) i1.getGenotype().get(0);
-		c2 = (GEChromosome) i2.getGenotype().get(0);
-
-		System.out.println(c1.toString());
-		System.out.println(c2.toString());
-	}
+//	public static void main(String[] args) {
+//		// a simple test of crossover
+//		TwoPointCrossover cop = new TwoPointCrossover(new MersenneTwisterFast(), 1);
+//		cop.setFixedCrossoverPoint(false);
+//		GEChromosome c1 = new GEChromosome(10);
+//		GEChromosome c2 = new GEChromosome(10);
+//
+//		for (int i = 0; i < 20; i++) {
+//			c1.add(1);
+//			c2.add(2);
+//		}
+//
+//		cop.makeNewChromosome(c1, c2, c1.size(), c2.size());
+//
+//		Genotype g1 = new Genotype();
+//		Genotype g2 = new Genotype();
+//		g1.add(c1);
+//		g2.add(c2);
+//		GEIndividual i1 = new GEIndividual();
+//		GEIndividual i2 = new GEIndividual();
+//		i1.setMapper(new GEGrammar());
+//		i1.setGenotype(g1);
+//		i2.setMapper(new GEGrammar());
+//		i2.setGenotype(g2);
+//
+//		ArrayList<Individual> aI = new ArrayList<Individual>(2);
+//		aI.add(i1);
+//		aI.add(i2);
+//
+//		cop.doOperation(aI);
+//
+//		System.out.println();
+//		System.out.println("Testing operation crossover");
+//		System.out.println();
+//		c1 = (GEChromosome) i1.getGenotype().get(0);
+//		c2 = (GEChromosome) i2.getGenotype().get(0);
+//
+//		System.out.println(c1.toString());
+//		System.out.println(c2.toString());
+//
+//		CrossoverModule cm = new CrossoverModule(new MersenneTwisterFast(), cop);
+//
+//		SimplePopulation p = new SimplePopulation();
+//		p.add(i1);
+//		p.add(i2);
+//		cm.setPopulation(p);
+//		long st = System.currentTimeMillis();
+//		for (int i = 1; i < 100000000; i += 20) {
+//
+//			cm.perform();
+//
+//		}
+//		long et = System.currentTimeMillis();
+//		System.out.println("Done running: Total time(Ms) for " + 100000000 + " generations was" + (et - st));
+//		System.out.println();
+//		System.out.println("Testing module crossover");
+//		System.out.println();
+//
+//		c1 = (GEChromosome) i1.getGenotype().get(0);
+//		c2 = (GEChromosome) i2.getGenotype().get(0);
+//
+//		System.out.println(c1.toString());
+//		System.out.println(c2.toString());
+//	}
 }

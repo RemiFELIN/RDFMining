@@ -8,6 +8,8 @@ import Individuals.Populations.SimplePopulation;
 import java.util.ArrayList;
 
 /**
+ * This class is used to compute some statistics about results founded
+ * 
  * @author NGUYEN Thu Huong Dec 21, 2017
  */
 @XmlRootElement
@@ -46,7 +48,7 @@ public class Statistics {
 		return count / sizeList;
 	}
 
-	public double getCountComplexAxiomNumber(ArrayList<GEIndividual> individuals) {
+	public double getCountComplexAxiom(ArrayList<GEIndividual> individuals) {
 		int count = 0;
 		int sizeList = individuals.size();
 		for (int i = 0; i < sizeList; i++) {
@@ -60,7 +62,7 @@ public class Statistics {
 		return count / sizeList;
 	}
 
-	public double getCountComplexAxiomNumber2(ArrayList<GEIndividual> individuals) {
+	public double getCountComplexAxiomSpecial(ArrayList<GEIndividual> individuals) {
 		int count = 0;
 		int sizeList = individuals.size();
 		for (int i = 0; i < sizeList; i++) {

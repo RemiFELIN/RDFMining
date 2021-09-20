@@ -50,7 +50,7 @@ import java.util.Comparator;
  **/
 public class EliteOperationSelection extends SelectionOperation {
 
-	private boolean evaluate_elites;
+	private boolean evaluateElites;
 
 	/**
 	 * New instance
@@ -91,82 +91,55 @@ public class EliteOperationSelection extends SelectionOperation {
 			valueS = Constants.FALSE;
 			System.out.println(this.getClass().getName() + ".setProperties " + e + " using default: " + valueS);
 		}
-		this.evaluate_elites = valueS.equals(Constants.TRUE);
+		this.evaluateElites = valueS.equals(Constants.TRUE);
 		super.selectedPopulation = new SimplePopulation(this.size);
 	}
 
 	public boolean isEvaluateElites() {
-		return this.evaluate_elites;
+		return this.evaluateElites;
 	}
 
 	public void doOperation(Individual operand) {
 	}
 
-	/**
-	 * Ranks the population. Takes out size number of individuals and adds to the
-	 * selectedPopulation.
-	 * 
-	 * @param operands Individuals to select from
-	 **/
-	/*
-	 * public void doOperation(List<Individual> operands) { Fitness[]
-	 * fA=rankPopulation(operands); int cnt = 0; while(cnt < this.size && cnt <
-	 * operands.size()){ //Avoid duplicates final boolean valid =
-	 * fA[cnt].getIndividual().isValid(); final boolean duplicate =
-	 * this.selectedPopulation.contains(fA[cnt].getIndividual()); if(!duplicate &&
-	 * valid) { Individual ind = fA[cnt].getIndividual().clone(); //
-	 * System.out.println("org:\t"+fA[cnt].getIndividual().getGenotype().hashCode())
-	 * ; // System.out.println("new:\t"+ind.getGenotype().hashCode()); //Set
-	 * individual as valid if(!this.evaluate_elites) {
-	 * ind.setEvaluated(fA[cnt].getIndividual().isEvaluated());
-	 * ind.setValid(fA[cnt].getIndividual().isValid());
-	 * ind.setAge(fA[cnt].getIndividual().getAge());
-	 * ((GEIndividual)ind).setMapped(((GEIndividual)(fA[cnt].getIndividual())).
-	 * isMapped());
-	 * ((GEIndividual)ind).setUsedCodons(((GEIndividual)(fA[cnt].getIndividual())).
-	 * getUsedCodons()); } this.selectedPopulation.add(ind); } cnt++; }
-	 * //System.out.println("E:"+this.selectedPopulation);
-	 * 
-	 * }
-	 */
-
 	public void doOperation(List<Individual> operands) {
-
 		operands.sort(Comparator.comparing(Individual::getFitness).reversed());
 		int cnt = 0;
 		while (cnt < this.size && cnt < operands.size()) {
 			this.selectedPopulation.add(operands.get(cnt));
 			cnt++;
 		}
-
 	}
 
-	public void setEvaluate_elites(boolean evaluate_elites) {
-		this.evaluate_elites = evaluate_elites;
+	public void setEvaluateElites(boolean evaluateElites) {
+		this.evaluateElites = evaluateElites;
 	}
 
 	/**
 	 * Helper function to rank the poulation in ascending order.
 	 * 
-	 * @param operands List of Individuals to rank
+	 * @param operands  List of Individuals to rank
+	 * @param ascending true if you choose a ascending sort for the fitness list,
+	 *                  else a descending sort.
 	 * @return An ordered Fitness array
 	 **/
-	Fitness[] rankPopulation(List<Individual> operands) {
+	Fitness[] rankAndSortPopulation(List<Individual> operands, boolean ascending) {
 		Fitness[] fAt = new Fitness[operands.size()];
-
-		// System.out.print("EliteRank org:");
 		for (int i = 0; i < fAt.length; i++) {
 			fAt[i] = operands.get(i).getFitness();
-			// System.out.print(fAt[i].getDouble()+",");
 		}
-		// System.out.println();
 		// Sort ascending
-		Arrays.sort(fAt, Collections.reverseOrder());
+		if (ascending) {
+			Arrays.sort(fAt);
+		} else {
+			// Sort descending
+			Arrays.sort(fAt, Collections.reverseOrder());
+		}
 		return fAt;
 	}
 
 	public void doOperation2(List<Individual> operands) {
-		Fitness[] fA = rankPopulation2(operands);
+		Fitness[] fA = rankAndSortPopulation(operands, true);
 		int cnt = 0;
 		while (cnt < this.size && cnt < operands.size()) {
 			// Avoid duplicates
@@ -174,10 +147,8 @@ public class EliteOperationSelection extends SelectionOperation {
 			final boolean duplicate = this.selectedPopulation.contains(fA[cnt].getIndividual());
 			if (!duplicate && valid) {
 				Individual ind = fA[cnt].getIndividual().clone();
-				// System.out.println("org:\t"+fA[cnt].getIndividual().getGenotype().hashCode());
-				// System.out.println("new:\t"+ind.getGenotype().hashCode());
 				// Set individual as valid
-				if (!this.evaluate_elites) {
+				if (!this.evaluateElites) {
 					ind.setEvaluated(fA[cnt].getIndividual().isEvaluated());
 					ind.setValid(fA[cnt].getIndividual().isValid());
 					ind.setAge(fA[cnt].getIndividual().getAge());
@@ -188,22 +159,6 @@ public class EliteOperationSelection extends SelectionOperation {
 			}
 			cnt++;
 		}
-		// System.out.println("E:"+this.selectedPopulation);
-
-	}
-
-	Fitness[] rankPopulation2(List<Individual> operands) {
-		Fitness[] fAt = new Fitness[operands.size()];
-
-		// System.out.print("EliteRank org:");
-		for (int i = 0; i < fAt.length; i++) {
-			fAt[i] = operands.get(i).getFitness();
-			// System.out.print(fAt[i].getDouble()+",");
-		}
-		// System.out.println();
-		// Sort ascending
-		Arrays.sort(fAt);
-		return fAt;
 	}
 
 }

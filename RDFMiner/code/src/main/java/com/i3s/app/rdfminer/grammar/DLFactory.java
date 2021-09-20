@@ -65,10 +65,6 @@ public class DLFactory {
 		}
 		if (!token.isEmpty())
 			expression.add(new Symbol(token, Enums.SymbolType.TSymbol));
-		// System.out.print("parseTerm: ");
-		// for(int k = 0; k<expression.size(); k++)
-		// System.out.print("[" + expression.get(k) + "]");
-		// System.out.println();
 		return i;
 	}
 

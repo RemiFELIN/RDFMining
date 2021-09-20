@@ -9,8 +9,6 @@ import java.util.List;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
-import com.i3s.app.rdfminer.Global;
-
 /**
  * A container of command line parameters and options.
  * 
@@ -27,7 +25,7 @@ public class CmdLineParameters {
 
 	@Option(name = "-sa", aliases = { "--single-axiom" }, usage = "test a single axiom given", metaVar = "AXIOM")
 	public String axiom = null;
-	
+
 	/**
 	 * The angular coefficient to be used for dynamic time capping of axiom test.
 	 * <p>
@@ -50,59 +48,58 @@ public class CmdLineParameters {
 	@Option(name = "-g", aliases = { "--grammar" }, usage = "use this file as the axiom grammar", metaVar = "GRAMMAR")
 	public String grammarFile = System.getenv("HOME") + "code/resources/OWL2Axiom-test.bnf";
 
-	@Option(name = "-o", aliases = {
-			"--output" }, usage = "path of output file", metaVar = "RESULTFILE")
-	public String resultFile = Global.OUTPUT_PATH + "results.json";
+	@Option(name = "-dir", aliases = { "--directory" }, usage = "path of output folder", metaVar = "RESULTFOLDER")
+	public String resultFolder = "results.json";
 
 	@Option(name = "-r", aliases = { "--random" }, usage = "test randomly generated axioms")
 	public boolean useRandomAxiomGenerator = false;
 
 	@Option(name = "-s", aliases = {
-			"--subclasslist" }, usage = "test subClassOf axioms generated from the list of subclasses in the given file", metaVar = "FILE")
-	public String subclassList = null;
+			"--subclassof-list" }, usage = "test subClassOf axioms generated from the list of subclasses in the given file", metaVar = "FILE")
+	public String subClassList = null;
 
 	@Option(name = "-t", aliases = {
 			"--timeout" }, usage = "use this time-out (in seconds) for axiom testing", metaVar = "SECONDS")
 	public long timeOut = 0;
-	
-	//**************************************************//
+
+	// **************************************************//
 	// List of parameters as the input for GE operation //
-	//**************************************************//
-	
+	// **************************************************//
+
 	@Option(name = "-ge", aliases = {
 			"--grammatical-evolution" }, usage = "activate the grammatical evolution for the axiom's extraction", metaVar = "GRAMMATICAL_EVOLUTION")
 	public boolean grammaticalEvolution;
-	
+
 	@Option(name = "-ps", aliases = {
 			"--population-size" }, usage = "use as this value as the initial size of population", metaVar = "POPULATION_SIZE")
-	public int populationsize = 200;
-	
-	@Option(name = "-ngen", aliases = {
-			"--n-generation" }, usage = "use as this value as the number of generation", metaVar = "GENERATION_NUMBER")
-	public int numGeneration = 5;
-	
+	public int populationSize = 200;
+
+//	@Option(name = "-ngen", aliases = {
+//			"--n-generation" }, usage = "use as this value as the number of generation", metaVar = "GENERATION_NUMBER")
+//	public int numGeneration = 5;
+
 	@Option(name = "-init", aliases = {
-			"--initlen" }, usage = "use as this value as the initial length of chromosome", metaVar = "INITLEN_CHROMOSOME")
-	public int initlenChromosome = 20;
+			"--init-len" }, usage = "use as this value as the initial length of chromosome", metaVar = "INITLEN_CHROMOSOME")
+	public int initLenChromosome = 20;
 
 	@Option(name = "-mxw", aliases = {
-			"--maxwrapp" }, usage = "use as this value as the max number of wrapping", metaVar = "MAX_WRAPP")
+			"--max-wrapp" }, usage = "use as this value as the max number of wrapping", metaVar = "MAX_WRAPP")
 	public int maxWrapp = 1;
 
 	@Option(name = "-mxc", aliases = {
-			"--maxcodon" }, usage = "use as this value as the max value of codon", metaVar = "MAX_CODON")
-	public int maxvalCodon = Integer.MAX_VALUE;
+			"--max-codon" }, usage = "use as this value as the max value of codon", metaVar = "MAX_CODON")
+	public int maxValCodon = Integer.MAX_VALUE;
 
 	@Option(name = "-tinit", aliases = {
-			"--typeinit" }, usage = "use as this value as the type of initialization", metaVar = "TYPE_INITIALIZATION")
-	public int typeInitialization = 1; // 1- random initialization ; 2 - ....... - need TO DO
+			"--type-init" }, usage = "use as this value as the type of initialization", metaVar = "TYPE_INITIALIZATION")
+	public int typeInitialization = 1; // 1- random initialization ; 2 - ....... - TODO
 
 	@Option(name = "-pc", aliases = {
-			"--probcross" }, usage = "use as this value as the probability of crossover operation", metaVar = "PROB_CROSSOVER")
+			"--prob-cross" }, usage = "use as this value as the probability of crossover operation", metaVar = "PROB_CROSSOVER")
 	public double proCrossover = 0.8;
 
 	@Option(name = "-pm", aliases = {
-			"--probmut" }, usage = "use as this value as the probability of mutation operation", metaVar = "PROB_MUTATION")
+			"--prob-mut" }, usage = "use as this value as the probability of mutation operation", metaVar = "PROB_MUTATION")
 	public double proMutation = 0.01;
 
 	@Option(name = "-twi", aliases = {
@@ -115,29 +112,27 @@ public class CmdLineParameters {
 							// chromosomes;
 
 	@Option(name = "-se", aliases = {
-			"--typeselect" }, usage = "use as this value as the type of parent selection operation", metaVar = "TYPE_SELECTION")
-	public int typeselect = 2; // 1- Roulette wheel; 2- truncation; 3- Tournament ; other numbers- normal way
+			"--type-select" }, usage = "use as this value as the type of parent selection operation", metaVar = "TYPE_SELECTION")
+	public int typeSelect = 2; // 1- Roulette wheel; 2- truncation; 3- Tournament ; other numbers- normal way
 
 	@Option(name = "-cr", aliases = {
-			"--typeCrossover" }, usage = "use as this value as the type of parent selection operation", metaVar = "TYPE_CROSSOVER")
-	public int typecrossover = 2; // 1- Single-point Crossover; 2- Subtree Crossover
+			"--type-crossover" }, usage = "use as this value as the type of parent selection operation", metaVar = "TYPE_CROSSOVER")
+	public int typeCrossover = 2; // 1- Single-point Crossover; 2- Subtree Crossover
 
 	@Option(name = "-sez", aliases = {
-			"--sizeselect" }, usage = "use as this value as the size of parent selection operation", metaVar = "SIZE_SELECTION")
+			"--size-select" }, usage = "use as this value as the size of parent selection operation", metaVar = "SIZE_SELECTION")
 	public double sizeSelection = 0.7;
 
-	/*
-	 * @Option (name="-sezm", aliases= {"--sizeMutationselect"} , usage=
-	 * "use as this value as the size of mutation selection operation",
-	 * metaVar="SIZE_MUTATIONSELECTIOn") public double sizeMutationSelection=0.4;
-	 */
+//	@Option(name = "-sezm", aliases = {
+//			"--sizeMutationselect" }, usage = "use as this value as the size of mutation selection operation", metaVar = "SIZE_MUTATIONSELECTIOn")
+//	public double sizeMutationSelection = 0.4;
 
 	@Option(name = "-el", aliases = {
 			"--elitism" }, usage = "use as this value as the choose of elitism selection", metaVar = "ELITISM_SELECTION")
 	public int elitism = 1; // 0- not applying etilism method; 1- applying etilism method
 
 	@Option(name = "-seez", aliases = {
-			"--sizeelitie" }, usage = "use as this value as the size of elitism selection", metaVar = "TYPE_SELECTION")
+			"--size-elitie" }, usage = "use as this value as the size of elitism selection", metaVar = "TYPE_SELECTION")
 	public double sizeElite = 0.02;
 
 	@Option(name = "-div", aliases = {
@@ -146,30 +141,30 @@ public class CmdLineParameters {
 
 	// Matrix Gold Standard
 	@Option(name = "-gsd", aliases = {
-			"--GoldStandard" }, usage = "use as this value as the input Goldstandard file", metaVar = "GOLD_STANDARD")
-	public String GoldStandard = "GoldStandard.xlsx";
+			"--gold-standard" }, usage = "use as this value as the input Goldstandard file", metaVar = "GOLD_STANDARD")
+	public String goldStandard = "GoldStandard.xlsx";
 
 	// Results
-	@Option(name = "-bf", aliases = {
-			"--BufferFile" }, usage = "use as this value as the name of buffer file of chromosome for next generation", metaVar = "BUFFER FILE")
-	public String Bufferfile = "buffer";
+//	@Option(name = "-bf", aliases = {
+//			"--buffer-file" }, usage = "use as this value as the name of buffer file of chromosome for next generation", metaVar = "BUFFER FILE")
+//	public String bufferFile = "buffer";
 
-	@Option(name = "-sre", aliases = {
-			"--StatisticsResult" }, usage = "use as this value as the name of output statistics result file", metaVar = "STATISTICS_RESULT")
-	public String StatisticsResult = "StatisticsResult.json";
+//	@Option(name = "-sre", aliases = {
+//			"--StatisticsResult" }, usage = "use as this value as the name of output statistics result file", metaVar = "STATISTICS_RESULT")
+//	public String StatisticsResult = "StatisticsResult.json";
 
-	@Option(name = "-fax", aliases = {
-			"--FileAxioms" }, usage = "use as this value as the name of output statistics axioms", metaVar = "STATISTICS_AXIOMS")
-	public String FileAxioms = "AxiomsStatistics";
+//	@Option(name = "-fax", aliases = {
+//			"--FileAxioms" }, usage = "use as this value as the name of output statistics axioms", metaVar = "STATISTICS_AXIOMS")
+//	public String FileAxioms = "AxiomsStatistics";
 
 	@Option(name = "-kb", aliases = { "--K_Base" }, usage = "KBase", metaVar = "K_BASE")
-	public int k_base = 5000;
+	public int kBase = 5000;
 
 	@Option(name = "-ckp", aliases = { "--Checkpoint" }, usage = "Checkpoint", metaVar = "CHECK_POINT")
 	public int checkpoint = 3;
-	
+
 	// receives other command line parameters than options
 	@Argument
 	public List<String> arguments = new ArrayList<String>();
-	
+
 }

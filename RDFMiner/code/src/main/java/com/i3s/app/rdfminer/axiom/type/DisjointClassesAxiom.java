@@ -6,15 +6,12 @@ package com.i3s.app.rdfminer.axiom.type;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.rdf.model.RDFNode;
-//import org.apache.log4j.Logger;
+import org.apache.log4j.Logger;
 
 import com.i3s.app.rdfminer.axiom.Axiom;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.expression.complement.ComplementClassExpression;
-import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 
 import Mapper.Symbol;
@@ -27,7 +24,7 @@ import Mapper.Symbol;
  */
 public class DisjointClassesAxiom extends Axiom {
 	
-//	private static Logger logger = Logger.getLogger(DisjointClassesAxiom.class.getName());
+	private static Logger logger = Logger.getLogger(DisjointClassesAxiom.class.getName());
 
 	/**
 	 * An array of class expressions which are declared to be mutually disjoint.
@@ -47,8 +44,7 @@ public class DisjointClassesAxiom extends Axiom {
 	 * @param subClassExpression   the functional-style expression of the subclass
 	 * @param superClassExpression the functional-style expression of the superclass
 	 */
-	public DisjointClassesAxiom(GEIndividual individual, List<List<Symbol>> arguments, SparqlEndpoint endpoint) {
-		this.individual = individual;
+	public DisjointClassesAxiom(List<List<Symbol>> arguments, SparqlEndpoint endpoint) {
 		disjointClass = new Expression[arguments.size()];
 		disjointClassComplement = new Expression[disjointClass.length];
 		for (int i = 0; i < disjointClass.length; i++) {
@@ -59,7 +55,6 @@ public class DisjointClassesAxiom extends Axiom {
 			else
 				disjointClassComplement[i] = new ComplementClassExpression(disjointClass[i]);
 		}
-
 		update(endpoint);
 	}
 
@@ -145,7 +140,7 @@ public class DisjointClassesAxiom extends Axiom {
 			String generalityGraphPattern2 = "";
 			generalityGraphPattern += "{ " + disjointClass[k].graphPattern + " }";
 			generalityGraphPattern2 += "{ " + disjointClass[k + 1].graphPattern + " }";
-			// ----compute the cost of GP
+			// compute the cost of GP
 			generality1 = endpoint.count("?x", generalityGraphPattern, 0);
 			generality2 = endpoint.count("?x", generalityGraphPattern2, 0);
 			if (generality1 > generality2)
@@ -154,7 +149,7 @@ public class DisjointClassesAxiom extends Axiom {
 				generality = generality1;
 			k = k + 2;
 		}
-		// logger.info("Generality: " + generality);
+		logger.info("generality: " + generality);
 		if (generality != 0) {
 			referenceCardinality = endpoint.count("?x", refCardGraphPattern, 0);
 			// skipping computing the reference cardinality when generality=0
@@ -163,8 +158,6 @@ public class DisjointClassesAxiom extends Axiom {
 			for (int i = 0; i < disjointClass.length; i++)
 				exceptionGraphPattern += disjointClass[i].graphPattern + "\n";
 			numExceptions = endpoint.count("?x", exceptionGraphPattern, 0);
-			// logger.info("Number of exception: " + numExceptions);
-			// logger.info(" ");
 //			if (numExceptions > 0 && numExceptions < 100) {
 				// query the exceptions
 				// endpoint.select("TO DO");
@@ -175,8 +168,9 @@ public class DisjointClassesAxiom extends Axiom {
 //				}
 //			}
 			numConfirmations = referenceCardinality - numExceptions;
-		} else
+		} else {
 			referenceCardinality = 0;
+		}
 	}
 
 	public void updateVolker(SparqlEndpoint endpoint) {
@@ -213,8 +207,6 @@ public class DisjointClassesAxiom extends Axiom {
 		for (int i = 0; i < disjointClass.length; i++)
 			exceptionGraphPattern += disjointClass[i].graphPattern + "\n";
 		numExceptions = endpoint.count("?x", exceptionGraphPattern, 0);
-		// logger.info("number of exception: " + numExceptions);
-		// logger.info(".............................................................");
 //		if (numExceptions > 0 && numExceptions < 100) {
 //			// query the exceptions
 //			while (endpoint.hasNext()) {

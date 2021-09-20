@@ -10,11 +10,9 @@ import java.util.TreeSet;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 
-import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
-
-//import com.hp.hpl.jena.rdf.model.Model;
-//import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 
 import Mapper.Symbol;
 
@@ -43,21 +41,24 @@ public class ExtensionalDatatypeExpression extends ExtensionalExpression {
 		super();
 		rootSymbol = "DataOneOf (";
 		extension = new TreeSet<RDFNodePair>();
-		Model m = RDFMiner.REMOTE_ENDPOINT.tdb;
-
+		SparqlEndpoint endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
+		Model m = endpoint.tdb;
 		Iterator<List<Symbol>> i = syntax.iterator();
+		
 		while (i.hasNext()) {
 			RDFNode r;
-
 			Symbol sym = i.next().get(0);
 			rootSymbol += " " + sym;
 			// We create an RDF node from the symbol
 			String s = sym.getSymbolString();
-			if (s.startsWith("<")) // <--- this should never happen!
+			if (s.startsWith("<")) {
+				// this should never happen !
 				throw new RuntimeException("Resource node in an enumerative datatype!");
+			}
 			r = m.createLiteral(s);
 			extension.add(new RDFNodePair(r, null));
 		}
+		
 		rootSymbol += " )";
 		graphPattern = createGraphPattern("?x", "?y");
 	}

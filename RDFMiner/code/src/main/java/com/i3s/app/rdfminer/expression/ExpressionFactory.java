@@ -145,8 +145,8 @@ public class ExpressionFactory extends DLFactory {
 			expr = new ExtensionalDatatypeExpression(subexpression);
 		} else if (syntax.get(0).equals("DatatypeRestriction")) {
 			// TODO
-		} else // Atomic expression
-		{
+		} else {
+			// Atomic expression
 			expr = new AtomicDatatypeExpression(syntax);
 		}
 		return expr;
@@ -221,8 +221,8 @@ public class ExpressionFactory extends DLFactory {
 			// TODO
 		} else if (syntax.get(0).equals("DataExactCardinality")) {
 			// TODO
-		} else // Atomic expression
-		{
+		} else {
+			// Atomic expression
 			expr = new AtomicClassExpression(syntax);
 		}
 		return expr;

@@ -5,8 +5,8 @@ package com.i3s.app.rdfminer;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONArray;
@@ -14,12 +14,12 @@ import org.json.JSONObject;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
+import com.i3s.app.rdfminer.grammar.evolutionary.CostGP;
 import com.i3s.app.rdfminer.launcher.LaunchWithGE;
 import com.i3s.app.rdfminer.launcher.LaunchWithoutGE;
 import com.i3s.app.rdfminer.output.ResultsJSON;
 import com.i3s.app.rdfminer.output.StatJSON;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
-import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 
 /**
  * The main class of the RDFMiner experimental tool.
@@ -29,7 +29,7 @@ import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
  * Quick Reference, 2nd Edition</a>.
  * </p>
  * 
- * @author Andrea G. B. Tettamanzi
+ * @author Andrea G. B. Tettamanzi & Rémi FELIN
  *
  */
 public class RDFMiner {
@@ -39,30 +39,17 @@ public class RDFMiner {
 	public static CmdLineParameters parameters = new CmdLineParameters();
 
 	/**
-	 * A SPARQL endpoint which can be used to query the RDF repository.
-	 */
-	public static SparqlEndpoint LOCAL_ENDPOINT;
-	public static SparqlEndpoint REMOTE_ENDPOINT;
-
-	/**
-	 * An executor to be used to submit asynchronous tasks which might be subjected
-	 * to a time-out.
-	 */
-//	public static ExecutorService executor;
-
-	/**
 	 * The output file in json
 	 */
 	public static FileWriter output;
+	public static String outputFolder;
 	
 	// v1.0 evaluate data
 	public static JSONArray axiomsList;
-	
 	// v1.2 miner data
 	public static ResultsJSON results;
 	public static StatJSON stats;
 	public static List<JSONObject> axioms;
-
 
 	/**
 	 * A service native method to query for CPU usage.
@@ -82,13 +69,18 @@ public class RDFMiner {
 	 */
 	public static native long getProcessCPUTime();
 
-	public static String[][] Predicate_Table;
+	/**
+	 * A table of predicates, used in {@link CostGP}
+	 */
+	public static String[][] predicateTable;
 
 	/**
 	 * The entry point of the RDF Miner application.
+	 * @throws InterruptedException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 
+		// Print the banner of RDF Miner
 		System.out.println(Global.BANNER);
 		
 		// Configure the log4j loggers:
@@ -138,9 +130,15 @@ public class RDFMiner {
 			(new File(Global.CACHE_PATH)).mkdir();
 			logger.info("Cache folder successfully created");
 		}
+		
 		// If parameters.grammaticalEvolution is used, we launch an instance of
 		// Grammar-based genetic programming
 		if(parameters.grammaticalEvolution) {
+			if(!(new File(Global.OUTPUT_PATH + parameters.resultFolder)).exists()) {
+				(new File(Global.OUTPUT_PATH + parameters.resultFolder)).mkdir();
+				logger.info(Global.OUTPUT_PATH + parameters.resultFolder + " folder successfully created");
+			}
+			RDFMiner.outputFolder = Global.OUTPUT_PATH + parameters.resultFolder;
 			try {
 				LaunchWithGE miner = new LaunchWithGE();
 				miner.run(parameters);
@@ -148,10 +146,18 @@ public class RDFMiner {
 				e.printStackTrace();
 				System.exit(0);
 			}
+		} else {
+			if (parameters.axiom == null) {
+				if(!(new File(Global.OUTPUT_PATH + parameters.resultFolder)).exists()) {
+					(new File(Global.OUTPUT_PATH + parameters.resultFolder)).mkdir();
+					logger.info(parameters.resultFolder + " folder successfully created");
+					RDFMiner.outputFolder = Global.OUTPUT_PATH + parameters.resultFolder;
+				}
+				RDFMiner.outputFolder = Global.OUTPUT_PATH + parameters.resultFolder;
+			}
+			LaunchWithoutGE evaluate = new LaunchWithoutGE();
+			evaluate.run(parameters);
 		}
-		LaunchWithoutGE evaluate = new LaunchWithoutGE();
-		evaluate.run(parameters);
-
 	}
 
 }

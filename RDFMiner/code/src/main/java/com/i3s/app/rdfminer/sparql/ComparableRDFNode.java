@@ -195,8 +195,8 @@ public class ComparableRDFNode implements RDFNode, Comparable<Object> {
 	 * @return the set of all concepts this RDF node is an explicit instance of
 	 */
 	public Set<ComparableRDFNode> getContainingClasses() {
+		
 		Set<ComparableRDFNode> result = new TreeSet<ComparableRDFNode>();
-
 		String str = "DISTINCT ?class WHERE {\n" + "\t<" + node + "> a ?class .\n"
 				+ "\tFILTER ( ?class != owl:Thing )\n" + "}";
 		logger.info("Querying SPARQL endpoint for the containing classes of " + node + " with query:\n" + str);

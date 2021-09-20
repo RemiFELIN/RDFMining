@@ -75,12 +75,6 @@ public class SparqlEndpoint {
 	public QueryEngineHTTP queryExecution;
 	
 	/**
-	 * The result of the current query.
-	 */
-//	public ResultSet resultSet;
-
-	
-	/**
 	 * Create a new SPARQL endpoint.
 	 * <p>
 	 * If a local directory named "<code>tdb</code>" exists, Jena TDB will be used
@@ -93,45 +87,20 @@ public class SparqlEndpoint {
 	 */
 	public SparqlEndpoint(String url, String prefix) {
 		if (new File(Global.DBPEDIA_TDB_PATH).exists()) {
-//			logger.warn("A local TBD directory exists. Using it as the SPARQL endpoint");
 			endpoint = null;
 			Dataset dataset = TDBFactory.createDataset(Global.DBPEDIA_TDB_PATH);
 			tdb = dataset.getDefaultModel();
 		} else {
 			endpoint = url;
-//			tdb = ModelFactory.createDefaultModel();
 		}
 		prefixes = prefix;
-//		queryExecution = null;
-//		resultSet = null;
 	}
 
 	public SparqlEndpoint(Model model, String prefix) {
 		endpoint = null;
 		tdb = model;
 		prefixes = prefix;
-//		queryExecution = null;
-//		resultSet = null;
 	}
-
-	/**
-	 * Prepare the execution of the given query.
-	 */
-//	protected void prepare(Query query) {
-////		System.out.println("[PREPARE]\n" + query.toString() + "\n[/PREPARE]");
-//		// Close a pre-existing query, if any, to free resources:
-//		if (queryExecution != null) {
-//			queryExecution.close();
-//			resultSet = null;
-//		}
-//		// Prepare the execution context for the given query:
-//		if (endpoint != null) {
-//			queryExecution = (QueryEngineHTTP) QueryExecutionFactory.createServiceRequest(endpoint, query);
-//		} else {
-//			queryExecution = (QueryEngineHTTP) QueryExecutionFactory.create(query, tdb);
-//			tdb.enterCriticalSection(Lock.READ);
-//		}
-//	}
 
 	/**
 	 * Execute a SELECT query.
@@ -143,10 +112,7 @@ public class SparqlEndpoint {
 		try {
 			String str = prefixes + "SELECT " + sparql;
 			Query query = QueryFactory.create(str);
-//			prepare(query);
 			queryExecution = new QueryEngineHTTP(endpoint, query);
-//			logger.warn("[INFO] :" + Runtime.getRuntime().freeMemory() + "/" + Runtime.getRuntime().totalMemory());
-			// set a timeout if is not equals to 0
 			if(timeout != 0) {
 				queryExecution.addParam("timeout", Integer.toString(timeout * 1000));
 			}
@@ -159,23 +125,6 @@ public class SparqlEndpoint {
 		}
 		return null;
 	}
-
-	public ResultSet selectAndCopyResults(String sparql) {
-		try {
-			String str = prefixes + "SELECT " + sparql;
-			Query query = QueryFactory.create(str);
-//			prepare(query);
-			queryExecution = new QueryEngineHTTP(endpoint, query);
-			// resultSet = queryExecution.execSelect();
-			ResultSet result = ResultSetFactory.copyResults(queryExecution.execSelect());
-			queryExecution.close();
-			return result;
-		} catch (Exception e) {
-			handleException(e, "making the following query:\nSELECT " + SparqlEndpoint.prettyPrint(sparql));
-		}
-		return null;
-	}
-
 	
 	/**
 	 * Execute an ASK query
@@ -233,74 +182,15 @@ public class SparqlEndpoint {
 		return 0;
 	}
 
-//	@Override
-//	public boolean hasNext() {
-//		boolean hasIt = false;
-//		try {
-//			if (resultSet != null) {
-////				try {
-//				hasIt = resultSet.hasNext();
-////					System.out.println("Ok !");
-////				} catch(ARQException e) {
-//					// Fix :
-//					// ARQException: ResultSet no longer valid (QueryExecution has been closed)
-////					logger.warn("result set no longer valid...");
-////					System.out.println("TEST:\n- hasIt: " + hasIt + "\n- endpoint: " + endpoint + "\nFIN DU TEST");
-//					// We let hasIt to false, then return false and set the count to 0
-////					return false;
-////				}
-//			}
-//		} catch (Exception e) {
-//			// handleException(e, "checking whether another solution is available.");
-//			logger.warn("result set no longer valid...");
-//		}
-//		if (!hasIt && endpoint == null) {
-//			try {
-//				tdb.leaveCriticalSection();
-//				// Every once in a while, the method on the previous line throws an exception
-//				// because no lock is held...
-//				// This happens just after an ignored Null Pointer Exception
-//				// while checking whether another solution is available.
-//			} catch (Exception e) {
-//				handleException(e, "checking whether another solution is available.");
-//			}
-//		}
-//		return hasIt;
-//	}
-
-//	@Override
-//	public QuerySolution next() {
-//		try {
-//			if (resultSet != null)
-//				return resultSet.next();
-//		} catch (Exception e) {
-//			handleException(e, "retrieving the next solution.");
-//		}
-//		return null;
-//	}
-
-//	@Override
-//	public void remove() {
-//		try {
-//			if (resultSet != null)
-//				resultSet.remove();
-//		} catch (Exception e) {
-//			handleException(e, "removing a solution from the result set.");
-//		}
-//	}
-
 	/**
 	 * Handle an exception caught by one of the methods of this class.
 	 * 
 	 * @param e The exception to be handled
 	 */
 	private void handleException(Exception e, String context) {
-		// Finally...
-//		if (queryExecution != null)
-//			queryExecution.close();
+		
 		if (endpoint == null)
 			tdb.leaveCriticalSection();
-
 		// Now, depending on the kind of exception, take the most suitable action:
 		if (e instanceof NullPointerException) {
 			// It looks like when a thread is interrupted, this happens inside the Jena
@@ -363,7 +253,6 @@ public class SparqlEndpoint {
 		int level = 0;
 		String pretty = "";
 		boolean bol = true; // beginning of line
-
 		// TO DO: pretty-print...
 		// 1) replace sequences of blanks by a single blank
 		// 2) use '{' and '}' to control indentation
@@ -403,7 +292,6 @@ public class SparqlEndpoint {
 		try {
 			String str = prefixes + "CONSTRUCT " + sparql;
 			Query query = QueryFactory.create(str);
-//			prepare(query);
 			QueryEngineHTTP queryExecution = QueryExecutionFactory.createServiceRequest(endpoint, query);
 			tdb = queryExecution.execConstruct();
 			queryExecution.close();
@@ -412,7 +300,4 @@ public class SparqlEndpoint {
 		}
 	}
 
-//	public ResultSet getResultSet() {
-//		return this.resultSet;
-//	}
 }

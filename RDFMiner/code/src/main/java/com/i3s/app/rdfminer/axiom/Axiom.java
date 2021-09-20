@@ -8,7 +8,9 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.i3s.app.rdfminer.axiom.type.DisjointClassesAxiom;
 import com.i3s.app.rdfminer.fuzzy.TruthDegree;
+import com.i3s.app.rdfminer.grammar.evolutionary.fitness.FitnessEvaluation;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 
@@ -25,15 +27,21 @@ import Mapper.Symbol;
  * for having different subclasses for different types of axioms.
  * </p>
  * 
- * @author Andrea G. B. Tettamanzi & NGUYEN Thu Huong
+ * @author Andrea G. B. Tettamanzi & NGUYEN Thu Huong & Rémi FELIN
  *
  */
 public abstract class Axiom {
 
+	/**
+	 * Title of the axiom
+	 */
 	public String axiomId;
-	
+
+	/**
+	 * The individual build with GEVA, corresponding to the current axiom
+	 */
 	public GEIndividual individual;
-	
+
 	/**
 	 * The cardinality of the universe of discourse for this axiom.
 	 * <p>
@@ -48,21 +56,41 @@ public abstract class Axiom {
 	 * <p>
 	 */
 	public List<List<Symbol>> argumentClasses;
+
+	/**
+	 * The generality of the axiom, its value is defined when we cannot compute the
+	 * {@link Axiom#necessity() necessity} of the current axiom (for instance, in a
+	 * case of a {@link DisjointClassesAxiom})
+	 */
 	public double generality = 0;
+
+	/**
+	 * The fitness of the axiom correspond to its value evaluated by a function, see
+	 * the {@link FitnessEvaluation#setFitness(Axiom) evaluation} function used
+	 */
 	public double fitness = 0.0;
+
+	/**
+	 * The reference cardinality will count all the instances involved by the
+	 * current axiom
+	 */
 	public int referenceCardinality = 0;
+
+	/**
+	 * The current ID of generation where this axiom has been found
+	 */
 	public int generation;
-	
+
 	/**
 	 * The number of facts in the RDF store that explicitly support/confirm the
 	 * axiom.
 	 */
 	public int numConfirmations = 0;
-	
+
 	/**
-	 *  the time it took to test the axiom, in ms.
+	 * the time it took to test the axiom, in ms.
 	 */
-	public long elapsedTime = 0L; 
+	public long elapsedTime = 0L;
 
 	/**
 	 * The number of facts in the RDF store that explicitly contradict the axiom.
@@ -99,11 +127,11 @@ public abstract class Axiom {
 	public boolean isTimeout = false;
 
 	/* The structure of GP in axiom */
-	protected int num_UNION_Operators = 0;
-	protected int num_FILTER_Operators = 0;
-	protected int num_Triples = 0;
-	protected int num_Variables = 0;
-	protected int num_Instances_predicates = 0;
+	protected int numUnionOperators = 0;
+	protected int numFilterOperators = 0;
+	protected int numTriples = 0;
+	protected int numVariables = 0;
+	protected int numInstancesPredicates = 0;
 
 	/**
 	 * Updates the counts used to compute the possibility and necessity degrees.
@@ -147,14 +175,19 @@ public abstract class Axiom {
 	 */
 	public double costGP() {
 		if (generality > 0) {
-			return Math.sqrt(
-					Math.sqrt((2 * num_UNION_Operators + num_FILTER_Operators + 1) * (num_Variables + 1) * num_Triples))
-					* Math.sqrt(Math.sqrt(num_Instances_predicates));
+			return Math
+					.sqrt(Math.sqrt((2 * numUnionOperators + numFilterOperators + 1) * (numVariables + 1) * numTriples))
+					* Math.sqrt(Math.sqrt(numInstancesPredicates));
 		} else {
 			return 1;
 		}
 	}
-	
+
+	/**
+	 * Get the individual involved by the current axiom
+	 * 
+	 * @return individual the current individual
+	 */
 	public GEIndividual getIndividual() {
 		return individual;
 	}
@@ -190,11 +223,11 @@ public abstract class Axiom {
 	 * way of updating the counts.
 	 * </p>
 	 */
-	public void update(SparqlEndpoint endpoint) {}
-	
+	public void update(SparqlEndpoint endpoint) {
+	}
+
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
-		// v1.0
 		json.put("axiom", axiomId);
 		json.put("referenceCardinality", referenceCardinality);
 		json.put("numConfirmations", numConfirmations);
@@ -205,12 +238,11 @@ public abstract class Axiom {
 		json.put("isTimeout", isTimeout);
 		json.put("exceptions", new JSONArray(exceptions));
 		json.put("confirmations", new JSONArray(confirmations));
-		// v1.3
 		json.put("generation", generation);
 		json.put("fitness", fitness);
 		json.put("generality", generality);
 		json.put("isMapped", individual.isMapped());
 		return json;
 	}
-	
+
 }

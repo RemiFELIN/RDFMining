@@ -11,19 +11,16 @@ import org.apache.jena.rdf.model.AnonId;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 
-import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
-
-//import com.hp.hpl.jena.rdf.model.AnonId;
-//import com.hp.hpl.jena.rdf.model.Model;
-//import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 
 import Mapper.Symbol;
 
 /**
  * A class expression of the form ObjectOneOf(...).
  * 
- * @author Andrea G. B. Tettamanzi
+ * @author Andrea G. B. Tettamanzi & Rémi FELIN
  *
  */
 public class ExtensionalClassExpression extends ExtensionalExpression {
@@ -46,12 +43,12 @@ public class ExtensionalClassExpression extends ExtensionalExpression {
 		super();
 		rootSymbol = "ObjectOneOf (";
 		extension = new TreeSet<RDFNodePair>();
-		Model m = RDFMiner.REMOTE_ENDPOINT.tdb;
-
+		SparqlEndpoint endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
+		Model m = endpoint.tdb;
 		Iterator<List<Symbol>> i = syntax.iterator();
+		
 		while (i.hasNext()) {
 			RDFNode r;
-
 			Symbol sym = i.next().get(0);
 			rootSymbol += " " + sym;
 			// We create an RDF node from the symbol, by removing the "<" and ">"
@@ -63,6 +60,7 @@ public class ExtensionalClassExpression extends ExtensionalExpression {
 				r = m.createResource(new AnonId(s));
 			extension.add(new RDFNodePair(r, null));
 		}
+		
 		rootSymbol += " )";
 		graphPattern = createGraphPattern("?x", "?y");
 	}

@@ -76,25 +76,6 @@ public class IntFlipMutation extends MutationOperation {
 		super(rng, p);
 	}
 
-	/*
-	 * public List<GEIndividual> doOperation(List<GEIndividual> operands,
-	 * RandomAxiomGenerator rd,int curGeneration, GoldStandardComparison
-	 * goldstandard,RestartVirtuoso st ) throws IOException, InterruptedException {
-	 * List<GEIndividual> List1 = new ArrayList<GEIndividual>(); int t=1;
-	 * st.StartVirtuoso(); for ( int i=0; i<operands.size();i++) { GEIndividual
-	 * operand = operands.get(i); if(i==50*t) { t=t++; st.StopVirtuoso();
-	 * Thread.sleep(5); st.StartVirtuoso(); }
-	 * List1.add(this.doOperation(operand,rd,curGeneration,goldstandard,st));
-	 * System.out.println("=============================");
-	 * System.out.println("individual after mutation");
-	 * System.out.println(List1.get(i).getGenotype().toString());
-	 * System.out.println(List1.get(i).getPhenotype().toString());
-	 * System.out.println(List1.get(i).getFitness().getDouble());
-	 * System.out.println("...............................");
-	 * 
-	 * } return List1; }
-	 */
-
 	/**
 	 * Calls doMutation(GEIndividual c) and then calls Individual.invalidate()
 	 * 
@@ -102,19 +83,14 @@ public class IntFlipMutation extends MutationOperation {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public GEIndividual doOperation(GEIndividual operand, RandomAxiomGenerator rd, int curGeneration,
-			/* GoldStandardComparison goldstandard, */ int totalGeneration, int[] pos)
+	public GEIndividual doOperation(GEIndividual operand, RandomAxiomGenerator rd, int curGeneration, int[] pos)
 			throws IOException, InterruptedException {
 		GEChromosome chr = new GEChromosome((GEChromosome) operand.getGenotype().get(0));
 		GEChromosome chr2 = new GEChromosome(doMutation(chr, pos));
-
-		// if (!chr2.toString().equals (operand.getGenotype().get(0).toString()))
-		// {
 		((GEIndividual) operand).invalidate();
 		operand = rd.axiomIndividual(chr2, curGeneration);
 		FitnessEvaluation fit = new FitnessEvaluation();
 		fit.updateIndividual(operand);
-		// }
 		return operand;
 	}
 

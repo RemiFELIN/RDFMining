@@ -19,7 +19,7 @@ import Util.Enums;
  * The axiom factory singleton class is able to construct axioms of various
  * types.
  * 
- * @author Andrea G. B. Tettamanzi
+ * @author Andrea G. B. Tettamanzi & Rémi FELIN
  *
  */
 public class AxiomFactory extends DLFactory {
@@ -95,7 +95,6 @@ public class AxiomFactory extends DLFactory {
 	 * @param syntax an axiom definition in OWL 2 functional-style syntax.
 	 * @return the corresponding axiom.
 	 */
-
 	public static Axiom create(GEIndividual individual, List<Symbol> syntax, SparqlEndpoint endpoint) {
 
 		Axiom axiom = null;
@@ -103,13 +102,23 @@ public class AxiomFactory extends DLFactory {
 		
 		if (syntax.get(0).equals("SubClassOf")) {
 			require(arguments.size() == 2);
-			axiom = new SubClassOfAxiom(individual, arguments.get(0), arguments.get(1), endpoint);
+			axiom = new SubClassOfAxiom(arguments.get(0), arguments.get(1), endpoint);
+			// set the individual of axiom
+			axiom.individual = individual;
+			// set the title of axiom
+			axiom.axiomId = individual.getPhenotype().getStringNoSpace();
+			// set this arguments 
 			axiom.argumentClasses = arguments;
 		} else if (syntax.get(0).equals("EquivalentClasses")) {
 			// TO DO
 		} else if (syntax.get(0).equals("DisjointClasses")) {
 			require(arguments.size() > 1);
-			axiom = new DisjointClassesAxiom(individual, arguments, endpoint);
+			axiom = new DisjointClassesAxiom(arguments, endpoint);
+			// set the individual of axiom
+			axiom.individual = individual;
+			// set the title of axiom
+			axiom.axiomId = individual.getPhenotype().getStringNoSpace();
+			// set this arguments 
 			axiom.argumentClasses = arguments;
 		} else if (syntax.get(0).equals("DisjointUnion")) {
 			// TO DO

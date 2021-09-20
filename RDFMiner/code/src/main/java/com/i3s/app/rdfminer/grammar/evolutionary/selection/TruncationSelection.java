@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 
 /**
+ * {@link TypeSelection#TRUNCATION TRUNCATION} selection.
+ * 
  * @author NGUYEN Thu Huong
- *
  * 
  */
 public class TruncationSelection extends EliteSelection {

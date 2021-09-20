@@ -11,9 +11,11 @@ import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import Individuals.Individual;
 
 /**
+ * Selection of the 'elite' population : a population composed of the 'best'
+ * individuals which have the best values of fitness.
+ * 
  * @author NGUYEN Thu Huong
  *
- * 
  */
 public class EliteSelection extends EliteOperationSelection {
 
@@ -23,31 +25,38 @@ public class EliteSelection extends EliteOperationSelection {
 		super(size);
 	}
 
-	public void setParentsSelectionElitism(ArrayList<GEIndividual> candidatePopulation) {
-		List<Individual> listCandidate = new ArrayList<Individual>();
-		for (int i = 0; i < candidatePopulation.size(); i++)
-			listCandidate.add(candidatePopulation.get(i));
-		doOperation(listCandidate);
-		ArrayList<GEIndividual> SelectedPopulation = new ArrayList<GEIndividual>();
+	/**
+	 * set the elitism population from a given candidate population
+	 * 
+	 * @param canPop a given population
+	 */
+	public void setParentsSelectionElitism(ArrayList<GEIndividual> canPop) {
+		List<Individual> candidates = new ArrayList<Individual>();
+		for (int i = 0; i < canPop.size(); i++)
+			candidates.add(canPop.get(i));
+		doOperation(candidates);
+		ArrayList<GEIndividual> selectedPopulation = new ArrayList<GEIndividual>();
 		for (int i = 0; i < getSelectedPopulation().size(); i++) {
-			SelectedPopulation.add((GEIndividual) getSelectedPopulation().get(i));
+			selectedPopulation.add((GEIndividual) getSelectedPopulation().get(i));
 		}
-		setElitedPopulation(SelectedPopulation);
+		setElitedPopulation(selectedPopulation);
 	}
 
+	/**
+	 * set the selected population from a given population
+	 * @param candidatePopulation a given population
+	 * @return the selected population
+	 */
 	public ArrayList<GEIndividual> setupSelectedPopulation(ArrayList<GEIndividual> candidatePopulation) {
+
 		ArrayList<GEIndividual> selectedPopulation = new ArrayList<GEIndividual>(
 				candidatePopulation.size() - elitedPopulation.size());
-		int tmp = 0;
-		String elite;
-		String can;
-		int PopSize = candidatePopulation.size();
-		int ElitePopSize = elitedPopulation.size();
-		for (int i = 0; i < PopSize; i++) {
-			tmp = 0;
-			for (int k = 0; k < ElitePopSize; k++) {
-				elite = elitedPopulation.get(k).getGenotype().get(0).toString();
-				can = candidatePopulation.get(i).getGenotype().get(0).toString();
+		
+		for (int i = 0; i < candidatePopulation.size(); i++) {
+			int tmp = 0;
+			for (int k = 0; k < elitedPopulation.size(); k++) {
+				String elite = elitedPopulation.get(k).getGenotype().get(0).toString();
+				String can = candidatePopulation.get(i).getGenotype().get(0).toString();
 				if (elite.equals(can)) {
 					tmp++;
 				}

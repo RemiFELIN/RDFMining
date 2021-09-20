@@ -8,21 +8,15 @@ import org.apache.log4j.Logger;
 
 import com.i3s.app.rdfminer.axiom.RandomAxiomGenerator;
 
-import Individuals.Chromosome;
 import Individuals.GEChromosome;
-//import Individuals.GEIndividual;
-import Individuals.Genotype;
-//import Individuals.Individual;
 import Individuals.Phenotype;
 import Individuals.Populations.SimplePopulation;
 import Util.Random.MersenneTwisterFast;
 import Util.Random.RandomNumberGenerator;
 
-/*
- * 
+/**
+ *  Map a set of candidate individual in population
  *  @author NGUYEN Thu Huong 
- *
- *
  *
 */
 public class CandidatePopulation {
@@ -51,12 +45,21 @@ public class CandidatePopulation {
 		this.initlenChromosome = initlenChromosome;
 	}
 
+	/**
+	 * Initialize a set of individuals 
+	 * @param buffer a given file used as a buffer of individuals
+	 * @param curGeneration the current generation
+	 * @return a new candidate population
+	 * @throws NumberFormatException
+	 * @throws IndexOutOfBoundsException
+	 * @throws IOException
+	 */
 	public ArrayList<GEIndividual> initialize(Reader buffer, int curGeneration)
 			throws NumberFormatException, IndexOutOfBoundsException, IOException {
 		GEChromosome chromosome;
 		GEIndividual individual;
-		// RandomNumberGenerator random;
-	    // TODO developed only in the case of random initialization - typeInitialization=1 ... Later need to develop other type of initialization.
+		// TODO developed only in the case of random initialization -
+		// typeInitialization=1 ... Later need to develop other type of initialization.
 		if (buffer != null) {
 			int intch;
 			String st = "";
@@ -83,44 +86,40 @@ public class CandidatePopulation {
 					m++;
 				}
 			}
+		} else {
+			this.chromosomes = initializeChromosomes();
 		}
-		else {
-			this.chromosomes = initializeListChromosome();
-		}
-		logger.info("number chromosome created: " + chromosomes.length);
-		ArrayList<GEIndividual> CandidatePopulation = new ArrayList<GEIndividual>(size);
+		logger.info("Number of chromosomes created: " + chromosomes.length);
+		ArrayList<GEIndividual> population = new ArrayList<GEIndividual>(size);
 
 		int j = 0;
 		while (j < size) {
 			if (generator != null) {
 				individual = generator.axiomIndividual(chromosomes[j], curGeneration);
-				CandidatePopulation.add(individual);
-				Phenotype axiom = CandidatePopulation.get(j).getPhenotype();
-				Genotype gp = CandidatePopulation.get(j).getGenotype();
-				Chromosome chro = gp.get(0);
+				population.add(individual);
+				Phenotype axiom = population.get(j).getPhenotype();
 				if (axiom == null)
 					break;
-				// logger.info("Generation: " + CandidatePopulation.get(j).getAge());
-				// logger.info("Individual: " + CandidatePopulation.get(j));
-				// logger.info("Chromosome: " + chro);
-				// logger.info("Used wraps: " + individual.getUsedWraps());
-				// logger.info(" ");
 				j++;
 			} else {
 				logger.error("RandomAxiomGenerator is null");
 				System.exit(0);
 			}
 		}
-		logger.info("Number of individual created: " + CandidatePopulation.size());
-		return CandidatePopulation;
+		logger.info("Number of individuals created: " + population.size());
+		return population;
 	}
 
-	public GEChromosome[] getListChromosome() {
-		return chromosomes;
-	}
-
-	public ArrayList<GEIndividual> renew(ArrayList<GEIndividual> listCrossover, int curGeneration,
+	/**
+	 * Renew a given population
+	 * @param population a given population
+	 * @param curGeneration the current generation
+	 * @param etilismPopulation a etilism population
+	 * @return a renewed population
+	 */
+	public ArrayList<GEIndividual> renew(ArrayList<GEIndividual> population, int curGeneration,
 			ArrayList<GEIndividual> etilismPopulation) {
+		
 		ArrayList<GEIndividual> newPopulation = new ArrayList<GEIndividual>();
 		if (etilismPopulation != null) {
 			for (int i1 = 0; i1 < etilismPopulation.size(); i1++) {
@@ -128,14 +127,18 @@ public class CandidatePopulation {
 				newPopulation.add(etilismPopulation.get(i1));
 			}
 		}
-		for (int i2 = 0; i2 < listCrossover.size(); i2++) {
-			listCrossover.get(i2).setAge(curGeneration + 1);
-			newPopulation.add(listCrossover.get(i2));
+		for (int i2 = 0; i2 < population.size(); i2++) {
+			population.get(i2).setAge(curGeneration + 1);
+			newPopulation.add(population.get(i2));
 		}
 		return newPopulation;
 	}
 
-	public void addBestIndividual(SimplePopulation etilismPopulation) {
+	/**
+	 * add best individuals on the set of chromosomes
+	 * @param etilismPopulation a etilism population
+	 */
+	public void addBestIndividuals(SimplePopulation etilismPopulation) {
 		int i = 0;
 		while (i < etilismPopulation.size()) {
 			chromosomes[i] = (GEChromosome) etilismPopulation.get(i).getGenotype().get(0);
@@ -143,7 +146,11 @@ public class CandidatePopulation {
 		}
 	}
 
-	public GEChromosome[] initializeListChromosome() {
+	/**
+	 * Initialize a set of random chromosomes
+	 * @return an array of chromosomes
+	 */
+	public GEChromosome[] initializeChromosomes() {
 		RandomNumberGenerator random;
 		random = new MersenneTwisterFast(System.currentTimeMillis() & 0xFFFFFFFF);
 		GEChromosome chromosome;
@@ -158,12 +165,16 @@ public class CandidatePopulation {
 				chromosome.add(Math.abs(random.nextInt(maxvalCodon)));
 			}
 			chromosomes[n] = chromosome;
-			// logger.info(chromosome);
 			n++;
 		}
 		return chromosomes;
 	}
 
+	/**
+	 * generate a new axiom from a given chromosome
+	 * @param chromosome a given {@link GEChromosome chromosome}
+	 * @return a new {@link GEIndividual individual}
+	 */
 	public GEIndividual createNewAxiom(GEChromosome chromosome) {
 		GEIndividual individual = new GEIndividual();
 		RandomNumberGenerator random;
@@ -182,6 +193,10 @@ public class CandidatePopulation {
 		return individual;
 	}
 
+	/**
+	 * create a random chromosome
+	 * @return a new {@link GEChromosome chromosome}
+	 */
 	public GEChromosome createChromosome() {
 		RandomNumberGenerator random;
 		random = new MersenneTwisterFast(System.currentTimeMillis() & 0xFFFFFFFF);

@@ -29,7 +29,6 @@ import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 
 import Individuals.GEChromosome;
 import Individuals.Genotype;
-import Individuals.Individual;
 import Individuals.Phenotype;
 import Individuals.FitnessPackage.Fitness;
 import Individuals.Populations.Population;
@@ -40,18 +39,26 @@ import Util.Random.RandomNumberGenerator;
 
 /**
  * This class is used to deployed all EA tools like crossover, mutation, ...
+ * 
+ * @author Thu Huong NGUYEN & Rémi FELIN
  */
 public class EATools {
 
 	private static Logger logger = Logger.getLogger(EATools.class.getName());
 
-	public static void deleteTwins(GEChromosome[] a, int n) {
+	/**
+	 * delete twins from a given array of {@link GEChromosome chromosomes}
+	 * 
+	 * @param chromosomes a given array
+	 * @param n
+	 */
+	public static void deleteTwins(GEChromosome[] chromosomes, int n) {
 		// Let's go to the same phantom
 		for (int i = 0; i < n - 1; i++) {
 			for (int k = i + 1; k < n; k++) {
-				if (a[k] == a[i]) {
+				if (chromosomes[k] == chromosomes[i]) {
 					for (int j = k; j < n - 1; j++) {
-						a[j] = a[j + 1];
+						chromosomes[j] = chromosomes[j + 1];
 					}
 					n--;
 					k--;
@@ -60,106 +67,54 @@ public class EATools {
 		}
 	}
 
-	public static void dem(Logger logger, List<Individual> a, int n) {
-		// show off the display of the chromosomes
-		int[] fr1 = new int[n];
-		int i, j, bienDem;
-		String ai, aj;
-		for (i = 0; i < n; i++) {
-			fr1[i] = -1;
-		}
-		// logger.info("Count the number of occurrences of each chromosome");
-		// logger.info("===");
-		for (i = 0; i < n; i++) {
-			bienDem = 1;
-			for (j = i + 1; j < n; j++) {
-				ai = a.get(i).getGenotype().toString();
-				aj = a.get(j).getGenotype().toString();
-				if (ai.equals(aj)) {
-					bienDem++;
-					fr1[j] = 0;
-				}
-			}
-			if (fr1[i] != 0) {
-				fr1[i] = bienDem;
-			}
-		}
-		// Dissolve the phenomenon of flipping chromosomes in
-		for (i = 0; i < n; i++) {
-			if (fr1[i] != 0) {
-				logger.info(
-						"Chromosome '" + a.get(i).getGenotype().toString() + "' show off " + fr1[i] + " occurrences");
-			}
-		}
-	}
-
+	/**
+	 * Remove the duplicate(s) individual(s) from a given list and returns the
+	 * filtered list
+	 * 
+	 * @param canPop a given list to be filtered
+	 * @return the filtered list
+	 */
 	public static ArrayList<GEIndividual> getDistinctPopulation(ArrayList<GEIndividual> canPop) {
 		ArrayList<GEIndividual> individuals = new ArrayList<GEIndividual>();
-		Set<Phenotype> ListPhenoType = new HashSet<Phenotype>();
+		Set<Phenotype> phenotypes = new HashSet<Phenotype>();
 		for (GEIndividual item : canPop) {
-			if (ListPhenoType.add(item.getPhenotype())) {
+			if (phenotypes.add(item.getPhenotype())) {
 				individuals.add(item);
 			}
 		}
 		return individuals;
 	}
 
+	/**
+	 * Remove the duplicate(s) genotype(s) from a given list and returns the
+	 * filtered list
+	 * 
+	 * @param canPop a given list to be filtered
+	 * @return the filtered list
+	 */
 	public static ArrayList<GEIndividual> getDistinctGenotypePopulation(ArrayList<GEIndividual> canPop) {
 		ArrayList<GEIndividual> individuals = new ArrayList<GEIndividual>();
-		Set<Genotype> ListGenoType = new HashSet<Genotype>();
+		Set<Genotype> genotypes = new HashSet<Genotype>();
 		for (GEIndividual item : canPop) {
-			if (ListGenoType.add(item.getGenotype())) {
+			if (genotypes.add(item.getGenotype())) {
 				individuals.add(item);
 			}
 		}
 		return individuals;
 	}
 
-	public static SimplePopulation distincPhenotypetPopulation(SimplePopulation canPop) {
-		SimplePopulation distinctPopulation = new SimplePopulation();
-		ArrayList<GEIndividual> arrListIndividual = new ArrayList<>();
-		String ai, aj;
-		int n, k, m;
-		n = canPop.size();
-		k = m = 0;
-		for (int i = 0; i < n; i++) {
-			arrListIndividual.add((GEIndividual) canPop.get(i));
-		}
-		for (int i = 1; i < arrListIndividual.size() - m; i++) {
-			for (int j = 0; j < i; j++) {
-				ai = arrListIndividual.get(i).getPhenotype().toString();
-				aj = arrListIndividual.get(j).getPhenotype().toString();
-				if (ai.equals(aj)) {
-					m++;
-					for (k = i; k < arrListIndividual.size() - m - 1; k++) {
-						arrListIndividual.set(k, arrListIndividual.get(k + 1));
-					}
-					arrListIndividual.remove(k);
-					arrListIndividual.trimToSize();
-					i--;
-				}
-			}
-		}
-		for (int t = 0; t < arrListIndividual.size(); t++) {
-			distinctPopulation.add(arrListIndividual.get(t));
-		}
-		return distinctPopulation;
-	}
-
-	public static SimplePopulation asymmetricPopulation(SimplePopulation canPop) {
+	public static SimplePopulation distincPhenotypePopulation(SimplePopulation canPop) {
 		SimplePopulation distinctPopulation = new SimplePopulation();
 		ArrayList<GEIndividual> individuals = new ArrayList<>();
-		String ai, aj;
-		int i, j, n, k, m;
-		n = canPop.size();
-		k = m = 0;
-		for (i = 0; i < n; i++) {
+		int n = canPop.size();
+		int k, m = 0;
+		for (int i = 0; i < n; i++) {
 			individuals.add((GEIndividual) canPop.get(i));
 		}
-		for (i = 1; i < individuals.size() - m; i++) {
-			for (j = 0; j < i; j++) {
-				ai = individuals.get(i).getPhenotype().toString();
-				aj = individuals.get(j).getPhenotype().toString();
+		for (int i = 1; i < individuals.size() - m; i++) {
+			for (int j = 0; j < i; j++) {
+				String ai = individuals.get(i).getPhenotype().toString();
+				String aj = individuals.get(j).getPhenotype().toString();
 				if (ai.equals(aj)) {
 					m++;
 					for (k = i; k < individuals.size() - m - 1; k++) {
@@ -177,15 +132,60 @@ public class EATools {
 		return distinctPopulation;
 	}
 
+	public static SimplePopulation asymmetricPopulation(SimplePopulation canPop) {
+		SimplePopulation distinctPopulation = new SimplePopulation();
+		ArrayList<GEIndividual> individuals = new ArrayList<>();
+		int i, j, k, m;
+		int n = canPop.size();
+		k = m = 0;
+		for (i = 0; i < n; i++) {
+			individuals.add((GEIndividual) canPop.get(i));
+		}
+		for (i = 1; i < individuals.size() - m; i++) {
+			for (j = 0; j < i; j++) {
+				String ai = individuals.get(i).getPhenotype().toString();
+				String aj = individuals.get(j).getPhenotype().toString();
+				if (ai.equals(aj)) {
+					m++;
+					for (k = i; k < individuals.size() - m - 1; k++) {
+						individuals.set(k, individuals.get(k + 1));
+					}
+					individuals.remove(k);
+					individuals.trimToSize();
+					i--;
+				}
+			}
+		}
+		for (int t = 0; t < individuals.size(); t++) {
+			distinctPopulation.add(individuals.get(t));
+		}
+		return distinctPopulation;
+	}
+
+	/**
+	 * To compute all tasks about crossover and mutation phasis of genetical
+	 * algorithm
+	 * 
+	 * @param canPop          the candidate population
+	 * @param proCrossover    the probability to make a crossover on individual
+	 * @param proMutation     the probability to make a mutation on individual
+	 * @param curGeneration   the current generation
+	 * @param rd              an instance of {@link RandomAxiomGenerator axioms
+	 *                        generator}
+	 * @param diversity       the coefficient of diversity
+	 * @return a new population
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
 	public static ArrayList<GEIndividual> crossover(ArrayList<GEIndividual> canPop, double proCrossover,
-			double proMutation, int curGeneration, RandomAxiomGenerator rd, int diversity, int totalGeneration)
+			double proMutation, int curGeneration, RandomAxiomGenerator rd, int diversity)
 			throws InterruptedException, ExecutionException {
 
 		ArrayList<GEIndividual> individuals = new ArrayList<GEIndividual>();
 		int index = canPop.size() - 1;
 		int m = 0;
 
-		// We have a set of threads to compute each axioms
+		// We have a set of threads to compute each tasks
 		ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
 		Set<Callable<Void>> callables = new HashSet<Callable<Void>>();
 
@@ -194,7 +194,7 @@ public class EATools {
 			callables.add(new Callable<Void>() {
 				@Override
 				public Void call() throws Exception {
-//					System.out.println("mut: " + m + "/" + (index - 1));
+					
 					RandomNumberGenerator rand = new MersenneTwisterFast();
 					GEIndividual parent1 = ((GEIndividual) canPop.get(idx));
 					GEIndividual parent2 = (GEIndividual) canPop.get(idx + 1);
@@ -202,52 +202,47 @@ public class EATools {
 					GEChromosome[] chromosomes;
 					GEChromosome c1, c2;
 
-					switch (RDFMiner.parameters.typecrossover) {
-						case TypeCrossover.SINGLE_POINT_CROSSOVER:
-							// Single-point crossover
-							SinglePointCrossoverAxiom spc = new SinglePointCrossoverAxiom(proCrossover, rand);
-							spc.setFixedCrossoverPoint(false);
-							c1 = new GEChromosome((GEChromosome) parent1.getGenotype().get(0));
-							c2 = new GEChromosome((GEChromosome) parent2.getGenotype().get(0));
-							chromosomes = spc.crossover(c1, c2);
-							child1 = rd.axiomIndividual(chromosomes[0], curGeneration);
-							child2 = rd.axiomIndividual(chromosomes[1], curGeneration);
-							break;
-						case TypeCrossover.SUBTREE_CROSSOVER:
-							// subtree crossover
-							SubtreeCrossoverAxioms sca = new SubtreeCrossoverAxioms(proCrossover, rand);
-							GEIndividual[] inds = sca.crossoverTree(parent1, parent2);
-							child1 = inds[0];
-							child2 = inds[1];
-							break;
-						default:
-							// Two point crossover
-							TwoPointCrossover tpc = new TwoPointCrossover(proCrossover, rand);
-							tpc.setFixedCrossoverPoint(true);
-							c1 = new GEChromosome((GEChromosome) parent1.getGenotype().get(0));
-							c2 = new GEChromosome((GEChromosome) parent2.getGenotype().get(0));
-							chromosomes = tpc.crossover(c1, c2);
-							child1 = rd.axiomIndividual(chromosomes[0], curGeneration);
-							child2 = rd.axiomIndividual(chromosomes[1], curGeneration);
-							break;
+					switch (RDFMiner.parameters.typeCrossover) {
+					case TypeCrossover.SINGLE_POINT_CROSSOVER:
+						// Single-point crossover
+						SinglePointCrossoverAxiom spc = new SinglePointCrossoverAxiom(proCrossover, rand);
+						spc.setFixedCrossoverPoint(false);
+						c1 = new GEChromosome((GEChromosome) parent1.getGenotype().get(0));
+						c2 = new GEChromosome((GEChromosome) parent2.getGenotype().get(0));
+						chromosomes = spc.crossover(c1, c2);
+						child1 = rd.axiomIndividual(chromosomes[0], curGeneration);
+						child2 = rd.axiomIndividual(chromosomes[1], curGeneration);
+						break;
+					case TypeCrossover.SUBTREE_CROSSOVER:
+						// subtree crossover
+						SubtreeCrossoverAxioms sca = new SubtreeCrossoverAxioms(proCrossover, rand);
+						GEIndividual[] inds = sca.crossoverTree(parent1, parent2);
+						child1 = inds[0];
+						child2 = inds[1];
+						break;
+					default:
+						// Two point crossover
+						TwoPointCrossover tpc = new TwoPointCrossover(proCrossover, rand);
+						tpc.setFixedCrossoverPoint(true);
+						c1 = new GEChromosome((GEChromosome) parent1.getGenotype().get(0));
+						c2 = new GEChromosome((GEChromosome) parent2.getGenotype().get(0));
+						chromosomes = tpc.crossover(c1, c2);
+						child1 = rd.axiomIndividual(chromosomes[0], curGeneration);
+						child2 = rd.axiomIndividual(chromosomes[1], curGeneration);
+						break;
 					}
 
 					RandomNumberGenerator rand1 = new MersenneTwisterFast();
 					IntFlipMutation mutation = new IntFlipMutation(proMutation, rand1);
 
 					try {
-						child1 = mutation.doOperation(child1, rd, curGeneration, totalGeneration,
-								child1.getMutationPoints());
-						child2 = mutation.doOperation(child2, rd, curGeneration, totalGeneration,
-								child2.getMutationPoints());
+						child1 = mutation.doOperation(child1, rd, curGeneration, child1.getMutationPoints());
+						child2 = mutation.doOperation(child2, rd, curGeneration, child2.getMutationPoints());
 					} catch (IOException | InterruptedException e) {
 						e.printStackTrace();
 					}
-					// logger.info("child1 after mutation:" + child1 );
-					// logger.info("child2 after mutation:" + child2 );
+					// if using crowding method in survival selection
 					if (diversity == 1) {
-						// if using crowding method in survival selection
-						// logger.info("After crowding");
 						Crowding crowd = new Crowding(4, canPop.get(idx), canPop.get(idx + 1), child1, child2);
 						individuals.add(crowd.SurvivalSelection()[0]);
 						individuals.add(crowd.SurvivalSelection()[1]);
@@ -262,13 +257,11 @@ public class EATools {
 			m = m + 2;
 		}
 		logger.info(callables.size() + " tasks ready to be launched !");
-
 		// Submit tasks
 		executor.invokeAll(callables);
-
+		// Shutdown the service
 		executor.shutdown();
 		executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-
 		return individuals;
 	}
 
@@ -370,12 +363,10 @@ public class EATools {
 	}
 
 	public static String[][] setTablesPredicates(Logger logger, SparqlEndpoint endpoint) {
-		String sparql = "distinct ?p where {?s ?p ?o}";
-		String p = "";
-		String gp = "";
-		ResultSet rs = endpoint.select(sparql, 0);
-//		ResultSet rs = endpoint.getResultSet();
 		ArrayList<String> predicates = new ArrayList<String>();
+		String sparql = "distinct ?p where {?s ?p ?o}";
+		String p, gp;
+		ResultSet rs = endpoint.select(sparql, 0);
 		int i = 0;
 		while (rs.hasNext()) {
 			p = rs.next().get("p").toString();
@@ -399,5 +390,38 @@ public class EATools {
 		}
 		return arr;
 	}
+
+//	public static void dem(Logger logger, List<Individual> a, int n) {
+//		// show off the display of the chromosomes
+//		int[] fr1 = new int[n];
+//		int i, j, bienDem;
+//		String ai, aj;
+//		for (i = 0; i < n; i++) {
+//			fr1[i] = -1;
+//		}
+//		// logger.info("Count the number of occurrences of each chromosome");
+//		// logger.info("===");
+//		for (i = 0; i < n; i++) {
+//			bienDem = 1;
+//			for (j = i + 1; j < n; j++) {
+//				ai = a.get(i).getGenotype().toString();
+//				aj = a.get(j).getGenotype().toString();
+//				if (ai.equals(aj)) {
+//					bienDem++;
+//					fr1[j] = 0;
+//				}
+//			}
+//			if (fr1[i] != 0) {
+//				fr1[i] = bienDem;
+//			}
+//		}
+//		// Dissolve the phenomenon of flipping chromosomes in
+//		for (i = 0; i < n; i++) {
+//			if (fr1[i] != 0) {
+//				logger.info(
+//						"Chromosome '" + a.get(i).getGenotype().toString() + "' show off " + fr1[i] + " occurrences");
+//			}
+//		}
+//	}
 
 }

@@ -6,10 +6,6 @@ package com.i3s.app.rdfminer.axiom.type;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.rdf.model.RDFNode;
-
-import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.axiom.Axiom;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;

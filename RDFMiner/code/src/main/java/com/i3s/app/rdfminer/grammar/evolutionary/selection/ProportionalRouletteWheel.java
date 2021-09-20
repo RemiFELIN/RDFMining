@@ -41,7 +41,12 @@ import java.util.*;
 /**
  * Roulette wheel selection based on fitness proprtional selection. it uses
  * assigns probabilities as 1/(1-fitness) where the smaller the value the more
- * likely it is to be selected
+ * likely it is to be selected.
+ * 
+ * <p>
+ * {@link TypeSelection#ROULETTE_WHEEL ROULETTE_WHEEL} selection 
+ * </p>
+ * 
  **/
 public class ProportionalRouletteWheel extends RouletteWheel implements Stochastic {
 

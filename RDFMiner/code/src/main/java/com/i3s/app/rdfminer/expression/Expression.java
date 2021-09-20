@@ -21,8 +21,8 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
-import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
+import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 import com.i3s.app.rdfminer.Global;
 
 /**
@@ -173,7 +173,8 @@ public abstract class Expression {
 		// but remove the prefix and the closing ">":
 		String[] s = rootSymbol.split("/");
 		String name = s[s.length - 1];
-		return String.format(Global.CACHE_PATH + "%s-%08x.cache", name.substring(0, name.length() - 1), toString().hashCode());
+		return String.format(Global.CACHE_PATH + "%s-%08x.cache", name.substring(0, name.length() - 1),
+				toString().hashCode());
 	}
 
 	/**
@@ -218,11 +219,14 @@ public abstract class Expression {
 					// String str = "";
 					try {
 						PrintStream cache = new PrintStream(cacheName());
+
 						for (int hexDigit = 0; hexDigit < 0x10; hexDigit++) {
 							String h = String.format("\"%x\"", hexDigit);
-							ResultSet result = RDFMiner.REMOTE_ENDPOINT.select("DISTINCT ?x WHERE { " + graphPattern
+							SparqlEndpoint endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT,
+									Global.REMOTE_PREFIXES);
+							ResultSet result = endpoint.select("DISTINCT ?x WHERE { " + graphPattern
 									+ " FILTER( strStarts(MD5(str(?x)), " + h + ") ) }", 0);
-							
+
 							while (result.hasNext()) {
 								QuerySolution solution = result.next();
 								RDFNode x = solution.get("x");
@@ -230,7 +234,6 @@ public abstract class Expression {
 								extension.add(new RDFNodePair(x, y));
 								cache.println(sparqlEncode(x) + "\t" + sparqlEncode(y));
 							}
-							// qe.close();
 						}
 						cache.close();
 					} catch (Exception e) {
@@ -272,14 +275,16 @@ public abstract class Expression {
 	 * @return the SPARQL encoding of the given RDF node
 	 */
 	public static String sparqlEncode(RDFNode node) {
-		if (node == null) // If the node is null, return the empty string...
+		// If the node is null, return the empty string...
+		if (node == null)
 			return "";
-		if (node.isAnon()) // If the node is blank, treat it as a variable, whose name will be based on the
-							// identifier:
+		// If the node is blank, treat it as a variable, whose name will be based on the
+		// identifier:
+		if (node.isAnon())
 			return "?_" + node.asResource().getId().getLabelString().substring(2);
 		if (node.isResource())
 			return "<" + node + ">";
-		// otherwise, the node is a literal:
+		// Otherwise, the node is a literal:
 		Literal lit = (Literal) node;
 		String lang = lit.getLanguage();
 		String dt = lit.getDatatypeURI();
@@ -301,7 +306,8 @@ public abstract class Expression {
 	 * @return the corresponding RDF node
 	 */
 	public static RDFNode sparqlDecode(String s) {
-		Model m = RDFMiner.REMOTE_ENDPOINT.tdb;
+		SparqlEndpoint endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
+		Model m = endpoint.tdb;
 		RDFNode r = null;
 		if (s.startsWith("<"))
 			r = m.createResource(s.substring(1, s.length() - 1));
@@ -327,8 +333,8 @@ public abstract class Expression {
 	public boolean contains(RDFNodePair pair) {
 		String x = pair.x != null ? sparqlEncode(pair.x) : "?x";
 		String y = pair.y != null ? sparqlEncode(pair.y) : "?y";
-
-		return RDFMiner.REMOTE_ENDPOINT.ask(createGraphPattern(x, y), 0);
+		SparqlEndpoint endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
+		return endpoint.ask(createGraphPattern(x, y), 0);
 	}
 
 	@Override

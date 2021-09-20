@@ -16,10 +16,12 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
+import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
+import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
 
 //import com.hp.hpl.jena.query.QuerySolution;
 //import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -47,7 +49,7 @@ import Util.Enums;
  * for which an axiom was generated (an tested).
  * </p>
  * 
- * @author Andrea G. B. Tettamanzi
+ * @author Andrea G. B. Tettamanzi & Rémi FELIN
  *
  */
 public class CandidateAxiomGenerator extends AxiomGenerator {
@@ -93,8 +95,9 @@ public class CandidateAxiomGenerator extends AxiomGenerator {
 	 * grammar.
 	 * 
 	 * @param fileName the name of the file containing the grammar.
+	 * @throws InterruptedException 
 	 */
-	public CandidateAxiomGenerator(String fileName, boolean v2) {
+	public CandidateAxiomGenerator(String fileName, boolean v2) throws InterruptedException {
 		super(fileName, v2);
 		logger.warn("Grammar Successfully Initialized");
 
@@ -154,7 +157,8 @@ public class CandidateAxiomGenerator extends AxiomGenerator {
 	protected Set<RDFNodePair> getNodes(String sparql) {
 		Set<RDFNodePair> classes = new TreeSet<RDFNodePair>();
 		logger.warn("Querying DBpedia with query " + sparql);
-		ResultSet result = RDFMiner.REMOTE_ENDPOINT.select(sparql, 0);
+		SparqlEndpoint endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
+		ResultSet result = endpoint.select(sparql, 0);
 		
 		while (result.hasNext()) {
 			QuerySolution solution = result.next();
