@@ -87,6 +87,7 @@ public class CandidatePopulation {
 				}
 			}
 		} else {
+			logger.info("Buffer file does not exists, initializing chromosomes ...");
 			this.chromosomes = initializeChromosomes();
 		}
 		logger.info("Number of chromosomes created: " + chromosomes.length);

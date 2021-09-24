@@ -29,7 +29,7 @@ public class Global {
 	/**
 	 * path to DBPEDIA TDB (not used in this version)
 	 */
-	public static final String DBPEDIA_TDB_PATH = "/home/remi/Bureau/dev/DBPedia/tdb";
+	public static final String DBPEDIA_TDB_PATH = System.getenv("HOME") + "/tdb/";
 
 	/**
 	 * SPARQL endpoint from remote server which contains full instance of DBPedia

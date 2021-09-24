@@ -8,20 +8,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
 import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.grammar.DLGEGrammar;
 import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
@@ -75,139 +69,56 @@ public abstract class AxiomGenerator {
 		grammar.setDerivationTreeType(DerivationTree.class.getName());
 		// grammar.setDerivationTreeType(ContextualDerivationTree.class.getName());
 		grammar.setMaxDerivationTreeDepth(100);
-
+		// set max wrapp 
+		grammar.setMaxWraps(RDFMiner.parameters.maxWrapp);
 		// System.out.println(grammar);
 		logger.info("Grammar loaded. Adding dynamic productions...");
 
-		if (v2) {
+		if(v2) {
 			logger.info("AxiomGenerator v2.0 used ...");
-			// set a collection of Callable<Void>, corresponding to a collection of future
-			// tasks
-			Set<Callable<Void>> callables = new HashSet<Callable<Void>>();
-			for (int hexDigit = 0; hexDigit < 0x10; hexDigit++) {
+			for(int hexDigit = 0; hexDigit<0x10; hexDigit++)
+			{
 				String h = String.format("\"%x\"", hexDigit);
-				callables.add(new Callable<Void>() {
-					@Override
-					public Void call() throws Exception {
-						logger.warn("Querying with FILTER(strStarts(MD5(?x), " + h + "))...");
-						generateProductions("Class",
-								"distinct ?class where {?class a owl:Class. FILTER(contains(str(?class), \"http://\")). FILTER( strStarts(MD5(str(?class))  , "
-										+ h + ") )  }");
-						return null;
-					}
-				});
-				
-				callables.add(new Callable<Void>() {
-					@Override
-					public Void call() throws Exception {
-						logger.warn("Querying with FILTER(strStarts(MD5(?x), " + h + "))...");
-						generateProductions("ObjectPropertyOf",
-								"DISTINCT ?prop WHERE { ?subj ?prop ?obj. FILTER ( isIRI(?obj) ).FILTER( strStarts(MD5(str(?prop)), "
-										+ h + ") ) }");
-						return null;
-					}
-				});
+				logger.warn("Querying with FILTER(strStarts(MD5(?x), " + h + "))...");
+				generateProductions("Class", "distinct ?class where {?class a owl:Class. FILTER(contains(str(?class), \"http://\")). FILTER( strStarts(MD5(str(?class))  , " + h + ") )  }");
+				generateProductions("ObjectPropertyOf","DISTINCT ?prop WHERE { ?subj ?prop ?obj. FILTER ( isIRI(?obj) ).FILTER( strStarts(MD5(str(?prop)), " + h + ") ) }");
 			}
-			logger.info(callables.size() + " tasks are ready to be launched !");
-			// We have a set of threads to compute each tasks
-			ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
-			// Submit tasks
-			executor.invokeAll(callables);
-			// Shut down the executor
-			executor.shutdown();
-			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 		} else {
 			extract();
 		}
 	}
-	
+
 	public void extract() throws InterruptedException {
 		logger.info("AxiomGenerator v1.0 used ...");
-		// set a collection of Callable<Void>, corresponding to a collection of future
-		// tasks
-		Set<Callable<Void>> callables = new HashSet<Callable<Void>>();
 		// Add dynamically-generated productions for the six primitive non-terminals
 		// N.B.: To circumvent the limit imposed by Virtuoso on the number of results,
 		// we split each query into 16 queries, based on the MD5 hash of the results.
 		// Actually, this is useful only if we use a remote SPARQL endpoint...
 		for (int hexDigit = 0; hexDigit < 0x10; hexDigit++) {
-
 			String h = String.format("\"%x\"", hexDigit);
 			logger.warn("Querying with FILTER(strStarts(MD5(?x), " + h + "))...");
-
-			callables.add(new Callable<Void>() {
-				@Override
-				public Void call() throws Exception {
-					generateProductions("Class",
-							"DISTINCT ?class WHERE { ?_ a ?class . FILTER( strStarts(MD5(str(?class)), " + h + ") ) }");
-					return null;
-				}
-			});
-
+			generateProductions("Class",
+					"DISTINCT ?class WHERE { ?_ a ?class . FILTER( strStarts(MD5(str(?class)), " + h + ") ) }");
 			if (!(this instanceof CandidateAxiomGenerator)) {
 				// If it is a CandidateAxiomGenerator that is being constructed,
 				// the following dynamic productions are not needed.
-
-				// Class-other-than-owl:Thing
-				callables.add(new Callable<Void>() {
-					@Override
-					public Void call() throws Exception {
-						generateProductions("Class-other-than-owl:Thing",
-								"DISTINCT ?class WHERE { ?_ a ?class . FILTER ( ?class != owl:Thing ) FILTER( strStarts(MD5(str(?class)), "
-										+ h + ") ) }");
-						return null;
-					}
-				});
-				// ObjectPropertyOf
-				callables.add(new Callable<Void>() {
-					@Override
-					public Void call() throws Exception {
-						generateProductions("ObjectPropertyOf",
-								"DISTINCT ?prop WHERE { ?subj ?prop ?obj . FILTER ( isIRI(?obj) ) FILTER( strStarts(MD5(str(?prop)), "
-										+ h + ") ) }");
-						return null;
-					}
-				});
-				// DataProperty
-				callables.add(new Callable<Void>() {
-					@Override
-					public Void call() throws Exception {
-						generateProductions("DataProperty",
-								"DISTINCT ?prop WHERE { ?subj ?prop ?obj . FILTER ( isLiteral(?obj) ) FILTER( strStarts(MD5(str(?prop)), "
-										+ h + ") ) }");
-						return null;
-					}
-				});
-				// NamedIndividual
-				callables.add(new Callable<Void>() {
-					@Override
-					public Void call() throws Exception {
-						generateProductions("NamedIndividual",
-								"DISTINCT ?ind WHERE { ?ind a ?class . FILTER ( isIRI(?ind) ) FILTER( strStarts(MD5(str(?ind)), "
-										+ h + ") ) }");
-						return null;
-					}
-				});
-				// Literal
-				callables.add(new Callable<Void>() {
-					@Override
-					public Void call() throws Exception {
-						generateProductions("Literal",
-								"DISTINCT ?obj WHERE { ?subj ?prop ?obj . FILTER ( isLiteral(?obj) ) FILTER( strStarts(MD5(str(?obj)), "
-										+ h + ") ) }");
-						return null;
-					}
-				});
+				generateProductions("Class-other-than-owl:Thing",
+						"DISTINCT ?class WHERE { ?_ a ?class . FILTER ( ?class != owl:Thing ) FILTER( strStarts(MD5(str(?class)), "
+								+ h + ") ) }");
+				generateProductions("ObjectPropertyOf",
+						"DISTINCT ?prop WHERE { ?subj ?prop ?obj . FILTER ( isIRI(?obj) ) FILTER( strStarts(MD5(str(?prop)), "
+								+ h + ") ) }");
+				generateProductions("DataProperty",
+						"DISTINCT ?prop WHERE { ?subj ?prop ?obj . FILTER ( isLiteral(?obj) ) FILTER( strStarts(MD5(str(?prop)), "
+								+ h + ") ) }");
+				generateProductions("NamedIndividual",
+						"DISTINCT ?ind WHERE { ?ind a ?class . FILTER ( isIRI(?ind) ) FILTER( strStarts(MD5(str(?ind)), "
+								+ h + ") ) }");
+				generateProductions("Literal",
+						"DISTINCT ?obj WHERE { ?subj ?prop ?obj . FILTER ( isLiteral(?obj) ) FILTER( strStarts(MD5(str(?obj)), "
+								+ h + ") ) }");
 			}
 		}
-		logger.info(callables.size() + " tasks are ready to be launched !");
-		// We have a set of threads to compute each tasks
-		ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
-		// Submit tasks
-		executor.invokeAll(callables);
-		// Shut down the executor
-		executor.shutdown();
-		executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 	}
 
 	/**
@@ -215,6 +126,7 @@ public abstract class AxiomGenerator {
 	 * different name.
 	 */
 	public static String cacheName(String symbol, String sparql) {
+//		logger.info("path: " + String.format(Global.CACHE_PATH + "%s%08x.cache", symbol, sparql.hashCode()));
 		return String.format(Global.CACHE_PATH + "%s%08x.cache", symbol, sparql.hashCode());
 	}
 
@@ -252,15 +164,14 @@ public abstract class AxiomGenerator {
 				Symbol t = new Symbol(s, Enums.SymbolType.TSymbol);
 				prod.add(t);
 				rule.add(prod);
-				// logger.debug("Added production " + prod);
 			}
+			logger.info("File readed: " + cacheName(symbol, sparql) + ", " + rule.size() + " production(s) added !");
 			cache.close();
 		} catch (IOException ioe) {
-			logger.debug("Cache for " + symbol + " not found. Querying SPARQL endpoint...");
-
-			logger.info("Querying SPARQL endpoint for symbol <" + symbol + "> with query:\nSELECT "
-					+ SparqlEndpoint.prettyPrint(sparql));
-
+			logger.info("Cache for " + symbol + " not found. Querying SPARQL endpoint");
+			logger.info("Querying SPARQL endpoint for symbol <" + symbol + "> ..."); 
+//			"with query:\nSELECT "
+//					+ SparqlEndpoint.prettyPrint(sparql));
 			SparqlEndpoint endpoint = new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, Global.LOCAL_PREFIXES);
 			ResultSet result = endpoint.select(sparql, 0);
 			PrintStream cache = null;
@@ -286,18 +197,20 @@ public abstract class AxiomGenerator {
 						// This was: Symbol t = new Symbol(separator + node.toString(),
 						// Enums.SymbolType.TSymbol);
 						prod.add(t);
-						if (cache != null)
-							cache.println(t);
+						// Write the cache with the symbol found
+						cache.println(t);
 						separator = " ";
-					} else
+					} else {
 						logger.warn("Found a node with an empty string representation");
+					}
 				}
+				// Adding production founded by SPARQL Request
 				rule.add(prod);
 			}
 			if (cache != null)
 				cache.close();
+			logger.info("Done! " + rule.size() + " productions added.");
 		}
-		logger.info("Done! " + rule.size() + " productions added.");
 	}
 
 	public ContextFreeGrammar getGrammar() {

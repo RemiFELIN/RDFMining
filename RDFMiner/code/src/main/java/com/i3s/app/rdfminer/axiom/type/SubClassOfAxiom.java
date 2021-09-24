@@ -78,7 +78,7 @@ public class SubClassOfAxiom extends Axiom {
 			superClassComplement = superClass.subExpressions.get(0);
 		else
 			superClassComplement = new ComplementClassExpression(superClass);
-//		System.out.println("------\nsubClass: " + subClass.getGraphPattern() + "\n---\nsuperClass: " + superClass.getGraphPattern() + "\n------");
+//		logger.info("------\nsubClass: " + subClass.getGraphPattern() + "\n---\nsuperClass: " + superClass.getGraphPattern() + "\n------");
 		try {
 			update(endpoint);
 		} catch (IllegalStateException e) {
@@ -139,13 +139,14 @@ public class SubClassOfAxiom extends Axiom {
 			else if (superClassComplement.contains(pair)) {
 				numExceptions++;
 				exceptions.add(Expression.sparqlEncode(pair.x));
-				logger.info("Found exception: " + pair);
+//				logger.info("Found exception: " + pair);
 			}
 			// A better idea would be to issue a SPARQL query
 			// and let the SPARQL endpoint do the work: see the method below...
 		}
-		logger.info("Reference cardinality: " + referenceCardinality + ", " + numConfirmations + " confirmation(s), "
-				+ numExceptions + " exception(s).");
+		logger.info("Reference cardinality: " + referenceCardinality);
+		logger.info("Number of confirmation(s): " + numConfirmations);
+		logger.info("Number of exception(s): " + numExceptions);
 	}
 
 	/**
@@ -234,7 +235,6 @@ public class SubClassOfAxiom extends Axiom {
 			}
 			
 		} else {
-			
 			// Set a timer to compute the result time of each query
 			Timer timer = new Timer();
 			timer.startTimer();
@@ -258,7 +258,6 @@ public class SubClassOfAxiom extends Axiom {
 				exceptions.add(Expression.sparqlEncode(x));
 			}
 		}
-		
 		logger.info("Possibility = " + possibility().doubleValue());
 		logger.info("Necessity = " + necessity().doubleValue());
 	}

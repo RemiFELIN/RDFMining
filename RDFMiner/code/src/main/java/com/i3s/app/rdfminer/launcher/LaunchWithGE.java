@@ -53,9 +53,6 @@ public class LaunchWithGE {
 		RDFMiner.stats = new StatJSON();
 
 		RandomAxiomGenerator generator = null;
-//		WritableWorkbook writeWorkbook = null;
-//		WritableSheet sheet1 = null;
-//		String FileAxioms = parameters.FileAxioms;
 
 		if (parameters.axiomFile == null && parameters.useRandomAxiomGenerator) {
 			// if a randomly generated Axiom already exists then continue
@@ -82,8 +79,6 @@ public class LaunchWithGE {
 			}
 		});
 
-//		RDFMiner.executor = Executors.newSingleThreadExecutor();
-
 		/* GRAMMATICAL EVOLUTIONARY */
 		/* Parameters as the inputs of GE */
 		logger.info("========================================================");
@@ -91,16 +86,14 @@ public class LaunchWithGE {
 		logger.info("========================================================");
 		logger.info("POPULATION SIZE : " + parameters.populationSize);
 		logger.info("TOTAL EFFORT : " + parameters.kBase);
-//		logger.info("========================================================");
-//		int maxnumGeneration = parameters.numGeneration;
 		logger.info("MAX GENERATION NUMBER: " + (parameters.kBase / parameters.populationSize));
-//		logger.info("GENERATION NUMBER: " + parameters.numGeneration);
-//		logger.info("========================================================");
 		logger.info("INITIALIZED LENGTH CHROMOSOME: " + parameters.initLenChromosome);
 		logger.info("MAXIMUM WRAPPING: " + parameters.maxWrapp);
 		logger.info("CROSSOVER PROBABILITY: " + parameters.proCrossover);
 		logger.info("MUTATION PROBABILITY: " + parameters.proMutation);
 		logger.info("TIME-CAP: " + parameters.timeOut + " secondes");
+		logger.info("========================================================");
+		logger.info("NUMBER OF THREAD(S) USED: " + Global.NB_THREADS);
 		logger.info("========================================================");
 
 		GEChromosome[] chromosomes = new GEChromosome[parameters.populationSize];
@@ -109,7 +102,6 @@ public class LaunchWithGE {
 		ArrayList<GEIndividual> etilismPopulation = null;
 		Statistics stat = new Statistics();
 
-		/* STEP 1 - Initializing candidate population */
 		int sizeElite = (int) (parameters.sizeElite * parameters.populationSize);
 		int sizeSelection = (int) (parameters.sizeSelection * parameters.populationSize);
 
