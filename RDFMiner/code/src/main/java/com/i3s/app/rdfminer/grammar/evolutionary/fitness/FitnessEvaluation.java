@@ -117,10 +117,15 @@ public class FitnessEvaluation {
 
 	/**
 	 * Update a given individual by using evaluation (possibility, fitness, ...)
-	 * 
 	 * @param indivi a given individual
+	 * @return the evaluated individual
 	 */
-	public void updateIndividual(GEIndividual indivi) {
+	public static GEIndividual updateIndividual(GEIndividual indivi) {
+		if(indivi.getFitness() != null) {
+			// this individual has already been evaluated
+			return indivi;
+		}
+		// in a case of new individual, we need to compute it as a new axiom
 		double f = 0;
 		if (indivi.isMapped()) {
 			Axiom axiom = AxiomFactory.create(indivi, indivi.getPhenotype(),
@@ -137,6 +142,7 @@ public class FitnessEvaluation {
 		fit.setIndividual(indivi);
 		fit.getIndividual().setValid(true);
 		indivi.setFitness(fit);
+		return indivi;
 	}
 
 	/**
@@ -183,9 +189,9 @@ public class FitnessEvaluation {
 	 * {@link Axiom#necessity() necessity} values.
 	 * 
 	 * @param axiom a given {@link Axiom axiom}
-	 * @return
+	 * @return the value of fitness
 	 */
-	public double setFitness(Axiom axiom) {
+	public static double setFitness(Axiom axiom) {
 		// Evaluate axioms with generality formula or (initial) formula with necessity
 		if (axiom.generality != 0) {
 			axiom.fitness = axiom.possibility().doubleValue() * axiom.generality;

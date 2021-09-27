@@ -37,7 +37,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package com.i3s.app.rdfminer.grammar.evolutionary.mutation;
 
 import Individuals.GEChromosome;
-//import Individuals.GEIndividual;
 import Individuals.Individual;
 import Operator.Operations.MutationOperation;
 import Util.Random.RandomNumberGenerator;
@@ -46,7 +45,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 import com.i3s.app.rdfminer.axiom.RandomAxiomGenerator;
-import com.i3s.app.rdfminer.grammar.evolutionary.fitness.FitnessEvaluation;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 
 /**
@@ -89,8 +87,6 @@ public class IntFlipMutation extends MutationOperation {
 		GEChromosome chr2 = new GEChromosome(doMutation(chr, pos));
 		((GEIndividual) operand).invalidate();
 		operand = rd.axiomIndividual(chr2, curGeneration);
-		FitnessEvaluation fit = new FitnessEvaluation();
-		fit.updateIndividual(operand);
 		return operand;
 	}
 

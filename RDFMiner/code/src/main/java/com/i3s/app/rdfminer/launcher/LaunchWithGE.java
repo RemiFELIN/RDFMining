@@ -236,12 +236,11 @@ public class LaunchWithGE {
 					logger.info("The size of elite population: " + sizeElite);
 					EliteSelection elite = new EliteSelection(sizeElite);
 					elite.setParentsSelectionElitism(distinctCandidatePopulation);
-					EATools.setPopulation(selectedPopulation,
-							elite.setupSelectedPopulation(distinctCandidatePopulation));
+					selectedPopulation = elite.setupSelectedPopulation(distinctCandidatePopulation);
 					etilismPopulation = elite.getElitedPopulation();
 
 				} else {
-					EATools.setPopulation(selectedPopulation, distinctCandidatePopulation);
+					selectedPopulation = distinctCandidatePopulation;
 					sizeElite = 0;
 				}
 
@@ -250,7 +249,7 @@ public class LaunchWithGE {
 					// Roulette wheel method
 					// if6
 					logger.info("Type selection: Roulette Wheel");
-					EATools.setPopulation(crossoverPopulation, EATools.rouletteWheel(selectedPopulation));
+					crossoverPopulation = EATools.rouletteWheel(selectedPopulation);
 					break;
 				case TypeSelection.TRUNCATION:
 					// Truncation selection method
@@ -265,7 +264,7 @@ public class LaunchWithGE {
 					// Tournament method
 					// if8
 					logger.info("Type selection: Tournament");
-					EATools.setPopulation(crossoverPopulation, EATools.tournament(selectedPopulation));
+					crossoverPopulation = EATools.tournament(selectedPopulation);
 					break;
 				default:
 					// Normal crossover way - All individual of the current generation
@@ -273,7 +272,7 @@ public class LaunchWithGE {
 					// population
 					// if6
 					logger.info("Type selection: Normal");
-					EATools.setPopulation(crossoverPopulation, candidatePopulation);
+					crossoverPopulation = candidatePopulation;
 					break;
 				}
 
@@ -286,15 +285,14 @@ public class LaunchWithGE {
 				// shuffle populations before crossover & mutation
 				java.util.Collections.shuffle(crossoverList);
 
-				logger.info("Performing Crossover & Mutation...");
+				// Add new population on a new list of individuals
+				ArrayList<GEIndividual> newPopulation = EATools.computeGeneration(crossoverList,
+						parameters.proCrossover, parameters.proMutation, curGeneration, generator,
+						parameters.diversity);
 
-				ArrayList<GEIndividual> listCrossover = new ArrayList<GEIndividual>();
-				EATools.setResultList(listCrossover, EATools.crossover(crossoverList, parameters.proCrossover,
-						parameters.proMutation, curGeneration, generator, parameters.diversity));
-
-				logger.info("Crossover & Mutation done");
-				candidatePopulation = canPop.renew(listCrossover, curGeneration, etilismPopulation);
-				curGeneration++; // turn to the next generation
+				candidatePopulation = canPop.renew(newPopulation, curGeneration, etilismPopulation);
+				// Turn to the next generation
+				curGeneration++;
 
 				// Write to buffer file
 				PrintWriter writer = new PrintWriter(

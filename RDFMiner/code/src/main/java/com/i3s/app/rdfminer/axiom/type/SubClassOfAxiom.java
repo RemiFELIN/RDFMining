@@ -71,6 +71,8 @@ public class SubClassOfAxiom extends Axiom {
 	 */
 	public SubClassOfAxiom(List<Symbol> subClassExpression, List<Symbol> superClassExpression,
 			SparqlEndpoint endpoint) {
+//		logger.error("subClass: " + subClassExpression);
+//		logger.error("superClass: " + superClassExpression);
 		subClass = ExpressionFactory.createClass(subClassExpression);
 		superClass = ExpressionFactory.createClass(superClassExpression);
 		if (superClass instanceof ComplementClassExpression)
@@ -182,7 +184,6 @@ public class SubClassOfAxiom extends Axiom {
 	 */
 	@Override
 	public void update(SparqlEndpoint endpoint) {
-		
 		confirmations = new ArrayList<String>();
 		exceptions = new ArrayList<String>();
 		referenceCardinality = endpoint.count("?x", subClass.graphPattern, 0);

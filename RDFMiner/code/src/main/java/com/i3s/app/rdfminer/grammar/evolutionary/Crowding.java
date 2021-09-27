@@ -1,7 +1,7 @@
 package com.i3s.app.rdfminer.grammar.evolutionary;
 
+import com.i3s.app.rdfminer.grammar.evolutionary.fitness.FitnessEvaluation;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
-import Individuals.GEChromosome;
 
 public class Crowding {
 
@@ -27,7 +27,7 @@ public class Crowding {
 		this.distanceP2ToC1 = this.distance(this.parent2, this.child1);
 	}
 
-	GEIndividual[] SurvivalSelection() {
+	GEIndividual[] getSurvivalSelection() {
 		int d1, d2;
 		GEIndividual[] survivals = new GEIndividual[2];
 		d1 = distanceP1ToC1 + distanceP2ToC2;
@@ -77,21 +77,27 @@ public class Crowding {
 		return dp[len1][len2];
 	}
 
-	int distance2(GEIndividual a, GEIndividual b) {
-		int[] a1 = ((GEChromosome) a.getGenotype().get(0)).toArray();
-		int[] b1 = ((GEChromosome) b.getGenotype().get(0)).toArray();
-		int d = 0;
-		for (int i = 0; i < a1.length; i++) {
-			for (int j = 0; j < a1.length; j++) {
-				if (b1[j] == a1[i]) {
-					d++;
-				}
-			}
-		}
-		return d;
-	}
+//	int distance2(GEIndividual a, GEIndividual b) {
+//		int[] a1 = ((GEChromosome) a.getGenotype().get(0)).toArray();
+//		int[] b1 = ((GEChromosome) b.getGenotype().get(0)).toArray();
+//		int d = 0;
+//		for (int i = 0; i < a1.length; i++) {
+//			for (int j = 0; j < a1.length; j++) {
+//				if (b1[j] == a1[i]) {
+//					d++;
+//				}
+//			}
+//		}
+//		return d;
+//	}
 
 	GEIndividual compare(GEIndividual parent, GEIndividual child) {
+		// if parent don't have any value for fitness, we need to compute its value
+		if(parent.getFitness() == null) {
+			parent = FitnessEvaluation.updateIndividual(parent);
+		}
+		child = FitnessEvaluation.updateIndividual(child);
+		// we can compare parent and child
 		if (parent.getFitness().getDouble() <= child.getFitness().getDouble()) {
 			return child;
 		} else {
