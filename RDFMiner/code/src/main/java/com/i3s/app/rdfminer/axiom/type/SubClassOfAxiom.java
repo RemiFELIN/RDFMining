@@ -125,7 +125,7 @@ public class SubClassOfAxiom extends Axiom {
 		referenceCardinality = numConfirmations = numExceptions = 0;
 		confirmations = new ArrayList<String>();
 		exceptions = new ArrayList<String>();
-		Set<RDFNodePair> extension = subClass.extension();
+		Set<RDFNodePair> extension = subClass.extension(endpoint);
 		int numIntersectingClasses = endpoint.count("?D", subClass.graphPattern + " ?x a ?D . ", 0);
 		timePredictor = referenceCardinality * numIntersectingClasses;
 
@@ -133,12 +133,12 @@ public class SubClassOfAxiom extends Axiom {
 		while (i.hasNext()) {
 			referenceCardinality++;
 			RDFNodePair pair = i.next();
-			if (superClass.contains(pair)) {
+			if (superClass.contains(pair, endpoint)) {
 				numConfirmations++;
 				confirmations.add(Expression.sparqlEncode(pair.x));
 			}
 			// The following is correct, but not optimized (a lot of duplicated tests)
-			else if (superClassComplement.contains(pair)) {
+			else if (superClassComplement.contains(pair, endpoint)) {
 				numExceptions++;
 				exceptions.add(Expression.sparqlEncode(pair.x));
 //				logger.info("Found exception: " + pair);

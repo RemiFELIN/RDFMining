@@ -48,6 +48,7 @@ import com.i3s.app.rdfminer.Global;
  *
  */
 public abstract class Expression {
+
 	private static Logger logger = Logger.getLogger(Expression.class.getName());
 
 	/**
@@ -195,7 +196,7 @@ public abstract class Expression {
 	 * expression be needed again in the future.
 	 * </p>
 	 */
-	public Set<RDFNodePair> extension() {
+	public Set<RDFNodePair> extension(SparqlEndpoint endpoint) {
 		if (extension == null) {
 			extension = new TreeSet<RDFNodePair>();
 
@@ -209,8 +210,8 @@ public abstract class Expression {
 							break;
 
 						String[] solution = s.split("\t");
-						RDFNode x = sparqlDecode(solution[0]);
-						RDFNode y = solution.length > 1 ? sparqlDecode(solution[1]) : null;
+						RDFNode x = sparqlDecode(solution[0], endpoint);
+						RDFNode y = solution.length > 1 ? sparqlDecode(solution[1], endpoint) : null;
 						extension.add(new RDFNodePair(x, y));
 					}
 					cache.close();
@@ -222,8 +223,8 @@ public abstract class Expression {
 
 						for (int hexDigit = 0; hexDigit < 0x10; hexDigit++) {
 							String h = String.format("\"%x\"", hexDigit);
-							SparqlEndpoint endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT,
-									Global.REMOTE_PREFIXES);
+							// SparqlEndpoint endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT,
+							// 		Global.REMOTE_PREFIXES);
 							ResultSet result = endpoint.select("DISTINCT ?x WHERE { " + graphPattern
 									+ " FILTER( strStarts(MD5(str(?x)), " + h + ") ) }", 0);
 
@@ -305,8 +306,8 @@ public abstract class Expression {
 	 * @param s a SPARQL encoding of an RDF node
 	 * @return the corresponding RDF node
 	 */
-	public static RDFNode sparqlDecode(String s) {
-		SparqlEndpoint endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
+	public static RDFNode sparqlDecode(String s, SparqlEndpoint endpoint) {
+		// SparqlEndpoint endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
 		Model m = endpoint.tdb;
 		RDFNode r = null;
 		if (s.startsWith("<"))
@@ -330,10 +331,10 @@ public abstract class Expression {
 	 * @return true if the given pair of RDF nodes is a member of the extension of
 	 *         this expression.
 	 */
-	public boolean contains(RDFNodePair pair) {
+	public boolean contains(RDFNodePair pair, SparqlEndpoint endpoint) {
 		String x = pair.x != null ? sparqlEncode(pair.x) : "?x";
 		String y = pair.y != null ? sparqlEncode(pair.y) : "?y";
-		SparqlEndpoint endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
+		// SparqlEndpoint endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
 		return endpoint.ask(createGraphPattern(x, y), 0);
 	}
 
