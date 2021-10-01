@@ -1,17 +1,17 @@
 version: "3.8"
 services:
-    # The main service : RDFMiner v1.2
+    # The main service : RDFMiner
     # developed by Andrea G. B. Tettamanzi, Thu Huong Nguyen and Rémi Felin
     rdfminer:
         restart: always
-        image: rdfminer:1.2
+        image: rdfminer:1.3
         build:
             context: ./RDFMiner/.
         depends_on:
             - virtuoso
         command: launch
         volumes:
-            - /home/remi/Bureau/dev/RDFMining/IO:/rdfminer/io
+            - /home/remi/Bureau/dev/RDFMining/IO:/rdfminer/io # To use it in your own machine, you need to put your own absolute path
         networks:
             rdfminer_network:
                 ipv4_address: 172.19.0.3
@@ -23,7 +23,7 @@ services:
         ports:
             - "9000:9000"
         volumes:
-            - /home/remi/Bureau/dev/RDFMining/Virtuoso/data:/data
+            - /home/remi/Bureau/dev/RDFMining/Virtuoso/data:/data # To use it in your own machine, you need to put your own absolute path
         networks:
             rdfminer_network:
                 ipv4_address: 172.19.0.2
