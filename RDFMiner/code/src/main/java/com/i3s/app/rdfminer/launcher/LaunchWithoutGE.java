@@ -102,6 +102,7 @@ public class LaunchWithoutGE {
 				logger.info("Testing axiom: " + axiomName);
 				try {
 					a = AxiomFactory.create(null, axiom, new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES));
+					a.axiomId = axiomName;
 				} catch (QueryExceptionHTTP httpError) {
 					logger.error("HTTP Error " + httpError.getMessage() + " making a SPARQL query.");
 					httpError.printStackTrace();

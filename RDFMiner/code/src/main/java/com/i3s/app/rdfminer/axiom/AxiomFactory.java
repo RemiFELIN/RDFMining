@@ -182,10 +182,13 @@ public class AxiomFactory extends DLFactory {
 		} else if (syntax.get(0).equals("NegativeDataPropertyAssertion")) {
 			// TO DO
 		}
-		// set the individual of axiom
-		axiom.individual = individual;
-		// set the title of axiom
-		axiom.axiomId = individual.getPhenotype().getStringNoSpace();
+		// if the given individual is not null, we can set the name of the axiom using its individual
+		if(individual != null) {
+			// set the individual of axiom
+			axiom.individual = individual;
+			// set the title of axiom
+			axiom.axiomId = individual.getPhenotype().getStringNoSpace();
+		}
 		// set this arguments 
 		axiom.argumentClasses = arguments;
 		return axiom;
