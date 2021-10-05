@@ -155,7 +155,7 @@ public class LaunchWithoutGE {
 				}
 
 				if (parameters.axiom != null) {
-					System.out.println("[RES]" + RDFMiner.results.toString());
+					System.out.println("Axiom evaluated ! JSON Result: " + a.toJSON().toString());
 					break;
 				}
 
