@@ -241,7 +241,10 @@ public abstract class Axiom {
 		json.put("generation", generation);
 		json.put("fitness", fitness);
 		json.put("generality", generality);
-		json.put("isMapped", individual != null ? individual.isMapped() : JSONObject.NULL);
+		if(individual != null)
+			json.put("isMapped", individual.isMapped());
+		else
+			json.put("isMapped", JSONObject.NULL);
 		return json;
 	}
 
