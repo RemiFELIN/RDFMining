@@ -130,6 +130,7 @@ public class LaunchWithoutGE {
 						break;
 					logger.info("Testing axiom: " + axiomName);
 					a = AxiomFactory.create(null, axiomName, new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES));
+					a.axiomId = axiomName;
 				} catch (IOException e) {
 					writeAndFinish();
 					logger.error("Could not read the next axiom.");
