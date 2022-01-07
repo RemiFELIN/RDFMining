@@ -15,6 +15,7 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import com.i3s.app.rdfminer.axiom.Type;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -44,11 +45,18 @@ public class LaunchWithGE {
 	 * The second version of RDFMiner launcher, with Grammar Evolutionary
 	 * 
 	 * @param parameters all parameters given in the execution of JAR
-	 * @throws Exception
-	 * @throws SQLException
-	 * @throws JAXBException
 	 */
 	public void run(CmdLineParameters parameters) throws Exception {
+
+		// ShutDownHook
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				logger.warn("Shutting down RDFMiner ...");
+				// Save results in output file
+				writeAndFinish();
+			}
+		});
 
 		RDFMiner.results = new ResultsJSON();
 		RDFMiner.axioms = new ArrayList<>();
@@ -70,16 +78,6 @@ public class LaunchWithGE {
 			e.printStackTrace();
 			System.exit(1);
 		}
-
-		// ShutDownHook
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				logger.warn("Shutting down RDFMiner ...");
-				// Save results in output file
-				writeAndFinish();
-			}
-		});
 
 		/* GRAMMATICAL EVOLUTIONARY */
 		/* Parameters as the inputs of GE */
@@ -310,8 +308,14 @@ public class LaunchWithGE {
 	public static void writeAndFinish() {
 		try {
 			RDFMiner.results.stats = RDFMiner.stats.toJSON();
-			// sort axioms
-			RDFMiner.axioms.sort(Comparator.comparingDouble(j -> j.getDouble("ari")));
+			RDFMiner.results.type = RDFMiner.type;
+			// sort axioms (by ARI or Generality) using type of axioms
+			RDFMiner.axioms.sort(Comparator.comparingDouble(j -> {
+				// if we have disjoint classes axioms, we need to sort using generality
+				if(RDFMiner.type == Type.DISJOINT_CLASSES)
+					return j.getInt("generality");
+				return j.getDouble("ari");
+			}));
 			RDFMiner.results.axioms = RDFMiner.axioms;
 			RDFMiner.output.write(RDFMiner.results.toJSON().toString());
 			RDFMiner.output.close();

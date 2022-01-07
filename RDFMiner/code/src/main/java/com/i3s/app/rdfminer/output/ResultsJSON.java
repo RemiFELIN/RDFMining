@@ -17,11 +17,13 @@ public class ResultsJSON {
 
 	public JSONObject stats;
 	public List<JSONObject> axioms;
+	public int type;
 	
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		json.put("statistics", stats);
 		json.put("axioms", new JSONArray(axioms));
+		json.put("type", type);
 		return json;
 	}
 	

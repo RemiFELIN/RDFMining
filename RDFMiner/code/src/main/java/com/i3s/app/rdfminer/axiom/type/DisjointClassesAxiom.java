@@ -6,6 +6,7 @@ package com.i3s.app.rdfminer.axiom.type;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.jena.atlas.lib.Timer;
 import org.apache.log4j.Logger;
 
 import com.i3s.app.rdfminer.axiom.Axiom;
@@ -41,8 +42,8 @@ public class DisjointClassesAxiom extends Axiom {
 	 * Create a new <code>DisjointClasses</code> axiom from the given list of
 	 * concept expressions.
 	 * 
-	 * @param subClassExpression   the functional-style expression of the subclass
-	 * @param superClassExpression the functional-style expression of the superclass
+	 * @param arguments   the functional-style expression of the subclass
+	 * @param endpoint the functional-style expression of the superclass
 	 */
 	public DisjointClassesAxiom(List<List<Symbol>> arguments, SparqlEndpoint endpoint) {
 		disjointClass = new Expression[arguments.size()];
@@ -115,26 +116,25 @@ public class DisjointClassesAxiom extends Axiom {
 	 * <code>DisjointClasses(CE<sub>1</sub> ... CE<sub><var>n</var></sub>)</code> is
 	 * satisfied if ...
 	 * </p>
-	 * <p>
-	 * The {@link #naive_update()} method provides a slower, but hopefully safer,
-	 * way of updating the counts.
-	 * </p>
 	 */
 	@Override
 	public void update(SparqlEndpoint endpoint) {
 		confirmations = new ArrayList<String>();
 		exceptions = new ArrayList<String>();
-
+		long timeSpent = 0;
 		String refCardGraphPattern = "";
 		for (int i = 0; i < disjointClass.length; i++) {
 			if (i > 0)
 				refCardGraphPattern += " UNION ";
 			refCardGraphPattern += "{ " + disjointClass[i].graphPattern + " }";
 		}
-
 		int generality1 = 0;
 		int generality2 = 0;
 		int k = 0;
+		// start the timer
+		Timer time = new Timer();
+		time.startTimer();
+		// compute generality and reference cardinality
 		while (k < disjointClass.length) {
 			String generalityGraphPattern = "";
 			String generalityGraphPattern2 = "";
@@ -143,10 +143,7 @@ public class DisjointClassesAxiom extends Axiom {
 			// compute the cost of GP
 			generality1 = endpoint.count("?x", generalityGraphPattern, 0);
 			generality2 = endpoint.count("?x", generalityGraphPattern2, 0);
-			if (generality1 > generality2)
-				generality = generality2;
-			else
-				generality = generality1;
+			generality = Math.min(generality1, generality2);
 			k = k + 2;
 		}
 		logger.info("generality: " + generality);
@@ -171,6 +168,9 @@ public class DisjointClassesAxiom extends Axiom {
 		} else {
 			referenceCardinality = 0;
 		}
+		// save time spent
+		elapsedTime = time.endTimer();
+		logger.info("referenceCardinality = " + referenceCardinality);
 	}
 
 	public void updateVolker(SparqlEndpoint endpoint) {

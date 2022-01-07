@@ -6,6 +6,7 @@ package com.i3s.app.rdfminer.axiom;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.axiom.type.DisjointClassesAxiom;
 import com.i3s.app.rdfminer.axiom.type.SubClassOfAxiom;
 import com.i3s.app.rdfminer.grammar.DLFactory;
@@ -102,15 +103,17 @@ public class AxiomFactory extends DLFactory {
 		List<List<Symbol>> arguments = parseArguments(syntax);
 		
 		if (syntax.get(0).equals("SubClassOf")) {
-			
 			require(arguments.size() == 2);
+			RDFMiner.type = Type.SUBCLASSOF;
 			axiom = new SubClassOfAxiom(arguments.get(0), arguments.get(1), endpoint);
 			
 		} else if (syntax.get(0).equals("EquivalentClasses")) {
 			// TO DO
+			RDFMiner.type = Type.EQUIVALENT_CLASSES;
+
 		} else if (syntax.get(0).equals("DisjointClasses")) {
-			
 			require(arguments.size() > 1);
+			RDFMiner.type = Type.DISJOINT_CLASSES;
 			axiom = new DisjointClassesAxiom(arguments, endpoint);
 			
 		} else if (syntax.get(0).equals("DisjointUnion")) {

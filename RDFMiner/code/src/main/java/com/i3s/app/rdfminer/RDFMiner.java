@@ -49,6 +49,7 @@ public class RDFMiner {
 	public static ResultsJSON results;
 	public static StatJSON stats;
 	public static List<JSONObject> axioms;
+	public static int type;
 
 	/**
 	 * A service native method to query for CPU usage.
