@@ -178,7 +178,7 @@ public class SubClassOfAxiom extends Axiom {
 	 * and stored in a list.
 	 * </p>
 	 * <p>
-	 * The {@link #naive_update()} method provides a slower, but hopefully safer,
+	 * The {@link #naiveUpdate(SparqlEndpoint) naiveUpdate} method provides a slower, but hopefully safer,
 	 * way of updating the counts.
 	 * </p>
 	 */
@@ -186,11 +186,12 @@ public class SubClassOfAxiom extends Axiom {
 	public void update(SparqlEndpoint endpoint) {
 		confirmations = new ArrayList<String>();
 		exceptions = new ArrayList<String>();
+		long timeSpent = 0;
 		referenceCardinality = endpoint.count("?x", subClass.graphPattern, 0);
 		logger.info("referenceCardinality = " + referenceCardinality);
 		int numIntersectingClasses = endpoint.count("?D", subClass.graphPattern + " ?x a ?D . ", 0);
 		logger.info("No. of Intersecting Classes = " + numIntersectingClasses);
-		timePredictor = referenceCardinality * numIntersectingClasses;
+		timePredictor = (long) referenceCardinality * numIntersectingClasses;
 		numConfirmations = endpoint.count("?x", subClass.graphPattern + "\n" + superClass.graphPattern, 0);
 		
 		if (numConfirmations > 0 && numConfirmations < 100) {
@@ -220,7 +221,7 @@ public class SubClassOfAxiom extends Axiom {
 			Timer timer = new Timer();
 			timer.startTimer();
 			numExceptions = endpoint.count("?x", subClass.graphPattern + "\n" + superClassComplement.graphPattern, (int) timeOut);
-			long timeSpent = timer.endTimer();
+			timeSpent = timer.endTimer();
 			// If no exceptions are raised
 			logger.info("Exceptions query finished - time spent: " + timeSpent + "ms.");
 			
@@ -243,7 +244,7 @@ public class SubClassOfAxiom extends Axiom {
 			// This is the EKAW 2014 version, without time-out:
 			numExceptions = endpoint.count("?x",
 					subClass.graphPattern + "\n" + superClassComplement.graphPattern, 0);
-			long timeSpent = timer.endTimer();
+			timeSpent = timer.endTimer();
 			// Log the response time
 			logger.info("Exceptions query finished - time spent: " + timeSpent + "ms.");
 		}
@@ -259,8 +260,13 @@ public class SubClassOfAxiom extends Axiom {
 				exceptions.add(Expression.sparqlEncode(x));
 			}
 		}
-		logger.info("Possibility = " + possibility().doubleValue());
-		logger.info("Necessity = " + necessity().doubleValue());
+		// set the time spent for the computation of exceptions
+		elapsedTime = timeSpent;
+		// logger.info("Possibility = " + possibility().doubleValue());
+		// logger.info("Necessity = " + necessity().doubleValue());
+		// set the ARI of axiom
+		ari = ARI();
+		logger.info("ARI = " + ari);
 	}
 
 	/**

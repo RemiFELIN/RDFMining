@@ -105,6 +105,9 @@ public class FitnessEvaluation {
 					dbpedia.referenceCardinality = axiom.referenceCardinality;
 					dbpedia.generality = axiom.generality;
 					dbpedia.necessity = axiom.necessity().doubleValue();
+					dbpedia.ari = axiom.ARI();
+					dbpedia.elapsedTime = axiom.elapsedTime;
+					dbpedia.isTimeOut = axiom.isTimeout;
 				}
 				for (JSONObject json : axioms) {
 					if (json.get("axiom").equals(axiom.axiomId)) {

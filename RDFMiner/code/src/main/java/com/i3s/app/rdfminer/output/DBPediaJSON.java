@@ -16,13 +16,19 @@ public class DBPediaJSON {
 	public double necessity;
 	public int referenceCardinality;
 	public double generality;
+	public double ari;
+	public long elapsedTime;
+	public boolean isTimeOut;
 	
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		json.put("possibility", possibility);
 		json.put("necessity", necessity);
+		json.put("ari", ari);
 		json.put("referenceCardinality", referenceCardinality);
 		json.put("generality", generality);
+		json.put("isTimeOut", isTimeOut);
+		json.put("elapsedTime", elapsedTime);
 		return json;
 	}
 	

@@ -132,7 +132,7 @@ public class RDFMiner {
 		if (parameters.axiom == null) {
 			if(!(new File(Global.OUTPUT_PATH + parameters.resultFolder)).exists()) {
 				(new File(Global.OUTPUT_PATH + parameters.resultFolder)).mkdirs();
-				logger.info(parameters.resultFolder + " folder successfully created");
+				logger.info(Global.OUTPUT_PATH + parameters.resultFolder + " folder successfully created");
 			}
 		}
 		RDFMiner.outputFolder = Global.OUTPUT_PATH + parameters.resultFolder;

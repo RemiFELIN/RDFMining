@@ -9,6 +9,8 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -136,41 +138,36 @@ public class LaunchWithGE {
 				parameters.maxWrapp);
 		candidatePopulation = canPop.initialize(buffer, curGeneration);
 
-		boolean isDefine = false;
 		// Fill the 'stats' part of the JSON output
-		if (!isDefine) {
+		RDFMiner.stats.populationSize = parameters.populationSize;
+		RDFMiner.stats.maxLengthChromosome = parameters.initLenChromosome;
+		RDFMiner.stats.maxWrapping = parameters.maxWrapp;
+		RDFMiner.stats.crossoverProbability = parameters.proCrossover;
+		RDFMiner.stats.mutationProbability = parameters.proMutation;
+		RDFMiner.stats.timeOut = (int) parameters.timeOut;
 
-			RDFMiner.stats.populationSize = parameters.populationSize;
-			RDFMiner.stats.maxLengthChromosome = parameters.initLenChromosome;
-			RDFMiner.stats.maxWrapping = parameters.maxWrapp;
-			RDFMiner.stats.crossoverProbability = parameters.proCrossover;
-			RDFMiner.stats.mutationProbability = parameters.proMutation;
-			RDFMiner.stats.timeOut = (int) parameters.timeOut;
+		if (parameters.elitism == 1) {
+			RDFMiner.stats.elitismSelection = true;
+			RDFMiner.stats.eliteSize = parameters.sizeElite;
+		} else {
+			RDFMiner.stats.elitismSelection = false;
+		}
 
-			if (parameters.elitism == 1) {
-				RDFMiner.stats.elitismSelection = true;
-				RDFMiner.stats.eliteSize = parameters.sizeElite;
-			} else {
-				RDFMiner.stats.elitismSelection = false;
-			}
-
-			switch (parameters.typeSelect) {
-			case 1:
-				RDFMiner.stats.selectionMethod = "Roulette Wheel selection method";
-				break;
-			default:
-			case 2:
-				RDFMiner.stats.selectionMethod = "Truncation selection method";
-				RDFMiner.stats.selectionSize = parameters.sizeSelection;
-				break;
-			case 3:
-				RDFMiner.stats.selectionMethod = "Tournament selection method";
-				break;
-			case 4:
-				RDFMiner.stats.selectionMethod = "Normal selection method";
-				break;
-			}
-			isDefine = true;
+		switch (parameters.typeSelect) {
+		case 1:
+			RDFMiner.stats.selectionMethod = "Roulette Wheel selection method";
+			break;
+		default:
+		case 2:
+			RDFMiner.stats.selectionMethod = "Truncation selection method";
+			RDFMiner.stats.selectionSize = parameters.sizeSelection;
+			break;
+		case 3:
+			RDFMiner.stats.selectionMethod = "Tournament selection method";
+			break;
+		case 4:
+			RDFMiner.stats.selectionMethod = "Normal selection method";
+			break;
 		}
 
 		while (curCheckpoint <= parameters.checkpoint) {
@@ -178,7 +175,7 @@ public class LaunchWithGE {
 			logger.info("Generation: " + curGeneration);
 			FitnessEvaluation fit = new FitnessEvaluation();
 			// First step of the grammatical evolution
-			if ((curGeneration == 1) || ((buffer != null) && (flag == false))) {
+			if ((curGeneration == 1) || ((buffer != null) && (!flag))) {
 				// if1
 				logger.info("Begin evaluating individuals...");
 				logger.info("Evaluating axioms against to the RDF Data of the minimized DBPedia");
@@ -192,12 +189,12 @@ public class LaunchWithGE {
 				fit.display(candidatePopulation, axioms, curGeneration);
 
 				ArrayList<GEIndividual> candidatePopulation2 = new ArrayList<GEIndividual>();
-				for (int l = 0; l < candidatePopulation.size(); l++) {
+				for (GEIndividual geIndividual : candidatePopulation) {
 					GEIndividual indivi = new GEIndividual();
-					indivi.setMapper(candidatePopulation.get(l).getMapper());
-					indivi.setGenotype(candidatePopulation.get(l).getGenotype());
-					indivi.setPhenotype(candidatePopulation.get(l).getPhenotype());
-					indivi.setMapped(candidatePopulation.get(l).isMapped());
+					indivi.setMapper(geIndividual.getMapper());
+					indivi.setGenotype(geIndividual.getGenotype());
+					indivi.setPhenotype(geIndividual.getPhenotype());
+					indivi.setMapped(geIndividual.isMapped());
 					candidatePopulation2.add(indivi);
 				}
 				logger.info("Evaluating axioms against to the RDF Data of the whole DBPedia.");
@@ -278,10 +275,7 @@ public class LaunchWithGE {
 
 				/* STEP 4 - CROSSOVER OPERATION */
 				// Crossover single point between 2 individuals of the selected population
-				ArrayList<GEIndividual> crossoverList = new ArrayList<GEIndividual>();
-				for (int i = 0; i < crossoverPopulation.size(); i++) {
-					crossoverList.add((GEIndividual) crossoverPopulation.get(i));
-				}
+				ArrayList<GEIndividual> crossoverList = new ArrayList<GEIndividual>(crossoverPopulation);
 				// shuffle populations before crossover & mutation
 				java.util.Collections.shuffle(crossoverList);
 
@@ -300,9 +294,9 @@ public class LaunchWithGE {
 				writer.println(curGeneration);
 				writer.println(curCheckpoint);
 				flag = true;
-				for (int l = 0; l < candidatePopulation.size(); l++) {
-					writer.println(candidatePopulation.get(l).getGenotype().toString().substring(22,
-							candidatePopulation.get(l).getGenotype().toString().length() - 1));
+				for (GEIndividual geIndividual : candidatePopulation) {
+					writer.println(geIndividual.getGenotype().toString().substring(22,
+							geIndividual.getGenotype().toString().length() - 1));
 				}
 				writer.close();
 			} else {
@@ -316,6 +310,8 @@ public class LaunchWithGE {
 	public static void writeAndFinish() {
 		try {
 			RDFMiner.results.stats = RDFMiner.stats.toJSON();
+			// sort axioms
+			RDFMiner.axioms.sort(Comparator.comparingDouble(j -> j.getDouble("ari")));
 			RDFMiner.results.axioms = RDFMiner.axioms;
 			RDFMiner.output.write(RDFMiner.results.toJSON().toString());
 			RDFMiner.output.close();

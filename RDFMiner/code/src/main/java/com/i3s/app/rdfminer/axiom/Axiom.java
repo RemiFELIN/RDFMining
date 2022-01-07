@@ -126,6 +126,12 @@ public abstract class Axiom {
 	 */
 	public boolean isTimeout = false;
 
+	/**
+	 * The ARI "Acceptance/Rejection Index" of an axiom is computed as follow :
+	 * ARI = {@link Axiom#possibility() possibility} + {@link Axiom#necessity() necessity} - 1
+	 */
+	public double ari = 0.0;
+
 	/* The structure of GP in axiom */
 	protected int numUnionOperators = 0;
 	protected int numFilterOperators = 0;
@@ -166,6 +172,14 @@ public abstract class Axiom {
 			y = Math.sqrt(1.0 - x * x);
 		}
 		return new TruthDegree(y);
+	}
+
+	/**
+	 * Define an ARI of the current axiom
+	 */
+	public double ARI() {
+		this.ari = possibility().doubleValue() + necessity().doubleValue() - 1;
+		return ari;
 	}
 
 	/**
@@ -235,12 +249,13 @@ public abstract class Axiom {
 		json.put("possibility", possibility().doubleValue());
 		json.put("necessity", necessity().doubleValue());
 		json.put("elapsedTime", elapsedTime);
-		json.put("isTimeout", isTimeout);
+		json.put("isTimeOut", isTimeout);
 		json.put("exceptions", new JSONArray(exceptions));
 		json.put("confirmations", new JSONArray(confirmations));
 		json.put("generation", generation);
 		json.put("fitness", fitness);
 		json.put("generality", generality);
+		json.put("ari", ari);
 		if(individual != null)
 			json.put("isMapped", individual.isMapped());
 		else
