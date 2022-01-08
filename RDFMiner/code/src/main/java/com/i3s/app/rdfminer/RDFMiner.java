@@ -6,6 +6,8 @@ package com.i3s.app.rdfminer;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONArray;
@@ -78,7 +80,7 @@ public class RDFMiner {
 	 * The entry point of the RDF Miner application.
 	 * @throws InterruptedException 
 	 */
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws InterruptedException, ExecutionException {
 
 		// Print the banner of RDF Miner
 		System.out.println(Global.BANNER);
@@ -130,7 +132,7 @@ public class RDFMiner {
 			logger.info("Cache folder successfully created");
 		}
 		
-		if (parameters.axiom == null) {
+		if (parameters.singleAxiom == null) {
 			if(!(new File(Global.OUTPUT_PATH + parameters.resultFolder)).exists()) {
 				(new File(Global.OUTPUT_PATH + parameters.resultFolder)).mkdirs();
 				logger.info(Global.OUTPUT_PATH + parameters.resultFolder + " folder successfully created");

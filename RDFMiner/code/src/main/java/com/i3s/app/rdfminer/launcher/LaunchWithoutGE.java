@@ -4,6 +4,12 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.*;
+
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.engine.http.QueryExceptionHTTP;
 import org.apache.log4j.Logger;
@@ -31,7 +37,7 @@ public class LaunchWithoutGE {
 	 * The first version of RDFMiner launcher
 	 * @throws InterruptedException 
 	 */
-	public void run(CmdLineParameters parameters) throws InterruptedException {
+	public void run(CmdLineParameters parameters) throws InterruptedException, ExecutionException {
 		
 		AxiomGenerator generator = null;
 		BufferedReader axiomFile = null;
@@ -40,7 +46,7 @@ public class LaunchWithoutGE {
 		RDFMiner.axiomsList = new JSONArray();
 		
 		if (parameters.axiomFile == null) {
-			if (parameters.axiom == null) {
+			if (parameters.singleAxiom == null) {
 				if (parameters.useRandomAxiomGenerator) {
 					logger.info(
 							"Initializing the random axiom generator with grammar " + parameters.grammarFile + "...");
@@ -71,12 +77,12 @@ public class LaunchWithoutGE {
 			@Override
 			public void run() {
 				// Save results in output file
-				if (parameters.axiom == null)
+				if (parameters.singleAxiom == null)
 					writeAndFinish();
 			}
 		});
 
-		if (parameters.axiom == null) {
+		if (parameters.singleAxiom == null) {
 			// as the test of a single axiom is return on standard output, we don't need to
 			// write file of the results
 			try {
@@ -88,37 +94,57 @@ public class LaunchWithoutGE {
 			}
 		}
 
+		// Prepare multi-threading
+		// We have a set of threads to compute each axioms
+		ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
+		Set<Callable<Axiom>> callables = new HashSet<Callable<Axiom>>();
+		List<Axiom> axiomList = new ArrayList<>();
+
+		// assessment of axioms
 		while (true) {
 
-			Axiom a = null;
+			// Axiom a = null;
 			String axiomName = null;
-			long t0 = RDFMiner.getProcessCPUTime();
 
 			if (generator != null) {
 				Phenotype axiom = generator.nextAxiom();
 				if (axiom == null)
 					break;
 				axiomName = axiom.getStringNoSpace();
-				logger.info("Testing axiom: " + axiomName);
-				try {
-					a = AxiomFactory.create(null, axiom, new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES));
-					a.axiomId = axiomName;
-				} catch (QueryExceptionHTTP httpError) {
-					logger.error("HTTP Error " + httpError.getMessage() + " making a SPARQL query.");
-					httpError.printStackTrace();
-					writeAndFinish();
-					System.exit(1);
-				} catch (JenaException jenaException) {
-					logger.error("Jena Exception " + jenaException.getMessage() + " making a SPARQL query.");
-					jenaException.printStackTrace();
-					writeAndFinish();
-					System.exit(1);
-				}
+				// create a callable and add it on list of callables
+				String finalAxiomName = axiomName;
+				callables.add(() -> {
+					long t0 = RDFMiner.getProcessCPUTime();
+					try {
+						logger.info("Testing axiom: " + finalAxiomName);
+						Axiom a = AxiomFactory.create(null, axiom, new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES));
+						a.axiomId = finalAxiomName;
+						long t = RDFMiner.getProcessCPUTime();
+						a.elapsedTime = t - t0;
+						if (parameters.singleAxiom != null) {
+							logger.info("Axiom evaluated ! JSON Result: " + a.toJSON().toString());
+						}
+						logger.info("Test completed in " + a.elapsedTime + " ms.");
+						return a;
+					} catch (QueryExceptionHTTP httpError) {
+						logger.error("HTTP Error " + httpError.getMessage() + " making a SPARQL query.");
+						httpError.printStackTrace();
+						writeAndFinish();
+						System.exit(1);
+					} catch (JenaException jenaException) {
+						logger.error("Jena Exception " + jenaException.getMessage() + " making a SPARQL query.");
+						jenaException.printStackTrace();
+						writeAndFinish();
+						System.exit(1);
+					}
+					return null;
+				});
+
 			} else {
 				try {
-					if (axiomFile == null && parameters.axiom != null) {
-						axiomName = parameters.axiom;
-					} else if (axiomFile != null && parameters.axiom == null) {
+					if (axiomFile == null && parameters.singleAxiom != null) {
+						axiomName = parameters.singleAxiom;
+					} else if (axiomFile != null && parameters.singleAxiom == null) {
 						axiomName = axiomFile.readLine();
 					} else {
 						logger.error("'-a' and '-sa' are used at the same time");
@@ -128,9 +154,20 @@ public class LaunchWithoutGE {
 						break;
 					if (axiomName.isEmpty())
 						break;
-					logger.info("Testing axiom: " + axiomName);
-					a = AxiomFactory.create(null, axiomName, new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES));
-					a.axiomId = axiomName;
+					String finalAxiomName = axiomName;
+					callables.add(() -> {
+						long t0 = RDFMiner.getProcessCPUTime();
+						logger.info("Testing axiom: " + finalAxiomName);
+						Axiom a = AxiomFactory.create(null, finalAxiomName, new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES));
+						a.axiomId = finalAxiomName;
+						long t = RDFMiner.getProcessCPUTime();
+						a.elapsedTime = t - t0;
+						if (parameters.singleAxiom != null) {
+							logger.info("Axiom evaluated ! JSON Result: " + a.toJSON().toString());
+						}
+						logger.info("Test completed in " + a.elapsedTime + " ms.");
+						return a;
+					});
 				} catch (IOException e) {
 					writeAndFinish();
 					logger.error("Could not read the next axiom.");
@@ -139,31 +176,34 @@ public class LaunchWithoutGE {
 				}
 			}
 
-			// long t = System.currentTimeMillis();
-			long t = RDFMiner.getProcessCPUTime();
+//			if (a instanceof SubClassOfAxiom && a.necessity().doubleValue() > 1.0 / 3.0) {
+//				SubClassOfAxiom sa = (SubClassOfAxiom) a;
+//				SubClassOfAxiom.maxTestTime.maxput(sa.timePredictor(), t - t0);
+//			}
 
-			if (a != null) {
-				// Save a JSON report of the test
-				RDFMiner.axiomsList.put(a.toJSON());
+//			 print useful results
+//			 logger.info("Num. confirmations: " + a.numConfirmations);
+//			 logger.info("Num. exceptions: " + a.numExceptions);
 
-				// print useful results
-				logger.info("Num. confirmations: " + a.numConfirmations);
-				logger.info("Num. exceptions: " + a.numExceptions);
-				
-				if (a instanceof SubClassOfAxiom && a.necessity().doubleValue() > 1.0 / 3.0) {
-					SubClassOfAxiom sa = (SubClassOfAxiom) a;
-					SubClassOfAxiom.maxTestTime.maxput(sa.timePredictor(), t - t0);
-				}
-
-				if (parameters.axiom != null) {
-					System.out.println("Axiom evaluated ! JSON Result: " + a.toJSON().toString());
-					break;
-				}
-
-			} else
-				logger.warn("Axiom type not supported yet!");
-			logger.info("Test completed in " + (t - t0) + " ms.");
 		}
+
+		// get all callables and execute it
+		logger.info(callables.size() + " tasks are ready ...");
+		// Submit tasks
+		List<Future<Axiom>> futureAxioms = executor.invokeAll(callables);
+		// We recover our axioms
+		for (Future<Axiom> axiom : futureAxioms) {
+			axiomList.add(axiom.get());
+		}
+		// Shut down the executor
+		executor.shutdown();
+		executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+
+		for(Axiom axiom : axiomList) {
+			// Save a JSON report of the test
+			RDFMiner.axiomsList.put(axiom.toJSON());
+		}
+
 		logger.info("Done testing axioms. Exiting.");
 		System.exit(0);
 	}

@@ -178,7 +178,7 @@ public abstract class Axiom {
 	 * Define an ARI of the current axiom
 	 */
 	public double ARI() {
-		this.ari = possibility().doubleValue() + necessity().doubleValue() - 1;
+		this.ari = this.possibility().doubleValue() + this.necessity().doubleValue() - 1;
 		return ari;
 	}
 
@@ -231,10 +231,6 @@ public abstract class Axiom {
 	 * <code>WHERE</code>. If the number of confirmations or exceptions is not too
 	 * large (currently, below 100), they are downloaded from the SPARQL endpoint
 	 * and stored in a list.
-	 * </p>
-	 * <p>
-	 * The {@link #naive_update()} method provides a slower, but hopefully safer,
-	 * way of updating the counts.
 	 * </p>
 	 */
 	public void update(SparqlEndpoint endpoint) {

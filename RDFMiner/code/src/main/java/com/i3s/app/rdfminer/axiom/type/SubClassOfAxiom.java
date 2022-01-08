@@ -127,20 +127,18 @@ public class SubClassOfAxiom extends Axiom {
 		exceptions = new ArrayList<String>();
 		Set<RDFNodePair> extension = subClass.extension(endpoint);
 		int numIntersectingClasses = endpoint.count("?D", subClass.graphPattern + " ?x a ?D . ", 0);
-		timePredictor = referenceCardinality * numIntersectingClasses;
+		timePredictor = (long) referenceCardinality * numIntersectingClasses;
 
-		Iterator<RDFNodePair> i = extension.iterator();
-		while (i.hasNext()) {
+		for (RDFNodePair rdfNodePair : extension) {
 			referenceCardinality++;
-			RDFNodePair pair = i.next();
-			if (superClass.contains(pair, endpoint)) {
+			if (superClass.contains(rdfNodePair, endpoint)) {
 				numConfirmations++;
-				confirmations.add(Expression.sparqlEncode(pair.x));
+				confirmations.add(Expression.sparqlEncode(rdfNodePair.x));
 			}
 			// The following is correct, but not optimized (a lot of duplicated tests)
-			else if (superClassComplement.contains(pair, endpoint)) {
+			else if (superClassComplement.contains(rdfNodePair, endpoint)) {
 				numExceptions++;
-				exceptions.add(Expression.sparqlEncode(pair.x));
+				exceptions.add(Expression.sparqlEncode(rdfNodePair.x));
 //				logger.info("Found exception: " + pair);
 			}
 			// A better idea would be to issue a SPARQL query
@@ -208,6 +206,9 @@ public class SubClassOfAxiom extends Axiom {
 		if (numConfirmations == referenceCardinality) {
 			// No need to count the exceptions: there can't be any!
 			numExceptions = 0;
+			// set the ARI of axiom
+			ari = ARI();
+			logger.info("ARI = " + ari);
 			return;
 			
 		} else if (RDFMiner.parameters.timeOut > 0 || RDFMiner.parameters.dynTimeOut != 0.0) {
@@ -225,7 +226,7 @@ public class SubClassOfAxiom extends Axiom {
 			// If no exceptions are raised
 			logger.info("Exceptions query finished - time spent: " + timeSpent + "ms.");
 			
-			if ( timeSpent > ((int) timeOut * 1000)) {
+			if ( timeSpent > ((int) timeOut * 1000L)) {
 				logger.warn("Timeout is reached");
 				// If the query times out, it is very likely that it would end up
 				// having a large number of exceptions. Therefore, we take the reference
