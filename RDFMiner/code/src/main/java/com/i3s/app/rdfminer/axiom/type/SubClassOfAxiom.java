@@ -243,24 +243,25 @@ public class SubClassOfAxiom extends Axiom {
 			timer.startTimer();
 			// logger.warn("Time Out = 0 s");
 			// This is the EKAW 2014 version, without time-out:
-			numExceptions = endpoint.count("?x",
-					subClass.graphPattern + "\n" + superClassComplement.graphPattern, 0);
+//			numExceptions = endpoint.count("?x",
+//					subClass.graphPattern + "\n" + superClassComplement.graphPattern, 0);
+			getExceptions(endpoint);
 			timeSpent = timer.endTimer();
 			// Log the response time
 			logger.info("Exceptions query finished - time spent: " + timeSpent + "ms.");
 		}
 		// We don't need to compute exceptions if we get a timeout from exceptions SPARQL request
-		if (numExceptions > 0 && numExceptions < 100 && !isTimeout) {
-			logger.info(numExceptions + " exception(s) found ! retrieving in collection ...");
-			// retrieve the exceptions
-			ResultSet exc = endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\n"
-					+ superClassComplement.graphPattern + " }", 0);
-			while (exc.hasNext()) {
-				QuerySolution solution = exc.next();
-				RDFNode x = solution.get("x");
-				exceptions.add(Expression.sparqlEncode(x));
-			}
-		}
+//		if (numExceptions > 0 && numExceptions < 100 && !isTimeout) {
+//			logger.info(numExceptions + " exception(s) found ! retrieving in collection ...");
+//			// retrieve the exceptions
+//			ResultSet exc = endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\n"
+//					+ superClassComplement.graphPattern + " }", 0);
+//			while (exc.hasNext()) {
+//				QuerySolution solution = exc.next();
+//				RDFNode x = solution.get("x");
+//				exceptions.add(Expression.sparqlEncode(x));
+//			}
+//		}
 		// set the time spent for the computation of exceptions
 		elapsedTime = timeSpent;
 		// logger.info("Possibility = " + possibility().doubleValue());
@@ -268,6 +269,74 @@ public class SubClassOfAxiom extends Axiom {
 		// set the ARI of axiom
 		ari = ARI();
 		logger.info("ARI = " + ari);
+	}
+
+	public void getExceptions(SparqlEndpoint endpoint) {
+		// sub correspond to the graph pattern without the "." char at the end
+		String sub = subClass.graphPattern.substring(0, subClass.graphPattern.length() - 1);
+		// SELECT count(DISTINCT(?t)) WHERE { ?x a <http://dbpedia.org/ontology/SoccerClub> , ?t }
+		int nTypes = endpoint.count("?t", sub + ", ?t", 0);
+		if(nTypes != 0)
+			logger.info(nTypes + " additionnal type(s) linked to it subClass ...");
+		// truncate query :
+		// get all types related to the subClassExpression for which it does not exists any ?z of this type and superClassExpression
+		int offset = 0;
+		int size = 1000;
+		List<String> types = new ArrayList<>();
+//		logger.info("find all types exception ...");
+		while(offset != nTypes) {
+			ResultSet cfs = endpoint.select("distinct(?t) WHERE { " +
+					"{ " +
+						"SELECT ?t WHERE { " +
+							"{ " +
+								"SELECT distinct(?t) WHERE { " +
+									sub + ", ?t " +
+								"} ORDER BY ?t " +
+							"} " +
+						"} LIMIT " + size + " OFFSET " + offset + " " +
+					"} " +
+					"FILTER NOT EXISTS { " +
+						"?z a ?t, " + superClass + " " +
+					"} } ", 0);
+			while (cfs.hasNext()) {
+				QuerySolution solution = cfs.next();
+				RDFNode t = solution.get("t");
+				types.add(Expression.sparqlEncode(t));
+			}
+			offset += Math.min(nTypes - offset, size);
+//			logger.info("offset=" + offset);
+		}
+		if(types.size() != 0)
+			logger.info(types.size() + " type(s) where we don't observe a link with the superClass ...");
+		// truncate query
+		// for each types in the list, we will search any instances such as :
+		int i = 0;
+		int k = 100;
+		List<String> instances = new ArrayList<>();
+		while(i != types.size()) {
+			int end = Math.min(i + k, types.size());
+			StringBuilder body = new StringBuilder(subClass.graphPattern +
+					"?x a ?t values (?t) { ");
+			for(String type : types.subList(i, end)) {
+				body.append("(").append(type).append(") ");
+			}
+			body.append("} ");
+//			logger.info("body=" + body);
+			ResultSet cfs = endpoint.select("distinct ?x where { " + body + "} ", 0);
+			while (cfs.hasNext()) {
+				QuerySolution solution = cfs.next();
+				RDFNode x = solution.get("x");
+				// to remove duplicated ?x (cause of truncation)
+				// if a given ?x is not on a list , we add it
+				if(!instances.contains(Expression.sparqlEncode(x)))
+					instances.add(Expression.sparqlEncode(x));
+			}
+			i += Math.min(types.size() - i, k);
+//			logger.info("i=" + i);
+		}
+		logger.info(instances.size() + " exception(s) found ...");
+		numExceptions = instances.size();
+		if (numExceptions > 0 && numExceptions < 100) exceptions = instances;
 	}
 
 	/**

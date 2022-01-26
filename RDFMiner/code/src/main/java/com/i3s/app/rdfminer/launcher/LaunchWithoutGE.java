@@ -119,12 +119,12 @@ public class LaunchWithoutGE {
 						logger.info("Testing axiom: " + finalAxiomName);
 						Axiom a = AxiomFactory.create(null, axiom, new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES));
 						a.axiomId = finalAxiomName;
-						long t = RDFMiner.getProcessCPUTime();
-						a.elapsedTime = t - t0;
+//						long t = RDFMiner.getProcessCPUTime();
+//						a.elapsedTime = t - t0;
 						if (parameters.singleAxiom != null) {
 							logger.info("Axiom evaluated ! JSON Result: " + a.toJSON().toString());
 						}
-						logger.info("Test completed in " + a.elapsedTime + " ms.");
+//						logger.info("Test completed in " + a.elapsedTime + " ms.");
 						return a;
 					} catch (QueryExceptionHTTP httpError) {
 						logger.error("HTTP Error " + httpError.getMessage() + " making a SPARQL query.");
@@ -160,12 +160,12 @@ public class LaunchWithoutGE {
 						logger.info("Testing axiom: " + finalAxiomName);
 						Axiom a = AxiomFactory.create(null, finalAxiomName, new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES));
 						a.axiomId = finalAxiomName;
-						long t = RDFMiner.getProcessCPUTime();
-						a.elapsedTime = t - t0;
+//						long t = RDFMiner.getProcessCPUTime();
+//						a.elapsedTime = t - t0;
 						if (parameters.singleAxiom != null) {
 							logger.info("Axiom evaluated ! JSON Result: " + a.toJSON().toString());
 						}
-						logger.info("Test completed in " + a.elapsedTime + " ms.");
+//						logger.info("Test completed in " + a.elapsedTime + " ms.");
 						return a;
 					});
 				} catch (IOException e) {
