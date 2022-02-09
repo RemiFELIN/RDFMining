@@ -14,3 +14,5 @@ buildNumber.properties
 .settings
 RDFMiner/io/
 *.cache
+*.idea
+.vscode

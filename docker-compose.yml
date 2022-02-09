@@ -4,17 +4,19 @@ services:
     # developed by Andrea G. B. Tettamanzi, Thu Huong Nguyen and Rémi Felin
     rdfminer:
         restart: always
-        image: rdfminer:1.3
+        image: rdfminer:1.4
         build:
             context: ./RDFMiner/.
         depends_on:
             - virtuoso
         command: launch
         volumes:
-            - /home/remi/Bureau/dev/RDFMining/IO:/rdfminer/io # To use it in your own machine, you need to put your own absolute path
+            - /home/rfelin/projects/RDFMining/IO:/rdfminer/io           # To use it in your own machine, you need to put your own absolute path
         networks:
-            rdfminer_network:
+            rdfmining_network:
                 ipv4_address: 172.19.0.3
+    # OpenLink Virtuoso v7.2.5
+    # Used by RDFMiner to load and query a training dataset
     virtuoso:
         restart: always
         image: virtuoso:1.0
@@ -23,12 +25,38 @@ services:
         ports:
             - "9000:9000"
         volumes:
-            - /home/remi/Bureau/dev/RDFMining/Virtuoso/data:/data # To use it in your own machine, you need to put your own absolute path
+            - /home/rfelin/projects/RDFMining/Virtuoso/data:/data       # To use it in your own machine, you need to put your own absolute path
         networks:
-            rdfminer_network:
+            rdfmining_network:
                 ipv4_address: 172.19.0.2
+    # Corese 4.3.0
+    # Developped by Olivier Corby et al.
+    # modified by Rémi Felin in order to validate a SHACL Shape using probabilistic and possibilistic validation
+    corese:
+        restart: always
+        image: corese:4.3.0
+        build: 
+            context: ./Corese/.
+        ports:
+            - "9100:9100"
+        volumes:
+            - /home/rfelin/projects/RDFMining/Corese/log:/usr/local/corese/log
+            - /home/rfelin/projects/RDFMining/Corese/data:/usr/local/corese/data
+            # - /home/rfelin/projects/RDFMining/Corese/config:/usr/local/corese/config
+        # build:
+        #     context: ./Corese/.
+        # ports:
+        #     - "8890:8890"
+        # volumes:
+        #     - /home/rfelin/projects/RDFMining/Corese/log:/log           # To use it in your own machine, you need to put your own absolute path
+        #     - /home/rfelin/projects/RDFMining/Corese/data:/data         # To use it in your own machine, you need to put your own absolute path
+        #     - /home/rfelin/projects/RDFMining/Corese/config:/config     # To use it in your own machine, you need to put your own absolute path
+        #     - /home/rfelin/projects/RDFMining/Corese/jar:/jar           # To use it in your own machine, you need to put your own absolute path
+        networks:
+            rdfmining_network:
+                ipv4_address: 172.19.0.4
 networks:
-    rdfminer_network:
+    rdfmining_network:
         ipam:
             config:
                 - subnet: 172.19.0.0/24

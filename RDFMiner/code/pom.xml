@@ -4,7 +4,7 @@
   	
   <groupId>RDFMiner</groupId>
   <artifactId>RDFMining</artifactId>
-  <version>1.3</version>
+  <version>1.4</version>
   <packaging>jar</packaging>
   	
   <name>RDFMining</name>
@@ -131,7 +131,18 @@
 		<artifactId>jena-tdb</artifactId>
 		<version>3.17.0</version>
 	</dependency>
-	<!-- 						GEVA 							 -->
+	<!-- Corese 4.1.1 -->
+	<dependency>
+		<groupId>fr.inria.corese</groupId>
+		<artifactId>corese-core</artifactId>
+		<version>4.3.0</version>
+	</dependency>
+	<dependency>
+		<groupId>fr.inria.corese</groupId>
+		<artifactId>corese-rdf4j</artifactId>
+		<version>4.3.0</version>
+	</dependency>
+	<!-- GEVA -->
 	<dependency>
 		<groupId>geva-jar</groupId>
 		<artifactId>GEVA</artifactId>

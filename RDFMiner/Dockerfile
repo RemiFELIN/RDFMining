@@ -4,7 +4,8 @@
 FROM debian:stretch
 
 # Setup RDFMiner version
-ENV RDFMINER_VERSION=1.3
+ENV RDFMINER_VERSION=1.4
+ENV CORESE_VERSION=4.3.0
 
 # Setup HOME environment variable
 ENV HOME=/rdfminer/
@@ -39,6 +40,30 @@ ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
 # Compile c code by running "compile_c_code" shell code
 RUN echo "\n********** compile rdfminer_RDFMiner.so" && \
     sh $HOME/scripts/compile_c_code.sh && \
+    echo "Done.\n"
+
+# Install Corese-core and Corese-rdf4j on .m2 folder 
+# Allow us to import customized JAR locally
+RUN echo "\n********** Install Corese-core ..." && \
+    mvn install:install-file \
+        -Dfile=/rdfminer/dep/corese-jar/corese-core/$CORESE_VERSION/corese-core-$CORESE_VERSION.jar \
+        -DgroupId=fr.inria.corese \
+        -DartifactId=corese-core \
+        -Dversion=$CORESE_VERSION \
+        -Dpackaging=jar \
+        -DgeneratePom=true \
+        --quiet && \
+    echo "Done.\n"
+
+RUN echo "\n********** Install Corese-rdf4j ..." && \
+    mvn install:install-file \
+        -Dfile=/rdfminer/dep/corese-jar/corese-rdf4j/$CORESE_VERSION/corese-rdf4j-$CORESE_VERSION.jar \
+        -DgroupId=fr.inria.corese \
+        -DartifactId=corese-rdf4j \
+        -Dversion=$CORESE_VERSION \
+        -Dpackaging=jar \
+        -DgeneratePom=true \
+        --quiet && \
     echo "Done.\n"
 
 # run command 'mvn clean install' to build jar of RDFMiner

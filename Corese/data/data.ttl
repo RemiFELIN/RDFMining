@@ -1,0 +1,26 @@
+@base <http://rdfminer.com/data/> .
+@prefix dbo: <http://dbpedia.org/ontology/> .
+
+<Tutu>
+    a dbo:Species, dbo:Eukaryote .
+
+<Toto>
+    a dbo:Wolf .
+
+<Tata>
+    a dbo:Eukaryote .
+
+<Tutu2>
+    a dbo:Eukaryote , dbo:Species .
+
+<AnotherValidData>
+    a dbo:Species .
+
+<UnvalidData>
+    a dbo:Eukaryote .
+
+<UnvalidDataShape21>
+    a dbo:Species .
+
+<UnvalidDataShape2>
+    a dbo:Species .
