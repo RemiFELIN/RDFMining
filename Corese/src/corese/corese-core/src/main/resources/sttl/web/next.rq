@@ -1,0 +1,19 @@
+prefix ft: <http://ns.inria.fr/sparql-template/format/tutorial/>
+template st:next(?t) {
+
+format {
+  ft:next.html
+  st:plink(?n)
+ }
+    
+}
+where {
+  bind (st:get(st:context) as ?g)
+  
+  graph ?g {
+    ?q1 st:name ?t ; st:index ?i
+    bind (?i + 1 as ?j)
+    ?q2 st:index ?j ;
+	st:name ?n 
+  }
+}

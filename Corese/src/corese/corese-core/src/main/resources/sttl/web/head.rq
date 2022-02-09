@@ -1,0 +1,11 @@
+prefix ft: <http://ns.inria.fr/sparql-template/format/tutorial/>
+template st:head {
+   
+  format {
+    ft:head.html  str(?title)
+  }
+  
+}
+where {
+  bind (coalesce(st:get(st:title), "Tutorial") as ?title)
+}

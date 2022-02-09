@@ -1,0 +1,16 @@
+prefix cn: <http://cdn.fr/schema/>
+prefix ft: <http://ns.inria.fr/sparql-template/format/cdn/>
+template cn:body(?c) {
+ 
+ format { ft:body.html
+
+  st:call-template(cn:rowtitle, ?c)    
+  st:call-template(cn:table, ?min, ?max)
+
+}   
+}  
+where {
+   ?c cn:start ?min ; cn:finish ?max 
+}
+
+    

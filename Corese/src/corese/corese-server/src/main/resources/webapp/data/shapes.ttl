@@ -1,0 +1,28 @@
+@base <http://rdfminer.com/shapes/> .
+@prefix dbo: <http://dbpedia.org/ontology/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+<EukaryoteScoSpeciesShape>
+    a sh:NodeShape ;
+    sh:targetClass dbo:Eukaryote ;
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue dbo:Species ;
+    ] .
+
+<2>
+    a sh:NodeShape ;
+    sh:targetClass dbo:Species ;
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue dbo:Eukaryote ;
+    ] .
+
+<3>
+    a sh:NodeShape ;
+    sh:targetClass dbo:Animal ;
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue dbo:Eukaryote ;
+    ] .

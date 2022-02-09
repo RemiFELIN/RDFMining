@@ -1,0 +1,8 @@
+prefix ft: <http://ns.inria.fr/sparql-template/format/calendar/>
+template st:title {
+  format { ft:title.html str(?t) }
+  ; separator = ""
+}
+where {
+values ?t { "Mo" "Tu" "We" "Th" "Fr" "Sa" "Su" }
+}

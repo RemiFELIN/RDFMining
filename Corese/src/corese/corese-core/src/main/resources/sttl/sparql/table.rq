@@ -1,0 +1,15 @@
+prefix rs: <http://www.w3.org/2001/sw/DataAccess/tests/result-set#>
+prefix ft: <http://ns.inria.fr/sparql-template/format/sparql/>
+template st:table {
+    format {
+        ft:table.html  
+        st:number()
+        st:apply-templates(?s)
+    }
+}
+where {
+  ?x rs:solution ?s 
+  ?s rs:index ?i  
+}
+order by ?i
+limit 50000

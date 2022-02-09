@@ -1,0 +1,26 @@
+#
+# Generate query names list from context graph
+#
+prefix ft: <http://ns.inria.fr/sparql-template/format/tutorial/>
+template st:list(?t) {
+
+format {
+  if (?q = ?t, ft:optionselected.html, ft:option.html) 
+  
+  ?q
+  str(?i)
+  str(?title)
+}
+   
+}
+where {
+  bind (st:get(st:context) as ?g)
+  graph ?g {
+  values ?qt {st:Query sw:Query}
+    [] a ?qt ;
+      st:index ?i ;
+      st:name ?q ;
+      rdfs:label ?title
+  }
+}
+order by ?i

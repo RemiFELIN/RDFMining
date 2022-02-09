@@ -1,0 +1,16 @@
+prefix ft: <http://ns.inria.fr/sparql-template/format/calendar/>
+template st:enum(?year, ?f, ?l) {
+format {
+  ft:enum1.html      
+  group {
+    format {
+      ft:enum2.html      
+      st:call-template(st:monthtab, ?year, ?month)
+     }
+  }
+}
+}
+where {
+
+    bind (unnest(xt:iota(?f, ?l)) as ?month)
+}

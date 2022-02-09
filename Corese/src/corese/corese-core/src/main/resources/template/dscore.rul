@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+SPARQL Template Transformation
+Olivier Corby - Wimmics - Inria UNS CNRS I3S
+Fri Oct 11 08:36:22 CEST 2019
+-->
+<rdf:RDF  xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+  xmlns='http://ns.inria.fr/sparql-template/'>
+<rule>
+<body>
+<![CDATA[
+prefix msh: <http://ns.inria.fr/shacl/>
+
+@import <function/datashape/main.rq>   
+
+template st:profile {}
+where {}
+
+function st:aggregate(out) {
+  st:agg_and(out)
+  #aggregate(out, us:merge)
+}
+
+function us:merge(list) {
+    reduce(rq:and, list)
+}
+
+function st:default(term){
+    true
+}
+
+function st:defaultNamed(term){
+    true
+}
+
+function st:optimize(shape, sh){
+    true
+}
+
+
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+#
+#  ?ls is the list of target nodes of shape ?sh
+#  evaluate  sh:and sh:or sh:not
+#
+prefix msh: <http://ns.inria.fr/shacl/>
+prefix sh:  <http://www.w3.org/ns/shacl#> 
+
+template  (?shape, ?sh, ?vis, ?ls) {
+    sh:core(?shape, ?sh, ?vis, ?ls)
+}
+where {
+}
+
+
+
+]]>
+</body>
+</rule>
+
+</rdf:RDF>

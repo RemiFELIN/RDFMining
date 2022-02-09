@@ -1,0 +1,9 @@
+select * 
+where {
+  service <http://corese.inria.fr/sparql?mode=message> {
+     select * where {
+       ?x ?p ?y 
+     } 
+     limit 10
+  }
+}

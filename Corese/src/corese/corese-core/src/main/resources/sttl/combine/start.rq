@@ -1,0 +1,7 @@
+template st:start {
+    if (bound(?list), st:call-template(st:main, ?list), 
+        st:call-template(st:old))
+}
+where {
+    bind (st:get(st:transformations) as ?list)
+}

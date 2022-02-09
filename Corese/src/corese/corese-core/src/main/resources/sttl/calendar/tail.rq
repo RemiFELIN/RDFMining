@@ -1,0 +1,10 @@
+prefix ft: <http://ns.inria.fr/sparql-template/format/calendar/>
+template st:tail {
+
+format {
+    ft:tail.html
+    now()
+}
+
+}
+where {}

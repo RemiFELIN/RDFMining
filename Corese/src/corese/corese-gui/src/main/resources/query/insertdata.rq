@@ -1,0 +1,6 @@
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+
+insert data {
+  us:John foaf:name 'John' ;
+    foaf:knows us:James .
+}

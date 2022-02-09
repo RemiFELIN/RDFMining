@@ -1,0 +1,19 @@
+#
+# Timeline SPARQL Template - Olivier Corby - 2014
+#
+prefix cn: <http://cdn.fr/schema/>
+prefix db: <http://fr.dbpedia.org/resource/>
+
+template st:start {
+   
+   if (?uri = st:global, 
+    st:call-template(cn:global),
+    st:call-template(st:substart, ?uri))  
+        
+}
+where {
+
+ bind (coalesce(st:get(st:uri), cn:XIV) as ?uri)
+
+}  
+

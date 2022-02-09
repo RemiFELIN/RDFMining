@@ -16,3 +16,4 @@ RDFMiner/io/
 *.cache
 *.idea
 .vscode
+IO/

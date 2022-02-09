@@ -1,0 +1,15 @@
+#
+#  Get an optional icon from the dataset and display it
+#
+prefix ft: <http://ns.inria.fr/sparql-template/format/sparql/>
+template st:show(?x) {
+    format { ft:img.html  str(?l) }
+}
+where {
+  bind (st:get(st:dataset) as ?g)
+  graph ?g { 
+    { ?x st:icon ?l }  
+    union { ?x a ?t . ?t st:icon ?l }  
+  }
+}
+limit 1

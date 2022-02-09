@@ -1,0 +1,16 @@
+prefix ft: <http://ns.inria.fr/sparql-template/format/sparql/>
+template st:query(?q) {
+
+format {
+
+  ft:query.html
+  
+  st:get(st:service)
+  if (bound(?prof), st:format(ft:option.html, ?prof), "")
+  str(?q)
+  }
+}
+where {
+  bind (st:get(st:profile) as ?prof)
+
+}
