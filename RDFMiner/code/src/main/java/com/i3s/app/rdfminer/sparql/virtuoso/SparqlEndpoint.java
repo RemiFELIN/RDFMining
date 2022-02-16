@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.i3s.app.rdfminer.sparql;
+package com.i3s.app.rdfminer.sparql.virtuoso;
 
 import java.io.File;
 import org.apache.jena.atlas.web.HttpException;

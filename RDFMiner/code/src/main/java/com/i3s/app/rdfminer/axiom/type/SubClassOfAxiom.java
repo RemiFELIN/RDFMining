@@ -4,7 +4,6 @@
 package com.i3s.app.rdfminer.axiom.type;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -20,7 +19,7 @@ import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.expression.complement.ComplementClassExpression;
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
-import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
 import com.i3s.app.rdfminer.tools.TimeMap;
 
 import Mapper.Symbol;

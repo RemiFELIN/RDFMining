@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.i3s.app.rdfminer.axiom;
+package com.i3s.app.rdfminer.generator.axiom;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import Individuals.GEChromosome;
+import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.RDFNode;
@@ -21,7 +23,7 @@ import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
-import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
 
 //import com.hp.hpl.jena.query.QuerySolution;
 //import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -33,33 +35,28 @@ import Mapper.Symbol;
 import Util.Enums;
 
 /**
- * An generator of SubClassOf axioms with atomic left- and right-hand side,
- * which constructs axioms from a list of subclasses.
+ * An exhaustive generator of SubClassOf axioms with atomic left- and right-hand
+ * side, written for the ISWC 2014 paper.
  * <p>
- * For all classes in the list, retrieve their instances, and consider as a
- * candidate superclass all the types of those instances. The axioms are
- * returned one by one by the {@link NextAxiom} method.
+ * For all classes in the "Class" production, retrieve their instances, and
+ * consider as a candidate superclass all the types of those instances. The
+ * axioms are returned one by one by the {@link CandidateAxiomGenerator#nextAxiom()} method.
  * </p>
  * <p>
  * A generator of this class saves its status in a file in the current
- * directory, with the conventional name
- * "<tt>IncreasingTPAxiomGenerator.status</tt>", so that it will be able to
- * resume from where it left in case of crash. The status file consists of two
- * lines: the first line contains the name of the last sub-class and the second
- * line contains the name of the last super-class for which an axiom was
- * generated (an tested).
- * </p>
- * <p>
- * This axiom generator was written for the K-Cap 2015 paper. The reason for its
- * name is that it has been used to generate axioms in increasing order of
- * time-predictor value.
+ * directory, with the conventional name "<tt>AxiomGenerator.status</tt>", so
+ * that it will be able to resume from where it left in case of crash. The
+ * status file consists of two lines: the first line contains the name of the
+ * last sub-class and the second line contains the name of the last super-class
+ * for which an axiom was generated (an tested).
  * </p>
  * 
  * @author Andrea G. B. Tettamanzi & Rémi FELIN
  *
  */
-public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
-	private static Logger logger = Logger.getLogger(IncreasingTimePredictorAxiomGenerator.class.getName());
+public class CandidateAxiomGenerator extends AxiomGenerator {
+
+	private static final Logger logger = Logger.getLogger(CandidateAxiomGenerator.class.getName());
 
 	/**
 	 * An iterator on the classes to be used as the sub-class of the candidate
@@ -93,34 +90,20 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 	 * suffix based on the time-out used for axiom test.
 	 * </p>
 	 */
-	protected final String statusFileName = "IncreasingTPAxiomGenerator-"
+	protected final String statusFileName = "AxiomGenerator-"
 			+ (RDFMiner.parameters.timeOut > 0 ? "-" + RDFMiner.parameters.timeOut : "") + ".status";
 
 	/**
-	 * Constructs a new axiom generator from a list of subclasses.
+	 * Constructs a new axiom generator for the language described by the given
+	 * grammar.
 	 * 
-	 * @param fileName the name of the file containing the list of subclasses.
+	 * @param fileName the name of the file containing the grammar.
 	 */
-	public IncreasingTimePredictorAxiomGenerator(String fileName) {
-		super(); // there is no grammar
+	public CandidateAxiomGenerator(String fileName, boolean v2) {
+		super(fileName, v2);
+		logger.warn("Grammar Successfully Initialized");
 
-		Rule rule = new Rule();
-		try {
-			// Try to read the file with the subclass list:
-			BufferedReader file = new BufferedReader(new FileReader(fileName));
-			do {
-				String subClassName = file.readLine();
-				if (subClassName == null)
-					break;
-				Production prod = new Production();
-				prod.add(new Symbol(subClassName, Enums.SymbolType.TSymbol));
-				rule.add(prod);
-			} while (true);
-			file.close();
-		} catch (IOException e) {
-			logger.error("No subclass list found.");
-		}
-
+		Rule rule = grammar.findRule("Class");
 		subClassIterator = rule.iterator();
 		// We assign an empty iterator to the super-class iterator:
 		superClassIterator = (new TreeSet<RDFNodePair>()).iterator();
@@ -176,8 +159,9 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 	protected Set<RDFNodePair> getNodes(String sparql) {
 		Set<RDFNodePair> classes = new TreeSet<RDFNodePair>();
 		logger.warn("Querying DBpedia with query " + sparql);
-		SparqlEndpoint endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
+		SparqlEndpoint endpoint = new SparqlEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES);
 		ResultSet result = endpoint.select(sparql, 0);
+		
 		while (result.hasNext()) {
 			QuerySolution solution = result.next();
 			RDFNode x = solution.get("class");
@@ -188,15 +172,11 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 		return classes;
 	}
 
-	/**
-	 * Generate the next candidate axiom.
-	 * 
-	 * @return a candidate axiom
-	 */
+	@Override
 	public Phenotype nextAxiom() {
 		// First of all, save the previous status to file:
-		if (subClass != null) {
-			// ... except for the first time
+		if (subClass != null) // ... except for the first time
+		{
 			try {
 				PrintStream status = new PrintStream(statusFileName);
 				status.println(subClass.get(0).toString());

@@ -13,12 +13,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import com.i3s.app.rdfminer.generator.Generator;
 import org.apache.jena.query.ResultSet;
 import org.apache.log4j.Logger;
 
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
-import com.i3s.app.rdfminer.axiom.RandomAxiomGenerator;
+import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.grammar.evolutionary.crossover.SinglePointCrossoverAxiom;
 import com.i3s.app.rdfminer.grammar.evolutionary.crossover.SubtreeCrossoverAxioms;
 import com.i3s.app.rdfminer.grammar.evolutionary.crossover.TwoPointCrossover;
@@ -27,7 +28,7 @@ import com.i3s.app.rdfminer.grammar.evolutionary.fitness.FitnessEvaluation;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.grammar.evolutionary.mutation.IntFlipMutation;
 import com.i3s.app.rdfminer.grammar.evolutionary.selection.ProportionalRouletteWheel;
-import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
 import Individuals.GEChromosome;
 import Individuals.Genotype;
 import Individuals.Phenotype;
@@ -171,8 +172,7 @@ public class EATools {
 	 * @param proCrossover  the probability to make a crossover on individual
 	 * @param proMutation   the probability to make a mutation on individual
 	 * @param curGeneration the current generation
-	 * @param rd            an instance of {@link RandomAxiomGenerator axioms
-	 *                      generator}
+	 * @param generator     an instance of {@link Generator Generator}
 	 * @param diversity     the coefficient of diversity
 	 * @return a new population
 	 * @throws InterruptedException
@@ -180,7 +180,7 @@ public class EATools {
 	 * @throws IOException
 	 */
 	public static ArrayList<GEIndividual> computeGeneration(ArrayList<GEIndividual> canPop, double proCrossover,
-			double proMutation, int curGeneration, RandomAxiomGenerator rd, int diversity)
+															double proMutation, int curGeneration, Generator generator, int diversity)
 			throws InterruptedException, ExecutionException, IOException {
 
 		ArrayList<GEIndividual> notEvaluatedIndividuals = new ArrayList<GEIndividual>();
@@ -201,8 +201,8 @@ public class EATools {
 			/* CROSSOVER PHASIS */
 			RandomNumberGenerator rand = new MersenneTwisterFast();
 			// get the two individuals which are neighbours
-			GEIndividual parent1 = ((GEIndividual) canPop.get(m));
-			GEIndividual parent2 = (GEIndividual) canPop.get(m + 1);
+			GEIndividual parent1 = canPop.get(m);
+			GEIndividual parent2 = canPop.get(m + 1);
 			GEIndividual child1, child2;
 			GEChromosome[] chromosomes;
 			GEChromosome c1, c2;
@@ -215,8 +215,8 @@ public class EATools {
 				c1 = new GEChromosome((GEChromosome) parent1.getGenotype().get(0));
 				c2 = new GEChromosome((GEChromosome) parent2.getGenotype().get(0));
 				chromosomes = spc.crossover(c1, c2);
-				child1 = rd.axiomIndividual(chromosomes[0], curGeneration);
-				child2 = rd.axiomIndividual(chromosomes[1], curGeneration);
+				child1 = generator.getIndividualFromChromosome(chromosomes[0], curGeneration);
+				child2 = generator.getIndividualFromChromosome(chromosomes[1], curGeneration);
 				break;
 			case TypeCrossover.SUBTREE_CROSSOVER:
 				// subtree crossover
@@ -232,8 +232,8 @@ public class EATools {
 				c1 = new GEChromosome((GEChromosome) parent1.getGenotype().get(0));
 				c2 = new GEChromosome((GEChromosome) parent2.getGenotype().get(0));
 				chromosomes = tpc.crossover(c1, c2);
-				child1 = rd.axiomIndividual(chromosomes[0], curGeneration);
-				child2 = rd.axiomIndividual(chromosomes[1], curGeneration);
+				child1 = generator.getIndividualFromChromosome(chromosomes[0], curGeneration);
+				child2 = generator.getIndividualFromChromosome(chromosomes[1], curGeneration);
 				break;
 			}
 
@@ -241,8 +241,8 @@ public class EATools {
 			RandomNumberGenerator rand1 = new MersenneTwisterFast();
 			IntFlipMutation mutation = new IntFlipMutation(proMutation, rand1);
 			// make mutation and return new childs from it
-			GEIndividual newChild1 = mutation.doOperation(child1, rd, curGeneration, child1.getMutationPoints());
-			GEIndividual newChild2 = mutation.doOperation(child2, rd, curGeneration, child2.getMutationPoints());
+			GEIndividual newChild1 = mutation.doOperation(child1, generator, curGeneration, child1.getMutationPoints());
+			GEIndividual newChild2 = mutation.doOperation(child2, generator, curGeneration, child2.getMutationPoints());
 			// if using crowding method in survival selection
 			if (diversity == 1) {
 				// fill callables of crowding to compute
@@ -397,18 +397,6 @@ public class EATools {
 		}
 		return list;
 	}
-
-//	public static void setResultList(ArrayList<GEIndividual> crossovers, ArrayList<GEIndividual> individuals) {
-//		for (int i = 0; i < individuals.size(); i++) {
-//			crossovers.add(individuals.get(i));
-//		}
-//	}
-
-//	public static void setPopulation(ArrayList<GEIndividual> pop1, ArrayList<GEIndividual> pop2) {
-//		for (int i = 0; i < pop2.size(); i++) {
-//			pop1.add(pop2.get(i));
-//		}
-//	}
 
 	public static String[][] setTablesPredicates(Logger logger, SparqlEndpoint endpoint) {
 		ArrayList<String> predicates = new ArrayList<String>();

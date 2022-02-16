@@ -69,16 +69,16 @@ public class SPARQLResult implements ResultFormatDef, URLParam    {
      * Specific endpoint function where format can be specified by format parameter
      * Content-Type is set according to format parameter and what is returned by ResultFormat
      * 
-     * @name is a) the name of a specific triple store, b) undefined for standard sparql endpoint
-     * @oper is sparql | federate | symbolic name defined in urlprofile.ttl
-     * @uri is optional list of URI. use case: URL of shacl shape
-     * @param is optional parameter in format: param=key~val;val
-     * @mode is such as  mode=debug;link;log
-     * @access is a key that may give access to protected features
-     * @defaut and @named are graph name URI 
-     * @format is json|xml to specify return format when there is no http header content
-     * @type is format specified by content negotiation http header (consider type otherwise format)
-     * @transform is list of transformation such as st:map
+     * @param name is a) the name of a specific triple store, b) undefined for standard sparql endpoint
+     * @param oper is sparql | federate | symbolic name defined in urlprofile.ttl
+     * @param uri is optional list of URI. use case: URL of shacl shape
+     * @param param is optional parameter in format: param=key~val;val
+     * @param mode is such as  mode=debug;link;log
+     * @param access is a key that may give access to protected features
+     * @param defaut and @named are graph name URI
+     * @param format is json|xml to specify return format when there is no http header content
+     * @param type is format specified by content negotiation http header (consider type otherwise format)
+     * @param transform is list of transformation such as st:map
      */
     public Response getResultFormat(String name, String oper, 
             List<String> uri, List<String> param, List<String> mode,

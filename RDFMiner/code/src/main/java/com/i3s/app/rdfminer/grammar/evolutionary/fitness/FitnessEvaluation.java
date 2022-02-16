@@ -18,7 +18,7 @@ import com.i3s.app.rdfminer.axiom.Axiom;
 import com.i3s.app.rdfminer.axiom.AxiomFactory;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.output.DBPediaJSON;
-import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
 
 import Individuals.FitnessPackage.BasicFitness;
 
@@ -60,9 +60,9 @@ public class FitnessEvaluation {
 					public Axiom call() throws Exception {
 						SparqlEndpoint endpoint;
 						if (evaluateOnFullDB) {
-							endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
+							endpoint = new SparqlEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES);
 						} else {
-							endpoint = new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, Global.LOCAL_PREFIXES);
+							endpoint = new SparqlEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES);
 						}
 						Axiom axiom = AxiomFactory.create(population.get(idx), population.get(idx).getPhenotype(),
 								endpoint);
@@ -132,7 +132,7 @@ public class FitnessEvaluation {
 		double f = 0;
 		if (indivi.isMapped()) {
 			Axiom axiom = AxiomFactory.create(indivi, indivi.getPhenotype(),
-					new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, Global.LOCAL_PREFIXES));
+					new SparqlEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES));
 			if (axiom != null) {
 				f = setFitness(axiom);
 			} else {
@@ -170,7 +170,7 @@ public class FitnessEvaluation {
 					// if indivi is correctly formed
 					if (indivi.isMapped()) {
 						Axiom a = AxiomFactory.create(indivi, indivi.getPhenotype(),
-								new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, Global.LOCAL_PREFIXES));
+								new SparqlEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES));
 						a.generation = generation;
 						axioms.add(a.toJSON());
 					}

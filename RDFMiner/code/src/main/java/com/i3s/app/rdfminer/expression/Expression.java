@@ -22,7 +22,7 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
-import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
 import com.i3s.app.rdfminer.Global;
 
 /**

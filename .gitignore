@@ -17,3 +17,4 @@ RDFMiner/io/
 *.idea
 .vscode
 IO/
+Corese/jar/*.jar

@@ -7,11 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.axiom.Axiom;
+import com.i3s.app.rdfminer.axiom.Type;
 import com.i3s.app.rdfminer.axiom.type.DisjointClassesAxiom;
 import com.i3s.app.rdfminer.axiom.type.SubClassOfAxiom;
 import com.i3s.app.rdfminer.grammar.DLFactory;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
-import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
 
 import Mapper.Symbol;
 import Util.Enums;

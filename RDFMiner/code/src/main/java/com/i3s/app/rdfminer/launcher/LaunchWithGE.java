@@ -7,21 +7,21 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.sql.SQLException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
-
 import com.i3s.app.rdfminer.axiom.Type;
+import com.i3s.app.rdfminer.generator.Generator;
+import com.i3s.app.rdfminer.generator.shacl.RandomShapeGenerator;
+import com.i3s.app.rdfminer.shacl.ShapesManager;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
-import com.i3s.app.rdfminer.axiom.RandomAxiomGenerator;
+import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.grammar.evolutionary.EATools;
 import com.i3s.app.rdfminer.grammar.evolutionary.fitness.FitnessEvaluation;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.CandidatePopulation;
@@ -39,7 +39,7 @@ import Individuals.GEChromosome;
 
 public class LaunchWithGE {
 
-	private static Logger logger = Logger.getLogger(LaunchWithGE.class.getName());
+	private static final Logger logger = Logger.getLogger(LaunchWithGE.class.getName());
 
 	/**
 	 * The second version of RDFMiner launcher, with Grammar Evolutionary
@@ -49,26 +49,29 @@ public class LaunchWithGE {
 	public void run(CmdLineParameters parameters) throws Exception {
 
 		// ShutDownHook
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				logger.warn("Shutting down RDFMiner ...");
-				// Save results in output file
-				writeAndFinish();
-			}
-		});
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			logger.warn("Shutting down RDFMiner ...");
+			// Save results in output file
+			writeAndFinish();
+		}));
 
 		RDFMiner.results = new ResultsJSON();
 		RDFMiner.axioms = new ArrayList<>();
 		RDFMiner.stats = new StatJSON();
 
-		RandomAxiomGenerator generator = null;
+		Generator generator = null;
 
-		if (parameters.axiomFile == null && parameters.useRandomAxiomGenerator) {
-			// if a randomly generated Axiom already exists then continue
-			// to generate a new Axioms based on BNF
-			logger.info("Initializing the random axiom generator with grammar " + parameters.grammarFile + "...");
-			generator = new RandomAxiomGenerator(parameters.grammarFile, true);
+		if (parameters.axiomFile == null) {
+			if (parameters.useRandomAxiomGenerator) {
+				// if a randomly generated Axiom already exists then continue
+				// to generate a new Axioms based on BNF
+				logger.info("Initializing the random axiom generator with grammar " + parameters.grammarFile + "...");
+				generator = new RandomAxiomGenerator(parameters.grammarFile, true);
+			} else if (parameters.useRandomShaclShapesGenerator) {
+				// launch random SHACL Shapes generator
+				logger.info("Initializing the random SHACL Shapes generator with grammar " + parameters.grammarFile + "...");
+				generator = new RandomShapeGenerator(parameters.grammarFile);
+			}
 		}
 		// Create the results file
 		try {
@@ -116,18 +119,18 @@ public class LaunchWithGE {
 		} else {
 			FileInputStream reader = new FileInputStream(
 					RDFMiner.outputFolder + "buffer_size" + parameters.populationSize + ".txt");
-			buffer = new InputStreamReader(reader, "UTF-8");
+			buffer = new InputStreamReader(reader, StandardCharsets.UTF_8);
 			int intch;
-			String st = "";
+			StringBuilder st = new StringBuilder();
 			while ((intch = reader.read()) != '\n') {
-				st += (char) intch;
+				st.append((char) intch);
 			}
-			curGeneration = Integer.parseInt(st);
-			st = "";
+			curGeneration = Integer.parseInt(st.toString());
+			st = new StringBuilder();
 			while ((intch = reader.read()) != '\n') {
-				st += (char) intch;
+				st.append((char) intch);
 			}
-			curCheckpoint = Integer.parseInt(st);
+			curCheckpoint = Integer.parseInt(st.toString());
 			logger.info("Buffer file founded ! starting from gen." + curGeneration + " ...");
 		}
 		logger.info("Initializing candidate population in generation " + curGeneration + "...");
@@ -135,6 +138,16 @@ public class LaunchWithGE {
 				parameters.typeInitialization, chromosomes, parameters.initLenChromosome, parameters.maxValCodon,
 				parameters.maxWrapp);
 		candidatePopulation = canPop.initialize(buffer, curGeneration);
+
+		logger.info("--------- [TMP] phenotype generated :");
+		for(GEIndividual ind : candidatePopulation) {
+			logger.info(ind.getPhenotype());
+		}
+
+		// test shapesManager
+		logger.info("--------- [TMP] ShapesManager : cleaned population :");
+		ShapesManager shapesManager = new ShapesManager(candidatePopulation);
+		shapesManager.printPopulation();
 
 		// Fill the 'stats' part of the JSON output
 		RDFMiner.stats.populationSize = parameters.populationSize;
@@ -186,7 +199,7 @@ public class LaunchWithGE {
 
 				fit.display(candidatePopulation, axioms, curGeneration);
 
-				ArrayList<GEIndividual> candidatePopulation2 = new ArrayList<GEIndividual>();
+				ArrayList<GEIndividual> candidatePopulation2 = new ArrayList<>();
 				for (GEIndividual geIndividual : candidatePopulation) {
 					GEIndividual indivi = new GEIndividual();
 					indivi.setMapper(geIndividual.getMapper());
@@ -219,8 +232,7 @@ public class LaunchWithGE {
 			if (curGeneration * parameters.populationSize < parameters.kBase * parameters.checkpoint) {
 				// if4
 				// STEP 3 - SELECTION OPERATION - Reproduce Selection - Parent Selection
-				ArrayList<GEIndividual> crossoverPopulation = new ArrayList<GEIndividual>();
-				ArrayList<GEIndividual> selectedPopulation = new ArrayList<GEIndividual>();
+				ArrayList<GEIndividual> crossoverPopulation, selectedPopulation;
 				if (parameters.elitism == 1) {
 					// Elitism method, which copies the best chromosome( or a few best
 					// chromosome) to new population. The rest done classical way. it
@@ -273,7 +285,7 @@ public class LaunchWithGE {
 
 				/* STEP 4 - CROSSOVER OPERATION */
 				// Crossover single point between 2 individuals of the selected population
-				ArrayList<GEIndividual> crossoverList = new ArrayList<GEIndividual>(crossoverPopulation);
+				ArrayList<GEIndividual> crossoverList = new ArrayList<>(crossoverPopulation);
 				// shuffle populations before crossover & mutation
 				java.util.Collections.shuffle(crossoverList);
 
@@ -288,7 +300,7 @@ public class LaunchWithGE {
 
 				// Write to buffer file
 				PrintWriter writer = new PrintWriter(
-						RDFMiner.outputFolder + "buffer_size" + parameters.populationSize + ".txt", "UTF-8");
+						RDFMiner.outputFolder + "buffer_size" + parameters.populationSize + ".txt", StandardCharsets.UTF_8);
 				writer.println(curGeneration);
 				writer.println(curCheckpoint);
 				flag = true;

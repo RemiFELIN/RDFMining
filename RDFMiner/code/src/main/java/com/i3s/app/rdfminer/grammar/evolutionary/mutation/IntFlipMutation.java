@@ -44,7 +44,9 @@ import Util.Random.RandomNumberGenerator;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
-import com.i3s.app.rdfminer.axiom.RandomAxiomGenerator;
+
+import com.i3s.app.rdfminer.generator.Generator;
+import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 
 /**
@@ -81,12 +83,12 @@ public class IntFlipMutation extends MutationOperation {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public GEIndividual doOperation(GEIndividual operand, RandomAxiomGenerator rd, int curGeneration, int[] pos)
+	public GEIndividual doOperation(GEIndividual operand, Generator generator, int curGeneration, int[] pos)
 			throws IOException, InterruptedException {
 		GEChromosome chr = new GEChromosome((GEChromosome) operand.getGenotype().get(0));
 		GEChromosome chr2 = new GEChromosome(doMutation(chr, pos));
 		((GEIndividual) operand).invalidate();
-		operand = rd.axiomIndividual(chr2, curGeneration);
+		operand = generator.getIndividualFromChromosome(chr2, curGeneration);
 		return operand;
 	}
 

@@ -19,13 +19,12 @@ import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.axiom.Axiom;
 import com.i3s.app.rdfminer.axiom.AxiomFactory;
-import com.i3s.app.rdfminer.axiom.AxiomGenerator;
-import com.i3s.app.rdfminer.axiom.CandidateAxiomGenerator;
-import com.i3s.app.rdfminer.axiom.IncreasingTimePredictorAxiomGenerator;
-import com.i3s.app.rdfminer.axiom.RandomAxiomGenerator;
-import com.i3s.app.rdfminer.axiom.type.SubClassOfAxiom;
+import com.i3s.app.rdfminer.generator.axiom.AxiomGenerator;
+import com.i3s.app.rdfminer.generator.axiom.CandidateAxiomGenerator;
+import com.i3s.app.rdfminer.generator.axiom.IncreasingTimePredictorAxiomGenerator;
+import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
-import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
 
 import Individuals.Phenotype;
 
@@ -117,7 +116,7 @@ public class LaunchWithoutGE {
 					long t0 = RDFMiner.getProcessCPUTime();
 					try {
 						logger.info("Testing axiom: " + finalAxiomName);
-						Axiom a = AxiomFactory.create(null, axiom, new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES));
+						Axiom a = AxiomFactory.create(null, axiom, new SparqlEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES));
 						a.axiomId = finalAxiomName;
 //						long t = RDFMiner.getProcessCPUTime();
 //						a.elapsedTime = t - t0;
@@ -158,7 +157,7 @@ public class LaunchWithoutGE {
 					callables.add(() -> {
 						long t0 = RDFMiner.getProcessCPUTime();
 						logger.info("Testing axiom: " + finalAxiomName);
-						Axiom a = AxiomFactory.create(null, finalAxiomName, new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES));
+						Axiom a = AxiomFactory.create(null, finalAxiomName, new SparqlEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES));
 						a.axiomId = finalAxiomName;
 //						long t = RDFMiner.getProcessCPUTime();
 //						a.elapsedTime = t - t0;

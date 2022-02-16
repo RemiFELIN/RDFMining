@@ -35,13 +35,13 @@ public class Global {
 	 * SPARQL endpoint from remote server which contains full instance of DBPedia
 	 * 2015.04
 	 */
-	public static final String REMOTE_SPARQL_ENDPOINT = "http://134.59.130.136:8890/sparql";
+	public static final String VIRTUOSO_REMOTE_SPARQL_ENDPOINT = "http://134.59.130.136:8890/sparql";
 
 	/**
-	 * prefixes used to perform queries with the remote {@link Global#REMOTE_SPARQL_ENDPOINT
+	 * prefixes used to perform queries with the remote {@link Global#VIRTUOSO_REMOTE_SPARQL_ENDPOINT
 	 * server} endpoint
 	 */
-	public final static String REMOTE_PREFIXES = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
+	public final static String VIRTUOSO_REMOTE_PREFIXES = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
 			+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 			+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 			+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -54,13 +54,13 @@ public class Global {
 	 * SPARQL endpoint from local server which contains 1% of full instance of
 	 * DBPedia 2015.04
 	 */
-	public static final String LOCAL_SPARQL_ENDPOINT = "http://172.19.0.2:9000/sparql";
+	public static final String VIRTUOSO_LOCAL_SPARQL_ENDPOINT = "http://172.19.0.2:9000/sparql";
 
 	/**
-	 * prefixes used to perform queries with the local {@link Global#LOCAL_SPARQL_ENDPOINT
+	 * prefixes used to perform queries with the local {@link Global#VIRTUOSO_LOCAL_SPARQL_ENDPOINT
 	 *  server} endpoint
 	 */
-	final public static String LOCAL_PREFIXES = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
+	final public static String VIRTUOSO_LOCAL_PREFIXES = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
 			+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 			+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 			+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -70,6 +70,23 @@ public class Global {
 			+ "PREFIX dbpedia: <http://dbpedia.org/>\n" + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n"
 			+ "PREFIX dbo: <http://dbpedia.org/ontology/>\n" + "PREFIX ex:    <http://example.org/demo#> \n"
 			+ "PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> \n" + "PREFIX sp:    <http://spinrdf.org/sp#> \n";
+
+	/**
+	 * Corese IP Address
+	 */
+	public static final String CORESE_IP_ADDRESS = "http://172.19.0.4:9100/";
+
+	/**
+	 * Corese prefixes for SHACL Shapes
+	 */
+	public static final String CORESE_PREFIXES = "@prefix dbo: <http://dbpedia.org/ontology/> \n" +
+			"@prefix sh: <http://www.w3.org/ns/shacl#> \n" +
+			"@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n\n";
+
+	/**
+	 * Size of the SHACL Shapes ID randomly generated using BNF Grammar
+	 */
+	public static final int SIZE_ID_SHACL_SHAPES = 8;
 
 	/**
 	 * Output path of results, it corresponding to '/rdfminer/io/' in container

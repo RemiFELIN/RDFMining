@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 
+import com.i3s.app.rdfminer.generator.Generator;
 import org.apache.log4j.Logger;
 
-import com.i3s.app.rdfminer.axiom.RandomAxiomGenerator;
+import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
 
 import Individuals.GEChromosome;
 import Individuals.Phenotype;
@@ -25,7 +26,7 @@ public class CandidatePopulation {
 
 	protected int size;
 	protected int generation;
-	protected RandomAxiomGenerator generator;
+	protected Generator generator;
 	protected GEChromosome[] chromosomes;
 	protected int maxlenChromosome;
 	protected int maxWrapp;
@@ -33,8 +34,8 @@ public class CandidatePopulation {
 	protected int typeInitialization;
 	protected int initlenChromosome;
 
-	public CandidatePopulation(int size, RandomAxiomGenerator generator, int typeInitialization,
-			GEChromosome[] chromosomes, int initlenChromosome, int maxvalCodon, int maxWrapp) {
+	public CandidatePopulation(int size, Generator generator, int typeInitialization,
+							   GEChromosome[] chromosomes, int initlenChromosome, int maxvalCodon, int maxWrapp) {
 		// size of the population
 		this.size = size;
 		this.generator = generator;
@@ -96,7 +97,7 @@ public class CandidatePopulation {
 		int j = 0;
 		while (j < size) {
 			if (generator != null) {
-				individual = generator.axiomIndividual(chromosomes[j], curGeneration);
+				individual = generator.getIndividualFromChromosome(chromosomes[j], curGeneration);
 				population.add(individual);
 				Phenotype axiom = population.get(j).getPhenotype();
 				if (axiom == null)
@@ -153,7 +154,7 @@ public class CandidatePopulation {
 	 */
 	public GEChromosome[] initializeChromosomes() {
 		RandomNumberGenerator random;
-		random = new MersenneTwisterFast(System.currentTimeMillis() & 0xFFFFFFFF);
+		random = new MersenneTwisterFast(System.currentTimeMillis());
 		GEChromosome chromosome;
 		int maxLenChromosome = 1000;
 		int n = 0;
@@ -179,7 +180,7 @@ public class CandidatePopulation {
 	public GEIndividual createNewAxiom(GEChromosome chromosome) {
 		GEIndividual individual = new GEIndividual();
 		RandomNumberGenerator random;
-		random = new MersenneTwisterFast(System.currentTimeMillis() & 0xFFFFFFFF);
+		random = new MersenneTwisterFast(System.currentTimeMillis());
 		int maxLenChromosome = 1000;
 		chromosome = new GEChromosome(initlenChromosome);
 		chromosome.setMaxCodonValue(maxvalCodon);
@@ -189,7 +190,7 @@ public class CandidatePopulation {
 			chromosome.add(Math.abs(random.nextInt(maxvalCodon)));
 		}
 		if (generator != null) {
-			individual = generator.axiomIndividual(chromosome, generation);
+			individual = generator.getIndividualFromChromosome(chromosome, generation);
 		}
 		return individual;
 	}

@@ -26,6 +26,9 @@ public class CmdLineParameters {
 	@Option(name = "-sa", aliases = { "--single-axiom" }, usage = "test a single axiom given", metaVar = "AXIOM")
 	public String singleAxiom = null;
 
+	@Option(name = "-shacl", aliases = { "--shacl-shapes" }, usage = "enable SHACL Shapes mining", metaVar = "SHAPES")
+	public boolean useRandomShaclShapesGenerator = false;
+
 	/**
 	 * The angular coefficient to be used for dynamic time capping of axiom test.
 	 * <p>

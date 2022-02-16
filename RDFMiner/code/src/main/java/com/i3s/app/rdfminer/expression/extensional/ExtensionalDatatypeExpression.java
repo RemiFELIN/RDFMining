@@ -12,7 +12,7 @@ import org.apache.jena.rdf.model.RDFNode;
 
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
-import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
 
 import Mapper.Symbol;
 
@@ -41,7 +41,7 @@ public class ExtensionalDatatypeExpression extends ExtensionalExpression {
 		super();
 		rootSymbol = "DataOneOf (";
 		extension = new TreeSet<RDFNodePair>();
-		SparqlEndpoint endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
+		SparqlEndpoint endpoint = new SparqlEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES);
 		Model m = endpoint.tdb;
 		Iterator<List<Symbol>> i = syntax.iterator();
 		

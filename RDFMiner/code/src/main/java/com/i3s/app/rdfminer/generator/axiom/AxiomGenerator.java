@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.i3s.app.rdfminer.axiom;
+package com.i3s.app.rdfminer.generator.axiom;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -9,6 +9,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Iterator;
+
+import com.i3s.app.rdfminer.generator.Generator;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.RDFNode;
@@ -18,7 +20,7 @@ import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.grammar.DLGEGrammar;
-import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
 
 import Individuals.Phenotype;
 import Mapper.ContextFreeGrammar;
@@ -38,7 +40,7 @@ import Util.Enums;
  * @author Andrea G. B. Tettamanzi & Rémi FELIN
  *
  */
-public abstract class AxiomGenerator {
+public abstract class AxiomGenerator extends Generator {
 
 	private static Logger logger = Logger.getLogger(AxiomGenerator.class.getName());
 
@@ -51,7 +53,8 @@ public abstract class AxiomGenerator {
 	 * Constructs a new axiom generator with no grammar attached.
 	 */
 	public AxiomGenerator() {
-		grammar = null;
+		super(null);
+//		grammar = null;
 	}
 
 	/**
@@ -61,19 +64,10 @@ public abstract class AxiomGenerator {
 	 * @param fileName the name of the file containing the grammar.
 	 * @param v2       if true, we used the second version (minimized) for the
 	 *                 extraction of rules, else the first
-	 * @throws InterruptedException
 	 */
-	public AxiomGenerator(String fileName, boolean v2) throws InterruptedException {
-		// Set up the grammar to be used for generating the axioms:
-		grammar = new DLGEGrammar(fileName);
-		grammar.setDerivationTreeType(DerivationTree.class.getName());
-		// grammar.setDerivationTreeType(ContextualDerivationTree.class.getName());
-		grammar.setMaxDerivationTreeDepth(100);
-		// set max wrapp 
-		grammar.setMaxWraps(RDFMiner.parameters.maxWrapp);
-		// System.out.println(grammar);
+	public AxiomGenerator(String fileName, boolean v2) {
+		super(fileName);
 		logger.info("Grammar loaded. Adding dynamic productions...");
-
 		if(v2) {
 			logger.info("AxiomGenerator v2.0 used ...");
 			for(int hexDigit = 0; hexDigit<0x10; hexDigit++)
@@ -88,7 +82,7 @@ public abstract class AxiomGenerator {
 		}
 	}
 
-	public void extract() throws InterruptedException {
+	public void extract() {
 		logger.info("AxiomGenerator v1.0 used ...");
 		// Add dynamically-generated productions for the six primitive non-terminals
 		// N.B.: To circumvent the limit imposed by Virtuoso on the number of results,
@@ -121,28 +115,7 @@ public abstract class AxiomGenerator {
 		}
 	}
 
-	/**
-	 * Generate a cache file name from a SPARQL query, so that each file has a
-	 * different name.
-	 */
-	public static String cacheName(String symbol, String sparql) {
-//		logger.info("path: " + String.format(Global.CACHE_PATH + "%s%08x.cache", symbol, sparql.hashCode()));
-		return String.format(Global.CACHE_PATH + "%s%08x.cache", symbol, sparql.hashCode());
-	}
-
-	/**
-	 * Dynamically generates the productions for the rule corresponding to the given
-	 * symbol using the given SPARQL query.
-	 * <p>
-	 * If a rule for the given symbol does not exist, it is created; if it exists,
-	 * the dynamically-generated productions are simply added to the static
-	 * productions defined in the grammar.
-	 * </p>
-	 * 
-	 * @param symbol the name of a non-terminal symbol for which the productions are
-	 *               to be generated
-	 * @param sparql the <code>SELECT</code> clause of a SPARQL query
-	 */
+	@Override
 	protected void generateProductions(String symbol, String sparql) {
 		Rule rule = grammar.findRule(symbol);
 		if (rule == null) {
@@ -169,10 +142,10 @@ public abstract class AxiomGenerator {
 			cache.close();
 		} catch (IOException ioe) {
 			logger.info("Cache for " + symbol + " not found. Querying SPARQL endpoint");
-			logger.info("Querying SPARQL endpoint for symbol <" + symbol + "> ..."); 
+			logger.info("Querying SPARQL endpoint for symbol <" + symbol + "> ...");
 //			"with query:\nSELECT "
 //					+ SparqlEndpoint.prettyPrint(sparql));
-			SparqlEndpoint endpoint = new SparqlEndpoint(Global.LOCAL_SPARQL_ENDPOINT, Global.LOCAL_PREFIXES);
+			SparqlEndpoint endpoint = new SparqlEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES);
 			ResultSet result = endpoint.select(sparql, 0);
 			PrintStream cache = null;
 			try {
@@ -211,10 +184,6 @@ public abstract class AxiomGenerator {
 				cache.close();
 			logger.info("Done! " + rule.size() + " productions added.");
 		}
-	}
-
-	public ContextFreeGrammar getGrammar() {
-		return grammar;
 	}
 
 	/**

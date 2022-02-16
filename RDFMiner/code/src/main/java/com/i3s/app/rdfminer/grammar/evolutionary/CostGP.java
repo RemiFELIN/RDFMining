@@ -3,7 +3,7 @@ package com.i3s.app.rdfminer.grammar.evolutionary;
 import org.topbraid.spin.vocabulary.SP;
 
 import com.i3s.app.rdfminer.RDFMiner;
-import com.i3s.app.rdfminer.sparql.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
 
 import java.util.ArrayList;
 

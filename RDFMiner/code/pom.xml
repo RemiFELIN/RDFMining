@@ -11,8 +11,8 @@
   	
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.11</maven.compiler.source>
+    <maven.compiler.target>1.11</maven.compiler.target>
   </properties>
 
   <repositories>
@@ -29,131 +29,140 @@
   </repositories>
 
   <dependencies>
-    <!-- https://mvnrepository.com/artifact/args4j/args4j -->
-	<dependency>
-		<groupId>args4j</groupId>
-		<artifactId>args4j</artifactId>
-		<version>2.33</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/log4j/log4j -->
-	<dependency>
-		<groupId>log4j</groupId>
-		<artifactId>log4j</artifactId>
-		<version>1.2.17</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/xerces/xercesImpl -->
-	<dependency>
-		<groupId>xerces</groupId>
-		<artifactId>xercesImpl</artifactId>
-		<version>2.12.1</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/javax.activation/activation -->
-	<dependency>
-		<groupId>javax.activation</groupId>
-		<artifactId>activation</artifactId>
-		<version>1.1.1</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/xml-apis/xml-apis -->
-	<dependency>
-	    <groupId>xml-apis</groupId>
-	    <artifactId>xml-apis</artifactId>
-	    <version>1.4.01</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/com.ibm.icu/icu4j -->
-	<dependency>
-		<groupId>com.ibm.icu</groupId>
-		<artifactId>icu4j</artifactId>
-		<version>69.1</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
-	<dependency>
-		<groupId>javax.xml.bind</groupId>
-		<artifactId>jaxb-api</artifactId>
-		<version>2.4.0-b180830.0359</version>
-	</dependency>
-	<dependency>
-	    <groupId>org.glassfish.jaxb</groupId>
-	    <artifactId>jaxb-runtime</artifactId>
-	    <version>2.3.2</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
-	<dependency>
-	    <groupId>org.slf4j</groupId>
-	    <artifactId>slf4j-simple</artifactId>
-	    <version>1.7.30</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/org.json/json -->
-	<dependency>
-	    <groupId>org.json</groupId>
-	    <artifactId>json</artifactId>
-	    <version>20210307</version>
-	</dependency>
-	<!-- http://topquadrant.com/repository/spin/ -->
-	<dependency>
-	    <groupId>org.topbraid</groupId>
-	    <artifactId>spin</artifactId>
-	    <version>2.0.0</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
-	<dependency>
-		<groupId>org.apache.poi</groupId>
-		<artifactId>poi</artifactId>
-		<version>3.17</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
-	<dependency>
-		<groupId>org.apache.poi</groupId>
-		<artifactId>poi-ooxml</artifactId>
-		<version>3.17</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/net.sourceforge.jexcelapi/jxl -->
-	<dependency>
-		<groupId>net.sourceforge.jexcelapi</groupId>
-		<artifactId>jxl</artifactId>
-		<version>2.6.12</version>
-	</dependency>
-	<!-- 						JENA 							 -->
-	<!-- https://mvnrepository.com/artifact/org.apache.jena/jena -->
-	<dependency>
-		<groupId>org.apache.jena</groupId>
-		<artifactId>jena-core</artifactId>
-		<version>3.17.0</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/org.apache.jena/jena-arq -->
-	<dependency>
-		<groupId>org.apache.jena</groupId>
-		<artifactId>jena-arq</artifactId>
-		<version>3.17.0</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/org.apache.jena/jena-tdb -->
-	<dependency>
-		<groupId>org.apache.jena</groupId>
-		<artifactId>jena-tdb</artifactId>
-		<version>3.17.0</version>
-	</dependency>
-	<!-- Corese 4.1.1 -->
-	<dependency>
-		<groupId>fr.inria.corese</groupId>
-		<artifactId>corese-core</artifactId>
-		<version>4.3.0</version>
-	</dependency>
-	<dependency>
-		<groupId>fr.inria.corese</groupId>
-		<artifactId>corese-rdf4j</artifactId>
-		<version>4.3.0</version>
-	</dependency>
-	<!-- GEVA -->
-	<dependency>
-		<groupId>geva-jar</groupId>
-		<artifactId>GEVA</artifactId>
-		<version>2.0</version>
-	</dependency>
-
+	  <!-- https://mvnrepository.com/artifact/args4j/args4j -->
+	  <dependency>
+		  <groupId>args4j</groupId>
+		  <artifactId>args4j</artifactId>
+		  <version>2.33</version>
+	  </dependency>
+	  <!-- https://mvnrepository.com/artifact/log4j/log4j -->
+	  <dependency>
+		  <groupId>log4j</groupId>
+		  <artifactId>log4j</artifactId>
+		  <version>1.2.17</version>
+	  </dependency>
+	  <!-- https://mvnrepository.com/artifact/xerces/xercesImpl -->
+	  <dependency>
+		  <groupId>xerces</groupId>
+		  <artifactId>xercesImpl</artifactId>
+		  <version>2.12.1</version>
+	  </dependency>
+	  <!-- https://mvnrepository.com/artifact/javax.activation/activation -->
+	  <dependency>
+		  <groupId>javax.activation</groupId>
+		  <artifactId>activation</artifactId>
+		  <version>1.1.1</version>
+	  </dependency>
+	  <!-- https://mvnrepository.com/artifact/xml-apis/xml-apis -->
+	  <dependency>
+		  <groupId>xml-apis</groupId>
+		  <artifactId>xml-apis</artifactId>
+		  <version>1.4.01</version>
+	  </dependency>
+	  <!-- https://mvnrepository.com/artifact/com.ibm.icu/icu4j -->
+	  <dependency>
+		  <groupId>com.ibm.icu</groupId>
+		  <artifactId>icu4j</artifactId>
+		  <version>69.1</version>
+	  </dependency>
+	  <!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
+	  <dependency>
+		  <groupId>javax.xml.bind</groupId>
+		  <artifactId>jaxb-api</artifactId>
+		  <version>2.4.0-b180830.0359</version>
+	  </dependency>
+	  <dependency>
+		  <groupId>org.glassfish.jaxb</groupId>
+		  <artifactId>jaxb-runtime</artifactId>
+		  <version>2.3.2</version>
+	  </dependency>
+	  <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+	  <dependency>
+		  <groupId>org.slf4j</groupId>
+		  <artifactId>slf4j-simple</artifactId>
+		  <version>1.7.30</version>
+	  </dependency>
+	  <!-- https://mvnrepository.com/artifact/org.json/json -->
+	  <dependency>
+		  <groupId>org.json</groupId>
+		  <artifactId>json</artifactId>
+		  <version>20210307</version>
+	  </dependency>
+	  <!-- http://topquadrant.com/repository/spin/ -->
+	  <dependency>
+		  <groupId>org.topbraid</groupId>
+		  <artifactId>spin</artifactId>
+		  <version>2.0.0</version>
+	  </dependency>
+	  <!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+	  <dependency>
+		  <groupId>org.apache.poi</groupId>
+		  <artifactId>poi</artifactId>
+		  <version>3.17</version>
+	  </dependency>
+	  <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+	  <dependency>
+		  <groupId>org.apache.poi</groupId>
+		  <artifactId>poi-ooxml</artifactId>
+		  <version>3.17</version>
+	  </dependency>
+	  <!-- https://mvnrepository.com/artifact/net.sourceforge.jexcelapi/jxl -->
+	  <dependency>
+		  <groupId>net.sourceforge.jexcelapi</groupId>
+		  <artifactId>jxl</artifactId>
+		  <version>2.6.12</version>
+	  </dependency>
+	  <!-- 						JENA 							 -->
+	  <!-- https://mvnrepository.com/artifact/org.apache.jena/jena -->
+	  <dependency>
+		  <groupId>org.apache.jena</groupId>
+		  <artifactId>jena-core</artifactId>
+		  <version>3.17.0</version>
+	  </dependency>
+	  <!-- https://mvnrepository.com/artifact/org.apache.jena/jena-arq -->
+	  <dependency>
+		  <groupId>org.apache.jena</groupId>
+		  <artifactId>jena-arq</artifactId>
+		  <version>3.17.0</version>
+	  </dependency>
+	  <!-- https://mvnrepository.com/artifact/org.apache.jena/jena-tdb -->
+	  <dependency>
+		  <groupId>org.apache.jena</groupId>
+		  <artifactId>jena-tdb</artifactId>
+		  <version>3.17.0</version>
+	  </dependency>
+	  <!-- Corese 4.1.1 -->
+	  <dependency>
+		  <groupId>fr.inria.corese</groupId>
+		  <artifactId>corese-core</artifactId>
+		  <version>4.3.0</version>
+	  </dependency>
+	  <dependency>
+		  <groupId>fr.inria.corese</groupId>
+		  <artifactId>corese-rdf4j</artifactId>
+		  <version>4.3.0</version>
+	  </dependency>
+	  <!-- GEVA -->
+	  <dependency>
+		  <groupId>geva-jar</groupId>
+		  <artifactId>GEVA</artifactId>
+		  <version>2.0</version>
+	  </dependency>
   </dependencies>
   	
   <build>
 
 	<plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<version>3.8.0</version>
+			<configuration>
+				<release>11</release>
+				<source>11</source>
+				<target>11</target>
+			</configuration>
+		</plugin>
 		<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-shade-plugin</artifactId>
