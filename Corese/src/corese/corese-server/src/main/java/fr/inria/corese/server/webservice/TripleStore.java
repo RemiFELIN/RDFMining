@@ -20,11 +20,18 @@ import fr.inria.corese.sparql.triple.parser.ASTQuery;
 import fr.inria.corese.sparql.triple.parser.Context;
 import fr.inria.corese.sparql.triple.parser.Metadata;
 import fr.inria.corese.sparql.triple.parser.URLParam;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.io.IOUtils;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -198,7 +205,7 @@ public class TripleStore implements URLParam {
         QueryProcess exec = getQueryProcess();
         exec.setDebug(c.isDebug());
         
-        Mappings map;
+        Mappings map = null;
         try {
             before(exec, query, ds);
             TripleStoreLog tsl = new TripleStoreLog(exec, c);
@@ -236,8 +243,10 @@ public class TripleStore implements URLParam {
                 } else {
                     throw e;
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            
+
             // add param=value parameter to Context
             // Context is sent back to client as JSON message Linked Result
             // when mode=message
@@ -331,7 +340,8 @@ public class TripleStore implements URLParam {
     }
 
     boolean isProbabilisticShacl(Context c) {
-        return c.hasValue(PROBABILISTIC_SHACL) && hasValueList(c, URI);
+        if(c.hasValue(PROBABILISTIC_SHACL) && c.hasValue(CONTENT)) return true;
+        else return c.hasValue(PROBABILISTIC_SHACL) && hasValueList(c, URI);
     }
     
     boolean isConstruct(Context c) {
@@ -385,18 +395,27 @@ public class TripleStore implements URLParam {
     }
 
     /**
-     * sparql?mode=prob-shacl&uri=shape&query=select * where { ?s sh:conforms ?b }
+     * sparql?mode=prob-shacl&content=content&query=select * where { ?s sh:conforms ?b }
+     * sparql?mode=prob-shacl&uri=uri&query=select * where { ?s sh:conforms ?b }
      * Load shacl shape
      * Evaluate shape
      * Execute query on shacl validation report
      */ 
-    Mappings probabilisticShacl(String query, Dataset ds) throws EngineException {
+    Mappings probabilisticShacl(String query, Dataset ds) throws EngineException, IOException {
         Graph shacl = Graph.create();
         Load ld = Load.create(shacl);
+        InputStream stream = null;
         try {
-            for (IDatatype dt : ds.getContext().get(URI)) {
-                ld.parse(dt.getLabel());
+            if(ds.getContext().get(URLParam.CONTENT) != null) {
+                stream = new ByteArrayInputStream(ds.getContext().get(URLParam.CONTENT).stringValue().getBytes(StandardCharsets.UTF_8));
+                ld.parse(stream, "", Load.TURTLE_FORMAT);
+            } else {
+                for (IDatatype dt : ds.getContext().get(URLParam.URI)) {
+                    ld.parse(dt.getLabel());
+                }
             }
+
+
         } catch (LoadException ex) {
             logger.error(ex.getMessage());
             throw new EngineException(ex) ;
@@ -406,6 +425,8 @@ public class TripleStore implements URLParam {
         QueryProcess exec = QueryProcess.create(res);
         exec.setDebug(ds.getContext().isDebug());
         Mappings map = exec.query(query);
+        if(stream != null)
+            stream.close();
         return map;
     }
     

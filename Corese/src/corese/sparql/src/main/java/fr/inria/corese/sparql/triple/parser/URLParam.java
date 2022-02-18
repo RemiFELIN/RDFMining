@@ -21,6 +21,7 @@ public interface URLParam {
     static final String URL = "url";
     static final String DEFAULT_GRAPH = "default-graph-uri";
     static final String NAMED_GRAPH = "named-graph-uri";
+    static final String CONTENT = "content";
 
     // specific for service clause
     static final String LOOP = "loop";

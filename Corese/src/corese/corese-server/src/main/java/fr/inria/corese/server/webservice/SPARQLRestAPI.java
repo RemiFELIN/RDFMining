@@ -293,6 +293,7 @@ public class SPARQLRestAPI implements ResultFormatDef, URLParam {
             @QueryParam("transform")        List<String> transform,
             @QueryParam("param")  List<String> param,
             @QueryParam("mode")   List<String> mode,
+            @QueryParam("content") String content,
             @QueryParam("uri")    List<String> uri) {
         
         logger.info("getTriplesXMLForGet" );
@@ -306,7 +307,7 @@ public class SPARQLRestAPI implements ResultFormatDef, URLParam {
         // in this case, the value of format is taken into account
         // if there is header accept, the value of format is overloaded by header accept
         // if there is no header and no format, default format is chosen (xml or turtle)
-        return getResultFormat(request, name, oper, uri, param, mode, query, access, defaut, named, format, UNDEF_FORMAT, transform);
+        return getResultFormat(request, name, oper, uri, param, mode, query, access, defaut, named, format, UNDEF_FORMAT, transform, content);
     }
       
     
@@ -314,9 +315,9 @@ public class SPARQLRestAPI implements ResultFormatDef, URLParam {
             String name, String oper, List<String> uri, List<String> param, List<String> mode,
             String query, String access, 
             List<String> defaut, List<String> named,
-            String format, int type, List<String> transform) { 
+            String format, int type, List<String> transform, String content) {
         return new SPARQLResult(request).setVisitor(getVisitor())
-        .getResultFormat(name, oper, uri, param, mode, query, access, defaut, named, format, type, transform);
+        .getResultFormat(name, oper, uri, param, mode, query, access, defaut, named, format, type, transform, content);
     }
     
    
@@ -331,7 +332,7 @@ public class SPARQLRestAPI implements ResultFormatDef, URLParam {
             String query, String access,
             List<String> defaut, List<String> named,
             int type) {
-        return getResultFormat(request, name, oper, uri, param, mode, query, access, defaut, named, null, type, null);
+        return getResultFormat(request, name, oper, uri, param, mode, query, access, defaut, named, null, type, null, null);
     }
       
     Response getResultForPost(HttpServletRequest request,
@@ -390,7 +391,7 @@ public class SPARQLRestAPI implements ResultFormatDef, URLParam {
         .queryGETHTML(request, fr.inria.corese.core.transform.Transformer.SPARQL, 
                 null, null, null, null, format, access, query, null, null, null, defaut, named);
         }
-        return getResultFormat(request, name, oper, uri, param, mode, query, access, defaut, named, null, HTML_FORMAT, transform);
+        return getResultFormat(request, name, oper, uri, param, mode, query, access, defaut, named, null, HTML_FORMAT, transform, null);
     }
     
     @GET
@@ -426,7 +427,7 @@ public class SPARQLRestAPI implements ResultFormatDef, URLParam {
             @QueryParam("uri")    List<String> uri) {
        
         logger.info("getTriplesJSONForGet");
-        return getResultFormat(request, name, oper, uri, param, mode, query, access, defaut, named, null, JSON_FORMAT, transform);
+        return getResultFormat(request, name, oper, uri, param, mode, query, access, defaut, named, null, JSON_FORMAT, transform, null);
     }
     
 
@@ -636,7 +637,7 @@ public class SPARQLRestAPI implements ResultFormatDef, URLParam {
         
         // dataset(defaut, using), dataset(named, usingNamed)        
         return getResultFormat(request, name, oper, uri, param, mode, query, 
-           access, defaut, named, format, UNDEF_FORMAT, transform);
+           access, defaut, named, format, UNDEF_FORMAT, transform, null);
     }
 
     List<String> dataset(List<String> from, List<String> using) {
@@ -708,7 +709,7 @@ public class SPARQLRestAPI implements ResultFormatDef, URLParam {
 
         query = getQuery(query, update, message);
         logger.info("getTriplesJSONForPost");       
-        return getResultFormat(request, name, oper, uri, param, mode, query, access, defaut, named, null, JSON_FORMAT, transform);    
+        return getResultFormat(request, name, oper, uri, param, mode, query, access, defaut, named, null, JSON_FORMAT, transform, null);
     }
     
 
@@ -731,7 +732,7 @@ public class SPARQLRestAPI implements ResultFormatDef, URLParam {
         
         query = getQuery(query, update, message);
         logger.info("getTriplesCSVForPost");       
-        return getResultFormat(request, name, oper, uri, param, mode, query, access, defaut, named, null, CSV_FORMAT, transform);    
+        return getResultFormat(request, name, oper, uri, param, mode, query, access, defaut, named, null, CSV_FORMAT, transform, null);
     }
         
 //        try {
@@ -766,7 +767,7 @@ public class SPARQLRestAPI implements ResultFormatDef, URLParam {
             String message) {
          query = getQuery(query, update, message);
         logger.info("getTriplesTSVForPost");       
-        return getResultFormat(request, name, oper, uri, param, mode, query, access, defaut, named, null, TSV_FORMAT, transform);    
+        return getResultFormat(request, name, oper, uri, param, mode, query, access, defaut, named, null, TSV_FORMAT, transform, null);
     }
     
 //        try {

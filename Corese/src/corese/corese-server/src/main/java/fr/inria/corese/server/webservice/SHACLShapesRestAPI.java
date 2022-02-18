@@ -104,12 +104,14 @@ public class SHACLShapesRestAPI implements ResultFormatDef, URLParam {
             return Response.status(Response.Status.NOT_FOUND).header(headerAccept, "*").entity(msg).build();
         }
 
-        String content = null;
+        String content;
         try {
             File file = new File(RDFMINER_SHAPES_FILEPATH);
             content = Files.readString(file.toPath());
         } catch (IOException e) {
-            logger.error("Error during file extraction: " + e.getMessage());
+            String msg = "Error during file extraction: " + e.getMessage();
+            logger.error(msg);
+            return Response.status(Response.Status.NOT_FOUND).header(headerAccept, "*").entity(msg).build();
         }
         assert content != null;
         return Response.status(Response.Status.OK).

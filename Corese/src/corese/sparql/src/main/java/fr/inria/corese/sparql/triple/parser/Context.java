@@ -76,6 +76,7 @@ public class Context extends ASTObject implements URLParam {
     public static final String STL_RESTRICTED     = STL + "restricted";
     public static final String STL_HIERARCHY      = STL + "hierarchy";
     public static final String STL_LINK           = STL + "link";
+    public static final String STL_CONTENT        = STL + "content";
    
     public static final String URL = "url";   
     
