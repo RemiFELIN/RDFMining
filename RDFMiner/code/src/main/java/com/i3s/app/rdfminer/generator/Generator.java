@@ -35,11 +35,12 @@ public abstract class Generator {
 
     /**
      * Load a given file path as a grammar to follow for our future rules
+     *
      * @param filePath the path of grammar file
      */
     public Generator(String filePath) {
         // Set up the grammar to be used for generating the axioms:
-        if(filePath == null) {
+        if (filePath == null) {
             grammar = null;
         } else {
             grammar = new DLGEGrammar(filePath);
@@ -64,12 +65,13 @@ public abstract class Generator {
      *               to be generated
      * @param sparql a <code>SELECT</code> SPARQL query
      * @throws URISyntaxException Error concerning the syntax of the given URL
-     * @throws IOException Error concerning the execution of the GET request
+     * @throws IOException        Error concerning the execution of the GET request
      */
     protected abstract void generateProductions(String symbol, String sparql) throws URISyntaxException, IOException;
 
     /**
      * Take a GEChromosome and build an instance of GEInidividual, in order to use it in EA
+     *
      * @param chromosome instance of GEChromosome
      * @param generation ID generation
      * @return an individual well formed from chromosome

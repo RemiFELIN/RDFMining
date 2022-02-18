@@ -35,7 +35,6 @@ public class FitnessEvaluation {
 	 * each individual and fill data
 	 * 
 	 * @param population       a given population
-	 * @param curGeneration    the current generation
 	 * @param evaluateOnFullDB true if the given population are evaluated of full
 	 *                         instance of DB, else false
 	 * @param axioms           the list of axioms in JSON format (used to return
@@ -43,10 +42,10 @@ public class FitnessEvaluation {
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	public void updatePopulation(ArrayList<GEIndividual> population, int curGeneration, boolean evaluateOnFullDB,
-			List<JSONObject> axioms) throws InterruptedException, ExecutionException {
+	public void updatePopulation(ArrayList<GEIndividual> population, boolean evaluateOnFullDB,
+								 List<JSONObject> axioms) throws InterruptedException, ExecutionException {
 
-		Set<Callable<Axiom>> callables = new HashSet<Callable<Axiom>>();
+		Set<Callable<Axiom>> callables = new HashSet<>();
 		List<Axiom> axiomList = new ArrayList<>();
 
 		int i = 0;
@@ -56,18 +55,16 @@ public class FitnessEvaluation {
 				break;
 			if (population.get(i).isMapped()) {
 				final int idx = i;
-				callables.add(new Callable<Axiom>() {
-					public Axiom call() throws Exception {
-						SparqlEndpoint endpoint;
-						if (evaluateOnFullDB) {
-							endpoint = new SparqlEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES);
-						} else {
-							endpoint = new SparqlEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES);
-						}
-						Axiom axiom = AxiomFactory.create(population.get(idx), population.get(idx).getPhenotype(),
-								endpoint);
-						return axiom;
-					};
+				callables.add(() -> {
+					SparqlEndpoint endpoint;
+					if (evaluateOnFullDB) {
+						endpoint = new SparqlEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES);
+					} else {
+						endpoint = new SparqlEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES);
+					}
+					Axiom axiom = AxiomFactory.create(population.get(idx), population.get(idx).getPhenotype(),
+							endpoint);
+					return axiom;
 				});
 			} else {
 				BasicFitness fit = new BasicFitness(0, population.get(i));
@@ -133,11 +130,7 @@ public class FitnessEvaluation {
 		if (indivi.isMapped()) {
 			Axiom axiom = AxiomFactory.create(indivi, indivi.getPhenotype(),
 					new SparqlEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES));
-			if (axiom != null) {
-				f = setFitness(axiom);
-			} else {
-				f = 0;
-			}
+			f = setFitness(axiom);
 		} else {
 			f = 0;
 		}
@@ -162,20 +155,17 @@ public class FitnessEvaluation {
 		Set<Callable<Void>> callables = new HashSet<Callable<Void>>();
 		for (int i = 0; i < index; i++) {
 			final int idx = i;
-			callables.add(new Callable<Void>() {
-				@Override
-				public Void call() throws Exception {
-					// Compute axiom values and fill the list of axioms
-					GEIndividual indivi = (GEIndividual) population.get(idx);
-					// if indivi is correctly formed
-					if (indivi.isMapped()) {
-						Axiom a = AxiomFactory.create(indivi, indivi.getPhenotype(),
-								new SparqlEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES));
-						a.generation = generation;
-						axioms.add(a.toJSON());
-					}
-					return null;
+			callables.add(() -> {
+				// Compute axiom values and fill the list of axioms
+				GEIndividual indivi = (GEIndividual) population.get(idx);
+				// if indivi is correctly formed
+				if (indivi.isMapped()) {
+					Axiom a = AxiomFactory.create(indivi, indivi.getPhenotype(),
+							new SparqlEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES));
+					a.generation = generation;
+					axioms.add(a.toJSON());
 				}
+				return null;
 			});
 		}
 		ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
