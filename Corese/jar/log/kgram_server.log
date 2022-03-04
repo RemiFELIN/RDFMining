@@ -1,3 +1,0 @@
-2022-02-08 11:16:30 INFO  webservice.EmbeddedJettyServer.main:117 [] - Loading log4j configuration: null
-2022-02-08 11:16:30 INFO  webservice.EmbeddedJettyServer.main:118 [] - To override log4j configuration add JVM option: -Dlog4j.configurationFile=file:/home/.../your_log4j2.xml
-2022-02-08 11:16:30 INFO  core.Corese.init:14 [] - Corese, Inria: Tue Feb 08 11:16:30 CET 2022
