@@ -59,7 +59,7 @@ public class Test {
 				}
 				else if (ee.isQuery()){
 					// subquery
-					ASTQuery q = ee.getQuery();
+//					ASTQuery q = ee.getQuery();
 				}
 				else if (ee.isOption()){
 					// optional is unary (in Corese)

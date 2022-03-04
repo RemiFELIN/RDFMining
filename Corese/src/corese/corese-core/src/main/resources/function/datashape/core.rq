@@ -20,7 +20,7 @@ function sh:core(report, sh, vis, nodeList) {
 # present=true: fail if path is empty (when there is a path)
 #
 function sh:core(report, sh, vis, nodeList, present) {
-    sh:log("core.rq", "sh:core", "start...");
+    # sh:log("core.rq", "sh:core", "start...");
     if (sh:trace(), xt:print("core:", sh, nodeList, present), true);
     let (res = true) {
         for (node in dt:list(nodeList)) {
@@ -80,7 +80,7 @@ function sh:closedcore(report, sh, vis, node) {
  
 
 function sh:pathcore(report, sh, vis, nodeList, present) {
-    sh:log("core.rq", "sh:pathcore", "start...");
+    # sh:log("core.rq", "sh:pathcore", "start...");
     let (res = true, cstList = sh:getShapeConstraint(sh:pathcore, sh)) {
         if (sh:trace(), xt:print("core path:", sh, cstList, present), true);
         for ((cst path) in cstList) {

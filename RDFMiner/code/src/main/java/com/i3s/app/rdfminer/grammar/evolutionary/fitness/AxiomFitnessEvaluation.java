@@ -1,9 +1,6 @@
 package com.i3s.app.rdfminer.grammar.evolutionary.fitness;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -11,57 +8,50 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import com.i3s.app.rdfminer.grammar.evolutionary.Fitness;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.axiom.Axiom;
 import com.i3s.app.rdfminer.axiom.AxiomFactory;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
-import com.i3s.app.rdfminer.output.DBPediaJSON;
-import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
+import com.i3s.app.rdfminer.output.axiom.DBPediaJSON;
+import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 
 import Individuals.FitnessPackage.BasicFitness;
 
 /**
- * FitnessEvaluation - is the class to setup the fitness value for Axioms in the
+ * It is the class to setup the fitness value for Axioms in the
  * specified population
  *
  * @author NGUYEN Thu Huong Oct.18 & Rémi FELIN
  */
-public class FitnessEvaluation {
+public class AxiomFitnessEvaluation extends Fitness {
 
-	/**
-	 * Update a given population by using evaluation (possibility, fitness, ...) of
-	 * each individual and fill data
-	 * 
-	 * @param population       a given population
-	 * @param evaluateOnFullDB true if the given population are evaluated of full
-	 *                         instance of DB, else false
-	 * @param axioms           the list of axioms in JSON format (used to return
-	 *                         results)
-	 * @throws InterruptedException
-	 * @throws ExecutionException
-	 */
-	public void updatePopulation(ArrayList<GEIndividual> population, boolean evaluateOnFullDB,
-								 List<JSONObject> axioms) throws InterruptedException, ExecutionException {
+	private static final Logger logger = Logger.getLogger(AxiomFitnessEvaluation.class.getName());
+
+	@Override
+	public ArrayList<GEIndividual> updatePopulation(ArrayList<GEIndividual> population, String url, String prefixes, List<JSONObject> axioms) {
 
 		Set<Callable<Axiom>> callables = new HashSet<>();
 		List<Axiom> axiomList = new ArrayList<>();
 
 		int i = 0;
 
+		logger.info("Begin updating population ...");
 		while (i < population.size()) {
 			if (population.get(0).getPhenotype() == null)
 				break;
 			if (population.get(i).isMapped()) {
 				final int idx = i;
 				callables.add(() -> {
-					SparqlEndpoint endpoint;
-					if (evaluateOnFullDB) {
-						endpoint = new SparqlEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES);
-					} else {
-						endpoint = new SparqlEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES);
-					}
+//					SparqlEndpoint endpoint;
+//					if (evaluateOnFullDB) {
+					VirtuosoEndpoint endpoint = new VirtuosoEndpoint(url, prefixes);
+//					} else {
+//						endpoint = new SparqlEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES);
+//					}
 					Axiom axiom = AxiomFactory.create(population.get(idx), population.get(idx).getPhenotype(),
 							endpoint);
 					return axiom;
@@ -78,14 +68,27 @@ public class FitnessEvaluation {
 		// We have a set of threads to compute each axioms
 		ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
 		// Submit tasks
-		List<Future<Axiom>> futureAxioms = executor.invokeAll(callables);
+		List<Future<Axiom>> futureAxioms = null;
+		try {
+			futureAxioms = executor.invokeAll(callables);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		// We recover our axioms
 		for (Future<Axiom> axiom : futureAxioms) {
-			axiomList.add(axiom.get());
+			try {
+				axiomList.add(axiom.get());
+			} catch (InterruptedException | ExecutionException e) {
+				e.printStackTrace();
+			}
 		}
 		// Shut down the executor
 		executor.shutdown();
-		executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+		try {
+			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
 		// Update fitness of population
 		for (Axiom axiom : axiomList) {
@@ -94,7 +97,7 @@ public class FitnessEvaluation {
 			axiom.individual.setFitness(fit);
 			population.add(axiom.individual);
 			// Now, we can fill our JSONObject
-			if (evaluateOnFullDB) {
+			if (Objects.equals(url, Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT)) {
 				// data about full database of DBPedia
 				DBPediaJSON dbpedia = new DBPediaJSON();
 				if (axiom.getIndividual().isMapped()) {
@@ -113,14 +116,11 @@ public class FitnessEvaluation {
 				}
 			}
 		}
+		return population;
 	}
 
-	/**
-	 * Update a given individual by using evaluation (possibility, fitness, ...)
-	 * @param indivi a given individual
-	 * @return the evaluated individual
-	 */
-	public static GEIndividual updateIndividual(GEIndividual indivi) {
+	@Override
+	public GEIndividual updateIndividual(GEIndividual indivi) {
 		if(indivi.getFitness() != null) {
 			// this individual has already been evaluated
 			return indivi;
@@ -129,7 +129,7 @@ public class FitnessEvaluation {
 		double f = 0;
 		if (indivi.isMapped()) {
 			Axiom axiom = AxiomFactory.create(indivi, indivi.getPhenotype(),
-					new SparqlEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES));
+					new VirtuosoEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES));
 			f = setFitness(axiom);
 		} else {
 			f = 0;
@@ -141,27 +141,19 @@ public class FitnessEvaluation {
 		return indivi;
 	}
 
-	/**
-	 * display a given population
-	 * 
-	 * @param population a given population
-	 * @param axioms     the list of axioms in JSON format (used to return results)
-	 * @param generation the current generation
-	 * @throws InterruptedException
-	 */
-	public void display(ArrayList<GEIndividual> population, List<JSONObject> axioms, int generation)
-			throws InterruptedException {
+	@Override
+	public void display(ArrayList<GEIndividual> population, List<JSONObject> axioms, int generation) {
 		int index = population.size();
-		Set<Callable<Void>> callables = new HashSet<Callable<Void>>();
+		Set<Callable<Void>> callables = new HashSet<>();
 		for (int i = 0; i < index; i++) {
 			final int idx = i;
 			callables.add(() -> {
 				// Compute axiom values and fill the list of axioms
-				GEIndividual indivi = (GEIndividual) population.get(idx);
+				GEIndividual ind = population.get(idx);
 				// if indivi is correctly formed
-				if (indivi.isMapped()) {
-					Axiom a = AxiomFactory.create(indivi, indivi.getPhenotype(),
-							new SparqlEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES));
+				if (ind.isMapped()) {
+					Axiom a = AxiomFactory.create(ind, ind.getPhenotype(),
+							new VirtuosoEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES));
 					a.generation = generation;
 					axioms.add(a.toJSON());
 				}
@@ -170,10 +162,18 @@ public class FitnessEvaluation {
 		}
 		ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
 		// Submit tasks
-		executor.invokeAll(callables);
+		try {
+			executor.invokeAll(callables);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		// Shut down the executor
 		executor.shutdown();
-		executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+		try {
+			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -196,9 +196,5 @@ public class FitnessEvaluation {
 					* ((axiom.possibility().doubleValue() + axiom.necessity().doubleValue()) / 2);
 		}
 	}
-
-//	public static String removeCharAt(String s, int pos) {
-//		return s.substring(0, pos) + s.substring(pos + 1);
-//	}
 
 }

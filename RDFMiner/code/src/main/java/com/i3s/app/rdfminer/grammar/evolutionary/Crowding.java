@@ -1,7 +1,17 @@
 package com.i3s.app.rdfminer.grammar.evolutionary;
 
-import com.i3s.app.rdfminer.grammar.evolutionary.fitness.FitnessEvaluation;
+import Individuals.FitnessPackage.BasicFitness;
+import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.grammar.evolutionary.fitness.AxiomFitnessEvaluation;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
+import com.i3s.app.rdfminer.mode.Mode;
+import com.i3s.app.rdfminer.shacl.Shape;
+import com.i3s.app.rdfminer.shacl.ShapesManager;
+import com.i3s.app.rdfminer.shacl.ValidationReport;
+import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class Crowding {
 
@@ -14,9 +24,11 @@ public class Crowding {
 	protected GEIndividual parent2;
 	protected GEIndividual child1;
 	protected GEIndividual child2;
+	protected Mode mode;
 
-	public Crowding(int size, GEIndividual parent1, GEIndividual parent2, GEIndividual child1, GEIndividual child2) {
+	public Crowding(int size, GEIndividual parent1, GEIndividual parent2, GEIndividual child1, GEIndividual child2, Mode mode) {
 		this.size = size;
+		this.mode = mode;
 		this.parent1 = parent1;
 		this.parent2 = parent2;
 		this.child1 = child1;
@@ -27,7 +39,7 @@ public class Crowding {
 		this.distanceP2ToC1 = this.distance(this.parent2, this.child1);
 	}
 
-	GEIndividual[] getSurvivalSelection() {
+	GEIndividual[] getSurvivalSelection() throws IOException, URISyntaxException {
 		int d1, d2;
 		GEIndividual[] survivals = new GEIndividual[2];
 		d1 = distanceP1ToC1 + distanceP2ToC2;
@@ -68,8 +80,8 @@ public class Crowding {
 					int replace = dp[i][j] + 1;
 					int insert = dp[i][j + 1] + 1;
 					int delete = dp[i + 1][j] + 1;
-					int min = replace > insert ? insert : replace;
-					min = delete > min ? min : delete;
+					int min = Math.min(replace, insert);
+					min = Math.min(delete, min);
 					dp[i + 1][j + 1] = min;
 				}
 			}
@@ -77,31 +89,41 @@ public class Crowding {
 		return dp[len1][len2];
 	}
 
-//	int distance2(GEIndividual a, GEIndividual b) {
-//		int[] a1 = ((GEChromosome) a.getGenotype().get(0)).toArray();
-//		int[] b1 = ((GEChromosome) b.getGenotype().get(0)).toArray();
-//		int d = 0;
-//		for (int i = 0; i < a1.length; i++) {
-//			for (int j = 0; j < a1.length; j++) {
-//				if (b1[j] == a1[i]) {
-//					d++;
-//				}
-//			}
-//		}
-//		return d;
-//	}
-
-	GEIndividual compare(GEIndividual parent, GEIndividual child) {
-		// if parent don't have any value for fitness, we need to compute its value
-		if(parent.getFitness() == null) {
-			parent = FitnessEvaluation.updateIndividual(parent);
-		}
-		child = FitnessEvaluation.updateIndividual(child);
-		// we can compare parent and child
-		if (parent.getFitness().getDouble() <= child.getFitness().getDouble()) {
-			return child;
+	GEIndividual compare(GEIndividual parent, GEIndividual child) throws IOException, URISyntaxException {
+		if(this.mode.isAxiomMode()) {
+			AxiomFitnessEvaluation fit = new AxiomFitnessEvaluation();
+			// if parent don't have any value for fitness, we need to compute its value
+			if(parent.getFitness() == null) {
+				parent = fit.updateIndividual(parent);
+			}
+			child = fit.updateIndividual(child);
+			// we can compare parent and child
+			if (parent.getFitness().getDouble() <= child.getFitness().getDouble()) {
+				return child;
+			} else {
+				return parent;
+			}
 		} else {
-			return parent;
+			// we need to evaluate the child shape
+			Shape childShape = new Shape(child);
+			ShapesManager shapesManager = new ShapesManager(childShape);
+			// launch evaluation
+			CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP_ADDRESS, Global.CORESE_PREFIXES);
+			String report = endpoint.getProbabilisticValidationReportFromServer(shapesManager.fileContent);
+			// read evaluation report
+			ValidationReport validationReport = new ValidationReport(report);
+			childShape.fillParamFromReport(validationReport);
+			// we can compare parent and child
+			if (parent.getFitness().getDouble() <= (Double) shapesManager.getShape().fitness) {
+				// set the fitness of the child and return it
+				BasicFitness fit = new BasicFitness((Double) childShape.fitness, child);
+				fit.setIndividual(child);
+				fit.getIndividual().setValid(true);
+				child.setFitness(fit);
+				return child;
+			} else {
+				return parent;
+			}
 		}
 	}
 

@@ -10,6 +10,7 @@ import fr.inria.corese.core.load.LoadException;
 import fr.inria.corese.core.load.Service;
 import fr.inria.corese.core.producer.DataFilter;
 import fr.inria.corese.core.query.CompileService;
+import fr.inria.corese.core.query.MatcherImpl;
 import fr.inria.corese.core.query.QueryProcess;
 import fr.inria.corese.core.rule.RuleEngine;
 import fr.inria.corese.core.transform.Transformer;
@@ -29,6 +30,7 @@ import fr.inria.corese.sparql.exceptions.EngineException;
 import fr.inria.corese.sparql.triple.function.script.Function;
 import fr.inria.corese.sparql.triple.function.term.Binding;
 import fr.inria.corese.sparql.triple.function.term.TermEval;
+import fr.inria.corese.sparql.triple.parser.ASTExtension;
 import fr.inria.corese.sparql.triple.parser.Access;
 import fr.inria.corese.sparql.triple.parser.Access.Level;
 import fr.inria.corese.sparql.triple.parser.AccessRight;
@@ -151,6 +153,8 @@ public class Property {
         OWL_CLEAN,
         OWL_CLEAN_QUERY,
         OWL_RL,
+        
+        FUNCTION_PARAMETER_MAX,
         
         // init graph
         GUI_TITLE,
@@ -408,11 +412,12 @@ public class Property {
             case RDF_STAR:
                 Graph.setRDFStar(b);
                 ASTParser.RDF_STAR = b;
-                //ParserHandler.rdf_star_validation = b;
                 break;
                 
             case RDF_STAR_VALIDATION:
+                // check subject literal is an error
                 ParserHandler.rdf_star_validation = b;
+                MatcherImpl.RDF_STAR_VALIDATION = b;
                 break;
                 
             case RDF_STAR_SELECT:                
@@ -575,6 +580,10 @@ public class Property {
                 
             case LOAD_LIMIT:
                 Load.setLimitDefault(n);
+                break;
+                
+            case FUNCTION_PARAMETER_MAX:
+                ASTExtension.FUNCTION_PARAMETER_MAX = n;
                 break;
         }
     }

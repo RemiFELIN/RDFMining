@@ -20,7 +20,7 @@ import org.apache.jena.rdf.model.Statement;
 import org.apache.log4j.*;
 
 import com.i3s.app.rdfminer.Global;
-import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 
 /**
  * @author NGUYEN Thu Huong Extraction of a sample of DBpedia
@@ -103,7 +103,7 @@ public class SampleDBpediaExtraction {
 		String data = queue.poll();
 		// Subject
 		Resource s = m.createResource(data);
-		SparqlEndpoint endpoint = new SparqlEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, PREFIXES);
+		VirtuosoEndpoint endpoint = new VirtuosoEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, PREFIXES);
 		// Set List Objects of res
 		String str = " distinct ?r ?o where {{<" + data + "> ?r ?o. FILTER isIRI(?o). FILTER NOT EXISTS {<" + data
 				+ "> ?r ?o. FILTER(contains(str(?o), \"^\") || contains(str(?o), \"/-\") || contains(str(?o), \",\") || contains(str(?o), \";\") || contains(str(?o), \"!\") || contains(str(?o), \"|\")|| contains(str(?o), \"dbtax\") || contains(str(?r) , \"http://purl.org\") ||contains(str(?r) , \"http://dbpedia.org/ontology/wikiPage\") || contains(str(?r) , \"http://xmlns.com/foaf/0.1/primaryTopic\") || contains(str(?r) , \"http://dbpedia.org/property/wikiPageUsesTemplate\") || contains(str(?o) , \"http://dbpedia.org/class/yago/\") || contains(str(?r) , \"http://dbpedia.org/ontology/abstract\") || contains(str(?r) , \"#comment\") || contains(str(?r) , \"label\") || contains(str(?r) , \"#sameAs\") || contains(str(?r) , \"http://xmlns.com/foaf/0.1/name\") || contains(str(?r) , \"thumbnail\") || contains(str(?r) , \"#wasDerivedFrom\") || contains(str(?r) , \"isPrimaryTopicOf\") || contains(str(?r) , \"depiction\") || contains(str(?r) , \"describedby\") || contains(str(?o) , \"wikidata\") || contains(str(?r) , \"isDefinedBy\") || contains(str(?r) , \"describes\")) } } \n"

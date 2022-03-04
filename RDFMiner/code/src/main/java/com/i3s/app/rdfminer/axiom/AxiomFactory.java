@@ -7,13 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.i3s.app.rdfminer.RDFMiner;
-import com.i3s.app.rdfminer.axiom.Axiom;
-import com.i3s.app.rdfminer.axiom.Type;
 import com.i3s.app.rdfminer.axiom.type.DisjointClassesAxiom;
 import com.i3s.app.rdfminer.axiom.type.SubClassOfAxiom;
 import com.i3s.app.rdfminer.grammar.DLFactory;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
-import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 
 import Mapper.Symbol;
 import Util.Enums;
@@ -99,7 +97,7 @@ public class AxiomFactory extends DLFactory {
 	 * @param syntax an axiom definition in OWL 2 functional-style syntax.
 	 * @return the corresponding axiom.
 	 */
-	public static Axiom create(GEIndividual individual, List<Symbol> syntax, SparqlEndpoint endpoint) {
+	public static Axiom create(GEIndividual individual, List<Symbol> syntax, VirtuosoEndpoint endpoint) {
 
 		Axiom axiom = null;
 		List<List<Symbol>> arguments = parseArguments(syntax);
@@ -205,7 +203,7 @@ public class AxiomFactory extends DLFactory {
 	 * @param str
 	 * @return
 	 */
-	public static Axiom create(GEIndividual individual, String str, SparqlEndpoint endpoint) {
+	public static Axiom create(GEIndividual individual, String str, VirtuosoEndpoint endpoint) {
 		List<Symbol> list = new ArrayList<Symbol>();
 		String symbol = "";
 		boolean blank = false;

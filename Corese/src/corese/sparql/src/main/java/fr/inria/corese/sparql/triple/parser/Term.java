@@ -486,6 +486,7 @@ public class Term extends Expression {
                 
 
             case ExprType.INDEX:
+            case ExprType.XT_LABEL:
             case ExprType.XT_CONTENT:
             case ExprType.XT_DATATYPE_VALUE:
             case ExprType.XT_LOWERCASE:
@@ -628,6 +629,7 @@ public class Term extends Expression {
             case ExprType.IS_TRIPLE:
             case ExprType.SPARQL_COMPARE:
             case ExprType.XT_EDGE:
+            case ExprType.XT_REFERENCE:
             case ExprType.XT_ASSERTED:
                 return new TripleAccess(name);
                                 
@@ -1482,9 +1484,7 @@ public class Term extends Expression {
         return (str.equals(Processor.UNNEST)
                 || str.equals(Processor.KGUNNEST)
                 || str.equals(Processor.SQL)
-                //|| str.equals(XPATH)
-                || //str.equals(Processor.SPARQL) ||
-                str.equals(Processor.EXTERN));
+                || str.equals(Processor.EXTERN));
     }
 
     @Override

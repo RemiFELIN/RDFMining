@@ -13,7 +13,7 @@ import com.i3s.app.rdfminer.axiom.Axiom;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.expression.complement.ComplementClassExpression;
-import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 
 import Mapper.Symbol;
 
@@ -45,7 +45,7 @@ public class DisjointClassesAxiom extends Axiom {
 	 * @param arguments   the functional-style expression of the subclass
 	 * @param endpoint the functional-style expression of the superclass
 	 */
-	public DisjointClassesAxiom(List<List<Symbol>> arguments, SparqlEndpoint endpoint) {
+	public DisjointClassesAxiom(List<List<Symbol>> arguments, VirtuosoEndpoint endpoint) {
 		disjointClass = new Expression[arguments.size()];
 		disjointClassComplement = new Expression[disjointClass.length];
 		for (int i = 0; i < disjointClass.length; i++) {
@@ -118,7 +118,7 @@ public class DisjointClassesAxiom extends Axiom {
 	 * </p>
 	 */
 	@Override
-	public void update(SparqlEndpoint endpoint) {
+	public void update(VirtuosoEndpoint endpoint) {
 		confirmations = new ArrayList<String>();
 		exceptions = new ArrayList<String>();
 		long timeSpent = 0;
@@ -173,7 +173,7 @@ public class DisjointClassesAxiom extends Axiom {
 		logger.info("referenceCardinality = " + referenceCardinality);
 	}
 
-	public void updateVolker(SparqlEndpoint endpoint) {
+	public void updateVolker(VirtuosoEndpoint endpoint) {
 		confirmations = new ArrayList<String>();
 		exceptions = new ArrayList<String>();
 

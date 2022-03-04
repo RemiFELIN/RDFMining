@@ -4,8 +4,8 @@ import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -18,44 +18,64 @@ public class ShapesManager {
     private static final Logger logger = Logger.getLogger(ShapesManager.class);
 
     /**
-     * population from list of GEIndividuals (Genotype) with ID
+     * population of {@link Shape} from list of GEIndividuals (Genotype) with ID
      */
-    protected List<String> population;
+    public List<Shape> population = new ArrayList<>();
 
-    /**
-     * Map of a population of GEIndividuals (Genotype) where K = ID and V = genotype
-     */
-    protected HashMap<String, String> shapesMap;
+    public Shape shape;
+
+    public ArrayList<GEIndividual> individuals;
+
+    public String fileContent;
 
     /**
      * Take a list of GEIndividuals and build a list of well-formed SHACL Shapes
      *
      * @param individuals individuals generated
      */
-    public ShapesManager(ArrayList<GEIndividual> individuals) {
-        population = new ArrayList<>();
-        shapesMap = new HashMap<>();
+    public ShapesManager(ArrayList<GEIndividual> individuals) throws IOException {
+        this.individuals = individuals;
         for (GEIndividual individual : individuals) {
-            String shape = generateIDFromIndividual(individual) + individual.getPhenotype().toString();
-            population.add(shape);
-            shapesMap.put(generateIDFromIndividual(individual), shape);
+            population.add(new Shape(individual));
         }
+        // set the file content to evaluate this SHACL Shapes on server
+        this.fileContent = getFileContent();
     }
 
-    /**
-     * Generate randomly an unique ID for a given individual
-     *
-     * @param individual a GEIndividual from population
-     * @return a unique ID for a given individual. Example: <code>< shape#[random integer] ></code>
-     */
-    private String generateIDFromIndividual(GEIndividual individual) {
-        // the length of the substring depends of the SHACL Shapes ID size such as :
-        return "<shape#" + String.format("%." + Global.SIZE_ID_SHACL_SHAPES + "s", Math.abs(individual.getPhenotype().toString().hashCode())) + "> ";
+    public ShapesManager(Shape shape) {
+        this.shape = shape;
+        // set the file content to evaluate this SHACL Shapes on server
+        this.fileContent = getFileContent();
+    }
+
+    public void updateIndividualList(ArrayList<GEIndividual> updatedIndividuals) {
+        this.individuals = new ArrayList<>(updatedIndividuals);
+    }
+
+    private String getFileContent() {
+        StringBuilder content = new StringBuilder(Global.CORESE_PREFIXES);
+        if(!population.isEmpty()) {
+            for(Shape shape : population) {
+                content.append(shape).append("\n");
+            }
+        } else if(this.shape != null){
+            // set only one shape in fileContent
+            content.append(this.shape).append("\n");
+        }
+        return content.toString();
+    }
+
+    public List<Shape> getPopulation() {
+        return population;
+    }
+
+    public Shape getShape() {
+        return shape;
     }
 
     public void printPopulation() {
-        for (String population : population)
-            logger.info(population);
+        for (Shape ind : population)
+            logger.info(ind.id);
     }
 
 }

@@ -3,7 +3,7 @@ package com.i3s.app.rdfminer.grammar.evolutionary;
 import org.topbraid.spin.vocabulary.SP;
 
 import com.i3s.app.rdfminer.RDFMiner;
-import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 
 import java.util.ArrayList;
 
@@ -33,7 +33,7 @@ public class CostGP {
 	int countTriples;
 	int countVariables;
 	int countInstancesPredicates;
-	static SparqlEndpoint endpointSpin;
+	static VirtuosoEndpoint endpointSpin;
 	String gp;
 	Model model;
 
@@ -41,7 +41,7 @@ public class CostGP {
 		this.gp = gp;
 		String query = "Select ?x where { \n" + gp + "}";
 		model = TranslateToSpin(query);
-		endpointSpin = new SparqlEndpoint(model, PREFIXES);
+		endpointSpin = new VirtuosoEndpoint(model, PREFIXES);
 		this.countUnionOperators = countUnionOperator() * 2; // UNION is more expensive so multiple with 2
 		this.countFilterOperators = countFilterOperator();
 		this.countTriples = countTriples();
@@ -114,7 +114,7 @@ public class CostGP {
 		return count;
 	}
 
-	static ArrayList<String> getPredicates(SparqlEndpoint endpoint_spin, Model model) {
+	static ArrayList<String> getPredicates(VirtuosoEndpoint endpoint_spin, Model model) {
 
 		String GP = "distinct ?p where {\n" + "?t sp:predicate ?p.\n" + "}\n";
 		ArrayList<String> list = new ArrayList<String>();
@@ -128,7 +128,7 @@ public class CostGP {
 		return list;
 	}
 
-	int countInstancesPredicates(SparqlEndpoint endpoint, Model model) {
+	int countInstancesPredicates(VirtuosoEndpoint endpoint, Model model) {
 		ArrayList<String> predicates = getPredicates(endpoint, model);
 		int cost = 0;
 		for (int index = 0; index < predicates.size(); index++) {

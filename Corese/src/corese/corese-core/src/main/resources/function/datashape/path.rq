@@ -21,14 +21,14 @@ prefix shex: <http://ns.inria.fr/shex/shacl#>
 # present=true: fail when path is empty, use case: qualified value shape
 # 
 function sh:path(report, sh, vis, nodeList, path, present) {
-    sh:log("path.rq", "sh:path", "start...");
+    # sh:log("path.rq", "sh:path", "start...");
     if (sh:trace(), xt:print("path:", sh, path, nodeList), true);
     let (b1 = sh:pathBasic(report, sh, vis, nodeList, path, present), 
         b6 = sh:sparql(report, sh, vis, nodeList, path)
     ) {
         sh:log("path.rq", "sh:path", concat("b1=", b1));
         sh:log("path.rq", "sh:path", concat("b6=", b6));
-        sh:log("path.rq", "sh:path", concat("(b1 && b6)=", (b1 && b6)));
+        # sh:log("path.rq", "sh:path", concat("(b1 && b6)=", (b1 && b6)));
         return (b1 &&  b6)
     }
 }
@@ -77,10 +77,10 @@ function sh:pathBasic(report, sh, vis, s, p, present) {
         b4 = xt:size(cstList4) > 0
     ) {
 
-        sh:log("path.rq", "sh:pathBasic", concat("b1=", b1));
-        sh:log("path.rq", "sh:pathBasic", concat("b2=", b2));
-        sh:log("path.rq", "sh:pathBasic", concat("b3=", b3));
-        sh:log("path.rq", "sh:pathBasic", concat("b4=", b4));
+        # sh:log("path.rq", "sh:pathBasic", concat("b1=", b1));
+        # sh:log("path.rq", "sh:pathBasic", concat("b2=", b2));
+        # sh:log("path.rq", "sh:pathBasic", concat("b3=", b3));
+        # sh:log("path.rq", "sh:pathBasic", concat("b4=", b4));
 
         #xt:print("path:",  cstList1);
         if (! (b1 || b2 || b3 || b4)) {
@@ -164,12 +164,12 @@ function sh:pathBasic(report, sh, vis, s, p, present) {
                                     set(res = false) 
                                 }
                             } ;
-                            sh:log("path.rq", "sh:pathBasic", concat("sh=", sh));
-                            sh:log("path.rq", "sh:pathBasic", concat("oper=", oper));
-                            sh:log("path.rq", "sh:pathBasic", concat("val=", val));
-                            sh:log("path.rq", "sh:pathBasic", concat("s=", s));
-                            sh:log("path.rq", "sh:pathBasic", concat("p=", p));
-                            sh:log("path.rq", "sh:pathBasic", concat("res=", res));
+                            # sh:log("path.rq", "sh:pathBasic", concat("sh=", sh));
+                            # sh:log("path.rq", "sh:pathBasic", concat("oper=", oper));
+                            # sh:log("path.rq", "sh:pathBasic", concat("val=", val));
+                            # sh:log("path.rq", "sh:pathBasic", concat("s=", s));
+                            # sh:log("path.rq", "sh:pathBasic", concat("p=", p));
+                            # sh:log("path.rq", "sh:pathBasic", concat("res=", res));
                             # xt:print("res2:", sh, oper, val, s, p, res)
                         } ;
                         
@@ -317,7 +317,7 @@ function sh:uniqueLang (report, sh, vis, s, p, v, nodeList){
 
 
 function sh:hasValue (report, sh, vis, s, p, v, nodeList) {
-    sh:log("path.rq", "sh:hasValue", "start...");
+    # sh:log("path.rq", "sh:hasValue", "start...");
     let (suc = sh:hasValueList(v, nodeList)) {
         # -> 8 args
         sh:report(report, sh:hasValue, sh, s, p, v, suc, vis) ;
@@ -418,14 +418,14 @@ function sh:not (report, sh, vis, s, p, cst, nodeList, present) {
 #
 
 function sh:pathbool (report, oper, sh, vis, s, p, cst, nodeList, present) {
-    sh:log("path.rq", "sh:pathbool", "start...");
+    # sh:log("path.rq", "sh:pathbool", "start...");
     if (oper = sh:not) {
         sh:not (report, sh, vis, s, p, cst, nodeList, present)
     }
     else {
         let (res = true, shList = sh:getShapeConstraint(sh:pathboolean,  cst)) {
-            sh:log("path.rq", "sh:pathbool", concat("res=", res));
-            sh:log("path.rq", "sh:pathbool", concat("shList=", shList));
+            # sh:log("path.rq", "sh:pathbool", concat("res=", res));
+            # sh:log("path.rq", "sh:pathbool", concat("shList=", shList));
             for (o in nodeList) {
                 let (suc = coalesce(funcall(oper, report, sh, cst, shList, s, p, o, vis, present), false)) { 
                     #if (suc, true, sh:report(report, oper, sh, s, p, o, suc, vis));

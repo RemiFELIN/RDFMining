@@ -115,6 +115,12 @@ public class ParserHandler {
         }
     }
     
+    public void createNquad(Atom subject, Atom predicate, Atom object, Atom graph) {
+        if (create != null) {
+           create.triple(graph, subject, predicate, object);
+        }
+    }
+    
     public Triple createTriple(ASTQuery ast, Atom p, List<Atom> list, boolean matchArity) {
         return createTriple(ast, p, list, matchArity, false);
     }
@@ -151,7 +157,8 @@ public class ParserHandler {
         if (create != null) {
             create.list(rlist);
         } else {
-            stack.add(rlist);
+            //stack.add(rlist);
+            stack.addList(rlist);
         }
 
         return rlist.head();

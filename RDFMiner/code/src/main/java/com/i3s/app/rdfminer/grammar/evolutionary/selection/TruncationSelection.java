@@ -19,15 +19,14 @@ public class TruncationSelection extends EliteSelection {
 		super(size);
 	}
 
-	public ArrayList<GEIndividual> setupSelectedPopulation(ArrayList<GEIndividual> candidatePopulation, int popSize) {
+	public ArrayList<GEIndividual> setupSelectedPopulation(int popSize) {
 		ArrayList<GEIndividual> selectedPopulation = new ArrayList<GEIndividual>();
-		int i = 0;
-		int k;
+		int i = 0, k;
 		int elitePopsize = elitedPopulation.size();
 		while (i < popSize) {
 			k = 0;
 			while (k < elitePopsize && i < popSize) {
-				selectedPopulation.add((GEIndividual) elitedPopulation.get(k));
+				selectedPopulation.add(elitedPopulation.get(k));
 				k++;
 				i++;
 			}

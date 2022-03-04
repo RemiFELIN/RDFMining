@@ -11,8 +11,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import Individuals.GEChromosome;
-import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.RDFNode;
@@ -23,7 +21,7 @@ import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
-import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 
 //import com.hp.hpl.jena.query.QuerySolution;
 //import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -179,7 +177,7 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 	protected Set<RDFNodePair> getNodes(String sparql) {
 		Set<RDFNodePair> classes = new TreeSet<RDFNodePair>();
 		logger.warn("Querying DBpedia with query " + sparql);
-		SparqlEndpoint endpoint = new SparqlEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES);
+		VirtuosoEndpoint endpoint = new VirtuosoEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES);
 		ResultSet result = endpoint.select(sparql, 0);
 		while (result.hasNext()) {
 			QuerySolution solution = result.next();

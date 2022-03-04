@@ -18,9 +18,9 @@ import java.util.HashMap;
  * Sparql endpoint to manage and request the Corese server
  * @author Rémi FELIN
  */
-public class SparqlEndpoint {
+public class CoreseEndpoint {
 
-    private static final Logger logger = Logger.getLogger(SparqlEndpoint.class);
+    private static final Logger logger = Logger.getLogger(CoreseEndpoint.class);
 
     /**
      * The URL of the SPARQL endpoint.
@@ -53,11 +53,16 @@ public class SparqlEndpoint {
     public final String CORESE_GET_SHACL_SHAPES_ENDPOINT = "rdfminer/shacl/shapes";
 
     /**
+     * Corese params : Probabilistic SHACL Evaluation
+     */
+    public final String PROBABILISTIC_SHACL_EVALUATION = "prob-shacl";
+
+    /**
      * Constructor of SparqlEndpoint
      * @param url the IP Address of Corese server
      * @param prefixes the prefixes used for the queries
      */
-    public SparqlEndpoint(String url, String prefixes) {
+    public CoreseEndpoint(String url, String prefixes) {
         this.url = url;
         this.prefixes = prefixes;
     }
@@ -89,7 +94,7 @@ public class SparqlEndpoint {
      * @throws URISyntaxException Error concerning the syntax of the given URL
      * @throws IOException Error concerning the execution of the POST request
      */
-    public int sendSHACLShapesToServer(String fileContent) throws URISyntaxException, IOException {
+    public void sendSHACLShapesToServer(String fileContent) throws URISyntaxException, IOException {
         // build the final URL
         final String service = url + CORESE_SEND_SHACL_SHAPES_ENDPOINT;
         URIBuilder builder = new URIBuilder(service);
@@ -98,7 +103,8 @@ public class SparqlEndpoint {
         // POST request
         HttpPost post = new HttpPost(builder.build());
         HttpResponse response = httpClient.execute(post);
-        return response.getStatusLine().getStatusCode();
+        if(response.getStatusLine().getStatusCode() != HttpURLConnection.HTTP_OK)
+            logger.error("Error " + response.getStatusLine().getStatusCode() + " while sending SHACL Shapes on server ...");
     }
 
     /**
@@ -115,6 +121,23 @@ public class SparqlEndpoint {
     }
 
     /**
+     * Given
+     * @return
+     */
+    public String getProbabilisticValidationReportFromServer(String fileContent) throws URISyntaxException, IOException {
+        // build the final URL
+        final String service = url + CORESE_SPARQL_ENDPOINT;
+        // fill params
+        HashMap<String, String> params = new HashMap<>();
+        params.put("mode", PROBABILISTIC_SHACL_EVALUATION);
+        params.put("content", fileContent);
+        params.put("query", "construct where {?s ?p ?o}");
+        params.put("format", Format.TURTLE);
+        // send GET request
+        return get(service, params);
+    }
+
+    /**
      * GET Request send to the server using a given service
      * @param service URL of the service endpoint
      * @param params [OPTIONAL] the query params of the request
@@ -122,8 +145,7 @@ public class SparqlEndpoint {
      * @throws URISyntaxException Error concerning the syntax of the given URL
      * @throws IOException Error concerning the execution of the POST request
      */
-    @SafeVarargs
-    public final String get(String service, HashMap<String, String>... params) throws URISyntaxException, IOException {
+    public String get(String service, HashMap<String, String>... params) throws URISyntaxException, IOException {
         URIBuilder builder = new URIBuilder(service);
         // params
         if(params.length > 0) {
@@ -157,12 +179,12 @@ public class SparqlEndpoint {
     }
 
     public static void main(String[] args) throws URISyntaxException, IOException {
-        SparqlEndpoint endpoint = new SparqlEndpoint(Global.CORESE_IP_ADDRESS, Global.CORESE_PREFIXES);
+        CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP_ADDRESS, Global.CORESE_PREFIXES);
         for(int hexDigit = 0; hexDigit<0x10; hexDigit++) {
             String h = String.format("\"%x\"", hexDigit);
             System.out.println("### h=" + h);
             String sparql = RequestBuilder.buildSelectRequest("distinct ?class", "?class a ?z. FILTER(contains(str(?class), \"http://\")). FILTER( strStarts(MD5(str(?class))  , " + h + ") )");
-            String res = endpoint.select(Format.FORMAT_JSON, sparql);
+            String res = endpoint.select(Format.JSON, sparql);
             ResultParser.getResultsfromVariable("class", res);
         }
 

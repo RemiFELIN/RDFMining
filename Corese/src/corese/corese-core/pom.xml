@@ -41,20 +41,11 @@
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>compiler</artifactId>
         </dependency>
-<!--        <dependency>
-            <groupId>${project.parent.groupId}</groupId>
-            <artifactId>kgram</artifactId>
-        </dependency>-->
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>sparql</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>xerces</groupId>-->
-        <!--<artifactId>xercesImpl</artifactId>-->
-        <!--<scope>runtime</scope>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -79,7 +70,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>org.openrdf.sesame</groupId>
             <artifactId>sesame-rio-api</artifactId>
         </dependency>
@@ -92,7 +83,7 @@
             <groupId>org.openrdf.sesame</groupId>
             <artifactId>sesame-util</artifactId>
             <scope>runtime</scope>
-        </dependency>
+        </dependency>-->
         <!--RDFa parser-->
         <dependency>
             <groupId>${semargl.groupId}</groupId>
@@ -111,10 +102,6 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.jena</groupId>
@@ -141,10 +128,6 @@
             <artifactId>log4j-slf4j18-impl</artifactId>
             <version>${log4j2.version}</version>
             <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.activation</groupId>
-            <artifactId>javax.activation</artifactId>
         </dependency>
     </dependencies>
 
@@ -199,6 +182,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>

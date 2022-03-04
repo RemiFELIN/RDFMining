@@ -5,14 +5,16 @@ package com.i3s.app.rdfminer.axiom;
 
 import java.util.List;
 
+import com.i3s.app.rdfminer.output.Results;
+import com.i3s.app.rdfminer.shacl.ValidationReport;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.i3s.app.rdfminer.axiom.type.DisjointClassesAxiom;
 import com.i3s.app.rdfminer.fuzzy.TruthDegree;
-import com.i3s.app.rdfminer.grammar.evolutionary.fitness.FitnessEvaluation;
+import com.i3s.app.rdfminer.grammar.evolutionary.fitness.AxiomFitnessEvaluation;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
-import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 
 import Mapper.Symbol;
 
@@ -30,7 +32,7 @@ import Mapper.Symbol;
  * @author Andrea G. B. Tettamanzi & NGUYEN Thu Huong & Rémi FELIN
  *
  */
-public abstract class Axiom {
+public abstract class Axiom extends Results {
 
 	/**
 	 * Title of the axiom
@@ -66,7 +68,7 @@ public abstract class Axiom {
 
 	/**
 	 * The fitness of the axiom correspond to its value evaluated by a function, see
-	 * the {@link FitnessEvaluation#setFitness(Axiom) evaluation} function used
+	 * the {@link AxiomFitnessEvaluation#setFitness(Axiom) evaluation} function used
 	 */
 	public double fitness = 0.0;
 
@@ -233,9 +235,10 @@ public abstract class Axiom {
 	 * and stored in a list.
 	 * </p>
 	 */
-	public void update(SparqlEndpoint endpoint) {
+	public void update(VirtuosoEndpoint endpoint) {
 	}
 
+	@Override
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		json.put("axiom", axiomId);

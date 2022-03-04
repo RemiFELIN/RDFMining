@@ -78,14 +78,15 @@ public class Global {
     /**
      * Corese prefixes for SHACL Shapes
      */
-    public static final String CORESE_PREFIXES = "@prefix dbo: <http://dbpedia.org/ontology/> \n" +
-            "@prefix sh: <http://www.w3.org/ns/shacl#> \n" +
-            "@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n\n";
+    public static final String CORESE_PREFIXES = "base <http://rdfminer.com/shapes/> \n" +
+            "prefix sh: <http://www.w3.org/ns/shacl#> \n" +
+            "prefix rdfminer: <http://ns.inria.fr/rdfminer/shacl#> \n" +
+            "prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n\n";
 
     /**
      * Size of the SHACL Shapes ID randomly generated using BNF Grammar
      */
-    public static final int SIZE_ID_SHACL_SHAPES = 8;
+    public static final int SIZE_ID_SHACL_SHAPES = 6;
 
     /**
      * Output path of results, it corresponding to '/rdfminer/io/' in container

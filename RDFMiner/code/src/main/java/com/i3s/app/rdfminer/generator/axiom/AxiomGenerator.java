@@ -3,32 +3,22 @@
  */
 package com.i3s.app.rdfminer.generator.axiom;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.Iterator;
-
+import Individuals.Phenotype;
+import Mapper.Production;
+import Mapper.Rule;
+import Mapper.Symbol;
+import Util.Enums;
+import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.generator.Generator;
+import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
-import com.i3s.app.rdfminer.Global;
-import com.i3s.app.rdfminer.RDFMiner;
-import com.i3s.app.rdfminer.expression.Expression;
-import com.i3s.app.rdfminer.grammar.DLGEGrammar;
-import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
-
-import Individuals.Phenotype;
-import Mapper.ContextFreeGrammar;
-import Mapper.DerivationTree;
-import Mapper.Production;
-import Mapper.Rule;
-import Mapper.Symbol;
-import Util.Enums;
+import java.io.*;
+import java.util.Iterator;
 
 /**
  * An generator of OWL 2 axiom.
@@ -42,12 +32,7 @@ import Util.Enums;
  */
 public abstract class AxiomGenerator extends Generator {
 
-	private static Logger logger = Logger.getLogger(AxiomGenerator.class.getName());
-
-	/**
-	 * The grammar defining the logical language of the axioms.
-	 */
-	protected DLGEGrammar grammar;
+	private static final Logger logger = Logger.getLogger(AxiomGenerator.class.getName());
 
 	/**
 	 * Constructs a new axiom generator with no grammar attached.
@@ -145,7 +130,7 @@ public abstract class AxiomGenerator extends Generator {
 			logger.info("Querying SPARQL endpoint for symbol <" + symbol + "> ...");
 //			"with query:\nSELECT "
 //					+ SparqlEndpoint.prettyPrint(sparql));
-			SparqlEndpoint endpoint = new SparqlEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES);
+			VirtuosoEndpoint endpoint = new VirtuosoEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES);
 			ResultSet result = endpoint.select(sparql, 0);
 			PrintStream cache = null;
 			try {
@@ -171,6 +156,7 @@ public abstract class AxiomGenerator extends Generator {
 						// Enums.SymbolType.TSymbol);
 						prod.add(t);
 						// Write the cache with the symbol found
+						assert cache != null;
 						cache.println(t);
 						separator = " ";
 					} else {

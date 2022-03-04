@@ -91,6 +91,7 @@ import fr.inria.corese.gui.query.MyJPanelQuery;
 import fr.inria.corese.kgram.core.Mappings;
 import fr.inria.corese.kgram.event.Event;
 import fr.inria.corese.shex.shacl.Shex;
+import fr.inria.corese.sparql.datatype.DatatypeMap;
 import fr.inria.corese.sparql.exceptions.EngineException;
 import fr.inria.corese.sparql.exceptions.SafetyException;
 import fr.inria.corese.sparql.triple.parser.Access;
@@ -866,9 +867,11 @@ public class MainFrame extends JFrame implements ActionListener {
         }
 
         displayMenu.add(defDisplay("Turtle", ResultFormat.TURTLE_FORMAT));
-        displayMenu.add(defDisplay("Trig", ResultFormat.TRIG_FORMAT));
+        displayMenu.add(defDisplay("Trig",   ResultFormat.TRIG_FORMAT));
         displayMenu.add(defDisplay("RDF/XML", ResultFormat.RDF_XML_FORMAT));
         displayMenu.add(defDisplay("JSON LD", ResultFormat.JSON_LD_FORMAT));
+        displayMenu.add(defDisplay("Index",    ResultFormat.UNDEF_FORMAT));
+        displayMenu.add(defDisplay("Internal", ResultFormat.UNDEF_FORMAT));
 
         shaclMenu.add(itypecheck);
         shaclMenu.add(defItem("Fast Engine", "shacl/fastengine.rq"));
@@ -1212,15 +1215,35 @@ public class MainFrame extends JFrame implements ActionListener {
     JMenuItem defDisplay(String name, int format) {
         JMenuItem it = new JMenuItem(name);
         it.addActionListener((ActionEvent event) -> {
-            displayMenu(name, format);
+            getCurrentQueryPanel().getTextArea().setText(
+                    displayMenu(name, format));
         });
         return it;
     }
 
-    void displayMenu(String name, int format) {
-        ResultFormat ft = ResultFormat.create(getMyCorese().getGraph(), format)
-                .setNbTriple(getTripleMax());
-        getCurrentQueryPanel().getTextArea().setText(ft.toString());
+    String displayMenu(String name, int format) {
+        if (format == ResultFormat.UNDEF_FORMAT) {
+            return displayGraph(name, format);
+        } else {
+            ResultFormat ft = ResultFormat.create(getGraph(), format)
+                    .setNbTriple(getTripleMax());
+            return ft.toString();
+        }
+    }
+    
+    String displayGraph(String name, int format) {
+        if (name.equals("Internal")) {
+            DatatypeMap.DISPLAY_AS_TRIPLE = false;
+        }
+        String str = getGraph().display();
+        if (name.equals("Internal")) {
+            DatatypeMap.DISPLAY_AS_TRIPLE = true;
+        }
+        return str;
+    }
+    
+    Graph getGraph() {
+        return getMyCorese().getGraph();
     }
 
     int getTripleMax() {

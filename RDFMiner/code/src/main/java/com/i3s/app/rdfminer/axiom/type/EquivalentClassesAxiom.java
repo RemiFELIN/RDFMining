@@ -10,7 +10,7 @@ import com.i3s.app.rdfminer.axiom.Axiom;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.expression.complement.ComplementClassExpression;
-import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 
 import Mapper.Symbol;
 
@@ -39,7 +39,7 @@ public class EquivalentClassesAxiom extends Axiom {
 	 * 
 	 *
 	 */
-	public EquivalentClassesAxiom(List<List<Symbol>> arguments, SparqlEndpoint endpoint) {
+	public EquivalentClassesAxiom(List<List<Symbol>> arguments, VirtuosoEndpoint endpoint) {
 		equivalentClass = new Expression[arguments.size()];
 		equivalentClassComplement = new Expression[equivalentClass.length];
 		for (int i = 0; i < equivalentClass.length; i++) {
@@ -51,10 +51,10 @@ public class EquivalentClassesAxiom extends Axiom {
 				equivalentClassComplement[i] = new ComplementClassExpression(equivalentClass[i]);
 
 			System.out.println("\nclass_" + i + " = " + equivalentClass[i] + "; graph pattern =");
-			System.out.println(SparqlEndpoint.prettyPrint(equivalentClass[i].graphPattern));
+			System.out.println(VirtuosoEndpoint.prettyPrint(equivalentClass[i].graphPattern));
 
 			System.out.println("\n~class_" + i + " = " + equivalentClassComplement[i] + "; graph pattern =");
-			System.out.println(SparqlEndpoint.prettyPrint(equivalentClassComplement[i].graphPattern));
+			System.out.println(VirtuosoEndpoint.prettyPrint(equivalentClassComplement[i].graphPattern));
 		}
 
 		update(endpoint);
@@ -97,7 +97,7 @@ public class EquivalentClassesAxiom extends Axiom {
 	 * </p>
 	 */
 	@Override
-	public void update(SparqlEndpoint endpoint) {
+	public void update(VirtuosoEndpoint endpoint) {
 		confirmations = new ArrayList<String>();
 		exceptions = new ArrayList<String>();
 

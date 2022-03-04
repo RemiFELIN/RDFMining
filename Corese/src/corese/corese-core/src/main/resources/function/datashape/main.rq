@@ -119,7 +119,7 @@ function dt:graph sh:shacl(dt:graph shape, focus) {
 # focus = mappings or list(sh=nodeShape; list=targetNodeList)
 #
 function sh:shacleval(shape, focus) {
-    sh:log("main.rq", "sh:shacleval", "start...");
+    # sh:log("main.rq", "sh:shacleval", "start...");
     let (suc = true) {
         for ((sh list) in focus) {
             if (sh:trace(), xt:print("target:", coalesce(sh, "undef"), xt:size(list), list), true);
@@ -144,14 +144,17 @@ function sh:shacleval(shape, focus) {
                     set(result = res);
                     if (res, true, set(suc = false))
                 } ;
-                # if the RDF graph is conform, we set the report to conform such as :
-                sh:success(result, rep);
                 # write the additionnal component (Extended SHACL)
                 # 'body' is defined on <report.rq>
                 if(extended) {
                     sh:addExtendedShaclReport(rep, exceptions);
                 } ;
             }
+        } ;
+        # if the RDF graph is conform, we set the report to conform such as :
+        if(coalesce(!fail, true)) {
+            # sh:log("main.rq", "debug", concat("fail is ", fail));
+            sh:success(true, rep);
         } ;
         return (suc)
     }

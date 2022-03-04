@@ -20,7 +20,7 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.*;
 
-import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 
 /**
  * GoldStandard Matrix provides the standard in the assessment of the
@@ -56,7 +56,7 @@ public class GoldStandardMatrix {
 			+ "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n" + "PREFIX dc: <http://purl.org/dc/elements/1.1/>\n"
 			+ "PREFIX dbr: <http://dbpedia.org/resource/>\n" + "PREFIX dbp: <http://dbpedia.org/property/>\n"
 			+ "PREFIX dbo: <http://dbpedia.org/ontology>\n";
-	public static SparqlEndpoint endpoint;
+	public static VirtuosoEndpoint endpoint;
 	private static Scanner sc;
 	public static String rootClass = "http://dbpedia.org/ontology/Work";
 
@@ -65,7 +65,7 @@ public class GoldStandardMatrix {
 		// Configure the log4j loggers:
 		PropertyConfigurator.configure("log4j.properties");
 		sc = new Scanner(System.in);
-		endpoint = new SparqlEndpoint(dbpedia2, PREFIXES);
+		endpoint = new VirtuosoEndpoint(dbpedia2, PREFIXES);
 		GoldStandardMatrix A = new GoldStandardMatrix();
 		setMatrix(LoadMatrix());
 		logger.info("Matrix size: " + M.length + "*" + M.length);
@@ -95,7 +95,7 @@ public class GoldStandardMatrix {
 		String sparql_countClasses = "(count(distinct ?class) AS ?count) where {?class a owl:Class. ?class rdfs:subClassOf+ <"
 				+ rootClass + ">}";
 		logger.info("Querying SPARQL endpoint for the number of subclasses of the class : <" + rootClass
-				+ "> with query:\nSELECT " + SparqlEndpoint.prettyPrint(sparql_countClasses));
+				+ "> with query:\nSELECT " + VirtuosoEndpoint.prettyPrint(sparql_countClasses));
 		ResultSet result1 = endpoint.select(sparql_countClasses, 0);
 		QuerySolution solution1 = result1.next();
 		Iterator<String> t = solution1.varNames();
@@ -106,7 +106,7 @@ public class GoldStandardMatrix {
 		String sparql_listClasses = "distinct ?class where {?class a owl:Class. ?class rdfs:subClassOf+ <" + rootClass
 				+ ">}";
 		logger.info("Querying SPARQL endpoint for symbol <Class> with query:\nSELECT "
-				+ SparqlEndpoint.prettyPrint(sparql_listClasses));
+				+ VirtuosoEndpoint.prettyPrint(sparql_listClasses));
 		ResultSet result2 = endpoint.select(sparql_listClasses, 0);
 
 		int dem = 0;
@@ -176,7 +176,7 @@ public class GoldStandardMatrix {
 		return List;
 	}
 
-	static ArrayList<RDFNode> ResultQuery(SparqlEndpoint endpoint, String sparql) {
+	static ArrayList<RDFNode> ResultQuery(VirtuosoEndpoint endpoint, String sparql) {
 		ArrayList<RDFNode> arrRDFNode = new ArrayList<RDFNode>();
 		ResultSet result = endpoint.select(sparql, 0);
 		while (result.hasNext()) {

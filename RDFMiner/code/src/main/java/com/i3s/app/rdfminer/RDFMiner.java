@@ -8,6 +8,11 @@ import java.io.FileWriter;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import com.i3s.app.rdfminer.mode.Mode;
+import com.i3s.app.rdfminer.mode.TypeMode;
+import com.i3s.app.rdfminer.output.Results;
+import com.i3s.app.rdfminer.output.axiom.AxiomsResultsJSON;
+import com.i3s.app.rdfminer.output.shacl.ShapesResultsJSON;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONArray;
@@ -18,8 +23,7 @@ import org.kohsuke.args4j.CmdLineParser;
 import com.i3s.app.rdfminer.grammar.evolutionary.CostGP;
 import com.i3s.app.rdfminer.launcher.LaunchWithGE;
 import com.i3s.app.rdfminer.launcher.LaunchWithoutGE;
-import com.i3s.app.rdfminer.output.ResultsJSON;
-import com.i3s.app.rdfminer.output.StatJSON;
+import com.i3s.app.rdfminer.output.axiom.StatJSON;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
 
 /**
@@ -48,10 +52,12 @@ public class RDFMiner {
 	// v1.0 evaluate data
 	public static JSONArray axiomsList;
 	// v1.2 miner data
-	public static ResultsJSON results;
+	public static Results results;
 	public static StatJSON stats;
-	public static List<JSONObject> axioms;
+	public static List<JSONObject> content;
 	public static int type;
+	// v1.4 Mode
+	public static Mode mode;
 
 	/**
 	 * A service native method to query for CPU usage.
@@ -139,6 +145,15 @@ public class RDFMiner {
 			}
 		}
 		RDFMiner.outputFolder = Global.OUTPUT_PATH + parameters.resultFolder;
+
+		// get the mode used ( SHACL Shapes ; OWL 2 Axioms )
+		if(parameters.useRandomShaclShapesGenerator) {
+			mode = new Mode(TypeMode.SHACL_SHAPE);
+			results = new ShapesResultsJSON();
+		} else {
+			mode = new Mode(TypeMode.AXIOMS);
+			results = new AxiomsResultsJSON();
+		}
 		
 		// If parameters.grammaticalEvolution is used, we launch an instance of
 		// Grammar-based genetic programming

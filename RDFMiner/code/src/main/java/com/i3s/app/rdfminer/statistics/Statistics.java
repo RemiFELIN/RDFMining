@@ -16,6 +16,11 @@ import java.util.ArrayList;
 public class Statistics {
 
 	public double computeAverageFitness(ArrayList<GEIndividual> individuals) {
+//		for(GEIndividual individual : individuals) {
+//			System.out.println("~~~~~~~~~~~~~~~~~");
+//			System.out.println("individual: " + individual);
+//			System.out.println("fitness= " + individual.getFitness());
+//		}
 		double sumFitness = 0;
 		for (int i = 0; i < individuals.size(); i++) {
 			sumFitness += individuals.get(i).getFitness().getDouble();

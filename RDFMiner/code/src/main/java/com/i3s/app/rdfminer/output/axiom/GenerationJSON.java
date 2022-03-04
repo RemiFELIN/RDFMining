@@ -1,5 +1,7 @@
-package com.i3s.app.rdfminer.output;
+package com.i3s.app.rdfminer.output.axiom;
 
+import com.i3s.app.rdfminer.output.Results;
+import com.i3s.app.rdfminer.shacl.ValidationReport;
 import org.json.JSONObject;
 
 /**
@@ -10,7 +12,7 @@ import org.json.JSONObject;
  * @author Rémi FELIN
  *
  */
-public class GenerationJSON {
+public class GenerationJSON extends Results {
 
 	public int idGeneration;
 	public double numSuccessMapping;
@@ -19,7 +21,8 @@ public class GenerationJSON {
 	public double averageFitness;
 	public double numComplexAxiom;
 	public double numComplexAxiomSpecial;
-	
+
+	@Override
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		json.put("idGeneration", idGeneration);
@@ -31,5 +34,5 @@ public class GenerationJSON {
 		json.put("numComplexAxiomSpecial", numComplexAxiomSpecial);
 		return json;
 	}
-	
+
 }

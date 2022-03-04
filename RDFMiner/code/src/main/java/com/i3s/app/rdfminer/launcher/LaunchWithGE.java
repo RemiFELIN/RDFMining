@@ -1,43 +1,36 @@
 package com.i3s.app.rdfminer.launcher;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
-import com.i3s.app.rdfminer.mode.Mode;
-import com.i3s.app.rdfminer.axiom.Type;
-import com.i3s.app.rdfminer.generator.Generator;
-import com.i3s.app.rdfminer.generator.shacl.RandomShapeGenerator;
-import com.i3s.app.rdfminer.mode.TypeMode;
-import com.i3s.app.rdfminer.shacl.ShapesManager;
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
-
+import Individuals.GEChromosome;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.axiom.Type;
+import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
+import com.i3s.app.rdfminer.generator.shacl.RandomShapeGenerator;
 import com.i3s.app.rdfminer.grammar.evolutionary.EATools;
-import com.i3s.app.rdfminer.grammar.evolutionary.fitness.FitnessEvaluation;
+import com.i3s.app.rdfminer.grammar.evolutionary.Fitness;
+import com.i3s.app.rdfminer.grammar.evolutionary.fitness.AxiomFitnessEvaluation;
+import com.i3s.app.rdfminer.grammar.evolutionary.fitness.ShapeFitnessEvaluation;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.CandidatePopulation;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.grammar.evolutionary.selection.EliteSelection;
 import com.i3s.app.rdfminer.grammar.evolutionary.selection.TruncationSelection;
 import com.i3s.app.rdfminer.grammar.evolutionary.selection.TypeSelection;
-import com.i3s.app.rdfminer.output.GenerationJSON;
-import com.i3s.app.rdfminer.output.ResultsJSON;
-import com.i3s.app.rdfminer.output.StatJSON;
+import com.i3s.app.rdfminer.mode.Mode;
+import com.i3s.app.rdfminer.output.axiom.GenerationJSON;
+import com.i3s.app.rdfminer.output.axiom.AxiomsResultsJSON;
+import com.i3s.app.rdfminer.output.axiom.StatJSON;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
+import com.i3s.app.rdfminer.shacl.Shape;
 import com.i3s.app.rdfminer.statistics.Statistics;
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
-import Individuals.GEChromosome;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class LaunchWithGE {
 
@@ -54,15 +47,15 @@ public class LaunchWithGE {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             logger.warn("Shutting down RDFMiner ...");
             // Save results in output file
-            writeAndFinish();
+            writeAndFinish(RDFMiner.mode);
         }));
 
-        RDFMiner.results = new ResultsJSON();
-        RDFMiner.axioms = new ArrayList<>();
+        RDFMiner.results = new AxiomsResultsJSON();
+        RDFMiner.content = new ArrayList<>();
         RDFMiner.stats = new StatJSON();
 
         Generator generator = null;
-        Mode mode;
+//        Mode mode = null ;
 
         if (parameters.axiomFile == null) {
             if (parameters.useRandomAxiomGenerator) {
@@ -71,15 +64,17 @@ public class LaunchWithGE {
                 logger.info("Initializing the random axiom generator with grammar " + parameters.grammarFile + "...");
                 generator = new RandomAxiomGenerator(parameters.grammarFile, true);
                 // set the mode to AXIOMS
-                mode = new Mode(TypeMode.AXIOMS);
+//                mode = new Mode(TypeMode.AXIOMS);
             } else if (parameters.useRandomShaclShapesGenerator) {
                 // launch random SHACL Shapes generator
                 logger.info("Initializing the random SHACL Shapes generator with grammar " + parameters.grammarFile + "...");
                 generator = new RandomShapeGenerator(parameters.grammarFile);
                 // set the mode to SHACL_SHAPE
-                mode = new Mode(TypeMode.SHACL_SHAPE);
+//                mode = new Mode(TypeMode.SHACL_SHAPE);
             }
         }
+//        assert mode != null;
+
         // Create the results file
         try {
             RDFMiner.output = new FileWriter(RDFMiner.outputFolder + Global.RESULTS_FILENAME);
@@ -146,16 +141,6 @@ public class LaunchWithGE {
                 parameters.maxWrapp);
         candidatePopulation = canPop.initialize(buffer, curGeneration);
 
-        logger.info("--------- [TMP] phenotype generated :");
-        for (GEIndividual ind : candidatePopulation) {
-            logger.info(ind.getPhenotype());
-        }
-
-        // test shapesManager
-        logger.info("--------- [TMP] ShapesManager : cleaned population :");
-        ShapesManager shapesManager = new ShapesManager(candidatePopulation);
-        shapesManager.printPopulation();
-
         // Fill the 'stats' part of the JSON output
         RDFMiner.stats.populationSize = parameters.populationSize;
         RDFMiner.stats.maxLengthChromosome = parameters.initLenChromosome;
@@ -188,35 +173,58 @@ public class LaunchWithGE {
                 break;
         }
 
+        // set an url and prefixes (depending of the mode used)
+        String url = "";
+        String prefixes = "";
+        ArrayList<JSONObject> shapes = null;
+        // set the fitness method
+        Fitness fit = null;
+        if(RDFMiner.mode.isAxiomMode()) {
+            url = Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT;
+            prefixes = Global.VIRTUOSO_LOCAL_PREFIXES;
+            // set a Fitness method provided to update individuals as OWL 2 Axiom
+            fit = new AxiomFitnessEvaluation();
+        } else if(RDFMiner.mode.isShaclMode()) {
+            url = Global.CORESE_IP_ADDRESS;
+            prefixes = Global.CORESE_PREFIXES;
+            // set a Fitness method provided to update individuals as SHACL Shape
+            fit = new ShapeFitnessEvaluation();
+            shapes = new ArrayList<>();
+        }
+        assert fit != null;
+
         while (curCheckpoint <= parameters.checkpoint) {
             System.out.println("\n--------------------------------------------------------\n");
             logger.info("Generation: " + curGeneration);
-            FitnessEvaluation fit = new FitnessEvaluation();
             // First step of the grammatical evolution
             if ((curGeneration == 1) || ((buffer != null) && (!flag))) {
                 // if1
-                logger.info("Begin evaluating individuals...");
-                fit.updatePopulation(candidatePopulation, false, null);
+                candidatePopulation = fit.updatePopulation(candidatePopulation, url, prefixes, null);
             }
             // Checkpoint reached, this is a code to evaluate and save axioms in output file
             if (parameters.populationSize * curGeneration == parameters.kBase * curCheckpoint) {
 
-                List<JSONObject> axioms = new ArrayList<>();
-
-                fit.display(candidatePopulation, axioms, curGeneration);
-
-                ArrayList<GEIndividual> candidatePopulation2 = new ArrayList<>();
-                for (GEIndividual geIndividual : candidatePopulation) {
-                    GEIndividual indivi = new GEIndividual();
-                    indivi.setMapper(geIndividual.getMapper());
-                    indivi.setGenotype(geIndividual.getGenotype());
-                    indivi.setPhenotype(geIndividual.getPhenotype());
-                    indivi.setMapped(geIndividual.isMapped());
-                    candidatePopulation2.add(indivi);
+                if(RDFMiner.mode.isAxiomMode()) {
+                    List<JSONObject> content = new ArrayList<>();
+                    fit.display(candidatePopulation, content, curGeneration);
+                    ArrayList<GEIndividual> candidatePopulation2 = new ArrayList<>();
+                    for (GEIndividual geIndividual : candidatePopulation) {
+                        GEIndividual indivi = new GEIndividual();
+                        indivi.setMapper(geIndividual.getMapper());
+                        indivi.setGenotype(geIndividual.getGenotype());
+                        indivi.setPhenotype(geIndividual.getPhenotype());
+                        indivi.setMapped(geIndividual.isMapped());
+                        candidatePopulation2.add(indivi);
+                    }
+                    logger.info("Evaluating axioms against to the RDF Data of the whole DBPedia.");
+                    fit.updatePopulation(candidatePopulation2, Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES, content);
+                } else {
+                    assert fit instanceof ShapeFitnessEvaluation;
+                    for(Shape shape : ((ShapeFitnessEvaluation) fit).getShapes()) {
+                        RDFMiner.content.add(shape.toJSON());
+                    }
                 }
-                logger.info("Evaluating axioms against to the RDF Data of the whole DBPedia.");
-                fit.updatePopulation(candidatePopulation2, true, axioms);
-                RDFMiner.axioms.addAll(axioms);
+
                 curCheckpoint++;
             }
 
@@ -257,36 +265,10 @@ public class LaunchWithGE {
                     sizeElite = 0;
                 }
 
-                switch (parameters.typeSelect) {
-                    case TypeSelection.ROULETTE_WHEEL:
-                        // Roulette wheel method
-                        // if6
-                        logger.info("Type selection: Roulette Wheel");
-                        crossoverPopulation = EATools.rouletteWheel(selectedPopulation);
-                        break;
-                    case TypeSelection.TRUNCATION:
-                        // Truncation selection method
-                        // if7
-                        logger.info("Type selection: Truncation");
-                        TruncationSelection truncation = new TruncationSelection(sizeSelection);
-                        truncation.setParentsSelectionElitism(selectedPopulation);
-                        crossoverPopulation = truncation.setupSelectedPopulation(selectedPopulation,
-                                parameters.populationSize - sizeElite);
-                        break;
-                    case TypeSelection.TOURNAMENT:
-                        // Tournament method
-                        // if8
-                        logger.info("Type selection: Tournament");
-                        crossoverPopulation = EATools.tournament(selectedPopulation);
-                        break;
-                    default:
-                        // Normal crossover way - All individual of the current generation
-                        // will be selected for crossover operation to create the new
-                        // population
-                        // if6
-                        logger.info("Type selection: Normal");
-                        crossoverPopulation = candidatePopulation;
-                        break;
+                // set the type selection
+                crossoverPopulation = EATools.getTypeSelection(parameters.typeSelect, selectedPopulation, sizeElite, sizeSelection);
+                if(crossoverPopulation == null) {
+                    crossoverPopulation = candidatePopulation;
                 }
 
                 /* STEP 4 - CROSSOVER OPERATION */
@@ -298,7 +280,7 @@ public class LaunchWithGE {
                 // Add new population on a new list of individuals
                 ArrayList<GEIndividual> newPopulation = EATools.computeGeneration(crossoverList,
                         parameters.proCrossover, parameters.proMutation, curGeneration, generator,
-                        parameters.diversity);
+                        parameters.diversity, RDFMiner.mode);
 
                 candidatePopulation = canPop.renew(newPopulation, curGeneration, etilismPopulation);
                 // Turn to the next generation
@@ -323,18 +305,19 @@ public class LaunchWithGE {
         System.exit(0);
     }
 
-    public static void writeAndFinish() {
+    public static void writeAndFinish(Mode mode) {
         try {
             RDFMiner.results.stats = RDFMiner.stats.toJSON();
-            RDFMiner.results.type = RDFMiner.type;
             // sort axioms (by ARI or Generality) using type of axioms
-            RDFMiner.axioms.sort(Comparator.comparingDouble(j -> {
-                // if we have disjoint classes axioms, we need to sort using generality
-                if (RDFMiner.type == Type.DISJOINT_CLASSES)
-                    return j.getInt("generality");
-                return j.getDouble("ari");
-            }));
-            RDFMiner.results.axioms = RDFMiner.axioms;
+            if(mode.isAxiomMode()) {
+                RDFMiner.content.sort(Comparator.comparingDouble(j -> {
+                    // if we have disjoint classes axioms, we need to sort using generality
+                    if (RDFMiner.type == Type.DISJOINT_CLASSES)
+                        return j.getInt("generality");
+                    return j.getDouble("ari");
+                }));
+            }
+            RDFMiner.results.content = RDFMiner.content;
             RDFMiner.output.write(RDFMiner.results.toJSON().toString());
             RDFMiner.output.close();
         } catch (IOException e) {

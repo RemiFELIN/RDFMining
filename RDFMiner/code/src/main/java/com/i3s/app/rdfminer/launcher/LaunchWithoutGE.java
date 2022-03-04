@@ -24,7 +24,7 @@ import com.i3s.app.rdfminer.generator.axiom.CandidateAxiomGenerator;
 import com.i3s.app.rdfminer.generator.axiom.IncreasingTimePredictorAxiomGenerator;
 import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
-import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 
 import Individuals.Phenotype;
 
@@ -116,7 +116,7 @@ public class LaunchWithoutGE {
 					long t0 = RDFMiner.getProcessCPUTime();
 					try {
 						logger.info("Testing axiom: " + finalAxiomName);
-						Axiom a = AxiomFactory.create(null, axiom, new SparqlEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES));
+						Axiom a = AxiomFactory.create(null, axiom, new VirtuosoEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES));
 						a.axiomId = finalAxiomName;
 //						long t = RDFMiner.getProcessCPUTime();
 //						a.elapsedTime = t - t0;
@@ -155,9 +155,9 @@ public class LaunchWithoutGE {
 						break;
 					String finalAxiomName = axiomName;
 					callables.add(() -> {
-						long t0 = RDFMiner.getProcessCPUTime();
+//						long t0 = RDFMiner.getProcessCPUTime();
 						logger.info("Testing axiom: " + finalAxiomName);
-						Axiom a = AxiomFactory.create(null, finalAxiomName, new SparqlEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES));
+						Axiom a = AxiomFactory.create(null, finalAxiomName, new VirtuosoEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES));
 						a.axiomId = finalAxiomName;
 //						long t = RDFMiner.getProcessCPUTime();
 //						a.elapsedTime = t - t0;

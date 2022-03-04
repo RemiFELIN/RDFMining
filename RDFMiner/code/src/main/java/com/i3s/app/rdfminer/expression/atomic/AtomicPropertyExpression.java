@@ -5,7 +5,7 @@ package com.i3s.app.rdfminer.expression.atomic;
 
 import java.util.List;
 
-import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
 
@@ -54,7 +54,7 @@ public class AtomicPropertyExpression extends Expression {
 	 * @param pair an RDF node pair
 	 */
 	@Override
-	public boolean contains(RDFNodePair pair, SparqlEndpoint endpoint) {
+	public boolean contains(RDFNodePair pair, VirtuosoEndpoint endpoint) {
 		// This is a faster alternative to the method inherited from the superclass:
 		return extension(endpoint).contains(pair);
 	}

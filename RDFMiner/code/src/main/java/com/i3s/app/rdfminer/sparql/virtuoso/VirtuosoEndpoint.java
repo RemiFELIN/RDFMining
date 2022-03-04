@@ -41,9 +41,9 @@ import com.i3s.app.rdfminer.Global;
  * @author Andrea G. B. Tettamanzi
  *
  */
-public class SparqlEndpoint {
+public class VirtuosoEndpoint {
 	
-	private static Logger logger = Logger.getLogger(SparqlEndpoint.class.getName());
+	private static Logger logger = Logger.getLogger(VirtuosoEndpoint.class.getName());
 
 	/**
 	 * The URL of the SPARQL endpoint.
@@ -85,7 +85,7 @@ public class SparqlEndpoint {
 	 * @param url    The URL of the endpoint.
 	 * @param prefix The SPARQL prefixes, that will be prepended to all queries.
 	 */
-	public SparqlEndpoint(String url, String prefix) {
+	public VirtuosoEndpoint(String url, String prefix) {
 		if (new File(Global.DBPEDIA_TDB_PATH).exists()) {
 			endpoint = null;
 			Dataset dataset = TDBFactory.createDataset(Global.DBPEDIA_TDB_PATH);
@@ -96,7 +96,7 @@ public class SparqlEndpoint {
 		prefixes = prefix;
 	}
 
-	public SparqlEndpoint(Model model, String prefix) {
+	public VirtuosoEndpoint(Model model, String prefix) {
 		endpoint = null;
 		tdb = model;
 		prefixes = prefix;
@@ -121,7 +121,7 @@ public class SparqlEndpoint {
 			queryExecution.close();
 			return result;
 		} catch (Exception e) {
-			handleException(e, "making the following query:\nSELECT " + SparqlEndpoint.prettyPrint(sparql));
+			handleException(e, "making the following query:\nSELECT " + VirtuosoEndpoint.prettyPrint(sparql));
 		}
 		return null;
 	}
@@ -148,7 +148,7 @@ public class SparqlEndpoint {
 			result = slct.hasNext();
 			queryExecution.close();
 		} catch (Exception e) {
-			handleException(e, "making the following query:\nASK { " + SparqlEndpoint.prettyPrint(graphPattern) + " }");
+			handleException(e, "making the following query:\nASK { " + VirtuosoEndpoint.prettyPrint(graphPattern) + " }");
 		} finally {
 			if (endpoint == null)
 				tdb.leaveCriticalSection();
@@ -296,7 +296,7 @@ public class SparqlEndpoint {
 			tdb = queryExecution.execConstruct();
 			queryExecution.close();
 		} catch (Exception e) {
-			handleException(e, "making the following query:\nCONSTRUCT " + SparqlEndpoint.prettyPrint(sparql));
+			handleException(e, "making the following query:\nCONSTRUCT " + VirtuosoEndpoint.prettyPrint(sparql));
 		}
 	}
 

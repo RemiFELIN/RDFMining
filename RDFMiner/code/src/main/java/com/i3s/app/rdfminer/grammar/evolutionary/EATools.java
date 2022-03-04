@@ -14,21 +14,23 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import com.i3s.app.rdfminer.generator.Generator;
+import com.i3s.app.rdfminer.grammar.evolutionary.selection.TruncationSelection;
+import com.i3s.app.rdfminer.grammar.evolutionary.selection.TypeSelection;
+import com.i3s.app.rdfminer.mode.Mode;
 import org.apache.jena.query.ResultSet;
 import org.apache.log4j.Logger;
 
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
-import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.grammar.evolutionary.crossover.SinglePointCrossoverAxiom;
 import com.i3s.app.rdfminer.grammar.evolutionary.crossover.SubtreeCrossoverAxioms;
 import com.i3s.app.rdfminer.grammar.evolutionary.crossover.TwoPointCrossover;
 import com.i3s.app.rdfminer.grammar.evolutionary.crossover.TypeCrossover;
-import com.i3s.app.rdfminer.grammar.evolutionary.fitness.FitnessEvaluation;
+import com.i3s.app.rdfminer.grammar.evolutionary.fitness.AxiomFitnessEvaluation;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.grammar.evolutionary.mutation.IntFlipMutation;
 import com.i3s.app.rdfminer.grammar.evolutionary.selection.ProportionalRouletteWheel;
-import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 import Individuals.GEChromosome;
 import Individuals.Genotype;
 import Individuals.Phenotype;
@@ -46,7 +48,7 @@ import Util.Random.RandomNumberGenerator;
  */
 public class EATools {
 
-	private static Logger logger = Logger.getLogger(EATools.class.getName());
+	private static final Logger logger = Logger.getLogger(EATools.class.getName());
 
 	/**
 	 * delete twins from a given array of {@link GEChromosome chromosomes}
@@ -103,6 +105,35 @@ public class EATools {
 			}
 		}
 		return individuals;
+	}
+
+	public static ArrayList<GEIndividual> getTypeSelection(int type, ArrayList<GEIndividual> selectedPopulation, int sizeElite, int sizeSelection) {
+		switch (type) {
+			case TypeSelection.ROULETTE_WHEEL:
+				// Roulette wheel method
+				// if6
+				logger.info("Type selection: Roulette Wheel");
+				return EATools.rouletteWheel(selectedPopulation);
+			case TypeSelection.TRUNCATION:
+				// Truncation selection method
+				// if7
+				logger.info("Type selection: Truncation");
+				TruncationSelection truncation = new TruncationSelection(sizeSelection);
+				truncation.setParentsSelectionElitism(selectedPopulation);
+				return truncation.setupSelectedPopulation(RDFMiner.parameters.populationSize - sizeElite);
+			case TypeSelection.TOURNAMENT:
+				// Tournament method
+				// if8
+				logger.info("Type selection: Tournament");
+				return EATools.tournament(selectedPopulation);
+			default:
+				// Normal crossover way - All individual of the current generation
+				// will be selected for crossover operation to create the new
+				// population
+				// if6
+				logger.info("Type selection: Normal");
+				return null;
+		}
 	}
 
 	public static SimplePopulation distincPhenotypePopulation(SimplePopulation canPop) {
@@ -174,13 +205,14 @@ public class EATools {
 	 * @param curGeneration the current generation
 	 * @param generator     an instance of {@link Generator Generator}
 	 * @param diversity     the coefficient of diversity
+	 * @param mode			The mode used for the current experiment
 	 * @return a new population
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 * @throws IOException
 	 */
 	public static ArrayList<GEIndividual> computeGeneration(ArrayList<GEIndividual> canPop, double proCrossover,
-															double proMutation, int curGeneration, Generator generator, int diversity)
+															double proMutation, int curGeneration, Generator generator, int diversity, Mode mode)
 			throws InterruptedException, ExecutionException, IOException {
 
 		ArrayList<GEIndividual> notEvaluatedIndividuals = new ArrayList<GEIndividual>();
@@ -247,13 +279,8 @@ public class EATools {
 			if (diversity == 1) {
 				// fill callables of crowding to compute
 				final int idx = m;
-				individualsCallables.add(new Callable<GEIndividual[]>() {
-					@Override
-					public GEIndividual[] call() throws Exception {
-						return new Crowding(4, canPop.get(idx), canPop.get(idx + 1), newChild1, newChild2)
-								.getSurvivalSelection();
-					}
-				});
+				individualsCallables.add(() -> new Crowding(4, canPop.get(idx), canPop.get(idx + 1), newChild1, newChild2, mode)
+						.getSurvivalSelection());
 //				evaluatedIndividuals.add(crowd.SurvivalSelection()[0]);
 //				evaluatedIndividuals.add(crowd.SurvivalSelection()[1]);
 			} else {
@@ -272,11 +299,9 @@ public class EATools {
 			logger.info("Starting population assessment ...");
 			// fill callables of individuals to evaluate
 			for (GEIndividual individual : notEvaluatedIndividuals) {
-				individualCallables.add(new Callable<GEIndividual>() {
-					@Override
-					public GEIndividual call() throws Exception {
-						return FitnessEvaluation.updateIndividual(individual);
-					}
+				individualCallables.add(() -> {
+					AxiomFitnessEvaluation fit = new AxiomFitnessEvaluation();
+					return fit.updateIndividual(individual);
 				});
 			}
 
@@ -300,9 +325,7 @@ public class EATools {
 			List<Future<GEIndividual[]>> futures = executor.invokeAll(individualsCallables);
 			// fill the evaluated individuals
 			for (Future<GEIndividual[]> future : futures) {
-				for (GEIndividual individual : future.get()) {
-					evaluatedIndividuals.add(individual);
-				}
+				evaluatedIndividuals.addAll(Arrays.asList(future.get()));
 			}
 			// Shutdown the service
 			executor.shutdown();
@@ -316,14 +339,11 @@ public class EATools {
 	public static ArrayList<GEIndividual> rouletteWheel(ArrayList<GEIndividual> selectedPopulation) {
 		// RouletteWheel
 		int size = (int) (selectedPopulation.size());
-		ArrayList<GEIndividual> newSelectedPopulation = new ArrayList<GEIndividual>();
 		RandomNumberGenerator random;
-		random = new MersenneTwisterFast(System.currentTimeMillis() & 0xFFFFFFFF);
+		random = new MersenneTwisterFast(System.currentTimeMillis());
 		ProportionalRouletteWheel rl = new ProportionalRouletteWheel(size, random);
 		rl.doOperation(((Population) selectedPopulation).getAll());
-		for (int i = 0; i < selectedPopulation.size(); i++)
-			newSelectedPopulation.add(selectedPopulation.get(i));
-		return newSelectedPopulation;
+		return new ArrayList<>(selectedPopulation);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -331,7 +351,7 @@ public class EATools {
 		// Tournament
 		int size = (int) (selectedPopulation.size());
 		RandomNumberGenerator random;
-		random = new MersenneTwisterFast(System.currentTimeMillis() & 0xFFFFFFFF);
+		random = new MersenneTwisterFast(System.currentTimeMillis());
 		TournamentSelect tn = new TournamentSelect(size, size / 10, random);
 		tn.selectFromTour();
 		return (ArrayList<GEIndividual>) tn.getSelectedPopulation();
@@ -339,8 +359,8 @@ public class EATools {
 
 	public static List<GEIndividual> resizeList(List<GEIndividual> individuals1, List<GEIndividual> individuals2) {
 		List<GEChromosome> chromosomes = new ArrayList<GEChromosome>();
-		for (int k1 = 0; k1 < individuals2.size(); k1++) {
-			GEChromosome temp = (GEChromosome) individuals2.get(k1).getGenotype().get(0);
+		for (GEIndividual individual : individuals2) {
+			GEChromosome temp = (GEChromosome) individual.getGenotype().get(0);
 			chromosomes.add(temp);
 		}
 		String Chr1;
@@ -398,7 +418,7 @@ public class EATools {
 		return list;
 	}
 
-	public static String[][] setTablesPredicates(Logger logger, SparqlEndpoint endpoint) {
+	public static String[][] setTablesPredicates(Logger logger, VirtuosoEndpoint endpoint) {
 		ArrayList<String> predicates = new ArrayList<String>();
 		String sparql = "distinct ?p where {?s ?p ?o}";
 		String p, gp;

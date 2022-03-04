@@ -165,14 +165,12 @@ public class Graph extends GraphObject implements
     // Index of subject: edge list sorted by subject/object/graph
     // Index of object:  edge list sorted by object/subject/graph
     // Index of graph:   edge list sorted by graph/subject/object
-    private ArrayList<Index> tables;
-    // default graph (deprecated)
-    //Index[] dtables;
+    private ArrayList<EdgeManagerIndexer> tables;
     // Index of subject with index=0
-    private Index subjectIndex;
-    // specific edge Index for RuleEngine where edge are sorted newest first
-    private Index namedGraphIndex;
-    Index ruleEdgeIndex;
+    private EdgeManagerIndexer subjectIndex;
+    private EdgeManagerIndexer namedGraphIndex;
+    // edge Index for RuleEngine where edge are sorted newest first
+    EdgeManagerIndexer ruleEdgeIndex;
     // predefined individual Node such as kg:default named graph
     HashMap<String, Node> system;
     // key -> URI Node
@@ -211,11 +209,8 @@ public class Graph extends GraphObject implements
     private boolean isSkolem = SKOLEM_DEFAULT;
     boolean isIndex = true,
             isDebug = !true;
-    //hasDefault = !true;
     // edge index sorted by index
     boolean byIndex = byIndexDefault;
-    // optmize EdgeIndexer EdgeList
-    //private boolean optIndex = true;
     // number of edges
     int size = 0;
     // counter for Graph Node index
@@ -286,6 +281,10 @@ public class Graph extends GraphObject implements
         }
         return false;
     }
+    
+    public boolean isCorrect() {
+        return ! isFlawed();
+    }
 
     public boolean typeCheck() {
         if (getEntailment() == null) {
@@ -334,20 +333,10 @@ public class Graph extends GraphObject implements
         }
     }
 
-    Index createIndex(boolean b, int i) {
+    EdgeManagerIndexer createIndex(boolean b, int i) {
         return new EdgeManagerIndexer(this, b, i);
-
     }
 
-//
-//    public int getMode() {
-//        return mode;
-//    }
-//
-//  
-//    public void setMode(int mode) {
-//        this.mode = mode;
-//    }
     @Override
     public String toGraph() {
         return null;
@@ -659,6 +648,7 @@ public class Graph extends GraphObject implements
         individual = new Hashtable<>();
         // Blank Node
         blank = new Hashtable<>();
+        // rdf star triple reference node
         triple = new Hashtable<>();
         // Named Graph Node
         graph = new Hashtable<>();
@@ -1075,7 +1065,7 @@ public class Graph extends GraphObject implements
             if (sb.length() > 0) {
                 sb.append(NL);
             }
-            sb.append(p).append(" (").append(getIndex().size(p)).append(") : ");
+            sb.append(String.format("predicate %s [%s]", p, getIndex().size(p)));
             sb.append(sep);
             int i = 0;
             for (Edge ent : (n == 0) ? getEdges(p) : getIndex(n).getEdges()) {
@@ -1380,9 +1370,11 @@ public class Graph extends GraphObject implements
         }
     }
 
+    // declare subject/object as graph vertex
     public void define(Edge ent) {
-        //gindex.add(ent);
-        nodeGraphIndex.add(ent);
+        if (ent.isAsserted()) {
+            nodeGraphIndex.add(ent);
+        }
     }
 
     public Iterable<Node> getProperties() {
@@ -1947,6 +1939,10 @@ public class Graph extends GraphObject implements
     void addTripleNode(IDatatype dt, Node node) {
         triple.put(node.getLabel(), node);
     }
+    
+    public void removeTripleNode(Node node) {
+        triple.remove(node.getLabel());
+    }
 
     String getID(Node node) {
         if (valueOut) {
@@ -2472,11 +2468,11 @@ public class Graph extends GraphObject implements
         return getDataStore().getNamed().from(gNode).iterate(node, 0);
     }
 
-    public List<Index> getIndexList() {
+    public List<EdgeManagerIndexer> getIndexList() {
         return tables;
     }
 
-    public Index getIndex(int n) {
+    public EdgeManagerIndexer getIndex(int n) {
         switch (n) {
             case IGRAPH:
                 return getNamedGraphIndex();
@@ -2489,7 +2485,7 @@ public class Graph extends GraphObject implements
         return getIndexList().get(n);
     }
 
-    void setIndex(int n, Index e) {
+    void setIndex(int n, EdgeManagerIndexer e) {
         getIndexList().add(n, e);
     }
 
@@ -2668,8 +2664,12 @@ public class Graph extends GraphObject implements
         return blank.values();
     }
     
-     public Iterable<Node> getTripleNodes() {
+    public Iterable<Node> getTripleNodes() {
         return triple.values();
+    }
+    
+    public Hashtable<String, Node> getTripleNodeMap() {
+        return triple;
     }
 
     /**
@@ -2698,37 +2698,68 @@ public class Graph extends GraphObject implements
         return getLiteralNodeManager().values();
     }
 
+    /**
+     * return graph vertex: subject/object of asserted edges
+     * return iterable of NodeGraph(node, graph) 
+     * MUST perform n.getNode() to get the node
+     * compute graph nodes (only if it has not been already computed)
+     * 
+     */
     public Iterable<Node> getAllNodeIterator() {
+        return getNodeGraphIterator();
+    }
+
+    public Iterable<Node> getAllNodeIterator2() {
         if (getEventManager().isDeletion()) {
             // recompute existing nodes (only if it has not been already recomputed)
+            // iterable NodeGraph(node, graph)
             return getNodeGraphIterator();
         } else {
-            // get nodes from tables
+            // get nodes from basic node tables
             return getNodeIterator();
         }
     }
 
+    /**
+     * Iterate nodes from basic graph node tables
+     * not exactly graph vertex with rdf star
+     * @note: 
+     * consider nodes from nested triple
+     * although they are just quoted 
+     */
     public Iterable<Node> getNodeIterator() {
         MetaIterator<Node> meta = new MetaIterator<>();
         meta.next(getNodes());
         meta.next(getBlankNodes());
         meta.next(getLiteralNodes());
+        meta.next(getTripleNodes());
         return meta;
     }
 
+    /**
+     * return iterable of NodeGraph(node, graph) 
+     * MUST perform n.getNode() to get the node
+     *
+     */
     public Iterable<Node> getNodeGraphIterator() {
         indexNode();
-        return nodeGraphIndex.getNodes();
+        return getNodeGraphIndex().getDistinctNodes();
     }
 
+    // return iterable of NodeGraph(node, graph)
+    // MUST perform n.getNode() to get the node
     public Iterable<Node> getNodeGraphIterator(Node gNode) {
         indexNode();
-        return nodeGraphIndex.getNodes(gNode);
+        return getNodeGraphIndex().getNodes(gNode);
     }
 
     public boolean contains(Node graph, Node node) {
         indexNode();
-        return nodeGraphIndex.contains(graph, node);
+        return getNodeGraphIndex().contains(graph, node);
+    }
+    
+    public NodeGraphIndex getNodeGraphIndex() {
+        return nodeGraphIndex;
     }
 
     /**
@@ -3771,23 +3802,23 @@ public class Graph extends GraphObject implements
         this.allGraphNode = allGraphNode;
     }
 
-    Index getSubjectIndex() {
+    EdgeManagerIndexer getSubjectIndex() {
         return subjectIndex;
     }
 
-    void setSubjectIndex(Index table) {
+    void setSubjectIndex(EdgeManagerIndexer table) {
         this.subjectIndex = table;
     }
 
-    Index getNamedGraphIndex() {
+    EdgeManagerIndexer getNamedGraphIndex() {
         return namedGraphIndex;
     }
 
-    void setNamedGraphIndex(Index tgraph) {
+    void setNamedGraphIndex(EdgeManagerIndexer tgraph) {
         this.namedGraphIndex = tgraph;
     }
 
-    public void setIndexList(ArrayList<Index> tables) {
+    public void setIndexList(ArrayList<EdgeManagerIndexer> tables) {
         this.tables = tables;
     }
 

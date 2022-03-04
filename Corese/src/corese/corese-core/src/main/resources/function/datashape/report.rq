@@ -75,6 +75,8 @@ function xsd:boolean sh:result(report, subReport, name, sh, cst, dt:graph shape,
         # abnode is defined in main.rq -> sh:shacleval(shape, focus)
         sh:store(report, abnode, rdf:type, sh:ValidationReport);
         sh:store(report, abnode, sh:conforms, false);
+        # set the global evaluation report as false
+        set(fail = true);
 
         if (report = sh:validationReport()) {
                 sh:store(report, abnode, sh:result, res);
@@ -149,7 +151,10 @@ function sh:addExtendedShaclReport(report, exceptions) {
     sh:store(report, summary, rdfminer:generality, generality);
     # TODO : définir generality * prob 
     sh:store(report, summary, rdfminer:fitness, generality * probability);
-    sh:store(report, summary, rdfminer:exceptions, exceptions);
+    for(exception in dt:list(exceptions)) {
+        sh:store(report, summary, rdfminer:exception, exception);
+    }
+    # sh:store(report, summary, rdfminer:exceptions, exceptions);
 }
 
 #

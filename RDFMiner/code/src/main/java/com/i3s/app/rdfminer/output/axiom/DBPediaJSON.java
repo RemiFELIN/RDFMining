@@ -1,5 +1,7 @@
-package com.i3s.app.rdfminer.output;
+package com.i3s.app.rdfminer.output.axiom;
 
+import com.i3s.app.rdfminer.output.Results;
+import com.i3s.app.rdfminer.shacl.ValidationReport;
 import org.json.JSONObject;
 
 /**
@@ -10,7 +12,7 @@ import org.json.JSONObject;
  * @author Rémi FELIN
  *
  */
-public class DBPediaJSON {
+public class DBPediaJSON extends Results {
 
 	public double possibility;
 	public double necessity;
@@ -19,7 +21,8 @@ public class DBPediaJSON {
 	public double ari;
 	public long elapsedTime;
 	public boolean isTimeOut;
-	
+
+	@Override
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		json.put("possibility", possibility);
@@ -31,5 +34,5 @@ public class DBPediaJSON {
 		json.put("elapsedTime", elapsedTime);
 		return json;
 	}
-	
+
 }

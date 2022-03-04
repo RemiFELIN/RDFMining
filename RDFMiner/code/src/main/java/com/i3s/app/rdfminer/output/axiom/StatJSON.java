@@ -1,8 +1,10 @@
-package com.i3s.app.rdfminer.output;
+package com.i3s.app.rdfminer.output.axiom;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.i3s.app.rdfminer.output.Results;
+import com.i3s.app.rdfminer.shacl.ValidationReport;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -14,7 +16,7 @@ import org.json.JSONObject;
  * @author Rémi FELIN
  *
  */
-public class StatJSON {
+public class StatJSON extends Results {
 
 	public int populationSize;
 	public int maxLengthChromosome;
@@ -27,7 +29,8 @@ public class StatJSON {
 	public String selectionMethod;
 	public double selectionSize;
 	public List<JSONObject> generations = new ArrayList<>();
-	
+
+	@Override
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		json.put("populationSize", populationSize);
@@ -40,8 +43,8 @@ public class StatJSON {
 		json.put("selectionMethod", selectionMethod);
 		json.put("selectionSize", selectionSize);
 		json.put("generations", new JSONArray(generations));
-		json.put("timeOut", timeOut);
+		json.put("timeOut", (timeOut == 0 ? JSONObject.NULL : timeOut));
 		return json;
 	}
-	
+
 }

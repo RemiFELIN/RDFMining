@@ -1,16 +1,13 @@
 package com.i3s.app.rdfminer.generator.shacl;
 
-import Individuals.Phenotype;
 import Mapper.*;
 import Util.Enums;
 import com.i3s.app.rdfminer.Global;
-import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.generator.Generator;
-import com.i3s.app.rdfminer.grammar.DLGEGrammar;
 import com.i3s.app.rdfminer.sparql.RequestBuilder;
 import com.i3s.app.rdfminer.sparql.corese.Format;
 import com.i3s.app.rdfminer.sparql.corese.ResultParser;
-import com.i3s.app.rdfminer.sparql.corese.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
 
 import java.io.*;
@@ -28,7 +25,7 @@ import java.util.List;
  */
 public abstract class ShapeGenerator extends Generator {
 
-    private static Logger logger = Logger.getLogger(ShapeGenerator.class.getName());
+    private static final Logger logger = Logger.getLogger(ShapeGenerator.class.getName());
 
     /**
      * Constructs a new SHACL Shape generator for the language described by the given grammar.
@@ -45,7 +42,7 @@ public abstract class ShapeGenerator extends Generator {
             logger.warn("Querying with FILTER(strStarts(MD5(?x), " + h + "))...");
             String sparql = RequestBuilder.buildSelectRequest(
                     "distinct ?class",
-                    "?class a ?z . FILTER(contains(str(?class), \"http://\")) . FILTER( strStarts(MD5(str(?class)) , " + h + ") ) "
+                    "?x a ?class . FILTER(contains(str(?class), \"http://\")) . FILTER( strStarts(MD5(str(?class)) , " + h + ") ) "
             );
             generateProductions("Class", sparql);
         }
@@ -80,8 +77,8 @@ public abstract class ShapeGenerator extends Generator {
         } catch (IOException ioe) {
             logger.info("Cache for " + symbol + " not found. Querying SPARQL endpoint");
             logger.info("Querying SPARQL endpoint for symbol <" + symbol + "> ...");
-            SparqlEndpoint endpoint = new SparqlEndpoint(Global.CORESE_IP_ADDRESS, Global.CORESE_PREFIXES);
-            String jsonResult = endpoint.select(Format.FORMAT_JSON, sparql);
+            CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP_ADDRESS, Global.CORESE_PREFIXES);
+            String jsonResult = endpoint.select(Format.JSON, sparql);
             PrintStream cache = null;
             try {
                 cache = new PrintStream(cacheName(symbol, sparql));
@@ -98,6 +95,7 @@ public abstract class ShapeGenerator extends Generator {
                     // add the symbol to production
                     prod.add(t);
                     // Write the cache with the symbol found
+                    assert cache != null;
                     cache.println(t + " ");
                 }
                 // Adding production founded by SPARQL Request

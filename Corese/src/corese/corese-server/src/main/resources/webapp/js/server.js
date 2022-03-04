@@ -37,7 +37,6 @@ function transPOST(form) {
         return false;
     }
     var url = $('#' + form.id).attr('action');//get relative path
-    console.log("[DEBUG] url = " + url);
     $.ajax({
         type: 'POST',
         url: url,

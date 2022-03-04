@@ -39,6 +39,7 @@ import fr.inria.corese.core.load.LoadException;
 import fr.inria.corese.core.load.QueryLoad;
 import fr.inria.corese.core.load.Service;
 import fr.inria.corese.core.print.LogManager;
+import fr.inria.corese.core.print.TripleFormat;
 import fr.inria.corese.core.producer.DataBrokerConstructExtern;
 import fr.inria.corese.core.query.update.GraphManager;
 import fr.inria.corese.core.util.Extension;
@@ -51,12 +52,11 @@ import fr.inria.corese.sparql.triple.parser.Access.Level;
 import fr.inria.corese.sparql.triple.parser.Access.Feature;
 import fr.inria.corese.sparql.triple.parser.AccessRight;
 import fr.inria.corese.sparql.triple.parser.URLParam;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import javax.ws.rs.client.ResponseProcessingException;
+import jakarta.ws.rs.client.ResponseProcessingException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +72,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class QueryProcess extends QuerySolver {
-
+    public static boolean DISPLAY_QUERY = false;
     private static Logger logger = LoggerFactory.getLogger(QueryProcess.class);
     private static ProducerImpl dbProducer;
     private static final String EVENT = "event";
@@ -377,13 +377,37 @@ public class QueryProcess extends QuerySolver {
 
     @Override
     public Mappings query(String squery) throws EngineException {
-        //System.out.println("QP: " + squery);
+        if (DISPLAY_QUERY) {
+            System.out.println("QP: " + squery);
+        }
         Mappings map = doQuery(squery, null, null);
-//        LogManager man = getLogManager(map);
-//        System.out.println(man);
         return map;
     }
-
+    
+    // rdf is a turtle document
+    // parse it as sparql query graph pattern (where bnode are variable)
+    public Mappings queryTurtle(String rdf) throws EngineException {
+        return doQuery(rdf, null, Dataset.create().setLoad(true));
+    }
+    
+    // translate graph g as turtle ast query graph pattern
+    public Mappings queryTurtle(Graph g) throws EngineException {
+        String rdf = TripleFormat.create(g).setGraphQuery(true).toString();
+        return doQuery(rdf, null, Dataset.create().setLoad(true));
+    }
+    
+    // translate graph g as trig ast query graph pattern
+    public Mappings queryTrig(Graph g) throws EngineException {
+        // trig where default graph kg:default is printed 
+        // in turtle without embedding graph kg:default { }
+        String rdf = TripleFormat.create(g, true).setGraphQuery(true).toString();
+        return doQuery(rdf, null, Dataset.create().setLoad(true));
+    }
+    
+    // translate graph g as trig ast query graph pattern
+    public Mappings query(Graph g) throws EngineException {
+        return queryTrig(g);
+    }
     /**
      * defaut and named specify a Dataset if the query has no from/using (resp.
      * named), kgram use defaut (resp. named) if it exist for update, defaut is
@@ -524,7 +548,7 @@ public class QueryProcess extends QuerySolver {
      * RDF Graph g considered as a Query Graph Build a SPARQL BGP with g
      * Generate and eval q KGRAM Query
      */
-    public Mappings query(Graph g) throws EngineException {
+    public Mappings queryOld(Graph g) throws EngineException {
         QueryGraph qg = QueryGraph.create(g);
         return query(qg);
     }

@@ -5,7 +5,7 @@ package com.i3s.app.rdfminer.expression.extensional;
 
 import java.util.Iterator;
 
-import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
 
@@ -67,7 +67,7 @@ public abstract class ExtensionalExpression extends Expression {
 	 * @see com.i3s.app.rdfminer.expression.Expression#contains(com.i3s.app.rdfminer.sparql.RDFNodePair)
 	 */
 	@Override
-	public boolean contains(RDFNodePair pair, SparqlEndpoint endpoint) {
+	public boolean contains(RDFNodePair pair, VirtuosoEndpoint endpoint) {
 		return extension.contains(pair);
 	}
 

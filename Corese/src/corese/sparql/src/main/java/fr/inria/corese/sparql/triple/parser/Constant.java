@@ -179,6 +179,13 @@ public class Constant extends Atom {
     static boolean isString() {
         return stringDatatype ;
     }
+    
+    String pretty(String datatype) {
+        if (datatype.startsWith("http://")) {
+            return String.format("^^<%s>", datatype);
+        }
+        return String.format("^^%s", datatype);
+    }
 
     @Override
     public ASTBuffer toString(ASTBuffer sb) {
@@ -190,7 +197,11 @@ public class Constant extends Atom {
                 //return name + "@" + lang;
                 toString(name, sb);
                 sb.append(KeywordPP.LANG).append(getLang());
-            } else if (hasRealDatatype()) {
+            } else if (DatatypeMap.isUndefined(getDatatypeValue())) {
+                    toString(name, sb);
+                    sb.append(pretty(datatype));
+                }
+                else if (hasRealDatatype()) {
                 if (getDatatypeValue().isList()){
                     sb.append("@").append(getDatatypeValue().getContent());
                 }
@@ -205,7 +216,7 @@ public class Constant extends Atom {
                     toString(name, sb);
                     if (!datatype.equals(RDF.xsdstring) || isString() || isNativeDatatype()) {
                         // value with datatype with syntax ^^<http://>
-                        sb.append(KeywordPP.SDT + "<").append(datatype).append(">");
+                        sb.append(pretty(datatype));
                     }
                 } else {
                     toString(name, sb);

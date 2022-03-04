@@ -5,7 +5,7 @@ package com.i3s.app.rdfminer.expression.atomic;
 
 import java.util.List;
 
-import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
 
@@ -56,7 +56,7 @@ public class AtomicClassExpression extends Expression {
 	 * @param node an RDF node
 	 */
 	@Override
-	public boolean contains(RDFNodePair pair, SparqlEndpoint endpoint) {
+	public boolean contains(RDFNodePair pair, VirtuosoEndpoint endpoint) {
 		// This is a faster alternative to the method inherited from the superclass:
 		if (rootSymbol.equals("owl:Thing"))
 			// Handle the special case of owl:Thing, i.e., the Top Concept, which contains

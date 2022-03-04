@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
@@ -35,12 +35,12 @@ public class ComparableRDFNode implements RDFNode, Comparable<Object> {
 	 */
 	protected RDFNode node;
 	
-	public SparqlEndpoint endpoint;
+	public VirtuosoEndpoint endpoint;
 	
 	/**
 	 * Creates a comparable RDF node from an existing RDF node.
 	 */
-	public ComparableRDFNode(RDFNode node, SparqlEndpoint endpoint) {
+	public ComparableRDFNode(RDFNode node, VirtuosoEndpoint endpoint) {
 		this.node = node;
 		this.endpoint = endpoint;
 	}

@@ -19,7 +19,7 @@ import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.expression.complement.ComplementClassExpression;
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
-import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 import com.i3s.app.rdfminer.tools.TimeMap;
 
 import Mapper.Symbol;
@@ -69,7 +69,7 @@ public class SubClassOfAxiom extends Axiom {
 	 * @param endpoint             the sparql endpoint used for the queries
 	 */
 	public SubClassOfAxiom(List<Symbol> subClassExpression, List<Symbol> superClassExpression,
-			SparqlEndpoint endpoint) {
+			VirtuosoEndpoint endpoint) {
 //		logger.error("subClass: " + subClassExpression);
 //		logger.error("superClass: " + superClassExpression);
 		subClass = ExpressionFactory.createClass(subClassExpression);
@@ -120,7 +120,7 @@ public class SubClassOfAxiom extends Axiom {
 	 * </p>
 	 * 
 	 */
-	public void naiveUpdate(SparqlEndpoint endpoint) {
+	public void naiveUpdate(VirtuosoEndpoint endpoint) {
 		referenceCardinality = numConfirmations = numExceptions = 0;
 		confirmations = new ArrayList<String>();
 		exceptions = new ArrayList<String>();
@@ -175,15 +175,15 @@ public class SubClassOfAxiom extends Axiom {
 	 * and stored in a list.
 	 * </p>
 	 * <p>
-	 * The {@link #naiveUpdate(SparqlEndpoint) naiveUpdate} method provides a slower, but hopefully safer,
+	 * The {@link #naiveUpdate(VirtuosoEndpoint) naiveUpdate} method provides a slower, but hopefully safer,
 	 * way of updating the counts.
 	 * </p>
 	 */
 	@Override
-	public void update(SparqlEndpoint endpoint) {
-		confirmations = new ArrayList<String>();
-		exceptions = new ArrayList<String>();
-		long timeSpent = 0;
+	public void update(VirtuosoEndpoint endpoint) {
+		confirmations = new ArrayList<>();
+		exceptions = new ArrayList<>();
+		long timeSpent;
 		referenceCardinality = endpoint.count("?x", subClass.graphPattern, 0);
 		logger.info("referenceCardinality = " + referenceCardinality);
 		int numIntersectingClasses = endpoint.count("?D", subClass.graphPattern + " ?x a ?D . ", 0);
@@ -216,7 +216,7 @@ public class SubClassOfAxiom extends Axiom {
 			// we execute it with the user-supplied time out.
 			// Compute the time-out (in seconds):
 			long timeOut = RDFMiner.parameters.timeOut;
-			timeOut += (long) Math.round(RDFMiner.parameters.dynTimeOut * timePredictor);
+			timeOut += Math.round(RDFMiner.parameters.dynTimeOut * timePredictor);
 			// Set a timer to compute the result time of each query
 			Timer timer = new Timer();
 			timer.startTimer();
@@ -270,7 +270,7 @@ public class SubClassOfAxiom extends Axiom {
 		logger.info("ARI = " + ari);
 	}
 
-	public void getExceptions(SparqlEndpoint endpoint) {
+	public void getExceptions(VirtuosoEndpoint endpoint) {
 		// sub correspond to the graph pattern without the "." char at the end
 		String sub = subClass.graphPattern.substring(0, subClass.graphPattern.length() - 1);
 		// SELECT count(DISTINCT(?t)) WHERE { ?x a <http://dbpedia.org/ontology/SoccerClub> , ?t }

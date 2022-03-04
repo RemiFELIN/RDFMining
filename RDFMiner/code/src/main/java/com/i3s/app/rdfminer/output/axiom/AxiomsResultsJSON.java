@@ -1,7 +1,9 @@
-package com.i3s.app.rdfminer.output;
+package com.i3s.app.rdfminer.output.axiom;
 
 import java.util.List;
 
+import com.i3s.app.rdfminer.output.Results;
+import com.i3s.app.rdfminer.shacl.ValidationReport;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -13,18 +15,14 @@ import org.json.JSONObject;
  * @author Rémi FELIN
  *
  */
-public class ResultsJSON {
+public class AxiomsResultsJSON extends Results {
 
-	public JSONObject stats;
-	public List<JSONObject> axioms;
-	public int type;
-	
+	@Override
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		json.put("statistics", stats);
-		json.put("axioms", new JSONArray(axioms));
-		json.put("type", type);
+		json.put("axioms", new JSONArray(content));
 		return json;
 	}
-	
+
 }

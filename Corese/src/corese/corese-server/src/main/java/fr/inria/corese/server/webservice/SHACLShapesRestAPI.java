@@ -9,9 +9,9 @@ import org.apache.logging.log4j.Logger;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Response;
 
 /**
  * Web service to manage the files transfer between Corese server and RDFMiner project
@@ -45,7 +45,7 @@ public class SHACLShapesRestAPI implements ResultFormatDef, URLParam {
     @POST
     @Path("/send/shapes")
     // @Produces({ResultFormat.TEXT})
-    public Response postSHACLShapesFile(@javax.ws.rs.core.Context HttpServletRequest request,
+    public Response postSHACLShapesFile(@jakarta.ws.rs.core.Context HttpServletRequest request,
             @QueryParam("content") String content) {
         
         if(content == null) {
@@ -96,7 +96,7 @@ public class SHACLShapesRestAPI implements ResultFormatDef, URLParam {
     @GET
     @Path("/shacl/shapes")
     @Produces({ResultFormat.TURTLE})
-    public Response getSHACLShapesFile(@javax.ws.rs.core.Context HttpServletRequest request) {
+    public Response getSHACLShapesFile(@jakarta.ws.rs.core.Context HttpServletRequest request) {
 
         if(!new File(RDFMINER_SHAPES_FILEPATH).exists()) {
             String msg = "The file does not exist !";

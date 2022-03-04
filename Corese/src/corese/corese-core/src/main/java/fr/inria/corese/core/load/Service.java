@@ -27,19 +27,19 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-import javax.ws.rs.RedirectionException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation.Builder;
-import javax.ws.rs.client.ResponseProcessingException;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Form;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Cookie;
+import jakarta.ws.rs.RedirectionException;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation.Builder;
+import jakarta.ws.rs.client.ResponseProcessingException;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Form;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Cookie;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -449,6 +449,7 @@ public class Service implements URLParam {
 
     // may take URL parameter into account:    ?format=rdfxml
     public InputStream load(String url, String mime)  {
+        //logger.info("load accept format: " + url + " " + mime);
         if (LOAD_WITH_PARAMETER) {
             return getStream(getURL().getServer(), getFormat(mime));
         }
@@ -470,11 +471,12 @@ public class Service implements URLParam {
     }
     
     Response getResponse(String url, String mime) {
-        //System.out.println("Service:  " + url + " " + mime);
+        logger.info("Service:  " + url + " " + mime);
         clientBuilder.connectTimeout(timeout, TimeUnit.MILLISECONDS);
         Client client = clientBuilder.build();
         WebTarget target = client.target(url);
         Builder build = target.request(mime);
+        //Builder build = target.request();
         Response resp = build.get();
         if (resp.getMediaType()!=null) {
             recordFormat(resp.getMediaType().toString());
@@ -486,7 +488,7 @@ public class Service implements URLParam {
             String myUrl = resp.getLocation().toString();
             logger.warn(String.format("Service redirection: %s to: %s", url, myUrl));
             if (myUrl.equals(url)) {
-                throw new javax.ws.rs.RedirectionException(resp);
+                throw new jakarta.ws.rs.RedirectionException(resp);
             }
             return getResponse(myUrl, mime);
         }
@@ -501,6 +503,8 @@ public class Service implements URLParam {
                 getLog().addException(new EngineException(ex, ex.getMessage())
                         .setURL(getURL()).setObject(ex.getResponse()));
             }
+            logger.error("Response status: " + resp.getStatus());
+            logger.info("message: "+ res);
             throw ex;
         }
          

@@ -3,15 +3,15 @@ module fr.inria.corese.corese_core {
     requires fr.inria.corese.compiler;
     requires org.slf4j;
     requires org.apache.commons.text;
-    requires sesame.rio.api;
+    //requires sesame.rio.api;
     requires java.xml;
     requires jsonld.java;
     requires semargl.core;
-    requires sesame.model;
+    //requires sesame.model;
     requires arp;
     requires java.logging;
     requires java.sql;
-    requires java.ws.rs;
+    requires jakarta.ws.rs;
     requires java.management;
     requires commons.lang;
     requires semargl.rdfa;

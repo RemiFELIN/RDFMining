@@ -8,12 +8,12 @@ public class Format {
     /**
      * Format : TURTLE
      */
-    public static final String FORMAT_TURTLE = "turtle";
+    public static final String TURTLE = "turtle";
 
     /**
      * Format : JSON
      */
-    public static final String FORMAT_JSON = "json";
+    public static final String JSON = "json";
 
     /**
      * Type result : URI

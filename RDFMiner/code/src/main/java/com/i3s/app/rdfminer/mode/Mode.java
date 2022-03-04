@@ -18,4 +18,12 @@ public class Mode {
         this.type = type;
     }
 
+    public boolean isAxiomMode() {
+        return this.type == TypeMode.AXIOMS;
+    }
+
+    public boolean isShaclMode() {
+        return this.type == TypeMode.SHACL_SHAPE;
+    }
+
 }

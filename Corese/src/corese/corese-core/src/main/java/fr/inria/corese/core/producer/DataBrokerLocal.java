@@ -83,12 +83,18 @@ public class DataBrokerLocal implements DataBroker {
     }
     
     
-    
+    /**
+     * iterable NodeGraph(node, graph)
+     * return all pairs (node, graph) for sparql PP*
+     * use case:  graph ?g { s pp* o }
+     * 
+     */
     @Override
     public Iterable<Node> getDefaultNodeList() {
         return getGraph().getAllNodeIterator();
     }
     
+    // iterable of NodeGraph(node, graph)
     @Override
     public Iterable<Node> getGraphNodeList(Node node) {
         return getGraph().getNodeGraphIterator(node);

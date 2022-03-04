@@ -22,7 +22,7 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
-import com.i3s.app.rdfminer.sparql.virtuoso.SparqlEndpoint;
+import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 import com.i3s.app.rdfminer.Global;
 
 /**
@@ -196,7 +196,7 @@ public abstract class Expression {
 	 * expression be needed again in the future.
 	 * </p>
 	 */
-	public Set<RDFNodePair> extension(SparqlEndpoint endpoint) {
+	public Set<RDFNodePair> extension(VirtuosoEndpoint endpoint) {
 		if (extension == null) {
 			extension = new TreeSet<RDFNodePair>();
 
@@ -306,7 +306,7 @@ public abstract class Expression {
 	 * @param s a SPARQL encoding of an RDF node
 	 * @return the corresponding RDF node
 	 */
-	public static RDFNode sparqlDecode(String s, SparqlEndpoint endpoint) {
+	public static RDFNode sparqlDecode(String s, VirtuosoEndpoint endpoint) {
 		// SparqlEndpoint endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
 		Model m = endpoint.tdb;
 		RDFNode r = null;
@@ -331,7 +331,7 @@ public abstract class Expression {
 	 * @return true if the given pair of RDF nodes is a member of the extension of
 	 *         this expression.
 	 */
-	public boolean contains(RDFNodePair pair, SparqlEndpoint endpoint) {
+	public boolean contains(RDFNodePair pair, VirtuosoEndpoint endpoint) {
 		String x = pair.x != null ? sparqlEncode(pair.x) : "?x";
 		String y = pair.y != null ? sparqlEncode(pair.y) : "?y";
 		// SparqlEndpoint endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);

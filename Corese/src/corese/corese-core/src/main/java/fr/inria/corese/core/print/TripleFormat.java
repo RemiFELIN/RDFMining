@@ -9,11 +9,12 @@ import fr.inria.corese.core.Graph;
 import fr.inria.corese.kgram.api.core.Edge;
 
 /**
- * Turtle Format
+ * Turtle & Trig Format
  * 
  * Olivier Corby, Wimmics INRIA 2013
  */
 public class TripleFormat extends RDFFormat {
+    public static boolean DISPLAY_GRAPH_KEYWORD = false;
 
     static final String PREFIX = "@prefix";
     static final String PV = " ;";
@@ -25,6 +26,11 @@ public class TripleFormat extends RDFFormat {
     static final String CGRAPH = "}";
 
     boolean isGraph = false;
+    // when true:  display default graph kg:default with embedding graph kg:default {}
+    // when false: display default graph in turtle (without graph kg:default {})
+    private boolean displayDefaultGraphURI = false;
+    // true when this pretty print is for a future translation into sparql select where
+    private boolean graphQuery = false;
     private Mappings mappings;
     int tripleCounter = 0;
 
@@ -66,6 +72,7 @@ public class TripleFormat extends RDFFormat {
         return  q.getAST().getNSM();
     }
 
+    // isGraph = true -> Trig
     public static TripleFormat create(Graph g, boolean isGraph) {
         TripleFormat t = new TripleFormat(g, nsm());
         t.setGraph(isGraph);
@@ -115,6 +122,7 @@ public class TripleFormat extends RDFFormat {
         return bb;
     }
 
+    // iterate on subject nodes and pprint their edges
     void nodes() {
         for (Node node : getSubjectNodes()) {
             if (tripleCounter > getNbTriple()) {
@@ -124,23 +132,70 @@ public class TripleFormat extends RDFFormat {
         }
     }
 
+    // iterate named graph nodes and pprint their content
     void graphNodes() {
+        // start by default graph
+        graphNodes(graph.getDefaultGraphNode());
+        
+        for (Node gNode : graph.getGraphNodes()) {
+            if (tripleCounter > getNbTriple()) {
+                break;
+            }
+            if (! graph.isDefaultGraphNode(gNode)) {
+                graphNodes(gNode);
+            }
+        }
+    }
+    
+    void graphNodes(Node gNode) {
+        if (accept(gNode)) {
+            if (graph.isDefaultGraphNode(gNode) && !isDisplayDefaultGraphURI()) {
+                basicGraphNode(gNode);
+
+            } else {
+                graphNode(gNode);
+            }
+        }
+    }
+    
+    void graphNodes2() {
         for (Node gNode : graph.getGraphNodes()) {
             if (tripleCounter > getNbTriple()) {
                 break;
             }
             if (accept(gNode)) {
-                sdisplay(GRAPH);
-                sdisplay(SPACE);
-                node(gNode);
-                sdisplay(SPACE);
-                sdisplay(OGRAPH);
-                display();
-                for (Node node : graph.getNodeGraphIterator(gNode)) {
-                    print(gNode, node);
+                if (graph.isDefaultGraphNode(gNode) && ! isDisplayDefaultGraphURI()) {
+                    basicGraphNode(gNode);
+
+                } else {
+                    graphNode(gNode);
                 }
-                display(CGRAPH);
             }
+        }
+    }
+    
+    // pprint content of named graph with trig syntax: uri { }
+    void graphNode(Node gNode) {
+        if (DISPLAY_GRAPH_KEYWORD || isGraphQuery()) {
+            // isGraphQuery() : trig format for AST query graph pattern
+            sdisplay(GRAPH);
+            sdisplay(SPACE);
+        }
+        node(gNode);
+        sdisplay(SPACE);
+        sdisplay(OGRAPH);
+        display();
+
+        basicGraphNode(gNode);
+
+        display(CGRAPH);
+        display();
+    }
+    
+    // pprint content of named graph
+    void basicGraphNode(Node gNode) {         
+        for (Node node : graph.getNodeGraphIterator(gNode)) {
+            print(gNode, node.getNode());
         }
     }
    
@@ -162,13 +217,18 @@ public class TripleFormat extends RDFFormat {
         }
     }
 
+    // pprint edges where node is subject
+    // when isGraph == true consider edges in named graph gNode
+    // otherwise consider all edges
     void print(Node gNode, Node node) {
         boolean first = true;
         boolean annotation = false;
         
         for (Edge edge : getEdges(gNode, node)) {
-            if (edge != null && accept(edge) 
-                    && edge.isAsserted()) {
+            if (edge != null && accept(edge) && edge.isAsserted()) {
+                // isAsserted() == true is the general case 
+                // false means rdf star nested triple
+                // pprinted as subject ot object of an asserted triple
                 if (tripleCounter++ > getNbTriple()) {
                     break;
                 }
@@ -176,10 +236,10 @@ public class TripleFormat extends RDFFormat {
                     first = false;
                     subject(edge);
                     sdisplay(SPACE);
-                    if (annotation(edge)) {
-                        annotation = true;
-                        sdisplay("{| ");
-                    }
+//                    if (annotation(edge)) {
+//                        annotation = true;
+//                        sdisplay("{| ");
+//                    }
                 } else {
                     sdisplay(PV);
                     sdisplay(NL);
@@ -187,9 +247,9 @@ public class TripleFormat extends RDFFormat {
                 edge(edge);
             }
         }
-        if (annotation){
-            sdisplay(" |}");
-        }
+//        if (annotation){
+//            sdisplay(" |}");
+//        }
 
         if (!first) {
             sdisplay(DOT);
@@ -198,6 +258,8 @@ public class TripleFormat extends RDFFormat {
         }
     }
 
+    // iterate edges where node is subject
+    // when isGraph == true consider edges in gNode named graph
     Iterable<Edge> getEdges(Node gNode, Node node) {
         if (isGraph) {
             return graph.getNodeEdges(gNode, node);
@@ -210,37 +272,6 @@ public class TripleFormat extends RDFFormat {
         node(ent.getSubjectValue());
     }
 
-
-    
-    boolean hasNestedTriple(Edge edge) {
-        return edge.getSubjectValue().isTripleWithEdge() || edge.getObjectValue().isTripleWithEdge();
-    }
-    
-    void triple(Edge edge) {
-        triple(edge, false);
-    }
-    
-    void triple(Edge edge, boolean rec) {
-        if (edge.isNested() || hasNestedTriple(edge) || rec) {
-            sdisplay("<<");
-            basicTriple(edge, rec);
-            sdisplay(">>");
-        } else {
-            basicTriple(edge, rec);
-        }
-    }
-    
-    void basicTriple(Edge edge) {
-        basicTriple(edge, false);
-    }
-
-    void basicTriple(Edge edge, boolean rec) {
-        node(edge.getSubjectNode(), true);
-        sdisplay(SPACE);
-        predicate(edge.getEdgeNode());
-        sdisplay(SPACE);
-        node(edge.getObjectNode(), true);
-    }
        
     void predicate(Node node) {
         String pred = nsm.toPrefix(node.getLabel());
@@ -254,7 +285,8 @@ public class TripleFormat extends RDFFormat {
     void node(Node node, boolean rec) {
         IDatatype dt = node.getValue();
         if (dt.isTripleWithEdge()) {
-            triple(dt.getEdge(), rec);
+            // rdf star nested triple
+            nestedTriple(node, dt.getEdge(), rec);
         }
         else if (dt.isLiteral()) {
             sdisplay(dt.toSparql(true, false, nsm));
@@ -263,6 +295,50 @@ public class TripleFormat extends RDFFormat {
         } else {
             uri(dt.getLabel());
         }
+    }
+       
+    // node is triple reference of edge
+    // node is subject/object
+    void triple(Node node, Edge edge) {
+        triple(node, edge, false);
+    }
+
+    void triple(Node node, Edge edge, boolean rec) {
+        nestedTriple(node, edge, rec);
+    }
+
+    // node is triple reference of edge
+    // node is subject/object
+    void nestedTriple(Node node, Edge edge, boolean rec) {
+        sdisplay("<<");
+        basicTriple(node, edge, rec);
+        sdisplay(">>");
+    }    
+
+    void basicTriple(Node node, Edge edge, boolean rec) {
+        node(edge.getSubjectNode(), true);
+        sdisplay(SPACE);
+        predicate(edge.getEdgeNode());
+        sdisplay(SPACE);
+        node(edge.getObjectNode(), true);
+    }
+    
+            
+//    void triple2(Node node, Edge edge, boolean rec) {
+//        if (edge.isNested() || hasNestedTriple(edge) || rec) {
+//            nestedTriple(node, edge, rec);
+//        } else {
+//            basicTriple(node, edge, rec);
+//        }
+//    }
+//    
+    
+//    void basicTriple(Node node, Edge edge) {
+//        basicTriple(node, edge, false);
+//    }
+    
+    boolean hasNestedTriple(Edge edge) {
+        return edge.getSubjectValue().isTripleWithEdge() || edge.getObjectValue().isTripleWithEdge();
     }
 
     void uri(String label) {
@@ -273,7 +349,8 @@ public class TripleFormat extends RDFFormat {
     void edge(Edge edge) {        
         predicate(edge.getEdgeNode());
         sdisplay(SPACE);
-        node(edge.getObjectNode());
+        // object triple node displayed with << >>
+        node(edge.getObjectNode(), true);
     }
     
     boolean annotation(Edge edge) {
@@ -298,6 +375,24 @@ public class TripleFormat extends RDFFormat {
     @Override
     public TripleFormat setNbTriple(int nbTriple) {
         super.setNbTriple(nbTriple);
+        return this;
+    }
+
+    public boolean isDisplayDefaultGraphURI() {
+        return displayDefaultGraphURI;
+    }
+
+    public TripleFormat setDisplayDefaultGraphURI(boolean displayDefaultGraphURI) {
+        this.displayDefaultGraphURI = displayDefaultGraphURI;
+        return this;
+    }
+
+    public boolean isGraphQuery() {
+        return graphQuery;
+    }
+
+    public TripleFormat setGraphQuery(boolean graphQuery) {
+        this.graphQuery = graphQuery;
         return this;
     }
 
