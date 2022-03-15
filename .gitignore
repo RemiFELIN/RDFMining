@@ -21,3 +21,4 @@ Corese/jar/*
 Corese/log/*
 Corese/src/corese/git_folder
 *.jar
+*.iml

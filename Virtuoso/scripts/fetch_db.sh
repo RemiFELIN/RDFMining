@@ -7,7 +7,7 @@ sleep 20
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [fetch_db.sh] INFO - status: "
 isql-v 1111 dba dba VERBOSE=OFF exec="status();"
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [fetch_db.sh] INFO - load db directory on server..."
-isql-v 1111 dba dba VERBOSE=OFF exec="ld_dir('/virtuoso/data', '*.nt', 'http://dbpedia.org');"
+isql-v 1111 dba dba VERBOSE=OFF exec="ld_dir('/virtuoso/data', '*.gz', 'http://dbpedia.org');"
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [fetch_db.sh] INFO - check load_list"
 # Get the number of lines which ll_state is 2 (loaded data)
 # expected : 0

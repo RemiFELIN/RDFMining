@@ -1,11 +1,13 @@
 # The aim of this file is to setup an complete environment to launch RDFMiner tool
 
 # Get Debian image from Docker Hub
-FROM debian:stretch
+FROM debian
+#:stretch
 
 # Setup RDFMiner version
 ENV RDFMINER_VERSION=1.4
 ENV CORESE_VERSION=4.3.0
+ENV JAVA_VERSION=11
 
 # Setup HOME environment variable
 ENV HOME=/rdfminer/
@@ -15,6 +17,8 @@ COPY . $HOME
 
 # Install all dependencies
 RUN echo "\n********** START: download dependencies \n" && \
+    # Add repository (OpenJDK)
+    # add-apt-repository ppa:openjdk-r/ppa && \
     # Update
     apt-get update && \
     # Install gcc 
@@ -24,7 +28,7 @@ RUN echo "\n********** START: download dependencies \n" && \
     # and catch errors while building phasis
     # Install Openjdk 8 : we use this jdk to run the maven build phasis and run rdfminer jar
     echo "\n********** 2/3: OPENJDK" && \
-    apt-get install openjdk-8-jdk -y && \
+    apt-get install openjdk-$JAVA_VERSION-jdk -y && \
     # Install maven
     echo "\n********** 3/3: MAVEN" && \
     apt-get --no-install-recommends install maven -y && \
@@ -35,15 +39,42 @@ RUN echo "\n********** START: download dependencies \n" && \
     echo $(mvn -v)"\n"
 
 # define JAVA_HOME
-ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
+ENV JAVA_HOME=/usr/lib/jvm/java-$JAVA_VERSION-openjdk-amd64/
 
 # Compile c code by running "compile_c_code" shell code
 RUN echo "\n********** compile rdfminer_RDFMiner.so" && \
     sh $HOME/scripts/compile_c_code.sh && \
     echo "Done.\n"
 
-# Install Corese-core and Corese-rdf4j on .m2 folder 
+#
+# Install manually on .m2 folder 
 # Allow us to import customized JAR locally
+#
+
+# Install SPIN 2.0.0 (from http://topquadrant.com/repository/spin/)
+RUN echo "\n********** Install SPIN 2.0.0 ..." && \
+    mvn install:install-file \
+        -Dfile=/rdfminer/dep/org/topbraid/spin/2.0.0/spin-2.0.0.jar \
+        -DgroupId=org.topbraid \
+        -DartifactId=spin \
+        -Dversion=2.0.0 \
+        -Dpackaging=jar \
+        -DgeneratePom=true \
+        --quiet && \
+    echo "Done.\n"
+
+# Install GEVA 2.0 (NCRA: http://ncra.ucd.ie/GEVA.html | Google Code Archive: https://code.google.com/archive/p/geva/)
+RUN echo "\n********** Install GEVA 2.0 ..." && \
+    mvn install:install-file \
+        -Dfile=/rdfminer/dep/geva-jar/GEVA/2.0/GEVA-2.0.jar \
+        -DgroupId=geva-jar \
+        -DartifactId=GEVA \
+        -Dversion=2.0 \
+        -Dpackaging=jar \
+        -DgeneratePom=true \
+        --quiet && \
+    echo "Done.\n"
+
 RUN echo "\n********** Install Corese-core ..." && \
     mvn install:install-file \
         -Dfile=/rdfminer/dep/corese-jar/corese-core/$CORESE_VERSION/corese-core-$CORESE_VERSION.jar \
