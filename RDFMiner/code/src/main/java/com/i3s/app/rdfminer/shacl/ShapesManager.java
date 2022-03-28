@@ -1,10 +1,16 @@
 package com.i3s.app.rdfminer.shacl;
 
 import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
+import org.apache.commons.io.Charsets;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +32,7 @@ public class ShapesManager {
 
     public ArrayList<GEIndividual> individuals;
 
-    public String fileContent;
+    public File file;
 
     /**
      * Take a list of GEIndividuals and build a list of well-formed SHACL Shapes
@@ -39,20 +45,20 @@ public class ShapesManager {
             population.add(new Shape(individual));
         }
         // set the file content to evaluate this SHACL Shapes on server
-        this.fileContent = getFileContent();
+        this.file = getFile();
     }
 
     public ShapesManager(Shape shape) {
         this.shape = shape;
         // set the file content to evaluate this SHACL Shapes on server
-        this.fileContent = getFileContent();
+        this.file = getFile();
     }
 
     public void updateIndividualList(ArrayList<GEIndividual> updatedIndividuals) {
         this.individuals = new ArrayList<>(updatedIndividuals);
     }
 
-    private String getFileContent() {
+    private File getFile() {
         StringBuilder content = new StringBuilder(Global.CORESE_PREFIXES);
         if(!population.isEmpty()) {
             for(Shape shape : population) {
@@ -62,7 +68,23 @@ public class ShapesManager {
             // set only one shape in fileContent
             content.append(this.shape).append("\n");
         }
-        return content.toString();
+        // Now, we can create (or edit) the file to send
+        File file = new File(RDFMiner.outputFolder + "shapes.ttl");
+        if(!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        // set content of file
+        try {
+            FileUtils.writeStringToFile(file, content.toString(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // return file
+        return file;
     }
 
     public List<Shape> getPopulation() {

@@ -18,7 +18,6 @@ public class ResultParser {
     private static final Logger logger = Logger.getLogger(ResultParser.class);
 
     public static List<String> getResultsfromVariable(String var, String json) {
-
         List<String> results = new ArrayList<>();
         // if json does not contains any result, we must return an empty list
         if(json == null) {

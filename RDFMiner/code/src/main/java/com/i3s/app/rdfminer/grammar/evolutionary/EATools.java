@@ -1,11 +1,8 @@
 package com.i3s.app.rdfminer.grammar.evolutionary;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.net.URISyntaxException;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -13,10 +10,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.grammar.evolutionary.selection.TruncationSelection;
 import com.i3s.app.rdfminer.grammar.evolutionary.selection.TypeSelection;
 import com.i3s.app.rdfminer.mode.Mode;
+import com.i3s.app.rdfminer.shacl.Shape;
+import com.i3s.app.rdfminer.shacl.ShapesManager;
+import com.i3s.app.rdfminer.shacl.ValidationReport;
+import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.jena.query.ResultSet;
 import org.apache.log4j.Logger;
 
@@ -213,7 +215,7 @@ public class EATools {
 	 */
 	public static ArrayList<GEIndividual> computeGeneration(ArrayList<GEIndividual> canPop, double proCrossover,
 															double proMutation, int curGeneration, Generator generator, int diversity, Mode mode)
-			throws InterruptedException, ExecutionException, IOException {
+			throws InterruptedException, ExecutionException, IOException, URISyntaxException {
 
 		ArrayList<GEIndividual> notEvaluatedIndividuals = new ArrayList<GEIndividual>();
 		ArrayList<GEIndividual> evaluatedIndividuals = new ArrayList<>();
@@ -226,11 +228,12 @@ public class EATools {
 
 		logger.info("Performing crossover and mutation ...");
 
+		List<Crowding> shapesToEvaluate = new ArrayList<>();
+
 		int m = 0;
 
 		while (m <= canPop.size() - 2) {
 
-			/* CROSSOVER PHASIS */
 			RandomNumberGenerator rand = new MersenneTwisterFast();
 			// get the two individuals which are neighbours
 			GEIndividual parent1 = canPop.get(m);
@@ -239,6 +242,7 @@ public class EATools {
 			GEChromosome[] chromosomes;
 			GEChromosome c1, c2;
 
+			/* CROSSOVER PHASIS */
 			switch (RDFMiner.parameters.typeCrossover) {
 			case TypeCrossover.SINGLE_POINT_CROSSOVER:
 				// Single-point crossover
@@ -277,12 +281,16 @@ public class EATools {
 			GEIndividual newChild2 = mutation.doOperation(child2, generator, curGeneration, child2.getMutationPoints());
 			// if using crowding method in survival selection
 			if (diversity == 1) {
-				// fill callables of crowding to compute
-				final int idx = m;
-				individualsCallables.add(() -> new Crowding(4, canPop.get(idx), canPop.get(idx + 1), newChild1, newChild2, mode)
-						.getSurvivalSelection());
-//				evaluatedIndividuals.add(crowd.SurvivalSelection()[0]);
-//				evaluatedIndividuals.add(crowd.SurvivalSelection()[1]);
+				if(mode.isAxiomMode()) {
+					// fill callables of crowding to compute
+					final int idx = m;
+					individualsCallables.add(() -> new Crowding(canPop.get(idx), canPop.get(idx + 1), newChild1, newChild2, mode)
+							.getSurvivalSelection());
+					// evaluatedIndividuals.add(crowd.SurvivalSelection()[0]);
+					// evaluatedIndividuals.add(crowd.SurvivalSelection()[1]);
+				} else if(mode.isShaclMode()) {
+					shapesToEvaluate.add(new Crowding(parent1, parent2, newChild1, newChild2, mode));
+				}
 			} else {
 				// if choosing children for the new population
 				notEvaluatedIndividuals.add(newChild1);
@@ -320,16 +328,64 @@ public class EATools {
 			// if crowding is chosen, we need to compute and return the individuals chosen
 			// (between parents and childs) in function of their fitness
 			logger.info("CROWDING diversity method used ...");
-			logger.info(individualsCallables.size() + " tasks ready to be launched !");
-			// Submit tasks
-			List<Future<GEIndividual[]>> futures = executor.invokeAll(individualsCallables);
-			// fill the evaluated individuals
-			for (Future<GEIndividual[]> future : futures) {
-				evaluatedIndividuals.addAll(Arrays.asList(future.get()));
+			// SHACL MODE
+			// we decide if we keep the parent or the child for each couple of individuals
+			if(mode.isShaclMode()) {
+				// for each child in crowding method
+				ArrayList<GEIndividual> childs = new ArrayList<>();
+				for(Crowding crowding : shapesToEvaluate) {
+					childs.add(crowding.child1);
+					childs.add(crowding.child2);
+				}
+//				logger.info("Size crowding list: " + shapesToEvaluate.size());
+				// evaluate them
+				ShapesManager shapesManager = new ShapesManager(childs);
+				// launch evaluation
+				CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP_ADDRESS, Global.CORESE_PREFIXES);
+				logger.info("Launch evaluation report for new childs ...");
+				String report = endpoint.getProbabilisticValidationReportFromServer(shapesManager.file);
+				// read evaluation report
+				ValidationReport validationReport = new ValidationReport(report);
+				// set each values finded for each child
+				for(Shape shape : shapesManager.population) {
+					shape.fillParamFromReport(validationReport);
+					// modify crowding with updated childs
+					for(Crowding crowding : shapesToEvaluate) {
+						if(crowding.child1 == shape.individual) {
+//							logger.info("set the fitness of child1: " + crowding.child1.getPhenotype() + "\nfitness = " + shape.fitness);
+							// set the fitness of the child
+							BasicFitness fit = new BasicFitness((Double) shape.fitness, crowding.child1);
+							fit.setIndividual(crowding.child1);
+							fit.getIndividual().setValid(true);
+							crowding.child1.setFitness(fit);
+						} else if(crowding.child2 == shape.individual) {
+							// set the fitness of the child
+//							logger.info("set the fitness of child1: " + crowding.child2.getPhenotype() + "\nfitness = " + shape.fitness);
+							BasicFitness fit = new BasicFitness((Double) shape.fitness, crowding.child2);
+							fit.setIndividual(crowding.child2);
+							fit.getIndividual().setValid(true);
+							crowding.child2.setFitness(fit);
+						}
+					}
+				}
+				// launch survival selection and save it in evaluatedIndividuals list
+				for(Crowding crowding : shapesToEvaluate) {
+					evaluatedIndividuals.addAll(List.of(crowding.getSurvivalSelection()));
+				}
+
+			} else if(mode.isAxiomMode()) {
+				logger.info(individualsCallables.size() + " tasks ready to be launched !");
+				// Submit tasks
+				List<Future<GEIndividual[]>> futures = executor.invokeAll(individualsCallables);
+				// fill the evaluated individuals
+				for (Future<GEIndividual[]> future : futures) {
+					evaluatedIndividuals.addAll(Arrays.asList(future.get()));
+				}
+				// Shutdown the service
+				executor.shutdown();
+				executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 			}
-			// Shutdown the service
-			executor.shutdown();
-			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+
 		}
 		// return the modified individuals
 		return evaluatedIndividuals;

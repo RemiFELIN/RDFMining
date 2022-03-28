@@ -40,11 +40,21 @@ public abstract class ShapeGenerator extends Generator {
         for(int hexDigit = 0; hexDigit<0x10; hexDigit++) {
             String h = String.format("\"%x\"", hexDigit);
             logger.warn("Querying with FILTER(strStarts(MD5(?x), " + h + "))...");
-            String sparql = RequestBuilder.buildSelectRequest(
-                    "distinct ?class",
-                    "?x a ?class . FILTER(contains(str(?class), \"http://\")) . FILTER( strStarts(MD5(str(?class)) , " + h + ") ) "
+            // SPARQL Request
+            String classSparql = RequestBuilder.buildSelectRequest(
+                    Global.CORESE_PREFIXES,
+                    "DISTINCT ?Class",
+                    "?x a ?Class . FILTER( contains( str(?Class), str(inria:) ) ) . FILTER( strStarts(MD5(str(?Class)) , " + h + ") ) "
             );
-            generateProductions("Class", sparql);
+            String subjectSparql = RequestBuilder.buildSelectRequest(
+                    Global.CORESE_PREFIXES,
+                    "DISTINCT (concat('\"', ?sub, '\"') as ?Subject)",
+                    "?article dct:subject ?sub . FILTER( strStarts(MD5(str(?Subject)) , " + h + ") ) "
+            );
+
+            generateProductions("Class", classSparql);
+//            generateProductions("Source", sourceSparql);
+            generateProductions("Subject", subjectSparql);
         }
     }
 
@@ -86,20 +96,21 @@ public abstract class ShapeGenerator extends Generator {
                 logger.warn("Could not create cache for symbol " + symbol + ".");
             }
 
-            List<String> results = ResultParser.getResultsfromVariable("class", jsonResult);
+            List<String> results = ResultParser.getResultsfromVariable(symbol, jsonResult);
             if(results.size() > 0) {
-                // declare a new production
-                Production prod = new Production();
                 for(String result : results) {
+                    // declare a new production
+                    Production prod = new Production();
+                    // Create a symbol and add the result
                     Symbol t = new Symbol(result, Enums.SymbolType.TSymbol);
                     // add the symbol to production
                     prod.add(t);
                     // Write the cache with the symbol found
                     assert cache != null;
                     cache.println(t + " ");
+                    // Adding production founded by SPARQL Request
+                    rule.add(prod);
                 }
-                // Adding production founded by SPARQL Request
-                rule.add(prod);
             }
             logger.info("Done! " + rule.size() + " productions added.");
             if (cache != null) cache.close();

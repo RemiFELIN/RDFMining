@@ -81,6 +81,9 @@ public class Global {
     public static final String CORESE_PREFIXES = "base <http://rdfminer.com/shapes/> \n" +
             "prefix sh: <http://www.w3.org/ns/shacl#> \n" +
             "prefix rdfminer: <http://ns.inria.fr/rdfminer/shacl#> \n" +
+            "prefix inria: <http://ns.inria.fr/covid19/> \n" +
+            "prefix source: <http://ns.inria.fr/covid19/source#> \n" +
+            "prefix dct: <http://purl.org/dc/terms/> \n" +
             "prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n\n";
 
     /**
@@ -102,6 +105,11 @@ public class Global {
      * .cache files folder path
      */
     public static final String CACHE_PATH = System.getenv("HOME") + "/caches/";
+
+    /**
+     * Corese IP Address
+     */
+    public static final String CORESE_SHACL_SHAPES_FILEPATH = "/usr/local/corese/rdfminer/shacl-shapes/shapes.ttl";
 
     /**
      * Number of threads used to perform evaluation of axioms, its value depends of

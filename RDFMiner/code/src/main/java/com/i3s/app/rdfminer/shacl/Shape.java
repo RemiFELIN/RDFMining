@@ -72,6 +72,16 @@ public class Shape extends Results {
     public List<String> targetClass;
 
     /**
+     * The values of "sh:targetSubjectOf"
+     */
+    public List<String> targetSubjectOf;
+
+    /**
+     * The values of "sh:targetObjectsOf"
+     */
+    public List<String> targetObjectsOf;
+
+    /**
      * Is it a nodeShape ?
      */
     public boolean isNodeShape;
@@ -88,6 +98,8 @@ public class Shape extends Results {
     public Number generality;
     public Number fitness;
     public List<String> exceptions = new ArrayList<>();
+
+    public Shape() {}
 
     /**
      *
@@ -106,10 +118,14 @@ public class Shape extends Results {
         // search if it is a sh:NodeShape
         this.isNodeShape = ask("a", ShaclKW.NODESHAPE);
         // get the targetted class(es) if it provides
-        this.targetClass = getTargetClass();
+        this.targetClass = getValuesFromProperty(ShaclKW.TARGETCLASS);
+        // get the targetSubjectsOf if it provides
+        this.targetSubjectOf = getValuesFromProperty(ShaclKW.TARGETSUBJECTSOF);
+        // get the targetObjectsOf if it provides
+        this.targetObjectsOf = getValuesFromProperty(ShaclKW.TARGETOBJECTSOF);
         // search if it provide a sh:property values
         this.properties = getProperties();
-        // @TODO : sh:targetNode ; sh:targetObjectsOf ; sh:targetSubjectsOf ; sh:message ; sh:severity
+        // @TODO : sh:targetNode ; sh:targetObjectsOf ; sh:message ; sh:severity
     }
 
     public String getUri() {
@@ -131,7 +147,7 @@ public class Shape extends Results {
             String request = Global.CORESE_PREFIXES + "ASK { " + this.id + " " + predicate + " " + object + " . }";
             BooleanQuery query = con.prepareBooleanQuery(request);
             // launch and get result
-            if(!query.evaluate()) logger.info(predicate + " is not provided by the shape " + this.id);
+            if(!query.evaluate()) logger.debug(predicate + " is not provided by the shape " + this.id);
             return query.evaluate();
         } finally {
             // shutdown the DB and frees up memory space
@@ -161,7 +177,17 @@ public class Shape extends Results {
                 // we just iterate over all solutions in the result...
                 for (BindingSet solution : result) {
                     // add each result on the final list
-                    results.put(String.valueOf(solution.getValue("pred")), String.valueOf(solution.getValue("obj")));
+                    String obj = parseString(String.valueOf(solution.getValue("obj")));
+                    // Parse literal if any (as REGEX)
+                    if(obj.contains("\"") && obj.contains("\"")) {
+                        // remove doube quote, remove all spaces and add double quote as :
+                        // " obj " ~~~> "obj"
+                        obj = "\"" + obj.replace("\"", "").replace("\"", "").trim() + "\"";
+                        // replace this param in shape by the well-formed param
+                        // need to be parsed for special character such as '(', ')', '+', ...
+                        this.shape = this.shape.replace(String.valueOf(solution.getValue("obj")), obj);
+                    }
+                    results.put(String.valueOf(solution.getValue("pred")), obj);
                 }
             }
         } finally {
@@ -177,16 +203,16 @@ public class Shape extends Results {
      * search if a such predicate exists and return the value of the given shape
      * @return the value(s) for 'toSearch' input
      */
-    public List<String> getTargetClass() {
+    public List<String> getValuesFromProperty(String property) {
         List<String> results = new ArrayList<>();
         // <id> ?predicate ?prop exists ?
-        if(!ask(ShaclKW.TARGETCLASS, "?class")) return null;
+        if(!ask(property, "?y")) return null;
         // get the value(s) of predicate
         try(RepositoryConnection con = db.getConnection()) {
             // add the model
             con.add(this.model);
             // init query
-            String request = Global.CORESE_PREFIXES + "SELECT ?class WHERE { " + this.id + " " + ShaclKW.TARGETCLASS + " ?class . }";
+            String request = Global.CORESE_PREFIXES + "SELECT ?class WHERE { " + this.id + " " + property + " ?y . }";
             // init query
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
@@ -194,15 +220,14 @@ public class Shape extends Results {
                 // we just iterate over all solutions in the result...
                 for (BindingSet solution : result) {
                     // add each result on the final list
-                    results.add(String.valueOf(solution.getValue("class")));
+                    results.add(String.valueOf(solution.getValue("y")));
                 }
             }
         } finally {
             // shutdown the DB and frees up memory space
             db.shutDown();
         }
-        if(results.isEmpty())
-            logger.info("No result found for: " + this.id + " " + ShaclKW.TARGETCLASS + " ?class");
+        if(results.isEmpty()) logger.info("No result found for: " + this.id + " " + property + " ?y");
         return results;
     }
 
@@ -214,7 +239,9 @@ public class Shape extends Results {
      */
     private String generateIDFromIndividual(GEIndividual individual) {
         // the length of the substring depends of the SHACL Shapes ID size such as :
-        return "<shape#" + String.format("%." + Global.SIZE_ID_SHACL_SHAPES + "s", Math.abs(individual.getPhenotype().toString().hashCode())) + RandomStringUtils.randomAlphabetic(4) +  "> ";
+        return "<shape#" + String.format("%." + Global.SIZE_ID_SHACL_SHAPES + "s",
+                Math.abs(individual.getPhenotype().toString().hashCode())) +
+                RandomStringUtils.randomAlphabetic(4) +  "> ";
     }
 
     public void fillParamFromReport(ValidationReport report) {
@@ -227,8 +254,8 @@ public class Shape extends Results {
         if(report.exceptionsByShape.get(this.uri) != null) {
             this.exceptions = new ArrayList<>(report.exceptionsByShape.get(this.uri));
         }
-        System.out.print("shape: " + this.shape);
-        System.out.println(" | fitness=" + this.fitness);
+//        System.out.print("shape: " + this.shape);
+//        System.out.println(" | fitness=" + this.fitness);
     }
 
     @Override
@@ -258,5 +285,16 @@ public class Shape extends Results {
 //        System.out.println(json);
         return json;
     }
+
+    public String parseString(String subject) {
+        return subject.replace("+", "\\+");
+//                replace("(", "\\(").
+//                replace(")", "\\)").
+    }
+
+//    public static void main(String[] args) throws IOException {
+//        Shape s = new Shape();
+//        System.out.println(s.parseString("Nitrogen(+3) compounds"));
+//    }
 
 }

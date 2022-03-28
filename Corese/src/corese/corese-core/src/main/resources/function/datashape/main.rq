@@ -6,6 +6,7 @@
 prefix sh:   <http://www.w3.org/ns/shacl#> 
 prefix xsh:  <http://www.w3.org/ns/shacl#> 
 prefix shex: <http://ns.inria.fr/shex/shacl#>
+prefix dct: <http://purl.org/dc/terms/>
 prefix fun:  <function://fr.inria.corese.core.extension.Extension>
 prefix rdfminer: <http://ns.inria.fr/rdfminer/shacl#>
 
@@ -122,20 +123,21 @@ function sh:shacleval(shape, focus) {
     # sh:log("main.rq", "sh:shacleval", "start...");
     let (suc = true) {
         for ((sh list) in focus) {
+            sh:log("main.rq", "sh:shacleval", "focus ...");
             if (sh:trace(), xt:print("target:", coalesce(sh, "undef"), xt:size(list), list), true);
             if (bound(sh) && xt:size(list) > 0) {
                 set(abnode = sh:bnodeid());
                 if(extended) {
-                    sh:log("main.rq", "sh:shacleval", concat("referenceCardinality=", xt:size(list)));
+                    # sh:log("main.rq", "sh:shacleval", concat("referenceCardinality=", xt:size(list)));
                     set(referenceCardinality = xt:size(list));
                     # set the name of the given shape
-                    sh:log("main.rq", "sh:shacleval", concat("shapeName=", sh));
+                    # sh:log("main.rq", "sh:shacleval", concat("shapeName=", sh));
                     set(shapeName = sh);
                     # For each shape, we will create a list of exceptions
                     set(exceptions = xt:list());
                     # now, we will calculate the total number of instances in the dataset
                     set(numInstances = sh:getNumInstances());
-                    sh:log("main.rq", "sh:shacleval", concat("numInstances=", numInstances));
+                    # sh:log("main.rq", "sh:shacleval", concat("numInstances=", numInstances));
                 } ;
                 # set the final report as global variable
                 set(rep = sh:validationReport());
@@ -165,8 +167,8 @@ function sh:shacleval(shape, focus) {
 #
 function sh:getNumInstances() {
     let(select (count(distinct(?x)) as ?n) where {
-        ?x a ?z .
-        filter( ?z != rdf:Property)
+        ?x ?p ?z .
+        filter(?z != rdf:Property)
     }) {
         return (n)
     }

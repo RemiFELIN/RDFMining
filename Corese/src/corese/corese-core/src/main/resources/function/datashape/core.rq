@@ -26,7 +26,7 @@ function sh:core(report, sh, vis, nodeList, present) {
         for (node in dt:list(nodeList)) {
             if (sh:contains(sh, node)) {}
             else {
-                sh:log("core.rq", "sh:core", concat(node," ~> ",sh));
+                # sh:log("core.rq", "sh:core", concat(node," ~> ",sh));
                 # push the node on the stack
                 sh:push(sh, node);
                 let (suc = sh:pathcore(report, sh, vis, node, present)) {
@@ -38,7 +38,7 @@ function sh:core(report, sh, vis, nodeList, present) {
                 sh:pop()
             }
         } ;
-        sh:log("core.rq", "sh:core", concat("conform=", res));
+        sh:log("core.rq", "sh:core", concat(sh, " is conform ? ", res));
         return (res)
     }
 }

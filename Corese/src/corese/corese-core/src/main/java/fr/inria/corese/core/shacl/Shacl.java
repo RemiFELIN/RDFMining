@@ -363,6 +363,7 @@ public class Shacl {
      * @param graph the graph to set
      */
     public void setGraph(Graph graph) {
+        graph.init();
         this.graph = graph;
     }
     
@@ -384,6 +385,7 @@ public class Shacl {
      * @param shacl the shacl to set
      */
     public void setShacl(Graph shacl) {
+        shacl.init();
         this.shacl = shacl;
     }
 

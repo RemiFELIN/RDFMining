@@ -9,13 +9,18 @@ import com.i3s.app.rdfminer.shacl.Shape;
 import com.i3s.app.rdfminer.shacl.ShapesManager;
 import com.i3s.app.rdfminer.shacl.ValidationReport;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Crowding {
 
-	protected int size;
+	private static final Logger logger = Logger.getLogger(Crowding.class.getName());
+
+//	protected int size;
 	protected int distanceP1ToC1;
 	protected int distanceP1ToC2;
 	protected int distanceP2ToC1;
@@ -26,8 +31,8 @@ public class Crowding {
 	protected GEIndividual child2;
 	protected Mode mode;
 
-	public Crowding(int size, GEIndividual parent1, GEIndividual parent2, GEIndividual child1, GEIndividual child2, Mode mode) {
-		this.size = size;
+	public Crowding(GEIndividual parent1, GEIndividual parent2, GEIndividual child1, GEIndividual child2, Mode mode) {
+//		this.size = size;
 		this.mode = mode;
 		this.parent1 = parent1;
 		this.parent2 = parent2;
@@ -39,22 +44,41 @@ public class Crowding {
 		this.distanceP2ToC1 = this.distance(this.parent2, this.child1);
 	}
 
-	GEIndividual[] getSurvivalSelection() throws IOException, URISyntaxException {
+	GEIndividual[] getSurvivalSelection() {
 		int d1, d2;
 		GEIndividual[] survivals = new GEIndividual[2];
 		d1 = distanceP1ToC1 + distanceP2ToC2;
 		d2 = distanceP1ToC2 + distanceP2ToC1;
 		if (d1 >= d2) {
-			survivals[0] = compare(parent1, child1);
-			survivals[1] = compare(parent2, child2);
+			survivals[0] = compare(parent1, child1, mode);
+			survivals[1] = compare(parent2, child2, mode);
 		} else {
-			survivals[0] = compare(parent1, child2);
-			survivals[1] = compare(parent2, child1);
+			survivals[0] = compare(parent1, child2, mode);
+			survivals[1] = compare(parent2, child1, mode);
 		}
 		return survivals;
 	}
 
-	int distance(GEIndividual a, GEIndividual b) {
+//	public static ArrayList<GEIndividual> getSurvivalSelectionFromList(ArrayList<HashMap<GEIndividual, GEIndividual>> hashMapArrayList) {
+//		ArrayList<GEIndividual> evaluatedIndividuals = new ArrayList<>();
+//		// for each couple of parents and their child
+//		for(HashMap<GEIndividual, GEIndividual> parChild : hashMapArrayList) {
+//			// define individuals
+//			GEIndividual parent1 = (GEIndividual) parChild.keySet().toArray()[0];
+//			GEIndividual parent2 = (GEIndividual) parChild.keySet().toArray()[1];
+//			GEIndividual child1 = parChild.get(parent1);
+//			GEIndividual child2 = parChild.get(parent2);
+//			int distanceP1ToC1 = distance(parent1, child1);
+//			this.distanceP2ToC2 = this.distance(this.parent2, this.child2);
+//			this.distanceP1ToC2 = this.distance(this.parent1, this.child2);
+//			this.distanceP2ToC1 = this.distance(this.parent2, this.child1);
+//			// apply get survival selection
+//			if()
+//		}
+//		return evaluatedIndividuals;
+//	}
+
+	public int distance(GEIndividual a, GEIndividual b) {
 		String word1 = a.getPhenotype().toString();
 		String word2 = b.getPhenotype().toString();
 		int len1 = word1.length();
@@ -89,41 +113,20 @@ public class Crowding {
 		return dp[len1][len2];
 	}
 
-	GEIndividual compare(GEIndividual parent, GEIndividual child) throws IOException, URISyntaxException {
-		if(this.mode.isAxiomMode()) {
+	public static GEIndividual compare(GEIndividual parent, GEIndividual child, Mode mode) {
+		if(mode.isAxiomMode()) {
 			AxiomFitnessEvaluation fit = new AxiomFitnessEvaluation();
 			// if parent don't have any value for fitness, we need to compute its value
-			if(parent.getFitness() == null) {
+			if (parent.getFitness() == null) {
 				parent = fit.updateIndividual(parent);
 			}
 			child = fit.updateIndividual(child);
-			// we can compare parent and child
-			if (parent.getFitness().getDouble() <= child.getFitness().getDouble()) {
-				return child;
-			} else {
-				return parent;
-			}
+		}
+		// we can compare parent and child
+		if (parent.getFitness().getDouble() <= child.getFitness().getDouble()) {
+			return child;
 		} else {
-			// we need to evaluate the child shape
-			Shape childShape = new Shape(child);
-			ShapesManager shapesManager = new ShapesManager(childShape);
-			// launch evaluation
-			CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP_ADDRESS, Global.CORESE_PREFIXES);
-			String report = endpoint.getProbabilisticValidationReportFromServer(shapesManager.fileContent);
-			// read evaluation report
-			ValidationReport validationReport = new ValidationReport(report);
-			childShape.fillParamFromReport(validationReport);
-			// we can compare parent and child
-			if (parent.getFitness().getDouble() <= (Double) shapesManager.getShape().fitness) {
-				// set the fitness of the child and return it
-				BasicFitness fit = new BasicFitness((Double) childShape.fitness, child);
-				fit.setIndividual(child);
-				fit.getIndividual().setValid(true);
-				child.setFitness(fit);
-				return child;
-			} else {
-				return parent;
-			}
+			return parent;
 		}
 	}
 

@@ -22,13 +22,12 @@ import Util.Random.RandomNumberGenerator;
 */
 public class CandidatePopulation {
 
-	private static Logger logger = Logger.getLogger(CandidatePopulation.class.getName());
+	private static final Logger logger = Logger.getLogger(CandidatePopulation.class.getName());
 
 	protected int size;
 	protected int generation;
 	protected Generator generator;
 	protected GEChromosome[] chromosomes;
-	protected int maxlenChromosome;
 	protected int maxWrapp;
 	protected int maxvalCodon;
 	protected int typeInitialization;
@@ -63,7 +62,7 @@ public class CandidatePopulation {
 		// typeInitialization=1 ... Later need to develop other type of initialization.
 		if (buffer != null) {
 			int intch;
-			String st = "";
+			StringBuilder st = new StringBuilder();
 			char ch;
 			int m = 0;
 			ArrayList<Integer> chr = new ArrayList<Integer>();
@@ -71,19 +70,18 @@ public class CandidatePopulation {
 				ch = (char) intch;
 				if (ch != '\n') {
 					if (ch != ',') {
-						st += ch;
+						st.append(ch);
 					} else {
-						chr.add(Integer.parseInt(st));
-						st = "";
+						chr.add(Integer.parseInt(st.toString()));
+						st = new StringBuilder();
 					}
 				} else {
 					chromosome = new GEChromosome(chr.size());
 					chromosome.setMaxCodonValue(maxvalCodon);
 					chromosome.setMaxChromosomeLength(1000);
-					for (int i = 0; i < chr.size(); i++)
-						chromosome.add(chr.get(i));
+					for (Integer integer : chr) chromosome.add(integer);
 					chromosomes[m] = chromosome;
-					chr = new ArrayList<Integer>();
+					chr = new ArrayList<>();
 					m++;
 				}
 			}
@@ -121,32 +119,28 @@ public class CandidatePopulation {
 	 */
 	public ArrayList<GEIndividual> renew(ArrayList<GEIndividual> population, int curGeneration,
 			ArrayList<GEIndividual> etilismPopulation) {
-		
+//		System.out.println("renew population : curGen=" + curGeneration);
 		ArrayList<GEIndividual> newPopulation = new ArrayList<GEIndividual>();
 		if (etilismPopulation != null) {
-			for (int i1 = 0; i1 < etilismPopulation.size(); i1++) {
-				etilismPopulation.get(i1).setAge(curGeneration + 1);
-				newPopulation.add(etilismPopulation.get(i1));
+			for (GEIndividual individual : etilismPopulation) {
+				individual.setAge(curGeneration + 1);
+				newPopulation.add(individual);
 			}
 		}
-		for (int i2 = 0; i2 < population.size(); i2++) {
-			population.get(i2).setAge(curGeneration + 1);
-			newPopulation.add(population.get(i2));
+		for (GEIndividual individual : population) {
+			individual.setAge(curGeneration + 1);
+			newPopulation.add(individual);
 		}
 		return newPopulation;
 	}
 
-	/**
-	 * add best individuals on the set of chromosomes
-	 * @param etilismPopulation a etilism population
-	 */
-	public void addBestIndividuals(SimplePopulation etilismPopulation) {
-		int i = 0;
-		while (i < etilismPopulation.size()) {
-			chromosomes[i] = (GEChromosome) etilismPopulation.get(i).getGenotype().get(0);
-			i++;
-		}
-	}
+	//	public void addBestIndividuals(SimplePopulation etilismPopulation) {
+//		int i = 0;
+//		while (i < etilismPopulation.size()) {
+//			chromosomes[i] = (GEChromosome) etilismPopulation.get(i).getGenotype().get(0);
+//			i++;
+//		}
+//	}
 
 	/**
 	 * Initialize a set of random chromosomes
@@ -201,7 +195,7 @@ public class CandidatePopulation {
 	 */
 	public GEChromosome createChromosome() {
 		RandomNumberGenerator random;
-		random = new MersenneTwisterFast(System.currentTimeMillis() & 0xFFFFFFFF);
+		random = new MersenneTwisterFast(System.currentTimeMillis());
 		int maxLenChromosome = 1000;
 		GEChromosome chromosome;
 		chromosome = new GEChromosome(initlenChromosome);

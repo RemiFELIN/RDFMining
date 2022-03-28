@@ -29,11 +29,11 @@ function xsd:boolean sh:report(report, name, sh, cst, s, p, o, suc, vis){
 # Main report
 # -> 10 args
 function xsd:boolean sh:report(report, subReport, name, sh, cst, s, p, o, suc, vis){
-    sh:log("report.rq", "sh:report", "start...");
+    # sh:log("report.rq", "sh:report", "start...");
     sh:record(name,  sh, cst, sh:shaclGraph(), s, p, o, suc, vis);
     if (vis && ! suc) { 
         sh:visit(name, s, suc) ;
-        sh:log("report.rq", "sh:report", "fill the report ...");
+        # sh:log("report.rq", "sh:report", "fill the report ...");
         return (sh:result(report, subReport, name, sh, cst, sh:shaclGraph(), s,  p, o))
     } ;
     return(true)
@@ -114,7 +114,7 @@ function xsd:boolean sh:result(report, subReport, name, sh, cst, dt:graph shape,
                 coalesce(sh:store(report, res, sh:sourceShapeDetail, sh:getDefinition(sh)), true)
         };
         # Extended SHACL 
-        if(extended == true) {
+        if(extended == true && sh:isAViolation(sev)) {
             # fill the list of exceptions 
             xt:add(exceptions, res);
         } ;
@@ -158,6 +158,16 @@ function sh:addExtendedShaclReport(report, exceptions) {
 }
 
 #
+# Test the severity
+# true if it's a violation, false else
+#
+function sh:isAViolation(sev) {
+    # sh:log("report.rq", "sh:report", concat(sev));
+    if(sev == sh:Violation) {
+        return(true);
+    };
+    return(false);
+}
 
 #
 # Additional report

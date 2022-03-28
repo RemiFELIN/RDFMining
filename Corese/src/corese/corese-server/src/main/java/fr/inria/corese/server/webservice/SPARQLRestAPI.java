@@ -1,5 +1,6 @@
 package fr.inria.corese.server.webservice;
 
+import java.io.InputStream;
 import java.util.List;
 
 import jakarta.ws.rs.Consumes;
@@ -33,6 +34,8 @@ import java.util.UUID;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.MediaType;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 /**
  * KGRAM SPARQL endpoint exposed as a rest web service.

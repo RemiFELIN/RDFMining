@@ -2,10 +2,13 @@ package com.i3s.app.rdfminer.sparql.corese;
 
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.sparql.RequestBuilder;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
@@ -45,7 +48,7 @@ public class CoreseEndpoint {
     /**
      * Corese service : send SHACL Shapes endpoint
      */
-    public final String CORESE_SEND_SHACL_SHAPES_ENDPOINT = "rdfminer/send/shapes";
+    public final String CORESE_SEND_SHACL_SHAPES_ENDPOINT = "rdfminer/upload";
 
     /**
      * Corese service : get SHACL Shapes endpoint
@@ -89,50 +92,57 @@ public class CoreseEndpoint {
     /**
      * Allow to send string content into shapes.ttl stored in the Corese server, it will replace the
      * previous content by the new one
-     * @param fileContent content of the future file, must contains SHACL Shapes
+     * @param file the file to upload, must contains SHACL Shapes
      * @return the HTTP Status code of the request
      * @throws URISyntaxException Error concerning the syntax of the given URL
      * @throws IOException Error concerning the execution of the POST request
      */
-    public void sendSHACLShapesToServer(String fileContent) throws URISyntaxException, IOException {
+    public void sendSHACLShapesToServer(File file) throws URISyntaxException, IOException {
         // build the final URL
         final String service = url + CORESE_SEND_SHACL_SHAPES_ENDPOINT;
         URIBuilder builder = new URIBuilder(service);
         // params
-        builder.setParameter("content", fileContent);
+//        builder.setParameter("content", fileContent);
         // POST request
         HttpPost post = new HttpPost(builder.build());
+        // set entity
+        HttpEntity entity = MultipartEntityBuilder.create().addPart("file", new FileBody(file)).build();
+        post.setEntity(entity);
+        // launch service
+        logger.info("send SHACL Shapes to the server ...");
         HttpResponse response = httpClient.execute(post);
         if(response.getStatusLine().getStatusCode() != HttpURLConnection.HTTP_OK)
             logger.error("Error " + response.getStatusLine().getStatusCode() + " while sending SHACL Shapes on server ...");
     }
 
-    /**
-     * Allow to read the SHACL Shapes file (shapes.ttl) stored in the Corese server
-     * @return the content of the file: shapes.ttl
-     * @throws URISyntaxException Error concerning the syntax of the given URL
-     * @throws IOException Error concerning the execution of the POST request
-     */
-    public String getSHACLShapesFromServer() throws URISyntaxException, IOException {
-        // build the final URL
-        final String service = url + CORESE_GET_SHACL_SHAPES_ENDPOINT;
-        // call the get method and return it result
-        return get(service);
-    }
+//    /**
+//     * Allow to read the SHACL Shapes file (shapes.ttl) stored in the Corese server
+//     * @return the content of the file: shapes.ttl
+//     * @throws URISyntaxException Error concerning the syntax of the given URL
+//     * @throws IOException Error concerning the execution of the POST request
+//     */
+//    public String getSHACLShapesFromServer() throws URISyntaxException, IOException {
+//        // build the final URL
+//        final String service = url + CORESE_GET_SHACL_SHAPES_ENDPOINT;
+//        // call the get method and return it result
+//        return get(service);
+//    }
 
     /**
      * Given
      * @return
      */
-    public String getProbabilisticValidationReportFromServer(String fileContent) throws URISyntaxException, IOException {
+    public String getProbabilisticValidationReportFromServer(File file) throws URISyntaxException, IOException {
         // build the final URL
         final String service = url + CORESE_SPARQL_ENDPOINT;
         // fill params
         HashMap<String, String> params = new HashMap<>();
         params.put("mode", PROBABILISTIC_SHACL_EVALUATION);
-        params.put("content", fileContent);
+        params.put("uri", Global.CORESE_IP_ADDRESS + CORESE_GET_SHACL_SHAPES_ENDPOINT);
         params.put("query", "construct where {?s ?p ?o}");
         params.put("format", Format.TURTLE);
+        // send the given file to the server
+        sendSHACLShapesToServer(file);
         // send GET request
         return get(service, params);
     }
@@ -163,7 +173,8 @@ public class CoreseEndpoint {
         // catch status code of the request
         if(response.getStatusLine().getStatusCode() != HttpURLConnection.HTTP_OK) {
             // this section handle the error from the request
-            logger.error("code:" + response.getStatusLine().getStatusCode() + " ; Request fail !");
+            logger.error("request: " + get.getRequestLine());
+            logger.error("Request fail (code " + response.getStatusLine().getStatusCode() + ")");
             return null;
         }
         // the request has a 200 OK response from the server
@@ -178,16 +189,16 @@ public class CoreseEndpoint {
         return sb.toString();
     }
 
-    public static void main(String[] args) throws URISyntaxException, IOException {
-        CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP_ADDRESS, Global.CORESE_PREFIXES);
-        for(int hexDigit = 0; hexDigit<0x10; hexDigit++) {
-            String h = String.format("\"%x\"", hexDigit);
-            System.out.println("### h=" + h);
-            String sparql = RequestBuilder.buildSelectRequest("distinct ?class", "?class a ?z. FILTER(contains(str(?class), \"http://\")). FILTER( strStarts(MD5(str(?class))  , " + h + ") )");
-            String res = endpoint.select(Format.JSON, sparql);
-            ResultParser.getResultsfromVariable("class", res);
-        }
-
-    }
+//    public static void main(String[] args) throws URISyntaxException, IOException {
+//        CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP_ADDRESS, Global.CORESE_PREFIXES);
+//        for(int hexDigit = 0; hexDigit<0x10; hexDigit++) {
+//            String h = String.format("\"%x\"", hexDigit);
+//            System.out.println("### h=" + h);
+//            String sparql = RequestBuilder.buildSelectRequest("distinct ?class", "?class a ?z. FILTER(contains(str(?class), \"http://\")). FILTER( strStarts(MD5(str(?class))  , " + h + ") )");
+//            String res = endpoint.select(Format.JSON, sparql);
+//            ResultParser.getResultsfromVariable("class", res);
+//        }
+//
+//    }
 
 }

@@ -21,10 +21,12 @@ mkdir -p ../../jar/
 mv -f corese-server/target/corese-server-$CORESE_VERSION-jar-with-dependencies.jar ../../jar/corese-server-$CORESE_VERSION.jar
 cd ../../..
 # Download SPIN 2.0.0 from http://topquadrant.com/repository/spin/
-echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - Download SPIN                v$SPIN_VERSION"
-mkdir -p ./RDFMiner/dep/org/topbraid/spin/2.0.0/
-wget -P ./RDFMiner/dep/org/topbraid/spin/2.0.0/ https://www.topquadrant.com/repository/spin/org/topbraid/spin/2.0.0/spin-2.0.0.jar
-
+SPIN_PATH="./RDFMiner/dep/org/topbraid/spin/2.0.0/"
+if [ ! -d "$SPIN_PATH" ]; then 
+    echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - Download SPIN                v$SPIN_VERSION"
+    mkdir -p "$SPIN_PATH"
+    wget -P "$SPIN_PATH" https://www.topquadrant.com/repository/spin/org/topbraid/spin/2.0.0/spin-2.0.0.jar
+fi
 # Build services
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - Build services ..."
 ./install/services/build_corese.sh

@@ -36,11 +36,6 @@ public class ShapeFitnessEvaluation extends Fitness {
         shapes = new ArrayList<>();
     }
 
-    public String evaluate(CoreseEndpoint endpoint, String fileContent) throws URISyntaxException, IOException {
-        // launch evaluation for each SHACL Shapes
-        return endpoint.getProbabilisticValidationReportFromServer(fileContent);
-    }
-
     @Override
     public ArrayList<GEIndividual> updatePopulation(ArrayList<GEIndividual> population, String url, String prefixes, List<JSONObject> content) {
         // evaluation of SHACL Shapes
@@ -48,7 +43,8 @@ public class ShapeFitnessEvaluation extends Fitness {
             ShapesManager shapesManager = new ShapesManager(population);
             // launch evaluation
             CoreseEndpoint endpoint = new CoreseEndpoint(url, prefixes);
-            String report = endpoint.getProbabilisticValidationReportFromServer(shapesManager.fileContent);
+            String report = endpoint.getProbabilisticValidationReportFromServer(shapesManager.file);
+//            System.out.println("### REPORT\n" + report);
             // read evaluation report
 //            System.out.println("fileContent = " + shapesManager.fileContent);
             ValidationReport validationReport = new ValidationReport(report);

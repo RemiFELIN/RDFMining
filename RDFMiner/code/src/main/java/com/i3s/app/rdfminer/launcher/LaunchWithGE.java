@@ -141,6 +141,10 @@ public class LaunchWithGE {
                 parameters.maxWrapp);
         candidatePopulation = canPop.initialize(buffer, curGeneration);
 
+//        for(GEIndividual ind : candidatePopulation) {
+//            System.out.println("ind: " + ind.getPhenotype());
+//        }
+
         // Fill the 'stats' part of the JSON output
         RDFMiner.stats.populationSize = parameters.populationSize;
         RDFMiner.stats.maxLengthChromosome = parameters.initLenChromosome;

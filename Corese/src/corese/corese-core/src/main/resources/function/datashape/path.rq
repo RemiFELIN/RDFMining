@@ -26,8 +26,8 @@ function sh:path(report, sh, vis, nodeList, path, present) {
     let (b1 = sh:pathBasic(report, sh, vis, nodeList, path, present), 
         b6 = sh:sparql(report, sh, vis, nodeList, path)
     ) {
-        sh:log("path.rq", "sh:path", concat("b1=", b1));
-        sh:log("path.rq", "sh:path", concat("b6=", b6));
+        # sh:log("path.rq", "sh:path", concat("b1=", b1));
+        # sh:log("path.rq", "sh:path", concat("b6=", b6));
         # sh:log("path.rq", "sh:path", concat("(b1 && b6)=", (b1 && b6)));
         return (b1 &&  b6)
     }

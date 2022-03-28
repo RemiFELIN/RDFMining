@@ -25,9 +25,9 @@ import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 /**
  * @author NGUYEN Thu Huong Extraction of a sample of DBpedia
  */
-public class SampleDBpediaExtraction {
+public class Extractor {
 
-	private static Logger logger = Logger.getLogger(SampleDBpediaExtraction.class.getName());
+	private static Logger logger = Logger.getLogger(Extractor.class.getName());
 
 	final private static String PREFIXES = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
 			+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
@@ -41,7 +41,7 @@ public class SampleDBpediaExtraction {
 
 	public static ArrayList<String> arrCheckedResource = new ArrayList<String>();
 
-	private static final String FILENAME = "./SampleDBpedia2/RDFDataset_";
+//	private static final String FILENAME = "./SampleDBpedia2/RDFDataset_";
 
 	public static int countTriples = 0; // count triples recorded at recent time
 
@@ -52,11 +52,11 @@ public class SampleDBpediaExtraction {
 
 	public static LinkedList<String> queue = new LinkedList<String>();
 
-	public static void main(String[] args) throws IOException {
+	public static void launch(String rootFile) throws IOException {
 		// Configure the log4j loggers:
 		PropertyConfigurator.configure("log4j.properties");
 
-		FileOutputStream fout = new FileOutputStream(FILENAME + Integer.toString(countLines) + ".nt", true);
+		FileOutputStream fout = new FileOutputStream(rootFile + Integer.toString(countLines) + ".nt", true);
 		// create model containing stacountTriplestements
 		Model m;
 		// User input
@@ -82,20 +82,20 @@ public class SampleDBpediaExtraction {
 					if (fout != null)
 						fout.close();
 					i++;
-					fout = new FileOutputStream(FILENAME + "_" + Integer.toString(i) + ".nt", true);
+					fout = new FileOutputStream(rootFile + "_" + Integer.toString(i) + ".nt", true);
 					countLines = 0;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
-			RDFDatasetGenerator2(m, fout, propotion);
+			RDFDatasetGeneratorOnDBPedia(m, fout, propotion);
 		}
 		sc.close();
 		System.out.println("Done ! Total number of triples: " + countTriples);
 		fout.close();
 	}
 
-	static void RDFDatasetGenerator2(Model m, FileOutputStream fout, double propotion) throws IOException {
+	static void RDFDatasetGeneratorOnDBPedia(Model m, FileOutputStream fout, double propotion) throws IOException {
 		List<Statement> stmts = new ArrayList<>();
 		int pickedNumberTriples;
 		int curNum;

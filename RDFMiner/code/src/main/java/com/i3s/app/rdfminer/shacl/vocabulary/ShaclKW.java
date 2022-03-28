@@ -45,7 +45,7 @@ public class ShaclKW {
     public static final String TARGETOBJECTSOF = SHACL + "targetObjectsOf";
 
     /**
-     * The "sh:targetSubjectsOf" of this shape
+     * The "sh:targetSubjectOf" of this shape
      */
     public static final String TARGETSUBJECTSOF = SHACL + "targetSubjectsOf";
 

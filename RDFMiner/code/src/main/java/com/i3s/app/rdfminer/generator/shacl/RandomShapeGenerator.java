@@ -36,8 +36,8 @@ public class RandomShapeGenerator extends ShapeGenerator {
         random = new MersenneTwisterFast(System.currentTimeMillis());
     }
 
-    public static void main(String[] args) throws URISyntaxException, IOException {
-        Generator test = new RandomShapeGenerator("/user/rfelin/home/projects/RDFMining/IO/shacl-shapes-test.bnf");
-    }
+//    public static void main(String[] args) throws URISyntaxException, IOException {
+//        Generator test = new RandomShapeGenerator("/user/rfelin/home/projects/RDFMining/IO/shacl-shapes-test.bnf");
+//    }
 
 }

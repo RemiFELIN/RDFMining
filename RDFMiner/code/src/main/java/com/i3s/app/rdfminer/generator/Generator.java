@@ -85,7 +85,7 @@ public abstract class Generator {
             grammar.setPhenotype(new Phenotype());
             valid = grammar.genotype2Phenotype(true);
             i++;
-        } while ((!valid) && (i < grammar.getMaxWraps()));
+        } while (!valid && i < grammar.getMaxWraps());
 
         individual = new GEIndividual();
         individual.setMapper(grammar);
