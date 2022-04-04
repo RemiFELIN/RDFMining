@@ -149,10 +149,8 @@ public class LaunchWithoutGE {
 						logger.error("'-a' and '-sa' are used at the same time");
 						System.exit(1);
 					}
-					if (axiomName == null)
-						break;
-					if (axiomName.isEmpty())
-						break;
+//					if (axiomName.isEmpty())
+//						break;
 					String finalAxiomName = axiomName;
 					callables.add(() -> {
 //						long t0 = RDFMiner.getProcessCPUTime();
@@ -167,6 +165,8 @@ public class LaunchWithoutGE {
 //						logger.info("Test completed in " + a.elapsedTime + " ms.");
 						return a;
 					});
+					if (axiomName != null)
+						break;
 				} catch (IOException e) {
 					writeAndFinish();
 					logger.error("Could not read the next axiom.");
