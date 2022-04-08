@@ -107,11 +107,6 @@ public class Global {
     public static final String CACHE_PATH = System.getenv("HOME") + "/caches/";
 
     /**
-     * Corese IP Address
-     */
-    public static final String CORESE_SHACL_SHAPES_FILEPATH = "/usr/local/corese/rdfminer/shacl-shapes/shapes.ttl";
-
-    /**
      * Number of threads used to perform evaluation of axioms, its value depends of
      * the processor(s) of the server which are used to deploy and use the RDF
      * Miner.

@@ -331,6 +331,7 @@ public class EATools {
 			// SHACL MODE
 			// we decide if we keep the parent or the child for each couple of individuals
 			if(mode.isShaclMode()) {
+				logger.info(shapesToEvaluate.size() + " couples of new shapes (childs) to evaluate ...");
 				// for each child in crowding method
 				ArrayList<GEIndividual> childs = new ArrayList<>();
 				for(Crowding crowding : shapesToEvaluate) {
@@ -352,7 +353,6 @@ public class EATools {
 					// modify crowding with updated childs
 					for(Crowding crowding : shapesToEvaluate) {
 						if(crowding.child1 == shape.individual) {
-//							logger.info("set the fitness of child1: " + crowding.child1.getPhenotype() + "\nfitness = " + shape.fitness);
 							// set the fitness of the child
 							BasicFitness fit = new BasicFitness((Double) shape.fitness, crowding.child1);
 							fit.setIndividual(crowding.child1);
@@ -360,7 +360,6 @@ public class EATools {
 							crowding.child1.setFitness(fit);
 						} else if(crowding.child2 == shape.individual) {
 							// set the fitness of the child
-//							logger.info("set the fitness of child1: " + crowding.child2.getPhenotype() + "\nfitness = " + shape.fitness);
 							BasicFitness fit = new BasicFitness((Double) shape.fitness, crowding.child2);
 							fit.setIndividual(crowding.child2);
 							fit.getIndividual().setValid(true);

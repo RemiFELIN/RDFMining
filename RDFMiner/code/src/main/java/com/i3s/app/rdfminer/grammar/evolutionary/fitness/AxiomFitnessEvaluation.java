@@ -69,6 +69,8 @@ public class AxiomFitnessEvaluation extends Fitness {
 		ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
 		// Submit tasks
 		List<Future<Axiom>> futureAxioms = null;
+
+		logger.info(callables.size() + " axioms are ready to be evaluate ...");
 		try {
 			futureAxioms = executor.invokeAll(callables);
 		} catch (InterruptedException e) {

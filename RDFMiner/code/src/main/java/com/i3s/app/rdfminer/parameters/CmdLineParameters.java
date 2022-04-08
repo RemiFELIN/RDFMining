@@ -52,7 +52,7 @@ public class CmdLineParameters {
 	public String grammarFile = System.getenv("HOME") + "code/resources/OWL2Axiom-test.bnf";
 
 	@Option(name = "-dir", aliases = { "--directory" }, usage = "path of output folder", metaVar = "RESULTFOLDER")
-	public String resultFolder = "results.json";
+	public String resultFolder = "results";
 
 	@Option(name = "-r", aliases = { "--random" }, usage = "test randomly generated axioms")
 	public boolean useRandomAxiomGenerator = false;

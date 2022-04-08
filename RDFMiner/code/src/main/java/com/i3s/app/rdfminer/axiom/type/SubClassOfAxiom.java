@@ -61,6 +61,11 @@ public class SubClassOfAxiom extends Axiom {
 	public static TimeMap maxTestTime = new TimeMap();
 
 	/**
+	 * The complexity of current axiom : if one (or both) of the part is composed of two or more URI
+	 */
+	public boolean complex = false;
+
+	/**
 	 * Create a new <code>SubClassOf</code> object expression axiom from the two
 	 * given concept expressions.
 	 * 
@@ -70,12 +75,14 @@ public class SubClassOfAxiom extends Axiom {
 	 */
 	public SubClassOfAxiom(List<Symbol> subClassExpression, List<Symbol> superClassExpression,
 			VirtuosoEndpoint endpoint) {
-//		logger.error("subClass: " + subClassExpression);
-//		logger.error("superClass: " + superClassExpression);
 		subClass = ExpressionFactory.createClass(subClassExpression);
 		superClass = ExpressionFactory.createClass(superClassExpression);
+		// define if the current axiom is complex
+		if(subClassExpression.size() > 1 || superClassExpression.size() > 1) {
+			complex = true;
+		}
+		// Handle the double negation in an optimized way:
 		if (superClass instanceof ComplementClassExpression)
-			// Handle the double negation in an optimized way:
 			superClassComplement = superClass.subExpressions.get(0);
 		else
 			superClassComplement = new ComplementClassExpression(superClass);
@@ -181,24 +188,41 @@ public class SubClassOfAxiom extends Axiom {
 	 */
 	@Override
 	public void update(VirtuosoEndpoint endpoint) {
+		// First of all, we verify if a such assumption does not already exists
+		// Only simple OWL 2 subClassOf axioms are considered in this case
+		// This checking part is an temporary solution
+		// TODO: in the future, we will consider all existing axioms as knowledge to improve OWL 2 Axioms mining (in GE, ...)
+		if(!complex && endpoint.ask(subClass + " rdfs:subClassOf " + superClass, 0)) {
+			// in this case, we set pos = nec = 1.0 as consequence to its existance in ontology
+			logger.info("This axiom is defined in the ontology ...");
+			referenceCardinality = numConfirmations = endpoint.count("?x", subClass.graphPattern, 0);
+			numExceptions = 0;
+			ari = ARI();
+			return;
+		}
+		// If it does not exists, we need to evaluate it
 		confirmations = new ArrayList<>();
 		exceptions = new ArrayList<>();
 		long timeSpent;
+		// The reference cardinality will count all the instances involved by the current axiom
 		referenceCardinality = endpoint.count("?x", subClass.graphPattern, 0);
-		logger.info("referenceCardinality = " + referenceCardinality);
-		int numIntersectingClasses = endpoint.count("?D", subClass.graphPattern + " ?x a ?D . ", 0);
+		logger.info("Reference cardinality = " + referenceCardinality);
+		// The number of instances linked between both part :
+		numIntersectingClasses = endpoint.count("?D", subClass.graphPattern + " ?x a ?D . ", 0);
 		logger.info("No. of Intersecting Classes = " + numIntersectingClasses);
-		timePredictor = (long) referenceCardinality * numIntersectingClasses;
+//		timePredictor = (long) referenceCardinality * numIntersectingClasses;
 		numConfirmations = endpoint.count("?x", subClass.graphPattern + "\n" + superClass.graphPattern, 0);
-		
-		if (numConfirmations > 0 && numConfirmations < 100) {
-			logger.info(numConfirmations + " confirmation(s) found ! retrieving in collection ...");
-			// query the confirmations
-			ResultSet cfs = endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\n" + superClass.graphPattern + " }", 0);
-			while (cfs.hasNext()) {
-				QuerySolution solution = cfs.next();
-				RDFNode x = solution.get("x");
-				confirmations.add(Expression.sparqlEncode(x));
+		if (numConfirmations > 0) {
+			logger.info(numConfirmations + " confirmation(s) found ...");
+			if(numConfirmations < 100) {
+				logger.info("retrieving in collection ...");
+				// query the confirmations
+				ResultSet cfs = endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\n" + superClass.graphPattern + " }", 0);
+				while (cfs.hasNext()) {
+					QuerySolution solution = cfs.next();
+					RDFNode x = solution.get("x");
+					confirmations.add(Expression.sparqlEncode(x));
+				}
 			}
 		}
 		// Now, let's compute the exceptions for this axiom 
@@ -211,6 +235,7 @@ public class SubClassOfAxiom extends Axiom {
 			return;
 			
 		} else if (RDFMiner.parameters.timeOut > 0 || RDFMiner.parameters.dynTimeOut != 0.0) {
+			logger.info("compute the number of exceptions with a timeout ...");
 			// Since the query to count exception is complex and may take very long to
 			// execute,
 			// we execute it with the user-supplied time out.
@@ -244,12 +269,12 @@ public class SubClassOfAxiom extends Axiom {
 			// This is the EKAW 2014 version, without time-out:
 //			numExceptions = endpoint.count("?x",
 //					subClass.graphPattern + "\n" + superClassComplement.graphPattern, 0);
-			getExceptions(endpoint);
+			getExceptions(endpoint, 1000);
 			timeSpent = timer.endTimer();
 			// Log the response time
 			logger.info("Exceptions query finished - time spent: " + timeSpent + "ms.");
 		}
-		// We don't need to compute exceptions if we get a timeout from exceptions SPARQL request
+//		// We don't need to compute exceptions if we get a timeout from exceptions SPARQL request
 //		if (numExceptions > 0 && numExceptions < 100 && !isTimeout) {
 //			logger.info(numExceptions + " exception(s) found ! retrieving in collection ...");
 //			// retrieve the exceptions
@@ -270,40 +295,31 @@ public class SubClassOfAxiom extends Axiom {
 		logger.info("ARI = " + ari);
 	}
 
-	public void getExceptions(VirtuosoEndpoint endpoint) {
-		// sub correspond to the graph pattern without the "." char at the end
-		String sub = subClass.graphPattern.substring(0, subClass.graphPattern.length() - 1);
-		// SELECT count(DISTINCT(?t)) WHERE { ?x a <http://dbpedia.org/ontology/SoccerClub> , ?t }
-		int nTypes = endpoint.count("?t", sub + ", ?t", 0);
-		if(nTypes != 0)
-			logger.info(nTypes + " additionnal type(s) linked to it subClass ...");
-		// truncate query :
-		// get all types related to the subClassExpression for which it does not exists any ?z of this type and superClassExpression
+	public void getExceptions(VirtuosoEndpoint endpoint, int size) {
+		logger.info("Compute the number of exceptions with a proposal optimization ...");
 		int offset = 0;
-		int size = 1000;
 		List<String> types = new ArrayList<>();
-//		logger.info("find all types exception ...");
-		while(offset != nTypes) {
+		// get all types related to the subClassExpression for which it does not exists any ?z of this type and superClassExpression
+		while(offset != numIntersectingClasses) {
 			ResultSet cfs = endpoint.select("distinct(?t) WHERE { " +
 					"{ " +
 						"SELECT ?t WHERE { " +
 							"{ " +
 								"SELECT distinct(?t) WHERE { " +
-									sub + ", ?t " +
+									subClass.graphPattern + " ?x a ?t " +
 								"} ORDER BY ?t " +
 							"} " +
 						"} LIMIT " + size + " OFFSET " + offset + " " +
 					"} " +
 					"FILTER NOT EXISTS { " +
-						"?z a ?t, " + superClass + " " +
+						superClass.graphPattern + " ?x a ?t" +
 					"} } ", 0);
 			while (cfs.hasNext()) {
 				QuerySolution solution = cfs.next();
 				RDFNode t = solution.get("t");
 				types.add(Expression.sparqlEncode(t));
 			}
-			offset += Math.min(nTypes - offset, size);
-//			logger.info("offset=" + offset);
+			offset += Math.min(numIntersectingClasses - offset, size);
 		}
 		if(types.size() != 0)
 			logger.info(types.size() + " type(s) where we don't observe a link with the superClass ...");
@@ -320,7 +336,6 @@ public class SubClassOfAxiom extends Axiom {
 				body.append("(").append(type).append(") ");
 			}
 			body.append("} ");
-//			logger.info("body=" + body);
 			ResultSet cfs = endpoint.select("distinct ?x where { " + body + "} ", 0);
 			while (cfs.hasNext()) {
 				QuerySolution solution = cfs.next();
@@ -331,7 +346,6 @@ public class SubClassOfAxiom extends Axiom {
 					instances.add(Expression.sparqlEncode(x));
 			}
 			i += Math.min(types.size() - i, k);
-//			logger.info("i=" + i);
 		}
 		logger.info(instances.size() + " exception(s) found ...");
 		numExceptions = instances.size();

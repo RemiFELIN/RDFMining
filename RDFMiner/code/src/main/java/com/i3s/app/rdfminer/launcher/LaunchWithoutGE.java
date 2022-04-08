@@ -120,9 +120,10 @@ public class LaunchWithoutGE {
 						a.axiomId = finalAxiomName;
 //						long t = RDFMiner.getProcessCPUTime();
 //						a.elapsedTime = t - t0;
-						if (parameters.singleAxiom != null) {
-							logger.info("Axiom evaluated ! JSON Result: " + a.toJSON().toString());
-						}
+//						if (parameters.singleAxiom != null) {
+//							logger.info("Axiom evaluated !");
+//							logger.info(a.toJSON().toString(2));
+//						}
 //						logger.info("Test completed in " + a.elapsedTime + " ms.");
 						return a;
 					} catch (QueryExceptionHTTP httpError) {
@@ -160,7 +161,8 @@ public class LaunchWithoutGE {
 //						long t = RDFMiner.getProcessCPUTime();
 //						a.elapsedTime = t - t0;
 						if (parameters.singleAxiom != null) {
-							logger.info("Axiom evaluated ! JSON Result: " + a.toJSON().toString());
+							logger.info("Axiom evaluated !");
+							logger.info("\n" + a.toJSON().toString(2));
 						}
 //						logger.info("Test completed in " + a.elapsedTime + " ms.");
 						return a;

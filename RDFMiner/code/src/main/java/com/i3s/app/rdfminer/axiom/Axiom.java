@@ -79,6 +79,12 @@ public abstract class Axiom extends Results {
 	public int referenceCardinality = 0;
 
 	/**
+	 * The number of instances linked between both part of a OWL 2 Axioms if it involve two parts such as :
+	 * <code>subClassOf</code>; <code>DisjointClasses</code>; ...
+	 */
+	public int numIntersectingClasses = 0;
+
+	/**
 	 * The current ID of generation where this axiom has been found
 	 */
 	public int generation;
