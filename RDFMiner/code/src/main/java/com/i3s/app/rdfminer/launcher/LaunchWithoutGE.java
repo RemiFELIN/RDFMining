@@ -113,7 +113,7 @@ public class LaunchWithoutGE {
 				// create a callable and add it on list of callables
 				String finalAxiomName = axiomName;
 				callables.add(() -> {
-					long t0 = RDFMiner.getProcessCPUTime();
+//					long t0 = RDFMiner.getProcessCPUTime();
 					try {
 						logger.info("Testing axiom: " + finalAxiomName);
 						Axiom a = AxiomFactory.create(null, axiom, new VirtuosoEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES));
@@ -150,8 +150,10 @@ public class LaunchWithoutGE {
 						logger.error("'-a' and '-sa' are used at the same time");
 						System.exit(1);
 					}
-//					if (axiomName.isEmpty())
-//						break;
+					if (axiomName == null || axiomName.isEmpty()) {
+						logger.info("No more axioms to evaluate ...");
+						break;
+					}
 					String finalAxiomName = axiomName;
 					callables.add(() -> {
 //						long t0 = RDFMiner.getProcessCPUTime();
@@ -167,7 +169,7 @@ public class LaunchWithoutGE {
 //						logger.info("Test completed in " + a.elapsedTime + " ms.");
 						return a;
 					});
-					if (axiomName != null)
+					if (parameters.singleAxiom != null)
 						break;
 				} catch (IOException e) {
 					writeAndFinish();
