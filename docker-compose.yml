@@ -40,18 +40,8 @@ services:
         ports:
             - "9100:9100"
         volumes:
-            - /home/rfelin/projects/RDFMining/Corese/log:/usr/local/corese/log
-            - /home/rfelin/projects/RDFMining/Corese/data:/usr/local/corese/data
-            # - /home/rfelin/projects/RDFMining/Corese/config:/usr/local/corese/config
-        # build:
-        #     context: ./Corese/.
-        # ports:
-        #     - "8890:8890"
-        # volumes:
-        #     - /home/rfelin/projects/RDFMining/Corese/log:/log           # To use it in your own machine, you need to put your own absolute path
-        #     - /home/rfelin/projects/RDFMining/Corese/data:/data         # To use it in your own machine, you need to put your own absolute path
-        #     - /home/rfelin/projects/RDFMining/Corese/config:/config     # To use it in your own machine, you need to put your own absolute path
-        #     - /home/rfelin/projects/RDFMining/Corese/jar:/jar           # To use it in your own machine, you need to put your own absolute path
+            - /home/rfelin/projects/RDFMining/Corese/log:/usr/local/corese/log      # To use it in your own machine, you need to put your own absolute path
+            - /home/rfelin/projects/RDFMining/Corese/data:/usr/local/corese/data    # To use it in your own machine, you need to put your own absolute path
         networks:
             rdfmining_network:
                 ipv4_address: 172.19.0.4

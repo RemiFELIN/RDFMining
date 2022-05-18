@@ -125,6 +125,7 @@ function sh:shacleval(shape, focus) {
         for ((sh list) in focus) {
             sh:log("main.rq", "sh:shacleval", "focus ...");
             if (sh:trace(), xt:print("target:", coalesce(sh, "undef"), xt:size(list), list), true);
+            sh:log("main.rq", "sh:shacleval", concat("bound(sh)=", bound(sh), " and xt:size(list)=", xt:size(list)));
             if (bound(sh) && xt:size(list) > 0) {
                 set(abnode = sh:bnodeid());
                 if(extended) {

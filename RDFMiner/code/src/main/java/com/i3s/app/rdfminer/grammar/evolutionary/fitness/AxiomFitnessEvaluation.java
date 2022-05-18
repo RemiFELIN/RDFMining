@@ -46,12 +46,7 @@ public class AxiomFitnessEvaluation extends Fitness {
 			if (population.get(i).isMapped()) {
 				final int idx = i;
 				callables.add(() -> {
-//					SparqlEndpoint endpoint;
-//					if (evaluateOnFullDB) {
 					VirtuosoEndpoint endpoint = new VirtuosoEndpoint(url, prefixes);
-//					} else {
-//						endpoint = new SparqlEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES);
-//					}
 					Axiom axiom = AxiomFactory.create(population.get(idx), population.get(idx).getPhenotype(),
 							endpoint);
 					return axiom;
@@ -92,12 +87,13 @@ public class AxiomFitnessEvaluation extends Fitness {
 			e.printStackTrace();
 		}
 
+		ArrayList<GEIndividual> newPopulation = new ArrayList<>();
 		// Update fitness of population
 		for (Axiom axiom : axiomList) {
 			BasicFitness fit = new BasicFitness(setFitness(axiom), axiom.individual);
 			fit.getIndividual().setValid(true);
 			axiom.individual.setFitness(fit);
-			population.add(axiom.individual);
+			newPopulation.add(axiom.individual);
 			// Now, we can fill our JSONObject
 			if (Objects.equals(url, Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT)) {
 				// data about full database of DBPedia
@@ -118,7 +114,7 @@ public class AxiomFitnessEvaluation extends Fitness {
 				}
 			}
 		}
-		return population;
+		return newPopulation;
 	}
 
 	@Override

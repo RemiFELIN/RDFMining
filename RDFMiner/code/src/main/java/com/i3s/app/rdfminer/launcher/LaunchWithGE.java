@@ -114,8 +114,8 @@ public class LaunchWithGE {
         int curGeneration;
         boolean flag = false;
         Reader buffer;
-        File tempFile = new File(RDFMiner.outputFolder + "buffer_size" + parameters.populationSize + ".txt");
-        if (!tempFile.exists()) {
+        File bufferFile = new File(RDFMiner.outputFolder + "buffer_size" + parameters.populationSize + ".txt");
+        if (!bufferFile.exists()) {
             buffer = null;
             curCheckpoint = curGeneration = 1;
         } else {
@@ -210,7 +210,8 @@ public class LaunchWithGE {
 
                 if(RDFMiner.mode.isAxiomMode()) {
                     List<JSONObject> content = new ArrayList<>();
-                    fit.display(candidatePopulation, content, curGeneration);
+//                    logger.info("\n\nDEBUG: candidatePopulation_size=" + candidatePopulation.size() + "\n");
+//                    fit.display(candidatePopulation, content, curGeneration);
                     ArrayList<GEIndividual> candidatePopulation2 = new ArrayList<>();
                     for (GEIndividual geIndividual : candidatePopulation) {
                         GEIndividual indivi = new GEIndividual();
@@ -222,6 +223,7 @@ public class LaunchWithGE {
                     }
                     logger.info("Evaluating axioms against to the RDF Data of the whole DBPedia.");
                     fit.updatePopulation(candidatePopulation2, Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES, content);
+                    RDFMiner.content.addAll(content);
                 } else {
                     assert fit instanceof ShapeFitnessEvaluation;
                     for(Shape shape : ((ShapeFitnessEvaluation) fit).getShapes()) {
@@ -268,7 +270,6 @@ public class LaunchWithGE {
                     selectedPopulation = distinctCandidatePopulation;
                     sizeElite = 0;
                 }
-
                 // set the type selection
                 crossoverPopulation = EATools.getTypeSelection(parameters.typeSelect, selectedPopulation, sizeElite, sizeSelection);
                 if(crossoverPopulation == null) {
@@ -314,10 +315,16 @@ public class LaunchWithGE {
             RDFMiner.results.stats = RDFMiner.stats.toJSON();
             // sort axioms (by ARI or Generality) using type of axioms
             if(mode.isAxiomMode()) {
+                if (RDFMiner.type == Type.DISJOINT_CLASSES)
+                    logger.info("sort axioms by generality ...");
+                else
+                    logger.info("sort axioms by ARI ...");
+//                logger.info("DEBUG: size_content=" + RDFMiner.content.size());
                 RDFMiner.content.sort(Comparator.comparingDouble(j -> {
                     // if we have disjoint classes axioms, we need to sort using generality
-                    if (RDFMiner.type == Type.DISJOINT_CLASSES)
+                    if (RDFMiner.type == Type.DISJOINT_CLASSES) {
                         return j.getInt("generality");
+                    }
                     return j.getDouble("ari");
                 }));
             }

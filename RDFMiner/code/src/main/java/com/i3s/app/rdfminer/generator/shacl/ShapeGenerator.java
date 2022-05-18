@@ -44,7 +44,7 @@ public abstract class ShapeGenerator extends Generator {
             String classSparql = RequestBuilder.buildSelectRequest(
                     Global.CORESE_PREFIXES,
                     "DISTINCT ?Class",
-                    "?x a ?Class . FILTER( contains( str(?Class), str(inria:) ) ) . FILTER( strStarts(MD5(str(?Class)) , " + h + ") ) "
+                    "?x a ?Class . FILTER( strStarts(MD5(str(?Class)) , " + h + ") ) "
             );
             String subjectSparql = RequestBuilder.buildSelectRequest(
                     Global.CORESE_PREFIXES,
@@ -54,7 +54,7 @@ public abstract class ShapeGenerator extends Generator {
 
             generateProductions("Class", classSparql);
 //            generateProductions("Source", sourceSparql);
-            generateProductions("Subject", subjectSparql);
+//            generateProductions("Subject", subjectSparql);
         }
     }
 

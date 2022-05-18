@@ -94,7 +94,7 @@ public class Global {
     /**
      * Output path of results, it corresponding to '/rdfminer/io/' in container
      */
-    public static final String OUTPUT_PATH = System.getenv("HOME") + "/io/";
+    public static final String OUTPUT_PATH = System.getenv("HOME") + "io/";
 
     /**
      * Name of output results file in JSON
