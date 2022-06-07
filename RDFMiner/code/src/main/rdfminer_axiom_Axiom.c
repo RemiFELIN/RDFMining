@@ -10,7 +10,7 @@ The application must then be run with the JVM command-line option: -Djava.librar
 /**
  * Return the total (= user + system) CPU time for this process, in ms.
  */
-JNIEXPORT jlong JNICALL Java_com_i3s_app_rdfminer_axiom_Axiom_getProcessCPUTime(JNIEnv *env, jclass c)
+JNIEXPORT jlong JNICALL Java_com_i3s_app_rdfminer_axiom_Axiom_getProcessCPUTime (JNIEnv *env, jclass c)
 {
 	struct rusage usage;
 	long t;
