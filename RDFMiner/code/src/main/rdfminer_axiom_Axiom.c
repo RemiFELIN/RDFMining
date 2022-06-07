@@ -1,6 +1,6 @@
 #include <sys/time.h>
 #include <sys/resource.h>
-#include "rdfminer_RDFMiner.h"
+#include "rdfminer_axiom_Axiom.h"
 /*
 
 The application must then be run with the JVM command-line option: -Djava.library.path=.
