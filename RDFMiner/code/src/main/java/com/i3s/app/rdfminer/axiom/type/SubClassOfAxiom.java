@@ -305,7 +305,7 @@ public class SubClassOfAxiom extends Axiom {
 		List<String> types = new ArrayList<>();
 		// get all types related to the subClassExpression for which it does not exists any ?z of this type and superClassExpression
 		while(offset != numIntersectingClasses) {
-			logger.info("[DEBUG]\n" + "distinct(?t) WHERE { " +
+			/*logger.info("[DEBUG]\n" + "distinct(?t) WHERE { " +
 								"{ " +
 									"SELECT ?t WHERE { " +
 									"{ " +
@@ -317,7 +317,7 @@ public class SubClassOfAxiom extends Axiom {
 							"} " +
 							"FILTER NOT EXISTS { " +
 								superClass.graphPattern + " ?x a ?t" +
-							"} } ");
+							"} } ");*/
 
 			ResultSet cfs = endpoint.select("distinct(?t) WHERE { " +
 					"{ " +
@@ -347,8 +347,7 @@ public class SubClassOfAxiom extends Axiom {
 		int i = 0;
 		int k = 100;
 		// set the LIMIT ... OFFSET ... values
-		// According to this ressource :
-		int limit = 10000;
+		int limit = 1000000;
 		offset = 0;
 		List<String> instances = new ArrayList<>();
 		while(i != types.size()) {
@@ -360,6 +359,7 @@ public class SubClassOfAxiom extends Axiom {
 			}
 			body.append("} ");
 			while(true) {
+//				logger.info("truncate request\n" + "DISTINCT ?x where { " + body + "} LIMIT " + limit + " OFFSET " + offset);
 				ResultSet cfs = endpoint.select("DISTINCT ?x where { " + body + "} LIMIT " + limit + " OFFSET " + offset , 0);
 				//			logger.info("[DEBUG]\ndistinct ?x where { " + body + "} ");
 				while (cfs.hasNext()) {
@@ -370,11 +370,11 @@ public class SubClassOfAxiom extends Axiom {
 					if(!instances.contains(Expression.sparqlEncode(x)))
 						instances.add(Expression.sparqlEncode(x));
 				}
-				logger.info("[DEBUG] cfs.getRowNumber() = " + cfs.getRowNumber());
+//				logger.info("[DEBUG] cfs.getRowNumber() = " + cfs.getRowNumber());
 				if(cfs.getRowNumber() < limit) {
 					break;
 				} else {
-					logger.info("[DEBUG] Increment offset ...");
+//					logger.info("[DEBUG] Increment offset ...");
 					offset += limit;
 				}
 			}
