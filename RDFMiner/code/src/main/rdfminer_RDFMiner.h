@@ -12,7 +12,7 @@ extern "C" {
  * Method:    getProcessCPUTime
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_com_i3s_app_rdfminer_RDFMiner_getProcessCPUTime
+JNIEXPORT jlong JNICALL Java_com_i3s_app_rdfminer_axiom_Axiom_getProcessCPUTime
   (JNIEnv *, jclass);
 
 #ifdef __cplusplus
