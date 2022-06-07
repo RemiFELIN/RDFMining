@@ -50,6 +50,18 @@ public class SubClassOfAxiom extends Axiom {
 	protected Expression superClassComplement;
 
 	/**
+	 * A service native method to query for CPU usage.
+	 * <p>The name and implementation of this method are adapted from
+	 * <a href="http://www.javaworld.com/article/2077361/learn-java/profiling-cpu-usage-from-within-a-java-application.html">this
+	 * 2002 blog post</a>.</p>
+	 * <p>The implementation in C language of this native method is contained in the two source files
+	 * <code>rdfminer_RDFMiner.h</code> and <code>rdfminer_RDFMiner.c</code>.</p>
+	 *
+	 * @return the number of milliseconds of CPU time used by the current process so far
+	 */
+	public static native long getProcessCPUTime();
+
+	/**
 	 * The time predictor for this axiom.
 	 */
 	protected long timePredictor;
@@ -75,6 +87,8 @@ public class SubClassOfAxiom extends Axiom {
 	 */
 	public SubClassOfAxiom(List<Symbol> subClassExpression, List<Symbol> superClassExpression,
 			VirtuosoEndpoint endpoint) {
+		// set a t0 using the CPU time
+		long t0 = getProcessCPUTime();
 		subClass = ExpressionFactory.createClass(subClassExpression);
 		superClass = ExpressionFactory.createClass(superClassExpression);
 		// define if the current axiom is complex
@@ -96,6 +110,8 @@ public class SubClassOfAxiom extends Axiom {
 			logger.warn("Trying a naive update: this is going to take some time...");
 			naiveUpdate(endpoint);
 		}
+		// set elapsedTime as a CPU usage time
+		elapsedTime = getProcessCPUTime() - t0;
 	}
 
 	/**
@@ -263,31 +279,31 @@ public class SubClassOfAxiom extends Axiom {
 			
 		} else {
 			// Set a timer to compute the result time of each query
-			Timer timer = new Timer();
-			timer.startTimer();
+//			Timer timer = new Timer();
+//			timer.startTimer();
 			// logger.warn("Time Out = 0 s");
 			// This is the EKAW 2014 version, without time-out:
 //			numExceptions = endpoint.count("?x",
 //					subClass.graphPattern + "\n" + superClassComplement.graphPattern, 0);
 			getExceptions(endpoint, 1000);
-			timeSpent = timer.endTimer();
+//			timeSpent = timer.endTimer();
 			// Log the response time
-			logger.info("Exceptions query finished - time spent: " + timeSpent + "ms.");
+//			logger.info("Exceptions query finished - time spent: " + timeSpent + "ms.");
 		}
 //		// We don't need to compute exceptions if we get a timeout from exceptions SPARQL request
-//		if (numExceptions > 0 && numExceptions < 100 && !isTimeout) {
-//			logger.info(numExceptions + " exception(s) found ! retrieving in collection ...");
-//			// retrieve the exceptions
-//			ResultSet exc = endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\n"
-//					+ superClassComplement.graphPattern + " }", 0);
-//			while (exc.hasNext()) {
-//				QuerySolution solution = exc.next();
-//				RDFNode x = solution.get("x");
-//				exceptions.add(Expression.sparqlEncode(x));
-//			}
-//		}
+		if (numExceptions > 0 && numExceptions < 100 && !isTimeout) {
+			logger.info(numExceptions + " exception(s) found ! retrieving in collection ...");
+			// retrieve the exceptions
+			ResultSet exc = endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\n"
+					+ superClassComplement.graphPattern + " }", 0);
+			while (exc.hasNext()) {
+				QuerySolution solution = exc.next();
+				RDFNode x = solution.get("x");
+				exceptions.add(Expression.sparqlEncode(x));
+			}
+		}
 		// set the time spent for the computation of exceptions
-		elapsedTime = timeSpent;
+//		elapsedTime = timeSpent;
 		// logger.info("Possibility = " + possibility().doubleValue());
 		// logger.info("Necessity = " + necessity().doubleValue());
 		// set the ARI of axiom
@@ -301,6 +317,20 @@ public class SubClassOfAxiom extends Axiom {
 		List<String> types = new ArrayList<>();
 		// get all types related to the subClassExpression for which it does not exists any ?z of this type and superClassExpression
 		while(offset != numIntersectingClasses) {
+			logger.info("[DEBUG]\n" + "distinct(?t) WHERE { " +
+								"{ " +
+									"SELECT ?t WHERE { " +
+									"{ " +
+										"SELECT distinct(?t) WHERE { " +
+											subClass.graphPattern + " ?x a ?t " +
+										"} ORDER BY ?t " +
+									"} " +
+								"} LIMIT " + size + " OFFSET " + offset + " " +
+							"} " +
+							"FILTER NOT EXISTS { " +
+								superClass.graphPattern + " ?x a ?t" +
+							"} } ");
+
 			ResultSet cfs = endpoint.select("distinct(?t) WHERE { " +
 					"{ " +
 						"SELECT ?t WHERE { " +
@@ -319,6 +349,7 @@ public class SubClassOfAxiom extends Axiom {
 				RDFNode t = solution.get("t");
 				types.add(Expression.sparqlEncode(t));
 			}
+			logger.info("[DEBUG] size list: " + types.size());
 			offset += Math.min(numIntersectingClasses - offset, size);
 		}
 		if(types.size() != 0)
@@ -327,6 +358,10 @@ public class SubClassOfAxiom extends Axiom {
 		// for each types in the list, we will search any instances such as :
 		int i = 0;
 		int k = 100;
+		// set the LIMIT ... OFFSET ... values
+		// According to this ressource :
+		int limit = 10000;
+		offset = 0;
 		List<String> instances = new ArrayList<>();
 		while(i != types.size()) {
 			int end = Math.min(i + k, types.size());
@@ -336,15 +371,26 @@ public class SubClassOfAxiom extends Axiom {
 				body.append("(").append(type).append(") ");
 			}
 			body.append("} ");
-			ResultSet cfs = endpoint.select("distinct ?x where { " + body + "} ", 0);
-			while (cfs.hasNext()) {
-				QuerySolution solution = cfs.next();
-				RDFNode x = solution.get("x");
-				// to remove duplicated ?x (cause of truncation)
-				// if a given ?x is not on a list , we add it
-				if(!instances.contains(Expression.sparqlEncode(x)))
-					instances.add(Expression.sparqlEncode(x));
+			while(true) {
+				ResultSet cfs = endpoint.select("DISTINCT ?x where { " + body + "} LIMIT " + limit + " OFFSET " + offset , 0);
+				//			logger.info("[DEBUG]\ndistinct ?x where { " + body + "} ");
+				while (cfs.hasNext()) {
+					QuerySolution solution = cfs.next();
+					RDFNode x = solution.get("x");
+					// to remove duplicated ?x (cause of truncation)
+					// if a given ?x is not on a list , we add it
+					if(!instances.contains(Expression.sparqlEncode(x)))
+						instances.add(Expression.sparqlEncode(x));
+				}
+				logger.info("[DEBUG] cfs.getRowNumber() = " + cfs.getRowNumber());
+				if(cfs.getRowNumber() < limit) {
+					break;
+				} else {
+					logger.info("[DEBUG] Increment offset ...");
+					offset += limit;
+				}
 			}
+
 			i += Math.min(types.size() - i, k);
 		}
 		logger.info(instances.size() + " exception(s) found ...");
