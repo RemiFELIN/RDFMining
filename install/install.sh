@@ -38,6 +38,9 @@ echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - Extract Corese-server    
 mkdir -p ../../jar/
 mv -f corese-server/target/corese-server-$CORESE_VERSION-jar-with-dependencies.jar ../../jar/corese-server-$CORESE_VERSION.jar
 cd ../../..
+# prepare data folder for Corese
+echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - Create data folder for Corese-server        v$CORESE_VERSION"
+mkdir ./Corese/data/
 # Download SPIN 2.0.0 from http://topquadrant.com/repository/spin/
 SPIN_PATH="./RDFMiner/dep/org/topbraid/spin/2.0.0/"
 if [ ! -d "$SPIN_PATH" ]; then 
