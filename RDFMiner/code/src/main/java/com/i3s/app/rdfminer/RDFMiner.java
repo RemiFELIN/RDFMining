@@ -60,24 +60,6 @@ public class RDFMiner {
 	public static Mode mode;
 
 	/**
-	 * A service native method to query for CPU usage.
-	 * <p>
-	 * The name and implementation of this method are adapted from <a href=
-	 * "http://www.javaworld.com/article/2077361/learn-java/profiling-cpu-usage-from-within-a-java-application.html">this
-	 * 2002 blog post</a>.
-	 * </p>
-	 * <p>
-	 * The implementation in C language of this native method is contained in the
-	 * two source files <code>rdfminer_RDFMiner.h</code> and
-	 * <code>rdfminer_RDFMiner.c</code>.
-	 * </p>
-	 * 
-	 * @return the number of milliseconds of CPU time used by the current process so
-	 *         far
-	 */
-	public static native long getProcessCPUTime();
-
-	/**
 	 * A table of predicates, used in {@link CostGP}
 	 */
 	public static String[][] predicateTable;

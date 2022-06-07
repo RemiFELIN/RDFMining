@@ -42,7 +42,7 @@ RUN echo "\n********** START: download dependencies \n" && \
 ENV JAVA_HOME=/usr/lib/jvm/java-$JAVA_VERSION-openjdk-amd64/
 
 # Compile c code by running "compile_c_code" shell code
-RUN echo "\n********** compile rdfminer_RDFMiner.so" && \
+RUN echo "\n********** compile rdfminer_axiom_Axiom.so" && \
     sh $HOME/scripts/compile_c_code.sh && \
     echo "Done.\n"
 
