@@ -79,6 +79,7 @@ public class SubClassOfAxiom extends Axiom {
 		long t0 = getProcessCPUTime();
 		subClass = ExpressionFactory.createClass(subClassExpression);
 		superClass = ExpressionFactory.createClass(superClassExpression);
+		logger.info("subClass: " + subClass + " | superClass: " + superClass);
 		// define if the current axiom is complex
 		if(subClassExpression.size() > 1 || superClassExpression.size() > 1) {
 			complex = true;
@@ -88,7 +89,6 @@ public class SubClassOfAxiom extends Axiom {
 			superClassComplement = superClass.subExpressions.get(0);
 		else
 			superClassComplement = new ComplementClassExpression(superClass);
-//		logger.info("------\nsubClass: " + subClass.getGraphPattern() + "\n---\nsuperClass: " + superClass.getGraphPattern() + "\n------");
 		try {
 			update(endpoint);
 		} catch (IllegalStateException e) {
@@ -100,6 +100,7 @@ public class SubClassOfAxiom extends Axiom {
 		}
 		// set elapsedTime as a CPU usage time
 		elapsedTime = getProcessCPUTime() - t0;
+		logger.info("elapsed time = " + elapsedTime + " ms.");
 	}
 
 	/**
@@ -211,7 +212,7 @@ public class SubClassOfAxiom extends Axiom {
 		// The reference cardinality will count all the instances involved by the current axiom
 		referenceCardinality = endpoint.count("?x", subClass.graphPattern, 0);
 		logger.info("Reference cardinality = " + referenceCardinality);
-		// The number of instances linked between both part :
+		// The number of instances linked with the subClass of the given axiom
 		numIntersectingClasses = endpoint.count("?D", subClass.graphPattern + " ?x a ?D . ", 0);
 		logger.info("No. of Intersecting Classes = " + numIntersectingClasses);
 //		timePredictor = (long) referenceCardinality * numIntersectingClasses;
@@ -337,7 +338,6 @@ public class SubClassOfAxiom extends Axiom {
 				RDFNode t = solution.get("t");
 				types.add(Expression.sparqlEncode(t));
 			}
-			logger.info("[DEBUG] size list: " + types.size());
 			offset += Math.min(numIntersectingClasses - offset, size);
 		}
 		if(types.size() != 0)

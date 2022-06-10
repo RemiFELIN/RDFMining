@@ -49,6 +49,9 @@ public class AxiomFitnessEvaluation extends Fitness {
 					VirtuosoEndpoint endpoint = new VirtuosoEndpoint(url, prefixes);
 					Axiom axiom = AxiomFactory.create(population.get(idx), population.get(idx).getPhenotype(),
 							endpoint);
+					// TODO : num of generation (look if it miss...)
+					if(axioms != null)
+						axioms.add(axiom.toJSON());
 					return axiom;
 				});
 			} else {
