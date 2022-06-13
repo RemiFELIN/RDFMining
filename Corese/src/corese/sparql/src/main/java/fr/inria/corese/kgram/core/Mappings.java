@@ -1,6 +1,5 @@
 package fr.inria.corese.kgram.core;
 
-import fr.inria.corese.kgram.api.core.DatatypeValue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,6 +24,7 @@ import fr.inria.corese.sparql.datatype.DatatypeMap;
 import fr.inria.corese.sparql.triple.function.term.Binding;
 import fr.inria.corese.sparql.triple.parser.ASTQuery;
 import fr.inria.corese.sparql.triple.parser.Context;
+import fr.inria.corese.sparql.triple.parser.Metadata;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -301,8 +301,15 @@ public class Mappings extends PointerObject
         return getQuery().getContext();
     }
 
-    public void setQuery(Query q) {
+    public Mappings setQuery(Query q) {
         query = q;
+        return this;
+    }
+    
+    public Mappings initQuery(Query q) {
+        setQuery(q);
+        init(q);
+        return this;
     }
 
     @Override
@@ -357,7 +364,7 @@ public class Mappings extends PointerObject
 //            if (node.isTripleWithEdge()) {
 //                list.add(node);
 //            }
-            Object obj = node.getObject();
+            Object obj = node.getNodeObject();
             if (ptr && obj != null
                     && obj != this
                     && obj instanceof PointerObject) {
@@ -378,6 +385,17 @@ public class Mappings extends PointerObject
         }
         Mapping map = get(0);
         return map.getValue(qNode);
+    }
+    
+    public List<String> getStringValueList(String var) {
+        List<String> alist = new ArrayList<>();
+        for (Mapping m : this) {
+            IDatatype dt = m.getValue(var);
+            if (dt != null) {
+                alist.add(dt.getLabel());
+            }
+        }
+        return alist;
     }
 
     public Node getNode(String var) {
@@ -1224,8 +1242,6 @@ public class Mappings extends PointerObject
         // bind the Mapping in memory to retrieve group by variables
         memory.aggregate(firstMap);
         if (size() == 1) {
-            // memory.getNode(?out)
-            //Node node = memory.getNode(exp.getFilter().getExp().getExp(0));
             Node node = eval.eval(exp.getFilter().getExp().getExp(0).getFilter(), memory, p);
             if (node != null && !node.isFuture()) {
                 // if (node == null) go to aggregate below because we want it to be uniform
@@ -1651,7 +1667,7 @@ public class Mappings extends PointerObject
                 Node val = m.getNode(node);
 
                 if (val != null) {
-                    DatatypeValue value = val.getDatatypeValue();
+                    IDatatype value = val.getDatatypeValue();
 
                     if (value.isBoolean() || value.isNumber()) {
                         if (value.booleanValue()) {
@@ -1709,7 +1725,7 @@ public class Mappings extends PointerObject
             if (m.size() > 0) {
                 Node var = m.getQueryNode(0);
                 if (var.isVariable()) {
-                    DatatypeValue value = m.getValue(var);
+                    IDatatype value = m.getValue(var);
                     if (value.isURI()) {
                         String ns = value.stringValue();
                         boolean check = check(var, ns);
@@ -1727,7 +1743,7 @@ public class Mappings extends PointerObject
     boolean check(Node var, String ns) {
         for (Mapping m : this) {
             if (m.size() > 0) {
-                DatatypeValue value = m.getValue(var);
+                IDatatype value = m.getValue(var);
                 if (!(value != null && value.isURI() && value.stringValue().startsWith(ns))) {
                     return false;
                 }
@@ -2094,6 +2110,18 @@ public class Mappings extends PointerObject
             }
         }
         return false;
+    }
+    
+    public Mappings getResult() {
+        Query q = getQuery();
+        ASTQuery ast = getAST();
+        if (ast.hasMetadata(Metadata.SELECTION) && q.getSelection()!=null) {
+            return q.getSelection();
+        }
+        if (ast.hasMetadata(Metadata.DISCOVERY) && q.getDiscorevy()!=null) {
+            return q.getDiscorevy();
+        }
+        return this;
     }
        
 }

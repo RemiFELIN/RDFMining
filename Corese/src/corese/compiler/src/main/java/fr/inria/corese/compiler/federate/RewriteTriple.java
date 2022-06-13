@@ -5,7 +5,6 @@ import fr.inria.corese.sparql.triple.parser.Atom;
 import fr.inria.corese.sparql.triple.parser.BasicGraphPattern;
 import fr.inria.corese.sparql.triple.parser.Constant;
 import fr.inria.corese.sparql.triple.parser.Exp;
-import fr.inria.corese.sparql.triple.parser.Expression;
 import fr.inria.corese.sparql.triple.parser.Union;
 import fr.inria.corese.sparql.triple.parser.Query;
 import fr.inria.corese.sparql.triple.parser.Service;
@@ -14,6 +13,7 @@ import fr.inria.corese.sparql.triple.parser.Triple;
 import java.util.List;
 
 /**
+ * Rewrite one triple into one service with several URI 
  * from, from named and named graph have two rewrite solutions
  * 1- service s { select from g where exp }
  * 2- service s { graph g exp }
@@ -43,11 +43,14 @@ public class RewriteTriple {
      * service <Si> { graph g { t } }  
      * Add filters of body bound by t in the BGP, except exists filters.
      */
-    Service rewrite(Atom name, Triple t, Exp body, List<Exp> list) {
-        BasicGraphPattern bgp = BasicGraphPattern.create();
-        bgp.add(t);
+    Service rewriteTripleWithSeveralURI(Atom name, Triple t, Exp body, List<Exp> list) {
+        BasicGraphPattern bgp = BasicGraphPattern.create(t);
         filter(body, t, bgp, list);
-        return rewrite(name, bgp, vis.getServiceList(t));
+        List<Atom> alist = vis.getServiceList(t);
+        if (alist.isEmpty()) {
+            vis.error(t, "rewrite triple");
+        }
+        return rewrite(name, bgp, alist);
     }
 
     /**
@@ -55,10 +58,13 @@ public class RewriteTriple {
      * 1- One triple and several service URI
      * 2- A BGP and one service URI.
      */
-    Service rewrite(Atom name, BasicGraphPattern bgp, List<Atom> serviceList) {
+    Service rewrite(Atom namedGraph, BasicGraphPattern bgp, List<Atom> serviceList) {
         Exp exp;
-        if (name == null) {
-            if (getAST().getDataset().hasFrom()) {
+        if (namedGraph == null) {
+            if (vis.isFederateBGP()) {
+                exp = bgp;
+            }
+            else if (getAST().getDataset().hasFrom()) {
                 // select from gi where bgp
                 exp = from(bgp);
             } else {
@@ -66,16 +72,12 @@ public class RewriteTriple {
             }
         } else {
             // graph name { bgp }
-            exp = named(name, bgp);
+            exp = named(namedGraph, bgp);
         }        
-        Service s = service(serviceList, bgp(exp));
+        Service s = vis.service(serviceList, bgp(exp));
         return s;
     }
-     
-    Service service(List<Atom> serviceList, Exp exp) {
-        return Service.create(serviceList, exp, false);
-    }
-    
+             
     Exp bgp(Exp exp) {
         if (exp.isBGP()) {
             return exp;
@@ -90,6 +92,9 @@ public class RewriteTriple {
      
     // select from where bgp
     Exp from(BasicGraphPattern bgp) {
+        if (getAST().getFrom().size() == 1) {
+            return basicGraphFrom(bgp);
+        }
         return graphFrom(bgp.copy());
     }
     
@@ -103,7 +108,7 @@ public class RewriteTriple {
      * for all t in bgp, for all g in from : 
      * graph g1 { t1 } union .. graph gn { t1 }
      * graph g1 { tm } union .. graph gn { tm }
-     */
+     */       
     Exp graphFrom(Exp bgp) {
         int i = 0;
         for (Exp exp : bgp) {
@@ -114,6 +119,11 @@ public class RewriteTriple {
             i++;
         }
         return bgp;
+    }
+    
+    Exp basicGraphFrom(Exp bgp) {
+        Source src = Source.create(getAST().getFrom().get(0), bgp);
+        return src;
     }
     
     Exp bgpSelectDistinct(Exp exp) {
@@ -160,9 +170,11 @@ public class RewriteTriple {
     void filter(Exp body, Triple t, Exp bgp, List<Exp> list) {
         for (Exp exp : body) {
             if (exp.isFilter()) {
-                if (! vis.isRecExist(exp)) {
-                    Expression f = exp.getFilter();
-                    if (t.bind(f) && ! bgp.getBody().contains(exp)) {
+                if (vis.isRecExist(exp)) {
+                    // skip
+                }
+                else {
+                    if (t.bind(exp.getFilter()) && ! bgp.getBody().contains(exp)) {
                         bgp.add(exp);
                         if (! list.contains(exp)) {
                             list.add(exp);

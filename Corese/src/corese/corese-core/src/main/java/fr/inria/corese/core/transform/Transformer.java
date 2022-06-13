@@ -71,6 +71,16 @@ public class Transformer implements TransformProcessor {
     public static final String TOSPIN = STL + "tospin";
     public static final String OWL = STL + "owl";
     public static final String OWLRL = STL + "owlrl";
+    public static final String OWL_RL = STL + "owlrl";
+    public static final String OWL_EL = STL + "owleltc";
+    public static final String OWL_QL = STL + "owlqltc";
+    public static final String OWL_TC = STL + "owltc";
+    
+    public static final String OWL_MAIN = STL + "main";
+    
+    public static final String PP_ERROR = STL + "pperror";
+    public static final String PP_ERROR_MAIN = STL + "main";
+    public static final String PP_ERROR_DISPLAY = STL + "display";
     public static final String DATASHAPE = STL + "dsmain";
     public static final String TEXT = STL + "text";
     public static final String TURTLE = STL + "turtle";
@@ -118,7 +128,7 @@ public class Transformer implements TransformProcessor {
     public static boolean DEFAULT_DEBUG = false;
     public static int count = 0;
     static HashMap<String, Boolean> dmap;
-    private TemplateVisitor visitor;
+    //private TemplateVisitor visitor;
     TransformerMapping tmap;
     Graph graph;
     QueryEngine qe;
@@ -206,7 +216,7 @@ public class Transformer implements TransformProcessor {
         tmap = new TransformerMapping(qp.getGraph());  
         setDebug(p);
         try {
-            setEventVisitor( QuerySolverVisitorTransformer.create(this, qp.getEval()));
+            setEventVisitor( QuerySolverVisitorTransformer.create(this, qp.getCreateEval()));
         } catch (EngineException ex) {
             logger.error(ex.getMessage());
         }
@@ -419,7 +429,7 @@ public class Transformer implements TransformProcessor {
         tune(exec);
     }
     
-    QueryProcess getQueryProcess() {
+    public QueryProcess getQueryProcess() {
         return exec;
     }
 
@@ -427,72 +437,52 @@ public class Transformer implements TransformProcessor {
         set(QueryProcess.create(g, true));
     }
 
-    /**
-     * @return the isCheck
-     */
+   
     public boolean isCheck() {
         return isCheck;
     }
 
-    /**
-     * @param isCheck the isCheck to set
-     */
+   
     public void setCheck(boolean isCheck) {
         this.isCheck = isCheck;
     }
 
-    /**
-     * @return the isDetail
-     */
+   
     public boolean isDetail() {
         return isDetail;
     }
 
-    /**
-     * @param isDetail the isDetail to set
-     */
+   
     public void setDetail(boolean isDetail) {
         this.isDetail = isDetail;
     }
 
-    /**
-     * @return the isOptimizeDefault
-     */
+    
     public static boolean isOptimizeDefault() {
         return isOptimizeDefault;
     }
 
-    /**
-     * @param aIsOptimizeDefault the isOptimizeDefault to set
-     */
+   
     public static void setOptimizeDefault(boolean aIsOptimizeDefault) {
         isOptimizeDefault = aIsOptimizeDefault;
     }
 
-    /**
-     * @return the isExplainDefault
-     */
+   
     public static boolean isExplainDefault() {
         return isExplainDefault;
     }
 
-    /**
-     * @param aIsExplainDefault the isExplainDefault to set
-     */
+   
     public static void setExplainDefault(boolean aIsExplainDefault) {
         isExplainDefault = aIsExplainDefault;
     }
 
-    /**
-     * @return the isOptimize
-     */
+   
     public boolean isOptimize() {
         return isOptimize;
     }
 
-    /**
-     * @param isOptimize the isOptimize to set
-     */
+   
     public void setOptimize(boolean isOptimize) {
         this.isOptimize = isOptimize;
     }
@@ -772,9 +762,11 @@ public class Transformer implements TransformProcessor {
         query = null;
 
         if (all) {
-            IDatatype dt2 = result(env, nodes);
-            afterTransformer(astart, dt2);
-            return dt2;
+            if (!nodes.isEmpty()) {
+                IDatatype dt2 = result(env, nodes);
+                afterTransformer(astart, dt2);
+                return dt2;
+            }
         }
         
         IDatatype fin = isBoolean() ? defaultBooleanResult() : EMPTY;
@@ -854,10 +846,13 @@ public class Transformer implements TransformProcessor {
     }
     
     public IDatatype process(String temp, IDatatype... ldt) throws EngineException {
-        return process(temp, false, null, null, null, ldt[0], (ldt.length == 1) ? null : ldt);
+        return process(temp, false, null, null, (Environment)null, ldt[0], (ldt.length == 1) ? null : ldt);
     }
 
-
+    public IDatatype process(String temp, Binding b, IDatatype... ldt) throws EngineException {
+        return process(temp, false, null, null, Mapping.create(b), ldt[0], (ldt.length == 1) ? null : ldt);
+    }
+    
     public static int getCount() {
         return count;
     }
@@ -1500,45 +1495,31 @@ public class Transformer implements TransformProcessor {
         return graph;
     }
 
-    /**
-     * @return the isTrace
-     */
+   
     public boolean isTrace() {
         return isTrace;
     }
 
-    /**
-     * @param isTrace the isTrace to set
-     */
     public void setTrace(boolean isTrace) {
         this.isTrace = isTrace;
     }
 
 
-    /**
-     * @return the hasDefault
-     */
     public boolean isHasDefault() {
         return hasDefault;
     }
 
-    /**
-     * @param hasDefault the hasDefault to set
-     */
+    
     public void setHasDefault(boolean hasDefault) {
         this.hasDefault = hasDefault;
     }
 
-    /**
-     * @return the dataset
-     */
+   
     public Dataset getDataset() {
         return ds;
     }
 
-    /**
-     * @param dataset the dataset to set
-     */
+   
     public void setDataset(Dataset dataset) {
         this.ds = dataset;
     }
@@ -1547,16 +1528,11 @@ public class Transformer implements TransformProcessor {
         return pp;
     }
 
-    /**
-     * @return the context
-     */
     public Context getContext() {
         return context;
     }
 
-    /**
-     * @param context the context to set
-     */
+  
     public void setContext(Context context) {
         this.context = context;
         initContext();
@@ -1598,10 +1574,10 @@ public class Transformer implements TransformProcessor {
         if (ct != null) {
             complete(ct);
         }
-        TemplateVisitor vis = getVisitor(q, ct);
-        if (vis != null) {
-            setVisitor(vis);
-        }
+//        TemplateVisitor vis = getVisitor(q, ct);
+//        if (vis != null) {
+//            setVisitor(vis);
+//        }
         // query prefix overload ct transformer prefix
         // because query call this new transformer
         complete(ast.getNSM());
@@ -1642,13 +1618,13 @@ public class Transformer implements TransformProcessor {
         }
     }
 
-    TemplateVisitor getVisitor(Query q, Transformer ct) {
-        if (ct == null) {
-            return (TemplateVisitor) q.getTemplateVisitor();
-        } else {
-            return ct.getVisitor();
-        }
-    }
+//    TemplateVisitor getVisitor(Query q, Transformer ct) {
+//        if (ct == null) {
+//            return (TemplateVisitor) q.getTemplateVisitor();
+//        } else {
+//            return ct.getVisitor();
+//        }
+//    }
 
     Context getContext(Query q, Transformer ct) {
         if (ct == null) {
@@ -1672,52 +1648,45 @@ public class Transformer implements TransformProcessor {
         }
     }
 
-    /**
-     * @return the visitor
-     */
+    
     public TemplateVisitor getVisitor() {
-        return visitor;
-    }
-
-    /**
-     * @param visitor the visitor to set
-     */
-    public void setVisitor(TemplateVisitor visitor) {
-        this.visitor = visitor;
-        if (visitor != null) {
-            visitor.setGraph(graph);
+        if (getBinding()!=null) {
+            return (TemplateVisitor) getBinding().getTransformerVisitor();
         }
+        return null;
     }
 
-    public TemplateVisitor defVisitor() {
-        if (visitor == null) {
-            initVisit();
-        }
-        return visitor;
-    }
+  
+//    public void setVisitor(TemplateVisitor visitor) {
+//        this.visitor = visitor;
+//        if (visitor != null) {
+//            visitor.setGraph(getGraph());
+//        }
+//    }
+//
+//    public TemplateVisitor defVisitor() {
+//        if (getVisitor() == null) {
+//            setVisitor(new DefaultVisitor());
+//        }
+//        return getVisitor();
+//    }
 
-    public IDatatype visitedGraph() {
-        //       return defVisitor().visitedGraph();
-        if (visitor == null) {
-            return null;
-        }
-        return visitor.visitedGraphNode();
-    }
+//    public IDatatype visitedGraph() {
+//        if (getVisitor() == null) {
+//            return null;
+//        }
+//        return getVisitor().visitedGraphNode();
+//    }
 
-    void initVisit() {
-        setVisitor(new DefaultVisitor());
-    }
+//    void initVisit() {
+//        setVisitor(new DefaultVisitor());
+//    }
 
-    /**
-     * @return the transformerMap
-     */
     public HashMap<String, Transformer> getTransformerMap() {
         return transformerMap;
     }
 
-    /**
-     * @param transformerMap the transformerMap to set
-     */
+    
     public void setTransformerMap(HashMap<String, Transformer> transformerMap) {
         this.transformerMap = transformerMap;
     }

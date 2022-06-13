@@ -3,6 +3,7 @@ package fr.inria.corese.kgram.api.core;
 import static fr.inria.corese.kgram.api.core.PointerType.NODE;
 import fr.inria.corese.kgram.path.Path;
 import fr.inria.corese.sparql.api.IDatatype;
+import fr.inria.corese.sparql.api.IDatatype.NodeKind;
 
 /**
  * Interface of Node provided by graph implementation
@@ -23,6 +24,10 @@ public interface Node extends Pointerable {
 	public static final int PSIZE 	= 4;
 
 	public static final int STATUS 	= 4;
+        
+        default NodeKind getNodeKind() {
+            return getValue().getNodeKind();
+        }
         
         @Override
         default PointerType pointerType(){
@@ -84,18 +89,16 @@ public interface Node extends Pointerable {
         @Override
         Node getNode();
 	
-	Object getObject();
+	Object getNodeObject();
+	void setObject(Object o);
                       
         Path getPath();
         
         @Override
-        TripleStore getTripleStore();
+        TripleStore getTripleStore();	
 	
-	void setObject(Object o);
-	
-	Object getProperty(int p);
-	
-	void setProperty(int p, Object o);
+//	Object getProperty(int p);	
+//	void setProperty(int p, Object o);
         
         // tagged as triple reference
         default boolean isTriple() {
@@ -109,5 +112,9 @@ public interface Node extends Pointerable {
         
         default void setEdge(Edge e) {
             getDatatypeValue().setEdge(e);
+        }
+        
+        default boolean isTripleNode() {
+            return false;
         }
 }

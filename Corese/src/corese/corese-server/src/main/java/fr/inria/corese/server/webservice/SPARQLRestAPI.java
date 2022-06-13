@@ -110,7 +110,7 @@ public class SPARQLRestAPI implements ResultFormatDef, URLParam {
     static Eval createEval() {
         QueryProcess exec = QueryProcess.create(getTripleStore().getGraph());
         try {
-            return exec.getEval();
+            return exec.getCreateEval();
         } catch (EngineException ex) {
             logger.error(ex.getMessage());
         }
@@ -139,6 +139,10 @@ public class SPARQLRestAPI implements ResultFormatDef, URLParam {
     
     void setVisitor(QuerySolverVisitorServer vis) {
         visitor = vis;
+    }
+    
+    public Response initRDF() {
+        return initRDF("false", "false", "false", null, "false");
     }
 
     /**

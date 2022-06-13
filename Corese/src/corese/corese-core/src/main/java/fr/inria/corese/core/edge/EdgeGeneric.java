@@ -52,7 +52,7 @@ public class EdgeGeneric extends EdgeTop implements Edge {
     public void replicate(Edge cur) {
         setNode(0, cur.getNode(0));
         setNode(1, cur.getNode(1));
-        setIndex(cur.getIndex());
+        setEdgeIndex(cur.getEdgeIndex());
         setLevel(cur.getLevel());
         setProvenance(cur.getProvenance());
     }
@@ -85,12 +85,6 @@ public class EdgeGeneric extends EdgeTop implements Edge {
     }
 
     @Override
-    public boolean contains(Node node) {
-        // TODO Auto-generated method stub
-        return getNode(0).same(node) || getNode(1).same(node);
-    }
-
-    @Override
     public Node getEdgeNode() {
         return predicate;
     }
@@ -101,12 +95,12 @@ public class EdgeGeneric extends EdgeTop implements Edge {
     }
 
     @Override
-    public int getIndex() {
+    public int getEdgeIndex() {
         return index;
     }
 
     @Override
-    public String getLabel() {
+    public String getEdgeLabel() {
         return getEdgeNode().getLabel();
     }
 
@@ -123,6 +117,7 @@ public class EdgeGeneric extends EdgeTop implements Edge {
         return null;
     }
 
+    @Override
     public void setNode(int i, Node n) {
         switch (i) {
             case 0:
@@ -145,7 +140,7 @@ public class EdgeGeneric extends EdgeTop implements Edge {
     }
 
     @Override
-    public void setIndex(int n) {
+    public void setEdgeIndex(int n) {
         index = n;
     }
 

@@ -1,6 +1,6 @@
 package fr.inria.corese.gui.query;
 
-import fr.inria.corese.core.load.SPARQLResult;
+import fr.inria.corese.core.load.result.SPARQLResult;
 import fr.inria.corese.core.load.Service;
 import fr.inria.corese.core.query.ProviderService;
 import fr.inria.corese.core.query.QueryProcess;
@@ -106,6 +106,8 @@ public class LinkedResult implements URLParam {
     void linkedResult(JSONObject json) {
         // original query
         process(json, SRC, true);
+        // source discovery 
+        process(json, INDEX, true);
         // source selection query
         process(json, SEL, true);
         // rewritten federated query
@@ -377,63 +379,7 @@ public class LinkedResult implements URLParam {
         as.setSelectAll(true);
         return as;
     }
-    
-//   void complete(String url, String text) {
-//        if (url.contains(URLParam.MES)) {
-//            message(url, new JSONObject(text));
-//        }
-//    }
-        
-    //    void linkedResult2(Mappings map) {
-//        List<String> list = map.getLinkList();
-//        for (int i = 0; i < list.size(); i++) {
-//            String url = list.get(i);
-//            
-//            if (url.contains(URLParam.LOG)) {
-//                String text = new Service().getString(url);
-//
-//                if (url.contains(URLParam.QUERY)) {
-//                    
-//                    if (i + 1 < list.size()) {
-//                        String next = list.get(i + 1);
-//
-//                        if (next.contains(URLParam.OUTPUT)) {
-//                            Mappings amap = getMappings(next);
-//                            
-//                            if (amap != null) {
-//                                analyse(url, text, amap);
-//                                display(url, prepare(url, text, amap), amap);
-//                            }
-//                                                       
-//                            i++;
-//                        } else if (isDisplayAll() || url.contains(URLParam.REW) || url.contains(SRC)) {
-//                            // federated query, result of rewrite query by FederateVisitor
-//                            display(url, text);
-//                        }
-//                    }
-//                    else {                      
-//                        // query starts with # @federate <qurl>
-//                        String uri = getURL(text);
-//                        if (uri != null) {
-//                            display(url, rewriteQuery(url, uri, text));
-//                        }
-//                    }
-//                } else {
-//                    // log document
-//                    msg(url).msg(NL);
-//                    msg(text).msg(NL);
-//                    complete(url, text);                   
-//                }
-//            }
-//            else {
-//                if (getServiceURL() == null) {
-//                    setServiceURL(url);
-//                }
-//            }
-//        }
-//    }
-    
-
+       
     public Mappings getSourceSelectionMappings() {
         return sourceSelectionMappings;
     }

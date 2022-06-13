@@ -25,15 +25,17 @@ import java.util.ArrayList;
 public class EdgeFactory {
     public static int std = 0, def = 0, rul = 0, ent = 0, typ = 0, sub = 0, fst = 0, rst = 0;
     static final String METADATA = NSManager.USER + "metadata";
+    public static boolean OPTIMIZE_EDGE = true;
+    public static boolean EDGE_TRIPLE_NODE = false;
     public static boolean trace = false;
     Graph graph;
     QueryProcess exec;
-    boolean isOptim = false,
+    boolean 
             isTag = false,
             isGraph = false;
     int count = 0;
     String key;
-    private boolean optimize = true;
+    private boolean optimize = OPTIMIZE_EDGE;
 
     public EdgeFactory(Graph g) {
         graph = g;
@@ -60,7 +62,7 @@ public class EdgeFactory {
         else if (graph.isMetadata()) {
              return EdgeImpl.createMetadata(source, subject, predicate, object, metadata());
         }
-        else if (optimize) {
+        else if (isOptimize()) {
             return genCreate(source, subject, predicate, object);
         }
         else {
@@ -88,7 +90,7 @@ public class EdgeFactory {
     }
          
     public Edge internal(Edge ent){
-        if (ent.nbNode() > 2) {
+        if (ent.nbNode() > 2 || ! isOptimize()) {
             return ent;
         }
         Edge edge = ent;
@@ -112,6 +114,10 @@ public class EdgeFactory {
         return edge;
     }
        
+    /**
+     * Use case: Index edge iterator, edge is internal (predicate==null)
+     * create a buffer edge where to record index getPredicate()
+     */
     public EdgeTop createDuplicate(Edge ent) {
         if (ent.nbNode() == 2) {
             return new EdgeGeneric();
@@ -120,10 +126,6 @@ public class EdgeFactory {
             ee.setMetadata(graph.isMetadata());
             return ee;
         }
-    }
-    
-    public Edge createGeneric(Node source, Node subject, Node predicate, Node value) {
-        return EdgeGeneric.create(source, subject, predicate, value);
     }
                 
     public Edge compact(Edge ent){
@@ -152,7 +154,7 @@ public class EdgeFactory {
                 return defaultCreate(source, subject, predicate, value);
             default:
                 std++;
-                return quad(source, subject, predicate, value);
+                return createQuad(source, subject, predicate, value);
         }
     }
     
@@ -209,17 +211,46 @@ public class EdgeFactory {
     }
 
     /**
-     * Edge for user named graph
+     * default when optimize
      */
-    public Edge quad(Node source, Node subject, Node predicate, Node value) {
-            return EdgeQuad.create(source, subject, predicate, value);
-   }
+    public Edge createQuad(Node source, Node subject, Node predicate, Node value) {
+        return EdgeQuad.create(source, subject, predicate, value);
+    }
+    
+    // default when not optimize
+    public Edge createGeneric(Node source, Node subject, Node predicate, Node value) {
+        if (EDGE_TRIPLE_NODE) {
+            return createTripleNode(source, subject, predicate, value);
+        }
+        else {
+            return createBasicGeneric(source, subject, predicate, value);
+        }
+    }
+    
+    public Edge createTripleNode(Node source, Node subject, Node predicate, Node value) {
+        return new EdgeTripleNode(source, subject, predicate, value);
+    }
+    
+    public Edge createBasicGeneric(Node source, Node subject, Node predicate, Node value) {
+        return EdgeGeneric.create(source, subject, predicate, value);
+    }
     
     public Edge create(Node source, Node predicate, List<Node> list) {
         return create(source, predicate, list, false);
     }
-
+    
     public Edge create(Node source, Node predicate, List<Node> list, boolean nested) {
+        if (EDGE_TRIPLE_NODE && list.size() == 3 && list.get(2).isTripleNode()) {
+            // use case: Construct created triple node reference as additional node
+            TripleNode t = (TripleNode) list.get(2);
+            Edge edge =  new EdgeTripleNode(source, t);
+            edge.setNested(nested);
+            return edge;
+        }
+        return createEdgeList(source, predicate, list, nested);
+    }
+
+    public Edge createEdgeList(Node source, Node predicate, List<Node> list, boolean nested) {
         EdgeImpl ee = EdgeImpl.create(source, predicate, list);
         ee.setMetadata(graph.isMetadata());
         if (ee.hasReferenceNode()) {
@@ -244,17 +275,27 @@ public class EdgeFactory {
         return create(edge.getGraph(), edge.getNode(0), predicate, edge.getNode(1), name, edge.isNested());
     }
     
-    public Edge copy(Node node, Node pred, Edge ent) {
-        Edge edge;
-        if (ent instanceof EdgeImpl) {
-            edge = ((EdgeImpl)ent).copy();
-            edge.setGraph(node);
+    /**
+     * Return a copy of edge with new named graph 
+     * to be inserted in same Graph
+     * edge nodes are already inserted
+     * @pragma: pred == edge.getPredicate()
+     * 
+     */
+    public Edge copy(Node graphNode, Node pred, Edge edge) {
+        Edge copy;
+        if (edge.isTripleNode()) {           
+            return ((EdgeTripleNode)edge).copy(graphNode);
+        }
+        if (edge instanceof EdgeImpl) {
+            copy = ((EdgeImpl)edge).copy();
+            copy.setGraph(graphNode);
         }  
         else {
-            edge = create(node, ent.getNode(0), pred,  ent.getNode(1));
+            copy = create(graphNode, edge.getNode(0), pred,  edge.getNode(1));
         }
-        edge.setLevel(ent.getLevel());
-        return edge;
+        copy.setLevel(edge.getLevel());
+        return copy;
     }
     
     public Edge copy(Edge ent){
@@ -323,5 +364,13 @@ public class EdgeFactory {
         Node time = graph.getNode(DatatypeMap.newDate(), true, true);
         Edge edge = new EdgeImpl(source, predicate, subject, value, time);
         return edge;
+    }
+
+    public boolean isOptimize() {
+        return optimize;
+    }
+
+    public void setOptimize(boolean optimize) {
+        this.optimize = optimize;
     }
 }

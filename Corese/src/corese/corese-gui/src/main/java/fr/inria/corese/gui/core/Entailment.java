@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package fr.inria.corese.gui.core;
 
 import fr.inria.corese.core.load.LoadException;
@@ -10,7 +5,6 @@ import fr.inria.corese.core.rule.RuleEngine;
 import fr.inria.corese.core.rule.RuleError;
 import fr.inria.corese.gui.query.GraphEngine;
 import fr.inria.corese.sparql.exceptions.EngineException;
-import java.util.logging.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,7 +16,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class Entailment extends Thread {
     private static final Logger logger = LogManager.getLogger(MainFrame.class.getName());
-    boolean doit = true;
+    boolean inThread = true;
     int owl = RuleEngine.OWL_RL;
     private String path;
     GraphEngine engine;
@@ -30,6 +24,11 @@ public class Entailment extends Thread {
     
     Entailment(GraphEngine e){
         engine = e;
+    }
+    
+    Entailment(GraphEngine e, boolean b){
+        this(e);
+        inThread = b;
     }
     
     @Override
@@ -60,10 +59,13 @@ public class Entailment extends Thread {
     }   
     
     void process(){
-        if (doit){
+        if (inThread){
             // in a // thread
             start();
-        }       
+        }  
+        else {
+            run();
+        }
     }
 
     void setTrace(boolean b) {

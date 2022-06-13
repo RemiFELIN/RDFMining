@@ -4,7 +4,6 @@ import fr.inria.corese.kgram.api.core.Node;
 import fr.inria.corese.kgram.core.Distinct;
 import fr.inria.corese.kgram.core.Query;
 import fr.inria.corese.core.Graph;
-import fr.inria.corese.core.rule.Rule;
 import java.util.ArrayList;
 import fr.inria.corese.kgram.api.core.Edge;
 
@@ -72,19 +71,19 @@ static int count = 0;
     }
 
     public boolean isConnected(Node p, Node n1, Node n2) {
-        if (isConnect()){
-            int i1 = n1.getIndex();       
+        if (isConnect()) {
+            int i1 = n1.getIndex();
             if (i1 >= 0 && n2.getIndex() >= 0) {
                 if (connect[i1] == null) {
                     try {
-                        connect[i1] = new boolean[connect.length];                   
-                    } catch (OutOfMemoryError E) {  
-                        if (isMessage){
+                        connect[i1] = new boolean[connect.length];
+                    } catch (OutOfMemoryError E) {
+                        if (isMessage) {
                             isMessage = false;
-                            System.out.println("Skip Cache Out Of Memory:  "  + p);
+                            System.out.println("Skip Cache Out Of Memory:  " + p);
                             return graph.exist(p, n1, n2);
                         }
-                    }                   
+                    }
                 }
                 return connect[i1][n2.getIndex()];
             }
@@ -129,8 +128,8 @@ static int count = 0;
         boolean go = true, isFirst = loop == 0;
         int n = 0;
 
-        ArrayList<Edge> lnew = new ArrayList<Edge>(),
-                ltmp = new ArrayList<Edge>();
+        ArrayList<Edge> lnew = new ArrayList<>(),
+                ltmp = new ArrayList<>();
         if (isTrace){
             System.out.println("Cl: 0 "  + graph.size(pred1));
         }
@@ -153,7 +152,7 @@ static int count = 0;
                 if (same && n1 == node) {
                     continue;
                 }
-                boolean ok1 = isFirst || e1.getIndex() >= prevIndex;
+                boolean ok1 = isFirst || e1.getEdgeIndex() >= prevIndex;
 
                Iterable<Edge> it2 = graph.getEdges(pred2, node, 0);
 
@@ -163,7 +162,7 @@ static int count = 0;
                         // join e2 on edge e1
                         if (e2 != null) {
 
-                            boolean ok2 = ok1 || e2.getIndex() >= prevIndex;
+                            boolean ok2 = ok1 || e2.getEdgeIndex() >= prevIndex;
                             if (!ok2) {
                                 // need at least one new edge
                                 continue;
@@ -176,7 +175,7 @@ static int count = 0;
 
                             if (!isConnected(pred1, n1, n2) && isDistinct(n1, n2)) {
                                 Edge ent = create(pred1, n1, n2);
-                                ent.setIndex(loopIndex);
+                                ent.setEdgeIndex(loopIndex);
                                 ltmp.add(ent);
                                 connect(n1, n2);
                             }

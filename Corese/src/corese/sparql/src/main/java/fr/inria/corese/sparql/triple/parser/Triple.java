@@ -2,6 +2,9 @@ package fr.inria.corese.sparql.triple.parser;
 
 import fr.inria.corese.kgram.api.core.Pointerable;
 import fr.inria.corese.sparql.api.IDatatype;
+import fr.inria.corese.sparql.datatype.RDF;
+import static fr.inria.corese.sparql.datatype.RDF.OWL;
+import static fr.inria.corese.sparql.datatype.RDF.OWL_SAME_AS;
 import fr.inria.corese.sparql.triple.api.ExpressionVisitor;
 import java.util.List;
 
@@ -66,8 +69,6 @@ public class Triple extends Exp implements Pointerable {
     // rdf star annotation triples t q v 
     // s p o t {| t q v |}
     private List<Triple> tripleList;
-    // tuple contain a filter
-    //Expression exp;
     // path regex
     Expression regex;
     String mode;
@@ -163,11 +164,13 @@ public class Triple extends Exp implements Pointerable {
 
     @Override
     public Triple copy() {
-//        if (isFilter()) {
-//            Expression exp = getFilter().copy();
-//            return create(exp);
-//        }
         return this;
+    }
+    
+    public Triple duplicate() {
+        Triple t =  create(getSubject(), getPredicate(), getObject());
+        t.setRegex(getRegex());
+        return t;
     }
 
     private void setTriple(Atom exp1, Atom atom, Atom exp2) {
@@ -357,6 +360,14 @@ public class Triple extends Exp implements Pointerable {
         return list;
     }
     
+    public List<Atom> getElements() {
+        ArrayList<Atom> list = new ArrayList<>();
+        list.add(getSubject());
+        list.add(getPredicate());
+        list.add(getObject());
+        return list;
+    }
+    
     public boolean hasTripleReference() {
         for (Atom at : getArgList()) {
             if (at.isTriple()) {
@@ -405,6 +416,16 @@ public class Triple extends Exp implements Pointerable {
     public void setType(boolean b) {
         istype = b;
     }
+    
+    public boolean isList() {
+        return getProperty().getLabel().equals(RDF.FIRST) ||
+               getProperty().getLabel().equals(RDF.REST);
+    }
+    
+    public boolean isSameAs() {
+        return getProperty().getLabel().equals(OWL_SAME_AS);
+    }
+
 
     /**
      *
@@ -623,13 +644,10 @@ public class Triple extends Exp implements Pointerable {
      * Does triple bind this variable ?
      */
     public boolean bind(Variable var) {
-//        if (isFilter()) {
-//            return false;
-//        }
         return bind(var.getName());
     }
     
-    void getTripleVariables(VariableScope sort,List<Variable> list) {
+    void getTripleVariables(VariableScope sort, List<Variable> list) {
         getSubject().getVariables(sort, list);
         if (!isPath()) {
             getPredicate().getVariables(sort, list);
@@ -637,21 +655,9 @@ public class Triple extends Exp implements Pointerable {
         getObject().getVariables(sort, list);
     }
     
-//    void getFilterVariables(VariableScope scope, List<Variable> list) {
-//        if (scope.isFilter()) {
-//            getFilter().getVariables(scope, list);
-//        }
-//    }
 
-    
     @Override
     void getVariables(VariableScope sort, List<Variable> list) {
-//        if (isFilter()) {
-//            getFilterVariables(sort, list);
-//        }
-//        else {
-//            getTripleVariables(sort, list);
-//        }
           getTripleVariables(sort, list);
 
     }
@@ -680,6 +686,7 @@ public class Triple extends Exp implements Pointerable {
     }
 
     public boolean bind(Expression e) {
+        // @todo: use getFilterVariables()
         for (String str : e.getVariables()) {
             if (!bind(str)) {
                 return false;
@@ -762,9 +769,22 @@ public class Triple extends Exp implements Pointerable {
     
     // @todo: path
     public boolean equals(Triple t) {
+         if (isPath()) {
+            return equalsPath(t);
+         }
+         else {
+             return equalsTriple(t);
+         }
+    }
+    
+    boolean equalsTriple(Triple t) {
          return getSubject().equals(t.getSubject()) &&
                  getPredicate().equals(t.getPredicate()) &&
                  getObject().equals(t.getObject());
+    }
+    
+    boolean equalsPath(Triple t) {
+        return this == t;
     }
 
     public Atom getSubject() {

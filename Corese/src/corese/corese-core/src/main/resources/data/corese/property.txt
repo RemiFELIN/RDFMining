@@ -8,10 +8,9 @@
 # Property.init(graph);
 #
 
-VARIABLE =  vis=fr.inria.corese.core.visitor.solver;home=./
+VARIABLE =  vis=fr.inria.corese.core.visitor.solver;home=./;fed=/user/corby/home/AADemoNew/federate;sys=/user/corby/home/AAData/query
 
 IMPORT   = ./gui.txt
-
 
 
 BLANK_NODE              = _:b
@@ -28,23 +27,40 @@ GRAPH_NODE_AS_DATATYPE  = false
 # graph ?g { } iterate external named graph
 EXTERNAL_NAMED_GRAPH    = true
 
+
+# load in kg:default or in file path as named graph
+LOAD_IN_DEFAULT_GRAPH   = true
+
+# skolemize bnode as URI
+SKOLEMIZE               = false
+
+GRAPH_INDEX_END = true
+
+# run corese with rdf* prototype extension
+RDF_STAR                = false
+RDF_STAR_TRIPLE         = false
+
+# select target nested triple for asserted triple pattern
+RDF_STAR_SELECT = false
+
+# physically delete triple with reference
+RDF_STAR_DELETE = false
+
+# clean OWL graph before OWL RL using update queries
+OWL_CLEAN               = true
+
 # constraint rule entailment in kg:constraint named graph
 CONSTRAINT_NAMED_GRAPH  = true
 
 # constraint rule entailment in external kg:constraint named graph
 CONSTRAINT_GRAPH        = true
 
-# load in kg:default or in file path as named graph
-LOAD_IN_DEFAULT_GRAPH   = false
+# Specific processing of transitive rule
+RULE_TRANSITIVE_OPTIMIZE = true
 
-# skolemize bnode as URI
-SKOLEMIZE               = false
+# transitive closure rule computed by function
+RULE_TRANSITIVE_FUNCTION = false
 
-# run corese with rdf* prototype extension
-RDF_STAR                = true
-
-# clean OWL graph before OWL RL using update queries
-OWL_CLEAN               = true
 
 # additional queries for cleaning OWL
 #OWL_CLEAN_QUERY         = /user/corby/home/AAData/query/clean/test.rq
@@ -69,7 +85,7 @@ ACCESS_RIGHT            = false
 EVENT               = false
 
 # Visitor for trace
-RULE_VISITOR        = $vis.QuerySolverVisitorRuleUser
+#RULE_VISITOR        = $vis.QuerySolverVisitorRuleUser
 #SOLVER_VISITOR      = $vis.QuerySolverVisitorUser
 #TRANSFORMER_VISITOR = $vis.QuerySolverVisitorTransformerUser
 #SERVER_VISITOR      = fr.inria.corese.server.webservice.QuerySolverVisitorServerUser
@@ -80,6 +96,10 @@ RULE_VISITOR        = $vis.QuerySolverVisitorRuleUser
 VERBOSE        = false
 SOLVER_DEBUG   = false
 TRANSFORMER_DEBUG   = false
+
+TRACE_MEMORY = true
+LOG_NODE_INDEX = true
+LOG_RULE_CLEAN = true
 
 # draft: trace var in owl rl checker: trace_sttl_undo=true
 LDSCRIPT_VARIABLE        = mapsize=maplarge;mapzoom=6
@@ -104,18 +124,61 @@ LDSCRIPT_CHECK_DATATYPE  = false
 # check rdf:type of arguments at function call
 LDSCRIPT_CHECK_RDFTYPE   = false
 
+# ldscript function max number of parameters 
+FUNCTION_PARAMETER_MAX = 15
 
 # values filter
 SERVICE_BINDING     = values 
-SERVICE_SLICE       = 20
-SERVICE_LIMIT       = 1000
-#SERVICE_TIMEOUT     = 2000
+SERVICE_SLICE       = 500
+SERVICE_LIMIT       = 5000
+SERVICE_TIMEOUT     = 3000
 #SERVICE_PARAMETER   = mode=link;debug;show&transform=st:xml&format=json
 # service may return RDF graph as result
 # when true: execute service query locally on this graph
 SERVICE_GRAPH       = false
 SERVICE_SEND_PARAMETER = true
 SERVICE_REPORT = false
+SERVICE_DISPLAY_RESULT = 20
+
+
+FEDERATION = /user/corby/home/AAData/data/corese/federation.ttl
+# generate partition of connected bgp
+FEDERATE_BGP = true
+# do not split complete partition
+FEDERATE_PARTITION = true
+# complete with triple alone
+FEDERATE_COMPLETE = false
+# source selection with filter 
+FEDERATE_FILTER = true
+FEDERATE_FILTER_ACCEPT = !=
+FEDERATE_FILTER_REJECT = test
+#  source selection with bind (exists {t1 . t2} as ?b_i)
+FEDERATE_JOIN = true
+FEDERATE_JOIN_PATH = true
+# exploit join on optional ; require FEDERATE_BGP = true 
+FEDERATE_OPTIONAL = true
+# exploit join on minus ; require FEDERATE_BGP = true 
+FEDERATE_MINUS = true
+# skip undefined arg of union optional minus
+FEDERATE_UNDEFINED = true
+
+FEDERATE_BLACKLIST        = http://ldf.fi/warsa/sparql;http://data.semanticweb.org/sparql
+FEDERATE_BLACKLIST_EXCEPT = http://corese.inria.fr/sparql;http://prod-dekalog.inria.fr/sparql;https://dbpedia.org/sparql;https://query.wikidata.org/sparql;http://fr.dbpedia.org/sparql
+
+# number of endpoint url considered in source discovery result
+FEDERATE_INDEX_LENGTH = 20
+# success rate to accept endpoint url in source discovery
+FEDERATE_INDEX_SUCCESS = 0.5
+
+FEDERATE_QUERY_PATTERN =     http://d2kab.fr=$fed/indexpattern/indexqueryd2kab.rq;http://prod-dekalog.inria.fr/sparql=$sys/indexpatternendpoint.rq;http://localhost:8080/index=$fed/testindex/indexpatternendpoint.rq
+
+FEDERATE_PREDICATE_PATTERN = http://d2kab.fr=$fed/indexpattern/indexpatternd2kab.rq;http://prod-dekalog.inria.fr/sparql=$sys/indexpredicate.rq;http://localhost:8080/index=$fed/testindex/indexpredicate.rq
+
+#FEDERATE_SPLIT = owl:sameAs
+
+#FEDERATE_INDEX_SKIP = http://rdfs.org/ns/void#
+
+TRACE_GENERIC = false
 
 #
 # Dataset
@@ -123,7 +186,7 @@ SERVICE_REPORT = false
 
 
 # limit number of triples loaded from any rdf document
-#LOAD_LIMIT   = 10
+#LOAD_LIMIT   = 100000
 
 # load take ?format=rdfxml into account
 #LOAD_WITH_PARAMETER = true

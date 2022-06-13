@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package fr.inria.corese.core.rule;
 
 import fr.inria.corese.kgram.api.core.Expr;
@@ -40,44 +36,48 @@ public class ResultWatcher implements ResultListener, GraphListener {
     // max sum of proportion of new edges
     public static double TOTAL = 0.3;
 
-    int loop = 0, ruleLoop = 0;
+    int loop = 0, timestamp = 0;
     int cpos = 0, cneg = 0;
     int cnode = 0;
-    boolean selectNewResult = true, start = true;
-    private boolean isDistinct = true;
-    private boolean isSkipPath = false;
-    private boolean test = false;
+    // check that result have new target edge
+    boolean selectNewResult = true;
+    // check that (specific) query edge have new target edge
     boolean selectNewEdge = false;
-    int index = -1;
+    boolean start = true;
+    private boolean isDistinct = true;
+    //private boolean isSkipPath = false;
+    private boolean test = false;
+    int queryNewEdgeIndex = -1;
 
-    Construct cons;
+    // Factory to construct edge directly without intermediate Mapping
+    private Construct construct;
     Mappings map;
-    Rule rule;
-    Graph graph;
-    Distinct dist;
-    ArrayList<Edge> list;
+    private Rule rule;
+    private Graph graph;
+    Distinct distinct;
+    ArrayList<Edge> insertEdgeList;
     private boolean trace;
-    private boolean isTestable;
+    private boolean performSelectNewEdge;
 
     ResultWatcher(Graph g) {
         graph = g;
-        list = new ArrayList<>();
+        insertEdgeList = new ArrayList<>();
     }
 
     public Distinct getDistinct() {
-        return dist;
+        return distinct;
     }
 
     void setConstruct(Construct c) {
-        cons = c;
+        construct = c;
     }
 
     void setMappings(Mappings m) {
         map = m;
     }
 
-    void setLoop(int n) {
-        ruleLoop = n;
+    void setTimestamp(int n) {
+        timestamp = n;
     }
 
     void start(int n) {
@@ -85,48 +85,53 @@ public class ResultWatcher implements ResultListener, GraphListener {
     }
 
     void start(Rule r) {
-        rule = r;
-        selectNewResult = doit(true);
+        setRule(r);
+        selectNewResult = true;
         selectNewEdge = false;
         start = true;
-        isTestable = false;
+        performSelectNewEdge = false;
         init(r);
+    }
+    
+    Query getQuery() {
+        return getRule().getQuery();
     }
 
     /**
      * (1) If there is only one predicate in where with new edges (Only one
      * occurrence of this predicate in where) We can focus on these new edge
      * using listen(Edge, Entity) (2) If there are two predicates and the
-     * proportion of new triples is small enough < 0.3 we will focus on new
+     * proportion of new edges (wrt new edges in previous record) 
+     * is small enough < 0.3 we will focus on new
      * triples using a specific Index of edges sorted by timestamp (see union())
      */
-    void start(Record ot, Record nt) {
-        setLoop(ot.getIndex());
+    void start(Record oldRecord, Record newRecord) {
+        setTimestamp(oldRecord.getTimestamp());
 
-        if (nt.getCount() == 1
-                && rule.getQuery().nbPredicate(nt.getPredicate()) == 1) {
-            index = rule.getQuery().getEdge(nt.getPredicate()).getIndex();
-            if (index != -1) {
-                selectNewEdge = doit(true);
+        if (newRecord.nbNewPredicate() == 1
+                && getQuery().nbPredicate(newRecord.getPredicate()) == 1) {
+            queryNewEdgeIndex = getQuery().getEdge(newRecord.getPredicate()).getEdgeIndex();
+            if (queryNewEdgeIndex != -1) {
+                selectNewEdge = true;
             }
-        } else if (loop > 0 && rule.getQuery().getEdgeList() == null) {
+        } else if (loop > 0 && getQuery().getEdgeList() == null) {
             int n = 0;
             boolean ok = true;
             double tt = 0.0;
             // new edges <= 30% edges
-            for (Node pred : rule.getPredicates()) {
-                if (nt.get(pred) > ot.get(pred)) {
+            for (Node predicate : getRule().getPredicates()) {
+                if (newRecord.get(predicate) > oldRecord.get(predicate)) {
                     n++;
-                    // proportion of new edges
-                    double dd = ((double) (nt.get(pred) - ot.get(pred))) / (double) nt.get(pred);
+                    // proportion of new edges for predicate wrt new edges in previous record
+                    double dd = ((double) (newRecord.get(predicate) - oldRecord.get(predicate))) / (double) newRecord.get(predicate);
                     // sum of proportion of new edges
                     tt += dd;
                 }
             }
 
-            // 2 edges and may be 1 a filter
-            if (n <= 2 && tt < TOTAL) {// && ok){
-                Exp body = rule.getQuery().getBody();
+            // 2 predicates with new edges and may be 1 a filter
+            if (n <= 2 && tt < TOTAL) {
+                Exp body = getQuery().getBody();
                 int ne = 0, nf = 0;
 
                 for (Exp exp : body) {
@@ -138,7 +143,7 @@ public class ResultWatcher implements ResultListener, GraphListener {
                 }
 
                 if (ne == 2 && nf <= 1) {
-                    isTestable = doit(true);
+                    performSelectNewEdge = doit(true);
                 }
             }
         }
@@ -152,19 +157,20 @@ public class ResultWatcher implements ResultListener, GraphListener {
         r.getQuery().setEdgeList(null);
         List<Node> list = r.getQuery().getConstructNodes();
         if (list != null && !list.isEmpty()) {
-            dist = Distinct.create(list);
+            distinct = Distinct.create(list);
         }
     }
 
     void finish(Rule r) {
-        dist = null;
+        distinct = null;
     }
 
     /**
-     * Environment contain a candidate solution Check that environment contains
+     * sparql interpreter find a solution in env and call function process
+     * Check that env contains
      * at least one new edge from preceding RuleEngine loop Check that this
      * solution is not duplicate: select distinct * on construct variables This
-     * function is called by kgram just before returning a solution
+     * function is called by sparql just before returning a solution
      */
     @Override
     public boolean process(Environment env) {
@@ -177,8 +183,7 @@ public class ResultWatcher implements ResultListener, GraphListener {
         }
 
         for (Edge ent : env.getEdges()) {
-
-            if (ent != null && ent.getIndex() >= ruleLoop) {
+            if (ent != null && ent.getEdgeIndex() >= timestamp) {
                 return store(env);
             }
         }
@@ -193,21 +198,21 @@ public class ResultWatcher implements ResultListener, GraphListener {
     }
 
     boolean store(Environment env) {
-        if (isDistinct && dist != null) {
+        if (isDistinct && distinct != null) {
             // select distinct * on construct variables
-            if (!dist.isDistinct(env)) {
+            if (!distinct.isDistinct(env)) {
                 cneg += 1;
                 return false;
             }
         }
         cpos += 1;
-        if (cons == null) {
+        if (getConstruct() == null) {
             // Mapping created by kgram
             return true;
         } else {
-            // create Edge 
-            // no Mapping created by kgram
-            cons.entailment(map, env);
+            // Construct create Edge directly
+            // no intermediate Mapping created by sparql
+            getConstruct().entailment(map, env);
             return false;
         }
     }
@@ -227,6 +232,11 @@ public class ResultWatcher implements ResultListener, GraphListener {
         return true;
     }
 
+    /**
+     * sparql interpreter call listen(exp, n) and may get an optimized
+     * version of exp to evaluate
+     * 
+     */
     @Override
     public Exp listen(Exp exp, int n) {
         switch (exp.type()) {
@@ -246,27 +256,30 @@ public class ResultWatcher implements ResultListener, GraphListener {
 
         if (n == 0 && exp.type() == Exp.AND) {
 
-            if (rule.isGTransitive() && rule.getQuery().getEdgeList() != null) {
-                // exp = where { ?p a owl:TransitiveProperty . ?x ?p ?y . ?y ?p ?z }
-                // there is a list of candidates for ?x ?p ?y
-                // skip first query edge: skip exp.get(0)
+            if (getRule().isGTransitive() && getRule().getQuery().getEdgeList() != null) {
+                // rule exp = where { ?p a owl:TransitiveProperty . ?x ?p ?y . ?y ?p ?z }
+                // there is a list of new candidates for ?x ?p ?y
+                // sparql skip first query edge: skip exp.get(0)
                 exp = Exp.create(Exp.AND, exp.get(1), exp.get(2));
-            } else if (isTestable && graph.hasRuleEdgeList()) {
-                // focus on new edges in a specific graph Index sorted by timestamps
-                isTestable = false;
+            } else if (performSelectNewEdge && getGraph().hasRuleEdgeList()) {
+                // return an expression with 
+                // focus on new edges in a specific graph Index sorted by edge timestamp
+                performSelectNewEdge = false;
                 exp = union(exp);
             }
-
         }
 
         return exp;
     }
   
+    /**
+     * sparql check whether targetEdge is new
+     */
     @Override
-    public boolean listen(Edge edge, Edge ent) {
+    public boolean listen(Edge queryEdge, Edge targetEdge) {
         if (selectNewEdge
-                && edge.getIndex() == index
-                && ent.getIndex() < ruleLoop) {
+                && queryEdge.getEdgeIndex() == queryNewEdgeIndex
+                && targetEdge.getEdgeIndex() < timestamp) {
             return false;
         }
         return true;
@@ -283,8 +296,9 @@ public class ResultWatcher implements ResultListener, GraphListener {
 
 
     /**
-     * exp = 2 edge (and may be 1 filter) return { getNew(e1) e2 } union {
-     * getNew(e2) e1 } where getNew(e) is a directive to Producer to focus on
+     * rule exp = 2 edge (and may be 1 filter) 
+     * return { getNew(e1) e2 } union {getNew(e2) e1 } 
+     * where getNew(e) is a directive to Producer to focus on
      * new edges only new edges are those with level(e) >= ruleLoop There is a
      * Graph Index where edges are sorted by level
      */
@@ -296,7 +310,7 @@ public class ResultWatcher implements ResultListener, GraphListener {
         }
 
         Exp e1 = Exp.create(Exp.EDGE, exp.get(fst).getEdge());
-        e1.setLevel(ruleLoop);
+        e1.setLevel(timestamp);
 
         Exp a1 = Exp.create(Exp.AND, e1, exp.get(snd));
         if (exp.size() == 3) {
@@ -304,7 +318,7 @@ public class ResultWatcher implements ResultListener, GraphListener {
         }
 
         Exp e2 = Exp.create(Exp.EDGE, exp.get(snd).getEdge());
-        e2.setLevel(ruleLoop);
+        e2.setLevel(timestamp);
 
         Exp a2 = Exp.create(Exp.AND, e2, exp.get(fst));
         if (exp.size() == 3) {
@@ -333,8 +347,8 @@ public class ResultWatcher implements ResultListener, GraphListener {
         Exp e1 = Exp.create(Exp.EDGE, exp.get(1).getEdge());
         Exp e2 = Exp.create(Exp.EDGE, exp.get(0).getEdge());
         Exp ee = Exp.create(Exp.AND, e1, e2);
-        exp.get(0).setIndex(ruleLoop);
-        e1.setIndex(ruleLoop);
+        exp.get(0).setIndex(timestamp);
+        e1.setIndex(timestamp);
         Exp union = Exp.create(Exp.UNION, exp, ee);
         return union;
     }
@@ -342,16 +356,16 @@ public class ResultWatcher implements ResultListener, GraphListener {
     /**
      * ************************************************************
      *
-     * GraphListener
+     * GraphListener: deprecated, not used
      *
      ************************************************************
      */
     public void clear() {
-        list.clear();
+        insertEdgeList.clear();
     }
 
-    public List<Edge> getList() {
-        return list;
+    public List<Edge> getInsertEdgeList() {
+        return insertEdgeList;
     }
 
     @Override
@@ -365,9 +379,8 @@ public class ResultWatcher implements ResultListener, GraphListener {
 
     @Override
     public void insert(Graph g, Edge ent) {
-        // TODO
-        if (ent.getLabel().equals(RDFS.SUBCLASSOF)) {
-            list.add(ent);
+        if (ent.getEdgeLabel().equals(RDFS.SUBCLASSOF)) {
+            getInsertEdgeList().add(ent);
         }
     }
 
@@ -388,14 +401,14 @@ public class ResultWatcher implements ResultListener, GraphListener {
     }
 
     
-    public boolean isSkipPath() {
-        return isSkipPath;
-    }
-
-   
-    public void setSkipPath(boolean isSkipPath) {
-        this.isSkipPath = isSkipPath;
-    }
+//    public boolean isSkipPath() {
+//        return isSkipPath;
+//    }
+//
+//   
+//    public void setSkipPath(boolean isSkipPath) {
+//        this.isSkipPath = isSkipPath;
+//    }
 
     
     public boolean isDistinct() {
@@ -429,6 +442,26 @@ public class ResultWatcher implements ResultListener, GraphListener {
 
     public boolean isNew() {
         return selectNewEdge;
+    }
+
+    public Rule getRule() {
+        return rule;
+    }
+
+    public void setRule(Rule rule) {
+        this.rule = rule;
+    }
+
+    public Graph getGraph() {
+        return graph;
+    }
+
+    public void setGraph(Graph graph) {
+        this.graph = graph;
+    }
+
+    public Construct getConstruct() {
+        return construct;
     }
 
 }

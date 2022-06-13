@@ -65,6 +65,125 @@ public class BasicGraphPattern extends And {
     public static BasicGraphPattern create(Exp e1, Exp e2) {
         return new BasicGraphPattern(e1, e2);
     }
+    
+    @Override
+    public BasicGraphPattern getBasicGraphPattern() {
+        return this;
+    }
+        
+    // @pragma: bgp are sorted and contain same physical objects
+    // use case: federated query compiler specific hashmap: bgp -> list uri
+    public boolean bgpEqual(BasicGraphPattern bgp) {
+        if (size() == bgp.size()) {
+            int i = 0;
+            for (Exp ee : this) {
+                if (ee != bgp.get(i++)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    
+    // not same physical triple but triple are equal
+    public boolean equalsTriple(BasicGraphPattern bgp) {
+        if (size() == bgp.size()) {
+            for (Exp e : this) {
+                if (!bgp.getBody().contains(e)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    
+    // use case: federate
+    // test if two pairs of triple are similar:
+    // same predicate, similar subject/object
+    public boolean similarPair(BasicGraphPattern bgp) {
+        if (size()!=2 || bgp.size()!=2) {
+            return false;
+        }
+        Triple a1 = get(0).getTriple();
+        Triple a2 = get(1).getTriple();
+        Triple b1 = bgp.get(0).getTriple();
+        Triple b2 = bgp.get(1).getTriple();
+
+        return similar(a1, a2, b1, b2) || similar(a1, a2, b2, b1);
+    }
+    
+    boolean similar(Triple a1, Triple a2, Triple b1, Triple b2) {
+        boolean res = similar(a1, b1) && similar (a2, b2);
+        if (!res) {
+            return false;
+        }
+        List<Atom> al1 = a1.getElements();
+        List<Atom> al2 = a2.getElements();
+        List<Atom> bl1 = b1.getElements();
+        List<Atom> bl2 = b2.getElements();
+
+        for (int i = 0; i < al1.size(); i++) {
+            for (int j = 0; j < al2.size(); j++) {
+                res &= similar(al1.get(i), al2.get(j), bl1.get(i), bl2.get(j));
+                if (! res) {
+                    return false;
+                }
+            }
+        }
+        
+        // check p p o OR s p s
+        for (int i = 0; i < al1.size(); i++) {
+            for (int j = i+1; j < al1.size(); j++) {
+                res &= similar(al1.get(i), al1.get(j), bl1.get(i), bl1.get(j));
+                if (! res) {
+                    return false;
+                }
+            }
+        }
+        
+        for (int i = 0; i < al2.size(); i++) {
+            for (int j = i+1; j < al2.size(); j++) {
+                res &= similar(al2.get(i), al2.get(j), bl2.get(i), bl2.get(j));
+                if (! res) {
+                    return false;
+                }
+            }
+        }
+
+        return res;
+    }
+    
+    boolean similar(Atom a1, Atom a2, Atom b1, Atom b2) {
+        boolean res = a1.equals(a2) == b1.equals(b2);
+        //System.out.println(String.format("%s %s %s %s %s ", res, a1, a2, b1, b2));
+        return res;
+    }
+    
+    boolean similar(Triple a, Triple b) {
+        return similar(a.getElements(), b.getElements());
+    }
+    
+    boolean similar(List<Atom> l1, List<Atom> l2) {
+        int i = 0;
+        for (Atom at : l1) {
+            if (!similar(at, l2.get(i++))) {
+                return false;
+            }
+        }
+        return true;
+    } 
+    
+    boolean similar(Atom a, Atom b) {
+        if (a.isVariable()) {
+            return b.isVariable();
+        }
+        if (a.isBlankNode()) {
+            return b.isBlankNode();
+        }
+        return a.equals(b);
+    }
 
     public void addFilter(Expression e) {
         add(e);
@@ -90,7 +209,13 @@ public class BasicGraphPattern extends And {
         sb.append("}");
         return sb;
     }
-
+    
+    public ASTBuffer toStringBasic() {
+        ASTBuffer sb = new ASTBuffer();
+        super.toString(sb);
+        return sb;
+    }
+    
     /**
      * This function add a new blank bode in the hashtable bnodes
      *

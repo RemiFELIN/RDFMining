@@ -67,7 +67,7 @@ public class Entailment implements Engine {
     static final int SYMMETRIC = 30;
     public static boolean trace = false;
     Signature domain, range, inverse, symetric, subproperty;
-    Graph graph; //, target;
+    Graph graph; 
     List<Edge> targetList;
     Node hasType, subClassOf, graphNode;
     Edge last, current;
@@ -109,7 +109,6 @@ public class Entailment implements Engine {
 
     Entailment(Graph g) {
         graph = g;
-        //targetList= new ArrayList<Entity>();
         symetric = new Signature();
         inverse = new Signature();
         domain = new Signature();
@@ -215,6 +214,7 @@ public class Entailment implements Engine {
      * clear tables of meta statements (domain, range, etc.) fill these tables
      * with current graph
      */
+    @Override
     public void onDelete() {
         reset();
     }
@@ -285,7 +285,7 @@ public class Entailment implements Engine {
     }
 
     Edge create(Node src, Node sub, Node pred, Node obj) {
-        return graph.create(src, sub, pred, obj);
+        return graph.createForInsert(src, sub, pred, obj);
     }
 
     /**
@@ -300,7 +300,7 @@ public class Entailment implements Engine {
         //if (! edge.getLabel().startsWith(W3C)) return;
         boolean isMeta = true;
 
-        switch (getType(edge.getLabel())) {
+        switch (getType(edge.getEdgeLabel())) {
 
             case TYPE:
                 if (getType(edge.getNode(1).getLabel()) == SYMMETRIC) {
@@ -654,7 +654,7 @@ public class Entailment implements Engine {
     }
 
     boolean hasLabel(Edge edge, String type) {
-        return edge.getLabel().equals(type);
+        return edge.getEdgeLabel().equals(type);
     }
 
     boolean hasLabel(Node node, String type) {

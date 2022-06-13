@@ -12,7 +12,6 @@ import fr.inria.corese.kgram.api.core.Expr;
 import fr.inria.corese.kgram.api.core.Filter;
 import fr.inria.corese.kgram.api.core.Loopable;
 import fr.inria.corese.kgram.api.core.Node;
-import fr.inria.corese.kgram.api.core.DatatypeValue;
 import fr.inria.corese.kgram.api.query.Environment;
 import fr.inria.corese.kgram.api.query.Evaluator;
 import fr.inria.corese.kgram.api.query.Matcher;
@@ -30,6 +29,7 @@ import fr.inria.corese.kgram.event.ResultListener;
 import fr.inria.corese.kgram.path.PathFinder;
 import fr.inria.corese.kgram.tool.Message;
 import fr.inria.corese.kgram.tool.ResultsImpl;
+import fr.inria.corese.sparql.api.IDatatype;
 import fr.inria.corese.sparql.triple.function.term.Binding;
 
 /**
@@ -60,17 +60,20 @@ public class Eval implements ExpType, Plugin {
     private static boolean parameterGraphMappings = true;
     // draft test: union() has Mappings map parameter and eval branch with map parameter
     private static boolean parameterUnionMappings = true;
+    public static int DISPLAY_RESULT_MAX = 10;
     
     static final int STOP = -2;
     public static int count = 0;
-    ResultListener listener;
+    private ResultListener listener;
     EventManager manager;
     private ProcessVisitor visitor;
     private SPARQLEngine sparqlEngine;
     boolean hasEvent = false;
     boolean namedGraph = NAMED_GRAPH_DEFAULT;
     // Edge and Node producer
-    Producer producer, saveProducer;
+    private Producer producer;
+    // Edge and Node producer
+    Producer saveProducer;
     Provider provider;
     // Filter evaluator
     Evaluator evaluator;
@@ -119,7 +122,6 @@ public class Eval implements ExpType, Plugin {
             optim = true,
             draft = true;
     private boolean hasListener = false;
-    private boolean isPathType = false;
     boolean storeResult = true;
     private int nbResult;
     boolean hasFilter = false;
@@ -162,7 +164,7 @@ public class Eval implements ExpType, Plugin {
     }
 
     public void set(Producer p) {
-        producer = p;
+        setProducer(p);
     }
 
     public void set(Matcher m) {
@@ -200,7 +202,7 @@ public class Eval implements ExpType, Plugin {
         }
         initMemory(q);
         share(m);
-        producer.start(q);
+        getProducer().start(q);
         getVisitor().init(q);
         share(getVisitor());
         getVisitor().before(q);
@@ -208,7 +210,7 @@ public class Eval implements ExpType, Plugin {
         getVisitor().orderby(map);
         getVisitor().after(map);
 
-        producer.finish(q);
+        getProducer().finish(q);
         if (hasEvent) {
             send(Event.END, q, map);
         }
@@ -233,6 +235,7 @@ public class Eval implements ExpType, Plugin {
 
     // store ProcessVisitor into Bind for future sharing by
     // Transformer and Interpreter exist
+    // use case: metadata @share
     void share(ProcessVisitor vis) {
         if (vis.isShareable() && getBind().getVisitor() == null) {
             getBind().setVisitor(vis);
@@ -412,7 +415,7 @@ public class Eval implements ExpType, Plugin {
         Mappings lMap = evaluator.eval(exp.getFilter(), memory, exp.getNodeList());
         if (lMap != null) {
             for (Mapping map : lMap) {
-                map = complete(map, producer);
+                map = complete(map, getProducer());
                 submit(map);
             }
         }
@@ -427,7 +430,7 @@ public class Eval implements ExpType, Plugin {
             Filter f = ee.getFilter();
             if (f != null && !f.isFunctional()) {
                 memory.push(map, -1);
-                Node node = eval(null, f, memory, producer);
+                Node node = eval(null, f, memory, getProducer());
                 memory.pop(map);
                 map.setNode(ee.getNode(), node);
             }
@@ -683,7 +686,6 @@ public class Eval implements ExpType, Plugin {
             ev.setVisitor(getVisitor());
         }
         ev.startExtFun(q);
-        ev.setPathType(isPathType);
         if (hasEvent) {
             ev.setEventManager(manager);
         }
@@ -826,7 +828,7 @@ public class Eval implements ExpType, Plugin {
         if (memory == null) {
             // when subquery, memory is already assigned
             // assign stack index to EDGE and NODE
-            q.complete(producer);//service while1 / Query
+            q.complete(getProducer());//service while1 / Query
             memory = new Memory(match, evaluator);
             memory.setEval(this);
             getEvaluator().init(memory);
@@ -835,7 +837,7 @@ public class Eval implements ExpType, Plugin {
             if (hasEvent) {
                 memory.setEventManager(manager);
             }
-            producer.init(q);
+            getProducer().init(q);
             evaluator.start(memory);
             setDebug(q.isDebug());
             if (q.isAlgebra()) {
@@ -902,11 +904,11 @@ public class Eval implements ExpType, Plugin {
     }
 
     private void aggregate() throws SparqlException {
-        results.aggregate(evaluator, memory, producer);
+        results.aggregate(evaluator, memory, getProducer());
     }
 
     private void template() throws SparqlException {
-        results.template(evaluator, memory, producer);
+        results.template(evaluator, memory, getProducer());
     }
     
     /**
@@ -987,7 +989,7 @@ public class Eval implements ExpType, Plugin {
         if (hasEvent) {
             pathFinder.set(manager);
         }
-        pathFinder.set(listener);
+        pathFinder.set(getListener());
         pathFinder.setList(query.getGlobalQuery().isListPath());
         // rdf:type/rdfs:subClassOf* generated system path does not store the list of edges
         // to be optimized
@@ -1108,7 +1110,8 @@ public class Eval implements ExpType, Plugin {
 
         Exp exp = stack.get(n);
         if (hasListener) {
-            exp = listener.listen(exp, n);
+            // rule engine may have a ResultWatcher listener
+            exp = getListener().listen(exp, n);
         }
         
         if (isEvent) {
@@ -1208,17 +1211,11 @@ public class Eval implements ExpType, Plugin {
                         break;
 
                     case EDGE:
-                        if (query.getGlobalQuery().isPathType() && exp.hasPath()) {
-                            backtrack = path(p, graphNode, exp.getPath(), map, stack, n);
-                        } else {
-                            backtrack = edge(p, graphNode, exp, map, stack, n);
-                        }
+                        backtrack = edge(p, graphNode, exp, map, stack, n);
                         break;
 
                     case VALUES:
-
                         backtrack = values(p, graphNode, exp, stack, n);
-
                         break;
 
                     /**
@@ -1768,6 +1765,12 @@ public class Eval implements ExpType, Plugin {
             getMemory().pop(qNode);
         }
     }
+    
+    void trace(String mes, Object... obj) {
+        if (getQuery().isDebug()) {
+            System.out.println(String.format(mes, obj));
+        }
+    }
 
     /**
      * Enumerate candidate edges
@@ -1845,7 +1848,6 @@ public class Eval implements ExpType, Plugin {
             }
 
             Edge edge = it.next();
-            if (query.isDebug())System.out.println("E: " + edge);
             if (edge != null) {
                 nbEdge++;
                 if (hasListener && !listener.listen(qEdge, edge)) {
@@ -1854,6 +1856,7 @@ public class Eval implements ExpType, Plugin {
 
                 graph = edge.getGraph();
                 boolean bmatch = match(qEdge, edge, graphNode, graph, env);
+                trace ("I: %s Q: %s E: %s match: %s", qEdge.getEdgeIndex(), qEdge, edge, bmatch);
 
                 if (matchNBNode) {
                     bmatch &= (qEdge.nbNode() == edge.nbNode());
@@ -1861,13 +1864,14 @@ public class Eval implements ExpType, Plugin {
 
                 if (bmatch) {
                     if (hasCandidate) {
-                        DatatypeValue dt = getVisitor().candidate(this, getGraphNode(graphNode), qEdge, edge);
+                        IDatatype dt = getVisitor().candidate(this, getGraphNode(graphNode), qEdge, edge);
                         if (dt != null) {
                             bmatch = dt.booleanValue();
                         }
                     }
 
                     bmatch &= push(p, qEdge, edge, graphNode, graph, n);
+                    if (!bmatch) trace("push success: %s", bmatch);
                 }
 
                 if (isEvent) {
@@ -2040,8 +2044,8 @@ public class Eval implements ExpType, Plugin {
      */
     private int store(Producer p, Mapping m) throws SparqlException {
         boolean store = true;
-        if (listener != null) {
-            store = listener.process(getMemory());
+        if (getListener() != null) {
+            store = getListener().process(getMemory());
         }
         if (store) {
             nbResult++;
@@ -2161,8 +2165,8 @@ public class Eval implements ExpType, Plugin {
      * @param el
      */
     public void addResultListener(ResultListener el) {
-        listener = el;
-        hasListener = listener != null;
+        setListener(el);
+        hasListener = getListener() != null;
         if (hasListener) {
             evaluator.addResultListener(el);
         }
@@ -2217,18 +2221,7 @@ public class Eval implements ExpType, Plugin {
     public Stack getStack() {
         return current;
     }
-
-    
-    public boolean isPathType() {
-        return isPathType;
-    }
-
-    
-    public void setPathType(boolean isPathType) {
-        this.isPathType = isPathType;
-    }
-
-    
+       
     public SPARQLEngine getSPARQLEngine() {
         return sparqlEngine;
     }
@@ -2420,7 +2413,7 @@ public class Eval implements ExpType, Plugin {
     private int cbind(Producer p, Node gNode, Exp exp, Stack stack, int n) throws SparqlException {
         int backtrack = n - 1;
         Memory env = memory;
-        Producer prod = producer;
+        Producer prod = getProducer();
 
         Node qNode = exp.get(0).getNode();
         if (!exp.status() || env.isBound(qNode)) {
@@ -2521,12 +2514,12 @@ public class Eval implements ExpType, Plugin {
      * Draf extension where a Visitor provides Edge iterator
      */
     Iterable<Edge> produce(Producer p, Node gNode, List<Node> from, Edge edge) {
-        DatatypeValue res = getVisitor().produce(this, gNode, edge);
+        IDatatype res = getVisitor().produce(this, gNode, edge);
         if (res == null) {
             return null;
         }
-        if (res.getObject() != null && (res.getObject() instanceof Iterable)) {
-            return new IterableEntity((Iterable) res.getObject());
+        if (res.getNodeObject() != null && (res.getNodeObject() instanceof Iterable)) {
+            return new IterableEntity((Iterable) res.getNodeObject());
         } else if (res instanceof Loopable) {
             Iterable loop = ((Loopable) res).getLoop();
             if (loop != null) {
@@ -2555,6 +2548,18 @@ public class Eval implements ExpType, Plugin {
 
     public void setJoinMappings(boolean joinMappings) {
         this.joinMappings = joinMappings;
+    }
+
+    public ResultListener getListener() {
+        return listener;
+    }
+
+    public void setListener(ResultListener listener) {
+        this.listener = listener;
+    }
+
+    public void setProducer(Producer producer) {
+        this.producer = producer;
     }
 
 }

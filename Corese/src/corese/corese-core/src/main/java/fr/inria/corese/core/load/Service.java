@@ -17,6 +17,7 @@ import static fr.inria.corese.core.util.Property.Value.SERVICE_SEND_PARAMETER;
 import fr.inria.corese.sparql.exceptions.EngineException;
 import fr.inria.corese.sparql.triple.function.term.Binding;
 import fr.inria.corese.sparql.triple.parser.Access;
+import fr.inria.corese.sparql.triple.parser.Dataset;
 import fr.inria.corese.sparql.triple.parser.HashMapList;
 import fr.inria.corese.sparql.triple.parser.URLParam;
 import fr.inria.corese.sparql.triple.parser.URLServer;
@@ -40,6 +41,7 @@ import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Cookie;
+import java.util.HashMap;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +61,7 @@ public class Service implements URLParam {
     public static final String MIME_TYPE = "application/sparql-results+xml,application/rdf+xml";
     public static final String XML = SPARQL_RESULTS_XML;
     public static final String RDF = RDF_XML;
+    static HashMap<String, String> redirect;
     
     private ClientBuilder clientBuilder;
 
@@ -77,6 +80,10 @@ public class Service implements URLParam {
     private Response response;
     private boolean log = false;
     private double time = 0;
+    
+    static {
+        redirect = new HashMap<>();
+    }
     
     public Service() {
         clientBuilder = ClientBuilder.newBuilder();
@@ -194,8 +201,17 @@ public class Service implements URLParam {
         }
     }
     
-    // https://docs.oracle.com/javaee/7/api/index.html
     public String post(String url, String query, String mime) {
+        if (redirect.containsKey(url)) {
+            return post(redirect.get(url), query, mime);
+        }
+        else {
+            return basicPost(url, query, mime);
+        }
+    }
+    
+    // https://docs.oracle.com/javaee/7/api/index.html
+    public String basicPost(String url, String query, String mime) {
         clientBuilder.connectTimeout(timeout, TimeUnit.MILLISECONDS);
         clientBuilder.readTimeout(timeout, TimeUnit.MILLISECONDS);
         Client client = clientBuilder.build(); 
@@ -209,12 +225,12 @@ public class Service implements URLParam {
             String accept = getAccept(mime);
             Builder rb = target.request(accept); // .cookie(cook)
             //setHeader(rb);
-            logger.info("Header Accept: " + accept);
+            //logger.info("Header Accept: " + accept);
             
             Date d1 = new Date();
-            if (isDebug()) {
+            //if (isDebug()) {
                 logger.info("Post " + getURL().getURL());
-            }
+            //}
             
             Response resp =  rb.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
             
@@ -240,14 +256,18 @@ public class Service implements URLParam {
                 if (myUrl.equals(url)) {
                     throw new RedirectionException(resp);
                 }
+                redirect(url, myUrl);
                 getCreateReport().setLocation(myUrl);
                 return post(myUrl, query, mime);
             }
                
             trace(resp);
             logger.info("Response status: " + resp.getStatus());
+            //logger.info("From " + getURL().getURL());
             
-            recordFormat(resp.getMediaType().toString());  
+            if (resp.getMediaType()!=null) {
+                recordFormat(resp.getMediaType().toString());
+            }
             getCreateReport().setResponse(resp);
             getCreateReport().setResult(res);
             
@@ -278,6 +298,11 @@ public class Service implements URLParam {
             logger.error(e.getClass().getName() + " " + e.getMessage());
             throw e;
         }
+    }
+    
+    void redirect(String url1, String url2) {
+        logger.info(String.format("Record %s redirect to %s", url1, url2));
+        redirect.put(url1, url2);
     }
     
     void trace(Response res) {
@@ -371,11 +396,20 @@ public class Service implements URLParam {
         return post(getURL().getServer(), query, mime);
     }
     
-
     
     Form getForm() {
         if (sendParameter()) {
-            return getURL().getMap() == null ? new Form() : new Form(getMap(getURL().getMap()));
+            if  (getURL().getMap() == null) {
+                if (getURL().getDataset() == null) {
+                    return new Form(); 
+                }
+                else {
+                   return new Form(getMap(new HashMapList<>())); 
+                }
+            }
+            else {
+                return new Form(getMap(getURL().getMap()));
+            }
         } else {
             return new Form();
         }
@@ -386,7 +420,19 @@ public class Service implements URLParam {
         for (String key : map.keySet()) {
             amap.put(key, map.get(key));
         }
+        complete(amap, getURL().getDataset());
         return amap;
+    }
+    
+    void complete(MultivaluedMap<String, String> amap, Dataset ds) {
+        if (ds != null) {
+            if (!ds.getFrom().isEmpty()) {
+                amap.put("default-graph-uri", ds.getFromStringList());
+            }
+            if (!ds.getNamed().isEmpty()) {
+                amap.put("named-graph-uri", ds.getNamedStringList());
+            }
+        }
     }
 
     public String get(String query, String mime) {
@@ -394,12 +440,13 @@ public class Service implements URLParam {
         return get(getURL().getServer(), query, mime);
     }
 
-    public String get(String uri, String query, String mime) {
-        if (isDebug()) {
-            System.out.println(query);
-        }
+    public String get(String uri, String query, String mime) {        
         String url;
         try {
+            if (isDebug()) {
+                logger.info(URLEncoder.encode(query, "UTF-8"));
+            }
+
             url = complete(uri, URLEncoder.encode(query, "UTF-8"));
         } catch (UnsupportedEncodingException ex) {
             url = complete(uri, query);
@@ -410,6 +457,9 @@ public class Service implements URLParam {
     String complete(String uri, String query) {
         if (getURL().hasParameter() && sendParameter()) {
             return String.format("%s?%s&query=%s", uri, param(), query);
+        }
+        if (getURL().getDataset()!=null && !getURL().getDataset().isEmpty()) {
+            return String.format("%s?%s&query=%s", uri, dataset(), query);
         }
         return String.format("%s?query=%s", uri, query);
     }
@@ -429,7 +479,23 @@ public class Service implements URLParam {
                 String format = sb.length() == 0 ? "%s=%s" : "&%s=%s";
                 sb.append(String.format(format, key, value));
             }
+        }  
+        complete(sb, getURL().getDataset());
+        return sb.toString();
+    }
+    
+    void complete(StringBuilder sb, Dataset ds) {
+        if (ds != null && !ds.isEmpty()) {
+            if (sb.length()>0) {
+                sb.append("&");
+            }
+            sb.append(ds.getURLParameter());
         }
+    }
+    
+    String dataset() {
+        StringBuilder sb = new StringBuilder();
+        complete(sb, getURL().getDataset());
         return sb.toString();
     }
         
@@ -471,6 +537,15 @@ public class Service implements URLParam {
     }
     
     Response getResponse(String url, String mime) {
+        if (redirect.containsKey(url)) {
+            return getResponse(redirect.get(url), mime);
+        }
+        else {
+            return basicGetResponse(url, mime);
+        }
+    }
+        
+    Response basicGetResponse(String url, String mime) {
         logger.info("Service:  " + url + " " + mime);
         clientBuilder.connectTimeout(timeout, TimeUnit.MILLISECONDS);
         Client client = clientBuilder.build();
@@ -488,8 +563,9 @@ public class Service implements URLParam {
             String myUrl = resp.getLocation().toString();
             logger.warn(String.format("Service redirection: %s to: %s", url, myUrl));
             if (myUrl.equals(url)) {
-                throw new jakarta.ws.rs.RedirectionException(resp);
+                throw new RedirectionException(resp);
             }
+            redirect(url, myUrl);
             return getResponse(myUrl, mime);
         }
         
@@ -539,58 +615,42 @@ public class Service implements URLParam {
     }
 
 
-    /**
-     * @return the level
-     */
+   
     public Access.Level getLevel() {
         return level;
     }
 
-    /**
-     * @param level the level to set
-     */
+    
     public void setLevel(Access.Level level) {
         this.level = level;
     }
 
-    /**
-     * @return the post
-     */
+    
     public boolean isPost() {
         return post;
     }
 
-    /**
-     * @param post the post to set
-     */
+    
     public void setPost(boolean post) {
         this.post = post;
     }
 
-    /**
-     * @return the showResult
-     */
+   
     public boolean isShowResult() {
         return showResult;
     }
 
-    /**
-     * @param showResult the showResult to set
-     */
+    
     public void setShowResult(boolean showResult) {
         this.showResult = showResult;
     }
 
-    /**
-     * @return the trap
-     */
+    
     public boolean isTrap() {
         return trap;
     }
 
-    /**
-     * @param trap the trap to set
-     */
+   
     public void setTrap(boolean trap) {
         this.trap = trap;
     }
@@ -621,7 +681,7 @@ public class Service implements URLParam {
      * format = text/turtle;charset=UTF-8
      */
     void recordFormat(String str) {
-        logger.info("Content type: " + str);
+        //logger.info("Content type: " + str);
         String format = clean(str);
         setFormat(format);
         getCreateReport().setFormat(format);
@@ -665,21 +725,7 @@ public class Service implements URLParam {
     }
     
     void metadata(ASTQuery ast) {
-        if (!ast.hasLimit()) {
-            if (ast.hasMetadata(Metadata.LIMIT)) {
-                ast.setLimit(ast.getMetadata().getDatatypeValue(Metadata.LIMIT).intValue());
-            }
-            // DRAFT: for testing (modify ast ...)
-            Integer lim = getURL().intValue(LIMIT);
-            if (lim != -1) {
-                ast.setLimit(lim);
-            }
-            lim = Property.intValue(SERVICE_LIMIT);            
-            if (lim != null) {
-                ast.setLimit(lim);
-            }
-            
-        }
+        limit(ast);
         if (getURL().isGET() || ast.getGlobalAST().hasMetadata(Metadata.GET)) {
             setPost(false);
         }
@@ -693,6 +739,26 @@ public class Service implements URLParam {
         if (! isShowResult()) {
             setShowResult(ast.getGlobalAST().hasMetadata(Metadata.SHOW));
             getCreateParser().setShowResult(isShowResult());        
+        }
+    }
+    
+    // use case for limit: @federate with one URL -> direct service
+    void limit(ASTQuery ast) {
+        if (!ast.hasLimit()) {
+            if (ast.hasMetadata(Metadata.LIMIT)) {
+                ast.setLimit(ast.getMetaValue(Metadata.LIMIT).intValue());
+            } else {
+                Integer lim = getURL().intValue(LIMIT);
+                if (lim != -1) {
+                    ast.setLimit(lim);
+                }
+                else {
+                    lim = Property.intValue(SERVICE_LIMIT);
+                    if (lim != null) {
+                        ast.setLimit(lim);
+                    }
+                }
+            }
         }
     }
 

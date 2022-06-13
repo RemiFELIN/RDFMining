@@ -1,5 +1,6 @@
 package fr.inria.corese.gui.query;
 
+import fr.inria.corese.compiler.federate.FederateVisitor;
 import java.util.Date;
 
 import org.apache.logging.log4j.Logger;
@@ -15,8 +16,10 @@ import fr.inria.corese.kgram.event.Event;
 import fr.inria.corese.core.Graph;
 import fr.inria.corese.core.query.QueryProcess;
 import fr.inria.corese.core.util.SPINProcess;
+import fr.inria.corese.core.util.Tool;
 import fr.inria.corese.sparql.triple.parser.ASTQuery;
 import fr.inria.corese.sparql.triple.parser.Metadata;
+import fr.inria.corese.sparql.triple.parser.context.ContextLog;
 import org.apache.logging.log4j.Level;
 
 /**
@@ -68,7 +71,6 @@ public class Exec extends Thread {
         Mappings res = null;
         MyJPanelQuery panel = frame.getPanel();
         if (isValidate()) {
-            //res = validate();
             res = compile();
             if (res != null) {
                 if (res.getQuery().isDebug()) {
@@ -118,16 +120,27 @@ public class Exec extends Thread {
                 q = (isShex()) ? qshex : qshacl;
             }
             // draft test: Mappings available using xt:mappings()
-            Mappings l_Results = exec.SPARQLQuery(q, getMappings());
+            Mappings map = exec.SPARQLQuery(q, getMappings());
             Date d2 = new Date();
-            System.out.println("** Time : " + (d2.getTime() - d1.getTime()) / (1000.0));
-            return l_Results;
+            trace(map);
+            logger.info(String.format("** Time: %s ; nb result: %s", 
+                    Tool.time(d1, d2), map.size()));            
+            return map;
         } catch (EngineException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
             frame.getPanel().getTextArea().setText(e.toString());
         }
         return null;
+    }
+    
+    void trace(Mappings map) {
+        ASTQuery ast = map.getAST();
+        if (ast.isFederateIndex()) {
+            if (!FederateVisitor.getBlacklist().isEmpty()) {
+                logger.info("Blacklist:\n" + FederateVisitor.getBlacklist());
+            }
+        }
     }
 
     Mappings compile() {
@@ -140,15 +153,25 @@ public class Exec extends Thread {
         try {
             Query q = exec.compile(query);
             q.setValidate(true);
+            ContextLog log = exec.getQueryProcess().getLog();
             Mappings map = exec.SPARQLQuery(q);
+            // Compile time log and eval time log may be managed
+            // in two different Binding
+            // hence we get compile time log
+            // during std eval, service clause manage this duality of log
+            // here it is validation, hence no service clause is executed 
+            // by eval
+            exec.getQueryProcess().getCreateBinding().setLog(log);
             ASTQuery ast = exec.getQueryProcess().getAST(map);
             if (ast!=null && !ast.hasMetadata(Metadata.EXPLAIN)) {
                 // display mappings will check existence of query resource URI in the graph
                 ast.setMetadata(Metadata.EXPLAIN);
             }
             Date d2 = new Date();
-            System.out.println("** Time : " + (d2.getTime() - d1.getTime()) / (1000.0));
-            return map;
+            trace(map);
+            logger.info(String.format("** Time: %s ; nb result: %s", 
+                    Tool.time(d1, d2), map.size()));
+            return map.getResult();
         } catch (EngineException e) {
             e.printStackTrace();
             frame.getPanel().getTextArea().setText(e.toString());
@@ -156,6 +179,7 @@ public class Exec extends Thread {
         return null;
     }
 
+    
     /**
      * Translate SPARQL query to SPIN graph Apply spin typecheck transformation
      */

@@ -4,7 +4,9 @@ import java.util.List;
 
 import fr.inria.corese.sparql.api.IDatatype;
 import fr.inria.corese.sparql.api.IDatatypeList;
+import static fr.inria.corese.sparql.datatype.CoreseBoolean.FALSE;
 import fr.inria.corese.sparql.datatype.DatatypeMap;
+import static fr.inria.corese.sparql.datatype.DatatypeMap.TRUE;
 import fr.inria.corese.sparql.exceptions.CoreseDatatypeException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -132,7 +134,7 @@ public class CoreseList extends CoreseExtension implements IDatatypeList {
     }
 
     @Override
-    public Object getObject() {
+    public Object getNodeObject() {
         return list;
     }
 

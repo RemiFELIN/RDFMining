@@ -173,11 +173,11 @@ public class Extension extends Core {
         if (dt.isTripleWithEdge()) {
             return list(dt.getEdge());
         }
-        if (dt.getObject() != null && dt.getObject() instanceof Enumeration) {
-            return DatatypeMap.newList((Enumeration) dt.getObject());
+        if (dt.getNodeObject() != null && dt.getNodeObject() instanceof Enumeration) {
+            return DatatypeMap.newList((Enumeration) dt.getNodeObject());
         }
-        if (dt.getObject() != null && dt.getObject() instanceof Object[]) {
-            return DatatypeMap.newList((Object[]) dt.getObject());
+        if (dt.getNodeObject() != null && dt.getNodeObject() instanceof Object[]) {
+            return DatatypeMap.newList((Object[]) dt.getNodeObject());
         }
         return DatatypeMap.list();
     }
@@ -243,7 +243,7 @@ public class Extension extends Core {
         Cleaner clean = new Cleaner(getGraph());
         clean.setVisitor(new QuerySolverVisitorRule(new RuleEngine(), getEval()));
         try {
-            clean.clean();
+            clean.process();
         } catch (IOException | LoadException | EngineException ex) {
             logger.error(ex.getMessage());
         } 

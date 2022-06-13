@@ -3,6 +3,7 @@ package fr.inria.corese.core.query;
 import fr.inria.corese.core.Graph;
 import fr.inria.corese.core.load.LoadException;
 import fr.inria.corese.core.load.QueryLoad;
+import fr.inria.corese.core.transform.DefaultVisitor;
 import fr.inria.corese.core.transform.TemplateVisitor;
 import fr.inria.corese.core.transform.Transformer;
 import fr.inria.corese.kgram.api.core.Expr;
@@ -24,8 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
- * @author corby
+ * Transformer LDScript functions.
  */
 public class PluginTransform implements ComputerProxy {
 
@@ -60,19 +60,18 @@ public class PluginTransform implements ComputerProxy {
     }
 
     @Override
-    public TemplateVisitor getVisitor(Binding b, Environment env, Producer p) {
-        TemplateVisitor tv = (TemplateVisitor) env.getQuery().getTemplateVisitor();
-        if (tv == null) {
-            try {
-                tv = getTransformer(b, env, p).defVisitor();
-            } catch (EngineException ex) {
-                logger.error("getTransformer fails in getVisitor");
-                Transformer t = Transformer.create(Graph.create(), null);
-                tv = t.defVisitor();
-            }
-            env.getQuery().setTemplateVisitor(tv);
-        }
-        return tv;
+    public TemplateVisitor getVisitor(Binding b, Environment env, Producer p) {        
+        return getVisitorNew(b, env, p);
+    }
+           
+    // TemplateVisitor is shared among every Binding of every subtransformation
+    public TemplateVisitor getVisitorNew(Binding b, Environment env, Producer p) {        
+        TemplateVisitor vis = (TemplateVisitor) b.getTransformerVisitor();
+        if (vis == null) {            
+            vis = new DefaultVisitor((Graph) p.getGraph());
+            b.setTransformerVisitor(vis);
+        }        
+        return vis;
     }
 
     /**
@@ -122,9 +121,7 @@ public class PluginTransform implements ComputerProxy {
             else {
                 c = new Context();
                 q.setContext(c);
-                //if (b.getContext() == null) {
-                    b.setContext(c);
-                //}
+                b.setContext(c);
             }
         }
         return c;
@@ -267,38 +264,4 @@ public class PluginTransform implements ComputerProxy {
 
         return "";
     }
-
-//    String getFormatURI2(String uri) {
-//        if (uri.startsWith(NSManager.STL_FORMAT)) {
-//            try {
-//                return readResource(uri, NSManager.STL_FORMAT, FORMAT_LIB);
-//            } catch (LoadException ex) {
-//                logger.error(ex.getMessage());
-//                return "";
-//            }
-//        }
-//        QueryLoad ql = QueryLoad.create();
-//        try {
-//            return ql.readProtect(uri);
-//        } catch (LoadException ex) {
-//            logger.error("Format unauthorized: " + ex.getMessage());
-//        }
-//        return "";
-//    }
-//
-//    /**
-//     * ns = http://ns.inria.fr/sparql-template/format/ resource =
-//     * http://ns.inria.fr/sparql-template/format/navlab/title.html lib =
-//     * /data/format/
-//     */
-//    String readResource(String resource, String ns, String lib) throws LoadException {
-//        String name = lib + resource.substring(ns.length());
-//        InputStream stream = getClass().getResourceAsStream(name);
-//        if (stream == null) {
-//            throw LoadException.create(new IOException(resource));
-//        }
-//        QueryLoad ql = QueryLoad.create();
-//        return ql.readWE(stream);
-//    }
-
 }

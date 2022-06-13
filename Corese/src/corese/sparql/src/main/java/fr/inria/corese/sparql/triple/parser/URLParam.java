@@ -25,6 +25,8 @@ public interface URLParam {
 
     // specific for service clause
     static final String LOOP = "loop";
+    static final String START = "start";
+    static final String UNTIL = "until";
     static final String LIMIT = "limit";
     static final String SLICE = "slice";
     static final String TIMEOUT = "timeout";
@@ -38,7 +40,11 @@ public interface URLParam {
     // service clause does not return variable in service result
     static final String UNSELECT = "unselect";
     static final String LOCAL = "local";
-
+    
+    public static final String FED_SUCCESS  = "federateSuccess";
+    public static final String FED_LENGTH   = "federateLength";    
+    public static final String FED_INCLUDE  = "include";
+    
     // value of mode=
     static final String DISPLAY = "display";
     static final String TRACE = "trace";
@@ -85,6 +91,7 @@ public interface URLParam {
     static final String WHY = "why";
     static final String INPUT = "input";
     static final String OUTPUT = "output";
+    static final String OUTPUT_INDEX = "outputIndex";
     static final String SEQUENCE = "sequence";
 
     // values of binding=
@@ -92,6 +99,7 @@ public interface URLParam {
     static final String FILTER = "filter";
     
     static final String REW = "rewrite";
+    static final String INDEX = "index";
     static final String SEL = "select";
     static final String SRC = "source";
     static final String INFO = "info";

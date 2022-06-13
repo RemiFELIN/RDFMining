@@ -74,7 +74,8 @@ public class NSManager extends ASTObject {
     public static final String RDFMINER = "http://ns.inria.fr/rdfminer/shacl#";
     public static final String RULE  = CORESE+"rule/";
     public static final String HTTP = "http://ns.inria.fr/http/";
-    
+    public static final String GEO = "http://www.w3.org/2003/01/geo/wgs84_pos#";
+   
     public static final String INDEX    = "http://ns.inria.fr/rdf/index/";
     public static final String FEDERATE = "http://ns.inria.fr/federation/";
     
@@ -88,7 +89,7 @@ public class NSManager extends ASTObject {
     public static final String SHAPE = SHACL;
     public static final String SHACL_JAVA = "function://fr.inria.corese.core.extension.SHACL.";
     public static final String SHACL_SHACL = RESOURCE+"data/shaclshacl.ttl";
-    
+
     public static final String COSNS = RDFS.COSNS;
     public static final String COS = RDFS.COS;
     public static final String SWL = ExpType.SWL;
@@ -130,6 +131,8 @@ public class NSManager extends ASTObject {
     // use case: determine if a string can be considered as an uri
     // use case: json string converted to uri or string
     static String[] protocol = {"http://", "https://", "file://", "ftp://", "urn:"};
+    
+    public static final int XSD_LENGTH = XSD.length();
 
     /**
      * prefix seed (ns1, ns2,...)
@@ -325,6 +328,7 @@ public class NSManager extends ASTObject {
         def.put(DOM, "dom");
         def.put(RESOURCE, "res");
         def.put(INDEX, "idx");
+        def.put(GEO, "geo");
         //def.put(HTTP, "http");
         // RDFMiner project
         def.put(RDFMINER, "rdfminer");
@@ -342,6 +346,10 @@ public class NSManager extends ASTObject {
 
     public boolean isSystem(String ns) {
         return def.containsKey(ns);
+    }
+    
+    public boolean isSystemURI(String uri) {
+        return isSystem(namespace(uri));
     }
 
     public boolean isNamespace(String ns) {

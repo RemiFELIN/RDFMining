@@ -13,7 +13,7 @@ import fr.inria.corese.kgram.core.Mapping;
 import fr.inria.corese.kgram.core.Mappings;
 import fr.inria.corese.kgram.core.Query;
 import fr.inria.corese.core.Graph;
-import fr.inria.corese.core.load.SPARQLResultParser;
+import fr.inria.corese.core.load.result.SPARQLResultParser;
 import fr.inria.corese.core.producer.DataProducer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -85,8 +85,8 @@ public class Mapper {
         }    
         else if (dt.isPointer()) {
             return map(nodes, dt.getPointerObject());
-        } else if (dt.getObject() != null) {
-            return map(nodes, dt.getObject());
+        } else if (dt.getNodeObject() != null) {
+            return map(nodes, dt.getNodeObject());
         } else if (dt.isURI()) {
             return mapURI(nodes, dt);
         } 
@@ -151,31 +151,6 @@ public class Mapper {
 
         return map(nodes, (Object) obj);
     }
-
-    /**
-     * bind (unnest(us:graph()) as (?s, ?p, ?o)) bind (unnest(us:graph()) as ?t)
-     */
-//    Mappings map2(List<Node> varList, Graph g) {
-//        Node[] qNodes = new Node[varList.size()];
-//        varList.toArray(qNodes);
-//        Node[] nodes;
-//        Mappings map = new Mappings();
-//        int size = varList.size();
-//        if (!(size == 1 || size == 3 || size == 4)) {
-//            return map;
-//        }
-//        for (Edge ent : g.getEdges()) {
-//            nodes = new Node[size];
-//            if (size >= 3) {
-//                nodeArray(ent, nodes);
-//            } else {
-//                nodes[0] = DatatypeMap.createObject(g.getEdgeFactory().copy(ent));
-//            }
-//            map.add(Mapping.create(qNodes, nodes));
-//        }
-//
-//        return map;
-//    }
 
     Mappings map(List<Node> varList, Graph g) {
         Node[] qNodes = new Node[varList.size()];

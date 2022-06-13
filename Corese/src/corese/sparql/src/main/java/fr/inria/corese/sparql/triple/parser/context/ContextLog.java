@@ -22,7 +22,7 @@ import org.json.JSONObject;
  */
 public class ContextLog implements URLParam, LogKey {
 
-    static final int nbshow=10;
+    public static int DISPLAY_RESULT_MAX=10;
 
     // log service exception list
     private List<EngineException> exceptionList;
@@ -30,12 +30,14 @@ public class ContextLog implements URLParam, LogKey {
     private List<String> linkList;
     // federated visitor endpoint selector Mappings
     private Mappings selectMap;
+    private Mappings indexMap;
     // subject -> property map
     private SubjectMap subjectMap;
     // federated query
     private ASTQuery ast;
     // federated visitor endpoint selector Mappings
     private ASTQuery astSelect;
+    private ASTQuery astIndex;
     private StringBuilder trace; 
     private List<String> formatList;
 
@@ -212,7 +214,12 @@ public class ContextLog implements URLParam, LogKey {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("Link List: %s\n", getLinkList().toString()));
         sb.append(getSubjectMap());
-        if (getASTSelect()!=null) {
+        if (getASTIndex()!= null) {
+            sb.append("Source discovery\n");
+            sb.append(getASTIndex()).append(NL);
+        }
+        if (getASTSelect() != null) {
+            sb.append("Source selection\n");
             sb.append(getASTSelect()).append(NL);
         }
         return sb.toString();
@@ -260,7 +267,7 @@ public class ContextLog implements URLParam, LogKey {
     void addURLInput(URLServer url, Mappings map) {
         incr(url.getLogURLNumber(), INPUT_CARD, mapSize(map));
         if (map != null && !map.isEmpty()) {
-            map.setDisplay(url.intValue(NBINPUT, nbshow));
+            map.setDisplay(url.intValue(NBINPUT, DISPLAY_RESULT_MAX));
             set(url.getLogURLNumber(), LogKey.INPUT, map);
         }
     }
@@ -271,7 +278,7 @@ public class ContextLog implements URLParam, LogKey {
         if (map!=null && !map.isEmpty()) {
             if (!url.hasParameter(URLParam.RESULT) || url.getLogURLNumber().contains(url.getParameter(URLParam.RESULT))) {
                 // we may filter the endpoint for which we ask results  
-                map.setDisplay(url.intValue(NBRESULT, nbshow));
+                map.setDisplay(url.intValue(NBRESULT, DISPLAY_RESULT_MAX));
                 set(url.getLogURLNumber(), LogKey.RESULT, map);
             }
         }
@@ -313,6 +320,9 @@ public class ContextLog implements URLParam, LogKey {
 
     // share data from federated visitor log
     public void share(ContextLog log) {
+        if (log == null) {
+            return;
+        }
         if (getAST() == null) {
             setAST(log.getAST());
         }
@@ -321,6 +331,12 @@ public class ContextLog implements URLParam, LogKey {
         }
         if (getSelectMap() == null) {
             setSelectMap(log.getSelectMap());
+        }
+        if (getASTIndex() == null) {
+            setASTIndex(log.getASTIndex());
+        }
+        if (getIndexMap() == null) {
+            setIndexMap(log.getIndexMap());
         }
         if (getExceptionList().isEmpty()) {
             getExceptionList().addAll(log.getExceptionList());
@@ -502,6 +518,22 @@ public class ContextLog implements URLParam, LogKey {
 
     public void setFormatList(List<String> formatList) {
         this.formatList = formatList;
+    }
+
+    public ASTQuery getASTIndex() {
+        return astIndex;
+    }
+
+    public void setASTIndex(ASTQuery astIndex) {
+        this.astIndex = astIndex;
+    }
+
+    public Mappings getIndexMap() {
+        return indexMap;
+    }
+
+    public void setIndexMap(Mappings indexMap) {
+        this.indexMap = indexMap;
     }
 
 }

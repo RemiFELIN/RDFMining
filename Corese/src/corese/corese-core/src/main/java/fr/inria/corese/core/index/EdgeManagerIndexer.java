@@ -1,6 +1,5 @@
 package fr.inria.corese.core.index;
 
-import fr.inria.corese.core.Event;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,6 +13,7 @@ import fr.inria.corese.kgram.tool.MetaIterator;
 import fr.inria.corese.core.Graph;
 import fr.inria.corese.core.Index;
 import fr.inria.corese.core.Serializer;
+import fr.inria.corese.core.index.PredicateList.Cursor;
 import fr.inria.corese.core.util.Property;
 import java.util.HashMap;
 import fr.inria.corese.kgram.api.core.Edge;
@@ -29,16 +29,29 @@ import fr.inria.corese.sparql.triple.parser.AccessRight;
  * ?x p ?y . ?z q ?y 
  * Index(1) of q is built for 2nd triple pattern
  * Hence Index(1) may be partial (not for all properties)
- * Nodes are sorted by Node index 
+ * Nodes are sorted by Node index and then by compareTo when they are equal
  * Nodes with same node index which are not sameTerm are kept in the list:
  * s p 01, 1, 1.0, '1'^^xsd:long, 1e1
+ * 
+ * NodeManager is a Node Index with a table:
+ * s -> (p1:i1 .. pn:in)
+ * with for each node s the list of its predicates and for each predicate p
+ * the position i of the triple s p o in the graph index edge list
+ * given s and p we have direct access to triple s p o in the graph index at position i
+ * given s we have the list of predicates of s 
+ * hence ?s ?p ?o iterates directly the list of predicates of each subject s
+ * very interesting when there are many candidate properties
  *
  * @author Olivier Corby, Wimmics INRIA I3S, 2017
  *
  */
 public class EdgeManagerIndexer 
         implements Index {
-
+    public static boolean TRACE_REDUCE = false;
+    public static boolean TRACE_INSERT = false;
+    // draft test to iterate edge list with subList(b, e) with rdf star only (predicate!=null)
+    public static boolean ITERATE_SUBLIST = false;
+    public static boolean RECORD_END = false;
     // true: store internal Edge without predicate Node
     public static boolean test = true;
     private static final String NL = System.getProperty("line.separator");
@@ -54,17 +67,15 @@ public class EdgeManagerIndexer
             isIndexer = false,
             // do not create entailed edge in kg:entailment if it already exist in another graph
             isOptim = false;
-    Comparator<Edge> comp;
-    Graph graph;
+    Comparator<Edge> comparatorIndex, comparator;
+    private Graph graph;
     List<Node> sortedProperties;
     PredicateList sortedPredicates;
     // Property Node -> Edge List 
     HashMap<Node, EdgeManager> table;
-    NodeManager nodeManager;
-    // replace key node by value node
-    HashMap<Node, Node> replaceMap;
+    private NodeManager nodeManager;
+    //TransitiveEdgeManager transitiveManager;
     private boolean debug = false;
-    private boolean loopMetadata = false;
 
     public EdgeManagerIndexer(Graph g, boolean bi, int index) {
         init(g, bi, index);
@@ -73,7 +84,7 @@ public class EdgeManagerIndexer
     }
 
     void init(Graph g, boolean bi, int n) {
-        graph = g;
+        setGraph(g);
         index = n;
         byIndex = bi;
         switch (index) {
@@ -179,7 +190,6 @@ public class EdgeManagerIndexer
         Collections.sort(sortedProperties, new Comparator<Node>() {
             @Override
             public int compare(Node o1, Node o2) {
-                // TODO Auto-generated method stub
                 return o1.compare(o2);
             }
         });
@@ -275,13 +285,13 @@ public class EdgeManagerIndexer
             logClear();
         }
         table.clear();
-        nodeManager.clear();
+        getNodeManager().clear();
     }
 
     @Override
     public void clearIndex(Node pred) {
         EdgeManager l = get(pred);
-        if (l != null) { // && l.size() > 0) {            
+        if (l != null) {         
             l.clear();
         }
     }
@@ -301,8 +311,10 @@ public class EdgeManagerIndexer
         return add(edge, false);
     }
 
-    Edge internal(Edge ent){
-        return graph.getEdgeFactory().internal(ent);
+    // generate internal representation for edge, 
+    // possibly without predicate and named graph if kg:default
+    Edge internal(Edge edge){
+        return getGraph().getEdgeFactory().internal(edge);
     }
     
     /**
@@ -322,14 +334,38 @@ public class EdgeManagerIndexer
         if (isSort(edge)) {
             // edges are sorted, check presence by dichotomy
             int i = el.getPlace(edge);
+            trace("insert: %s at %s", edge, i);
+            
+            if (getIndex() == 0) {
+                if (getGraph().isFormerMetadata()) {
+                    // add edge with metadata take care of it
+                    // ok
+                }
+                else if (i < el.size() &&
+                        el.equalWithoutConsideringMetadata(el.get(i), edge)) {
+                    // eliminate duplicate at insertion time for index 0 
+                    if (edge.isAsserted() && el.get(i).isNested()) {
+                        el.get(i).setAsserted(true);
+                    }
+                    i = -1;
+                }
+            }
+            
             if (i == -1) {
+                trace("skip insert edge: ", edge);
                 count++;
                 return null;
             }       
 
             if (onInsert(edge)) {
-                el.add(i, internal);
-                logInsert(edge);
+                if (getGraph().isFormerMetadata()) {
+                    // rdf star edge with reference node: g s p o t
+                     return addWithMetadata(el, edge, internal, i);
+                }
+                else {
+                    el.add(i, internal);
+                    logInsert(edge);
+                }
             } else {
                 return null;
             }
@@ -346,7 +382,146 @@ public class EdgeManagerIndexer
 
         return edge;
     }
+    
+    /**
+     * g s p o t  before  g s p o
+     * edge with ref node    compare with index i
+     * edge without ref node compare with index i-1
+     * check redundancy in 4 cases:
+     * edge g s p o t vs edgeList (g s p o t) or (g s p o)
+     * edge g s p o   vs edgeList (g s p o t) or (g s p o)
+     * 
+    */ 
+    Edge addWithMetadata(EdgeManager el, Edge edge, Edge internal, int i) {
+        trace("insert: %s at %s", edge, i);
+        if (el.getEdgeList().isEmpty()) {
+            el.add(i, edge);
+            logInsert(edge);
+        }
+        else if (edge.hasReferenceNode()) {
+            if (i == el.getEdgeList().size()) {
+                el.add(i, edge);
+                share(el, edge, i);
+                logInsert(edge);
+            }
+            else {
+                Edge current = el.get(i); 
+                trace("current: %s", current);
+                if (el.equalWithoutConsideringMetadata(current, edge)) {
+                    trace("they are equal");
+                    if (!current.hasReferenceNode()) {
+                        trace("set edge at: %s", i);
+                        // g s p o t replace g s p o
+                        el.set(i, edge);
+                        if (current.isAsserted()) {
+                            edge.setAsserted(true);
+                        }
+                        share(el, edge, i);
+                    }
+                    // in case edge does not replace current
+                    if (edge.isAsserted()) {
+                        current.setAsserted(true);
+                    }
+                    return null;
+                } else {
+                    trace("insert at: %s", i);
+                    el.add(i, edge);
+                    share(el, edge, i);
+                    logInsert(edge);
+                }
+            }
+        }
+        else {
+            // edge has no reference node
+            if (i < el.getEdgeList().size()) {
+                Edge current = el.get(i);
+                if (el.equalWithoutConsideringMetadata(current, edge)) {
+                    // current has no reference node (otherwise i would be just after current, i.e. i+1)
+                    // skip edge
+                    return null;
+                }
+            }
 
+            if (i == 0) {
+                insertEdgeWhenMetadata(el, edge, internal, i);
+            } else {
+                Edge current = el.get(i - 1);
+                if (el.equalWithoutConsideringMetadata(current, edge)) {
+                    // current has reference node because it is before i
+                    // edge has no reference node => current asserted
+                    current.setAsserted(true);
+                    return null;
+                } else {
+                    insertEdgeWhenMetadata(el, edge, internal, i);
+                }
+            }      
+        }
+        
+        return edge;
+    }
+    
+    void trace(String mes, Object... obj) {
+        if (TRACE_INSERT) {
+            System.out.println(String.format(mes, obj));
+        }
+    }
+    
+    /**
+     * edge with reference inserted at index i
+     * share its reference with equal edge before and after i
+     */
+    void share(EdgeManager el, Edge edge, int n) {
+        trace("share: %s at %s", edge, n);
+        boolean loop = true;        
+        for (int i = n + 1; i < el.size() && loop; i++) {
+            loop = shareReference(el, edge, i);
+        }
+        
+        loop = true;
+        for (int i = n - 1; i >= 0 && loop; i--) {
+            loop = shareReference(el, edge, i);
+        }
+
+    }
+    
+    /**
+     * return true while get(i) == edge
+     */
+    boolean shareReference(EdgeManager el, Edge edge, int i) {
+        Edge e = el.get(i);
+        trace("share test: %s", e);
+        if (el.compare2(e, edge) == 0) {
+            // same s p o, g may differ
+            trace("they are equal");
+            if (!e.hasReferenceNode()) {
+                trace("copy reference node");
+                Edge copy = getGraph().getEdgeFactory().name(e, el.getPredicate(), edge.getReferenceNode());
+                el.set(i, copy);
+                return true;
+            }
+        }
+        else {
+            trace("thay are not equal");
+        }
+        return false;
+    }
+    
+    /**
+     * insert edge with no reference
+     * if there exist similar edge with reference, 
+     * this edge share reference
+     */
+    void insertEdgeWhenMetadata(EdgeManager el, Edge edge, Edge internal, int i) {
+        Node ref = getGraph().getTripleReference(edge);
+        if (ref == null) {
+            el.add(i, internal);
+        } else {
+            Edge copy = getGraph().getEdgeFactory().name(edge, el.getPredicate(), ref);
+            el.add(i, copy);
+        }
+        logInsert(edge);
+    }
+    
     /**
      * PRAGMA: 
      * This is already reduced() ie there is no duplicates in this manager
@@ -366,13 +541,13 @@ public class EdgeManagerIndexer
     }
 
     Edge tag(Edge ent) {
-        graph.tag(ent);
+        getGraph().tag(ent);
         return ent;
     }
 
 
     EdgeManager getListByLabel(Edge e) {
-        Node pred = graph.getPropertyNode(e.getEdgeNode().getLabel());
+        Node pred = getGraph().getPropertyNode(e.getEdgeNode().getLabel());
         if (pred == null) {
             return null;
         }
@@ -393,10 +568,15 @@ public class EdgeManagerIndexer
         return list.exist(edge);
     }
     
+    /**
+     * use case: Construct find occurrence of edge for rdf star
+     * Index is sorted and reduced
+     */
     @Override
     public Edge find(Edge edge) {
         EdgeManager list = getListByLabel(edge);
         if (list == null) {
+            getGraph().trace("Find edge: undefined property %s", edge);
             return null;
         }
         return list.findEdge(edge);
@@ -404,7 +584,7 @@ public class EdgeManagerIndexer
 
 
     boolean isSort(Edge edge) {
-        return !graph.isIndex();
+        return !getGraph().isIndexable();
     }
 
     /**
@@ -432,7 +612,10 @@ public class EdgeManagerIndexer
         EdgeManager list = get(predicate);
         if (list == null) {
             list = new EdgeManager(this, predicate, index);
-            setComparator(list);
+            // comparator index: g s p o t < g s p o
+            list.setComparatorIndex(getCreateComparatorIndex(list));
+            // comparator basic: g s p o t = g s p o 
+            list.setComparator(getCreateComparator(list));            
             put(predicate, list);
         }
         return list;
@@ -442,12 +625,18 @@ public class EdgeManagerIndexer
      * 
      * All EdgeManager(index) share same Comparator
      */       
-    void setComparator(EdgeManager el){
-        if (comp == null){
-            // create Comparator that will be shared
-            comp = el.getComparator(index);
+    Comparator<Edge> getCreateComparatorIndex(EdgeManager el){
+        if (comparatorIndex == null){
+            comparatorIndex = el.createComparatorIndex(index);
         }
-        el.setComparator(comp);
+        return comparatorIndex;
+    }
+    
+    Comparator<Edge> getCreateComparator(EdgeManager el){
+        if (comparator == null){
+            comparator = el.createComparator(index);
+        }
+        return comparator;
     }
 
     /**
@@ -469,14 +658,15 @@ public class EdgeManagerIndexer
     
     /**
      * To be called after reduce is done
+     * Generate Node Index: node -> (predicate:position)
      */
     @Override
     public void indexNodeManager() {
-        nodeManager.start();
+        getNodeManager().start();
         for (Node pred : getSortedProperties()) {
-            checkGet(pred).indexNodeManager(nodeManager);
+            checkGet(pred).indexNodeManager(getNodeManager());
         }
-        nodeManager.finish();
+        getNodeManager().finish();
     }
     
     /**
@@ -488,7 +678,7 @@ public class EdgeManagerIndexer
      */
     @Override
     public void index(Node pred) {
-        nodeManager.desactivate();
+        getNodeManager().desactivate();
         basicIndex(pred);
     }
 
@@ -502,22 +692,28 @@ public class EdgeManagerIndexer
      * index NodeManager
      */
     private void reduce() {
-        nodeManager.start();
+        if (TRACE_REDUCE) {
+            System.out.println("before reduce:\n" + getGraph().display());
+        }
+        getNodeManager().start();
         for (Node pred : getSortedProperties()) {
             reduce(pred);
         }
-        nodeManager.finish();
+        getNodeManager().finish();
+        if (TRACE_REDUCE) {
+            System.out.println("after reduce:\n" + getGraph().display());
+        }
     }
 
     private void reduce(Node pred) {
-        get(pred).reduce(nodeManager);
+        get(pred).reduce(getNodeManager());       
     }
     
     @Override
     public void indexNode() {
         for (Node pred : getProperties()) {
             for (Edge ent : get(pred)) {
-                graph.define(ent);
+                getGraph().define(ent);
             }
         }
     }
@@ -557,7 +753,7 @@ public class EdgeManagerIndexer
         synchronized (pred) {
             EdgeManager list = get(pred);
             if (list != null && list.size() == 0) {
-                EdgeManager std = (EdgeManager) graph.getIndex().get(pred);
+                EdgeManager std = (EdgeManager) getGraph().getIndex().get(pred);
                 list.copy(std);
                 list.sort();
             }
@@ -565,13 +761,24 @@ public class EdgeManagerIndexer
         }
     }
     
-    
     @Override
     public Iterable<Edge> getSortedEdges(Node node) {
+        if (ITERATE_SUBLIST) {
+            return getSortedEdgesSubList(node);
+        }
+        else {
+            return getSortedEdgesBasic(node);
+        }
+    }
+
+    
+    // use case: node ?p ?o where ?p is unbound
+    // get node predicate list
+    public Iterable<Edge> getSortedEdgesBasic(Node node) {
         PredicateList list = getNodeManager().getPredicates(node);
         MetaIterator<Edge> meta = new MetaIterator<>();
         int i = 0;
-        for (Node pred : list) {
+        for (Node pred : list.getPredicateList()) {
             Iterable<Edge> it = getEdges(pred, node, list.getPosition(i++));
             if (it != null) {
                 meta.next(it);
@@ -581,6 +788,30 @@ public class EdgeManagerIndexer
             return new ArrayList<>();
         }
         return meta;
+    }
+    
+    public Iterable<Edge> getSortedEdgesSubList(Node node) {
+        PredicateList list = getNodeManager().getPredicates(node);
+        MetaIterator<Edge> meta = new MetaIterator<>();
+        int i = 0;
+        for (Node pred : list.getPredicateList()) {
+            Iterable<Edge> it = getEdgeSubList(pred, node, list.getCursor(i++));
+            if (it != null) {
+                meta.next(it);
+            }
+        }
+        if (meta.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return meta;
+    }
+    
+    Iterable<Edge> getEdgeSubList(Node p, Node n, Cursor cursor) {
+        if (cursor == null) {
+            return getEdges(p, n);
+        }
+        EdgeManager man = checkGet(p);
+        return man.getEdgeList().subList(cursor.getBegin(), cursor.getEnd());
     }
 
     /**
@@ -601,13 +832,13 @@ public class EdgeManagerIndexer
             return new EdgeManagerIterate(list);
         }
         else {
-            return list.getEdges(node);
+            return list.getEdges(node, node2);
         }
     }
     
     @Override
-    public Iterable<Edge> getEdges(Node pred, Node node, int n) {
-        if (n == -1){
+    public Iterable<Edge> getEdges(Node pred, Node node, int beginIndex) {
+        if (beginIndex == -1){
             return getEdges(pred, node, null);
         }
         EdgeManager list = checkGet(pred);
@@ -616,9 +847,9 @@ public class EdgeManagerIndexer
         }
         else {
             if (debug) {
-                logger.info("getEdges: " + pred + " " + node + " " + n);
+                logger.info("getEdges: " + pred + " " + node + " " + beginIndex);
             }
-            return list.getEdges(node, n);
+            return list.getEdges(node, beginIndex);
         }    
     }
 
@@ -643,27 +874,21 @@ public class EdgeManagerIndexer
         }
         return list.exist(n1, n2);
     }
-
-    void trace(List<Edge> list) {
-        Node nn = list.get(0).getNode(1);
-        for (int i = 0; i < list.size(); i++) {
-            if (!list.get(i).getNode(1).same(nn)) {
-                nn = list.get(i).getNode(1);
-                logger.debug(nn.toString());
-            }
+    
+    public Edge findEdge(Node s, Node p, Node o) {
+        EdgeManager list = checkGet(p);
+        if (list == null) {
+            return null;
         }
+        return list.findEdge(s, o);
     }
 
-    /**
-     * @return the byIndex
-     */
+    
     public boolean isByIndex() {
         return byIndex;
     }
 
-    /**
-     * @param byIndex the byIndex to set
-     */
+    
     @Override
     public void setByIndex(boolean byIndex) {
         this.byIndex = byIndex;
@@ -684,7 +909,7 @@ public class EdgeManagerIndexer
      */
     @Override
     public Edge delete(Edge edge) {
-        Node pred = graph.getPropertyNode(edge.getEdgeNode());
+        Node pred = getGraph().getPropertyNode(edge.getEdgeNode());
         if (pred == null){
             return null;
         }
@@ -704,7 +929,7 @@ public class EdgeManagerIndexer
             return null;
         }
 
-        int i = list.findIndexNodeTerm(edge);
+        int i = list.findEdgeEqualWithoutMetadata(edge);
 
         if (i == -1) {
             return null;
@@ -741,7 +966,7 @@ public class EdgeManagerIndexer
     
     void remove(EdgeManager list, int i) {
         if (getIndex() == 0) {
-            graph.setSize(graph.size() - 1);
+            getGraph().setSize(getGraph().size() - 1);
         }
         list.remove(i);
     }
@@ -769,14 +994,14 @@ public class EdgeManagerIndexer
     }
 
     boolean onInsert(Edge ent) {
-        return graph.onInsert(ent);
+        return getGraph().onInsert(ent);
     }
 
     void logDelete(Edge ent) {
         if (ent != null) {
             recordUpdate(true);
             if (getIndex() == 0) {
-                graph.logDelete(ent);
+                getGraph().logDelete(ent);
             }
         }
     }
@@ -785,7 +1010,7 @@ public class EdgeManagerIndexer
         setUpdate(b);
         if (index == 0) {
             // tell all Index that update occur
-            graph.declareUpdate(b);
+            getGraph().declareUpdate(b);
         }
     }
     
@@ -801,7 +1026,7 @@ public class EdgeManagerIndexer
     void logInsert(Edge ent) {
         recordUpdate(true);
         if (getIndex() == 0) {
-            graph.logInsert(ent);
+            getGraph().logInsert(ent);
         }
     }
 
@@ -915,15 +1140,12 @@ public class EdgeManagerIndexer
         }
     }
 
-    /**
-     * TODO: setUpdate(true)
-     */
     private Edge copy(Node gNode, Node pred, Edge ent) {
-        return graph.copy(gNode, pred, ent);
+        return getGraph().copy(gNode, pred, ent);
     }
 
     private void clear(Node pred, Edge ent) {
-        for (Index ei : graph.getIndexList()) {
+        for (EdgeManagerIndexer ei : getGraph().getIndexList()) {
             if (ei.getIndex() != IGRAPH) {
                 Edge rem = ei.delete(pred, ent);
                 if (isDebug && rem != null) {
@@ -937,90 +1159,20 @@ public class EdgeManagerIndexer
     public void delete(Node pred) {
     }
     
-    /**
-     *
-     */
+    public void finishRuleEngine() {
+    }
+    
     @Override
     public void finishUpdate() {
-        if (graph.isEdgeMetadata()) {
-            graph.init();
-            metadata();
-        }
     }
     
-    /**
-     * Merge duplicate rdf* triples:
-     * triple(s p o [q v]) triple(s p o [r s])
-     * ->
-     * triple(s p o [q v ; r s])
-     * PRAGMA: graph must be indexed (edges must be sorted)
-     */
-    @Override
-    public void metadata() {
-        if (replaceMap == null) {
-            replaceMap = new HashMap<>();
-        }
-        graph.cleanIndex();
-        graph.clearNodeManager();
-        setLoopMetadata(true);
-        graph.getEventManager().start(Event.IndexMetadata);
-        // loop because edge merge may lead to duplicate triple(t1 p t2 t3) triple (t1 p t2 t3)
-        while (isLoopMetadata()) {
-            graph.getEventManager().process(Event.IndexMetadata);
-            setLoopMetadata(false);
-            for (Node p : getProperties()) {
-                // merge duplicate triples with metadata nodes
-                // keep only one triple with one metadata node
-                get(p).metadata();
-            }
-            if (replaceMap.size() > 0) {
-                // replace nodes that have been merged
-                replace();
-            }
-        }
-        clearReferenceNode();
-        graph.getEventManager().finish(Event.IndexMetadata);
-        replaceMap.clear();
-    }
-    
-    void test() {
-        System.out.println("AMI:\n" + graph.display());
-        System.out.println(replaceMap);
-    }
-    
-    void clearReferenceNode() {
-        for (Node node : replaceMap.keySet()) {
-            graph.removeTripleNode(node);
-        }
-    }
-    
-    // record that n1 be replaced by n2
-    void replace(Node n1, Node n2) {
-        if (n1!=null && n2 !=null){
-            replaceMap.put(n1, n2);
-        }
-    }
-    
-     /**
-      * replace nodes that have been merged
-      * _:b1 q v _:b2 r s 
-      * ->
-      * _:b1 q v ; r s
-     */
-    void replace() {
-        for (Node p : getProperties()) {
-            get(p).replace(replaceMap);
-        }
-    }
-    
-  
-    public boolean isLoopMetadata() {
-        return loopMetadata;
+
+    public void setNodeManager(NodeManager nodeManager) {
+        this.nodeManager = nodeManager;
     }
 
-   
-    public void setLoopMetadata(boolean loopMetadata) {
-        this.loopMetadata = loopMetadata;
+    public void setGraph(Graph graph) {
+        this.graph = graph;
     }
       
 }

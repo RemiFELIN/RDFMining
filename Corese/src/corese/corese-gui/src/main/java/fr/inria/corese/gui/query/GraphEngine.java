@@ -16,10 +16,9 @@ import fr.inria.corese.core.GraphStore;
 import fr.inria.corese.core.load.Build;
 import fr.inria.corese.core.load.Load;
 import fr.inria.corese.core.load.LoadException;
-import fr.inria.corese.core.load.LoadPlugin;
-import fr.inria.corese.core.pipe.Pipe;
 import fr.inria.corese.core.query.QueryEngine;
 import fr.inria.corese.core.query.QueryProcess;
+import fr.inria.corese.core.rule.Cleaner;
 import fr.inria.corese.core.rule.RuleEngine;
 import fr.inria.corese.core.util.Parameter;
 import fr.inria.corese.core.util.Property;
@@ -32,6 +31,8 @@ import fr.inria.corese.sparql.triple.parser.ASTQuery;
 import fr.inria.corese.sparql.triple.parser.Access;
 import fr.inria.corese.sparql.triple.parser.Constant;
 import static fr.inria.corese.core.util.Property.Value.ACCESS_LEVEL;
+import fr.inria.corese.core.util.Tool;
+import java.io.IOException;
 
 /**
  * Lite implementation of IEngine using kgraph and kgram
@@ -49,7 +50,7 @@ public class GraphEngine {
     private QueryEngine qengine;
     QueryProcess exec;
     private QuerySolverVisitor visitor;
-    LoadPlugin plugin;
+    //LoadPlugin plugin;
     Build build;
 
     private boolean isListGroup = false,
@@ -61,7 +62,7 @@ public class GraphEngine {
         qengine = QueryEngine.create(graph);
         exec = QueryProcess.create(graph, true);
         try {
-            setVisitor(new QuerySolverVisitor(exec.getEval()));
+            setVisitor(new QuerySolverVisitor(exec.getCreateEval()));
         } catch (EngineException ex) {
             java.util.logging.Logger.getLogger(GraphEngine.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -152,6 +153,18 @@ public class GraphEngine {
     public static GraphEngine create(boolean rdfs) {
         return new GraphEngine(rdfs);
     }
+    
+    public void graphIndex() {
+        int max = 10;
+        if (Property.intValue(GUI_INDEX_MAX) !=null) {
+            max = Property.intValue(GUI_INDEX_MAX);
+        }
+        Graph g = getGraph();
+        System.out.println(g.display(max));
+        System.out.println(g.getNodeManager().display(max));
+        System.out.println(g.getIndex());
+        Tool.trace("Memory used: %s", Tool.getMemoryUsageMegabytes());
+    }
 
     public void definePrefix(String p, String ns) {
         QueryProcess.definePrefix(p, ns);
@@ -168,6 +181,15 @@ public class GraphEngine {
     public Graph getGraph() {
         return graph;
     }
+    
+    public void cleanOWL() {
+        try {
+            Cleaner clean = new Cleaner(getGraph());
+            clean.process();
+        } catch (IOException | EngineException | LoadException ex) {           
+            logger.error(ex.getMessage());
+        }
+    }
 
     public QueryProcess createQueryProcess() {
         QueryProcess qp = QueryProcess.create(graph, true);
@@ -181,14 +203,14 @@ public class GraphEngine {
         Load load = Load.create(graph);
         //load.setEngine(rengine);
         load.setEngine(qengine);
-        load.setPlugin(plugin);
+        //load.setPlugin(plugin);
         //load.setBuild(build);
         return load;
     }
 
-    public void setPlugin(LoadPlugin p) {
-        plugin = p;
-    }
+//    public void setPlugin(LoadPlugin p) {
+//        plugin = p;
+//    }
 
     public void load(String path) throws EngineException, LoadException {
         Load ld = loader();
@@ -264,12 +286,6 @@ public class GraphEngine {
         } catch (EngineException ex) {
             logger.error(ex.getMessage());
         }
-    }
-
-    public void runPipeline(String path) {
-        Pipe pipe = Pipe.create(graph);
-        pipe.setDebug(true);
-        pipe.process(path);
     }
 
     public boolean validate(String path) {

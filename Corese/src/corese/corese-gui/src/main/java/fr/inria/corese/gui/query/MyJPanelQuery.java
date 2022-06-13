@@ -43,12 +43,14 @@ import fr.inria.corese.core.load.LoadException;
 import fr.inria.corese.core.print.ResultFormat;
 import fr.inria.corese.core.print.XMLFormat;
 import fr.inria.corese.core.transform.Transformer;
+import fr.inria.corese.core.util.CompareMappings;
 import fr.inria.corese.core.util.Property;
 import static fr.inria.corese.core.util.Property.Value.GUI_CONSTRUCT_FORMAT;
 import static fr.inria.corese.core.util.Property.Value.GUI_SELECT_FORMAT;
 import static fr.inria.corese.core.util.Property.Value.GUI_XML_MAX;
 import fr.inria.corese.core.util.SPINProcess;
 import fr.inria.corese.kgram.core.SparqlException;
+import fr.inria.corese.sparql.datatype.RDF;
 import fr.inria.corese.sparql.triple.function.term.Binding;
 import fr.inria.corese.sparql.triple.parser.Metadata;
 import java.util.Date;
@@ -59,6 +61,7 @@ import org.apache.logging.log4j.Level;
 import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.graphstream.graph.Edge;
@@ -92,7 +95,8 @@ public final class MyJPanelQuery extends JPanel {
     int maxresxml = 1000;
     
     //Boutton du panneau Query
-    private JButton buttonRun, buttonShacl, buttonPush, buttonCopy, buttonSort,
+    private JButton buttonRun, buttonShacl, buttonPush, buttonCopy, 
+            buttonSort, buttonCompare,
             buttonShex, 
             buttonKill, buttonStop, buttonValidate, buttonToSPIN, buttonToSPARQL, 
             buttonTKgram, buttonProve;
@@ -164,6 +168,7 @@ public final class MyJPanelQuery extends JPanel {
         buttonPush = new JButton();
         buttonCopy = new JButton();
         buttonSort = new JButton();
+        buttonCompare = new JButton();
         buttonStop = new JButton();
         buttonKill = new JButton();
         buttonValidate = new JButton();
@@ -292,6 +297,7 @@ public final class MyJPanelQuery extends JPanel {
         // copy current result into last result panel
         buttonCopy.setText("Copy");
         buttonSort.setText("Modifier");
+        buttonCompare.setText("Compare");
         buttonRun.setText("Query");
         buttonShacl.setText("Shacl");
         buttonShex.setText("Shex");
@@ -367,6 +373,7 @@ public final class MyJPanelQuery extends JPanel {
         hSeq2.addComponent(buttonPush);
         hSeq2.addComponent(buttonCopy);
         hSeq2.addComponent(buttonSort);
+        hSeq2.addComponent(buttonCompare);
         hSeq2.addComponent(buttonStop);
         hSeq2.addComponent(buttonKill);
         hSeq2.addComponent(buttonValidate);
@@ -404,6 +411,7 @@ public final class MyJPanelQuery extends JPanel {
         vParallel2.addComponent(buttonPush);
         vParallel2.addComponent(buttonCopy);
         vParallel2.addComponent(buttonSort);
+        vParallel2.addComponent(buttonCompare);
         vParallel2.addComponent(buttonStop);
         vParallel2.addComponent(buttonKill);
         vParallel2.addComponent(buttonValidate);
@@ -462,6 +470,7 @@ public final class MyJPanelQuery extends JPanel {
         buttonPush.addActionListener(l_RunListener);
         buttonCopy.addActionListener(l_RunListener);
         buttonSort.addActionListener(l_RunListener);
+        buttonCompare.addActionListener(l_RunListener);
         buttonStop.addActionListener(l_RunListener);
         buttonKill.addActionListener(l_RunListener);
         buttonValidate.addActionListener(l_RunListener);
@@ -586,6 +595,7 @@ public final class MyJPanelQuery extends JPanel {
     
     void fillTable(Mappings map, int sort) {
         Query q = map.getQuery();
+        ASTQuery ast = q.getAST();
         List<fr.inria.corese.kgram.api.core.Node> vars = q.getSelect();
         if (q.isUpdate() && map.size() > 0){            
            vars = map.get(0).getQueryNodeList();           
@@ -601,23 +611,25 @@ public final class MyJPanelQuery extends JPanel {
         model.addColumn("num", col);
         
         for (fr.inria.corese.kgram.api.core.Node var : vars) {
-            String columnName = var.getLabel();
-            //System.out.println(sv);
-            String[] colmunData = new String[size];
-            for (int j = 0; j < map.size(); j++) {
-                if (j >= maxres){
-                    logger.warn("Stop display after " + maxres + " results out of " + map.size());
-                    break;
+            if (accept(ast, var.getLabel())) {
+                String columnName = var.getLabel();
+                //System.out.println(sv);
+                String[] colmunData = new String[size];
+                for (int j = 0; j < map.size(); j++) {
+                    if (j >= maxres) {
+                        logger.warn("Stop display after " + maxres + " results out of " + map.size());
+                        break;
+                    }
+                    Mapping m = map.get(j);
+                    fr.inria.corese.kgram.api.core.Node value = m.getNode(columnName);
+
+                    if (value != null) {
+                        IDatatype dt = value.getValue();
+                        colmunData[j] = pretty(dt);
+                    }
                 }
-                Mapping m = map.get(j);
-                fr.inria.corese.kgram.api.core.Node value = m.getNode(columnName);
-                
-                if (value != null) {
-                    IDatatype dt =  value.getValue();
-                    colmunData[j] = pretty(dt);
-                }
+                model.addColumn(columnName, colmunData);
             }
-            model.addColumn(columnName, colmunData);
         }
         
         if (sort>=0) {
@@ -625,6 +637,18 @@ public final class MyJPanelQuery extends JPanel {
         }
         
         this.tableResults.setModel(model);
+    }
+    
+    // @hide ?_service_report
+    boolean accept(ASTQuery ast, String var) {
+        if (ast.hasMetadata(Metadata.HIDE)) {
+            return ! var.startsWith(Binding.SERVICE_REPORT);
+        }
+        return true;
+    }
+    
+    TableModel getTable() {
+        return tableResults.getModel();
     }
     
     // table = model
@@ -657,10 +681,7 @@ public final class MyJPanelQuery extends JPanel {
         } else if (dt.isPointer()) {
             return dt.getPointerObject().toString();
         } else if (dt.isLiteral()) { 
-            if (dt.getCode() == IDatatype.STRING || (dt.getCode() == IDatatype.LITERAL && ! dt.hasLang())){
-                return dt.stringValue();
-            }
-            return dt.toString(); 
+            return prettyLiteral(dt);
         } 
         else if (dt.isTriple()) {
             return dt.toString();
@@ -671,6 +692,22 @@ public final class MyJPanelQuery extends JPanel {
         else {
             return dt.getLabel();
         }
+    }
+    
+    String prettyLiteral(IDatatype dt) {
+        if (dt.getCode() == IDatatype.STRING || 
+           (dt.getCode() == IDatatype.LITERAL && !dt.hasLang())) {
+            return dt.stringValue();
+        }
+        if (dt.isDecimalInteger()) {
+            if (dt.getDatatypeURI().equals(RDF.xsddecimal)) {
+                if (dt.doubleValue() == 0.0) {
+                    return "0";
+                }
+                return String.format("%g", dt.decimalValue());
+            }
+        }
+        return dt.toString();
     }
     
     String getResultText() {
@@ -877,7 +914,7 @@ public final class MyJPanelQuery extends JPanel {
 
 
     private boolean isStyle(fr.inria.corese.kgram.api.core.Edge edge) {
-        return edge.getEdge().equals(KGSTYLE);
+        return edge.getEdgeLabel().equals(KGSTYLE);
     }
 
     /**
@@ -946,6 +983,9 @@ public final class MyJPanelQuery extends JPanel {
                     else if (ev.getSource() == buttonSort) { 
                         modifier(query);
                     } 
+                    else if (ev.getSource() == buttonCompare) { 
+                        compare();
+                    } 
                     else if (ev.getSource() == buttonRun || ev.getSource() == buttonValidate 
                             || ev.getSource() == buttonShacl || ev.getSource() == buttonShex) {
                         // buttonRun
@@ -1007,6 +1047,62 @@ public final class MyJPanelQuery extends JPanel {
 
             }
         //}
+    }
+    
+        // compare last and previous result
+    void compare() {
+        show("Compare");
+        MyJPanelQuery previous = mainFrame.getPreviousQueryPanel();
+        if (getMappings() == null || previous == null || previous.getMappings() == null) {
+            show("Query Results not found");
+            return;
+        }
+        compare(getMappings(), previous.getMappings());
+    }
+    
+    
+
+    void compare(Mappings m1, Mappings m2) {
+        CompareMappings cp = new CompareMappings(m1, m2);
+        cp.process();
+    }
+    
+        // compare last and previous result
+    void compare2() {
+        show("Compare");
+        MyJPanelQuery previous = mainFrame.getPreviousQueryPanel();
+        if (previous == null) {
+            show("Previous Query Result not found");
+            return;
+        }
+        compare(getTable(), previous.getTable());
+    }
+    
+    
+    void compare(TableModel fst, TableModel snd) {
+        boolean found = false;
+        for (int i = 0; i < fst.getRowCount() && i < snd.getRowCount(); i++) {
+            for (int j = 0; j < fst.getColumnCount() && j < snd.getColumnCount(); j++) {
+                String v1 = (String) fst.getValueAt(i, j);
+                String v2 = (String) snd.getValueAt(i, j);
+                
+                if (! v1.equals(v2)) {
+                    found = true;
+                    show("Different value at: (row=%s, var=%s): %s != %s", i, fst.getColumnName(j), v1, v2);
+                }
+            }
+        }
+        
+        if (fst.getRowCount() != snd.getRowCount()) {
+            show("Different size: %s vs %s", fst.getRowCount(), snd.getRowCount());
+        }
+        else if (!found) {
+            show("No difference found");
+        }
+    }
+    
+    void show(String mes, Object... obj) {
+        System.out.println(String.format(mes, obj));
     }
 
     void setCurrent(Exec e) {

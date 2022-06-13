@@ -9,8 +9,12 @@ import java.util.List;
 import fr.inria.corese.kgram.api.core.ExpType;
 import fr.inria.corese.kgram.api.core.PointerType;
 import static fr.inria.corese.kgram.api.core.PointerType.DATASET;
+import fr.inria.corese.kgram.api.query.ProcessVisitor;
 import fr.inria.corese.kgram.core.Mapping;
 import fr.inria.corese.sparql.triple.parser.Access.Level;
+import static fr.inria.corese.sparql.triple.parser.URLParam.INDEX;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  *
@@ -25,13 +29,14 @@ public class Dataset extends ASTObject {
     static final String EMPTY = KG + "empty";
     static final Constant CEMPTY = Constant.create(EMPTY);
     private List<Constant> from;
-
     private List<Constant> named;
+    private List<String> index;
     List<Constant> with;
     private Context context;
     private Binding binding;
     private Metadata metadata;
     private Object templateVisitor;
+    private ProcessVisitor visitor;
     private String base;
     private List<String> uriList;
 
@@ -45,7 +50,8 @@ public class Dataset extends ASTObject {
     private boolean load = false;
 
     public Dataset() {
-        this(new ArrayList<Constant>(), new ArrayList<Constant>());
+        this(new ArrayList<>(), new ArrayList<>());
+        index = new ArrayList<>();
     }
 
     public Dataset(Context c) {
@@ -64,6 +70,12 @@ public class Dataset extends ASTObject {
 
     public static Dataset create(Context c) {
         return new Dataset(c);
+    }
+    
+    public static Dataset create(ProcessVisitor vis) {
+        Dataset ds = new Dataset();
+        ds.setVisitor(vis);
+        return ds;
     }
     
     public static Dataset create(Binding b) {
@@ -114,11 +126,11 @@ public class Dataset extends ASTObject {
     }
 
     public void defFrom() {
-        setFrom(new ArrayList<Constant>());
+        setFrom(new ArrayList<>());
     }
 
     public void defNamed() {
-        setNamed(new ArrayList<Constant>());
+        setNamed(new ArrayList<>());
     }
 
     public boolean isUpdate() {
@@ -158,7 +170,7 @@ public class Dataset extends ASTObject {
     }
 
     public void setWith(Constant w) {
-        with = new ArrayList<Constant>(1);
+        with = new ArrayList<>(1);
         with.add(w);
     }
 
@@ -222,9 +234,7 @@ public class Dataset extends ASTObject {
         }
     }
 
-    /**
-     * @return the context
-     */
+   
     public Context getContext() {
         return context;
     }
@@ -236,9 +246,7 @@ public class Dataset extends ASTObject {
         return getContext();
     }
 
-    /**
-     * @param context the context to set
-     */
+   
     public void setContext(Context context) {
         this.context = context;
     }
@@ -292,6 +300,25 @@ public class Dataset extends ASTObject {
         }
         return DatatypeMap.createList(list);
     }
+   
+    public List<String> getFromStringList() {
+        return getStringList(getFrom());
+    }
+
+    public List<String> getNamedStringList() {
+        return getStringList(getNamed());
+    }
+    
+    List<String> getStringList(List<Constant> alist) {
+        ArrayList<String> list = new ArrayList<>();
+        if (alist != null) {
+            for (Constant g : alist) {
+                list.add(g.getLabel());
+            }
+        }
+        return list;
+    }
+    
     
     public Mapping call(Mapping m) {
         if (getBinding() != null) {
@@ -317,59 +344,43 @@ public class Dataset extends ASTObject {
         return templateVisitor;
     }
 
-    /**
-     * @param from the from to set
-     */
+   
     public void setFrom(List<Constant> from) {
         this.from = from;
     }
 
-    /**
-     * @param named the named to set
-     */
+   
     public void setNamed(List<Constant> named) {
         this.named = named;
     }
 
-    /**
-     * @return the base
-     */
+    
     public String getBase() {
         return base;
     }
 
-    /**
-     * @param base the base to set
-     */
+    
     public Dataset setBase(String base) {
         this.base = base;
         return this;
     }
 
-    /**
-     * @return the binding
-     */
+    
     public Binding getBinding() {
         return binding;
     }
 
-    /**
-     * @param binding the binding to set
-     */
+    
     public void setBinding(Binding binding) {
         this.binding = binding;
     }
 
-    /**
-     * @return the uriList
-     */
+    
     public List<String> getUriList() {
         return uriList;
     }
 
-    /**
-     * @param uriList the uriList to set
-     */
+    
     public void setUriList(List<String> uriList) {
         this.uriList = uriList;
     }
@@ -390,6 +401,71 @@ public class Dataset extends ASTObject {
     public Dataset setLoad(boolean load) {
         this.load = load;
         return this;
+    }
+
+    public ProcessVisitor getVisitor() {
+        return visitor;
+    }
+
+    public void setVisitor(ProcessVisitor visitor) {
+        this.visitor = visitor;
+    }
+    
+    public String getURLParameter() {
+        StringBuilder sb = new StringBuilder();
+        for (Atom at : getFrom()) {
+            if (sb.length()>0) {
+                sb.append("&");
+            }
+            sb.append(String.format("default-graph-uri=%s", encode(at.getLabel())));
+        }
+        for (Atom at : getNamed()) {
+            if (sb.length()>0) {
+                sb.append("&");
+            }
+            sb.append(String.format("named-graph-uri=%s", encode(at.getLabel())));
+        }
+        return sb.toString();
+    }
+    
+    String encode(String url) {
+        try {
+            return URLEncoder.encode(url, "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            return url;
+        }
+    }
+    
+    // select *
+    // from <index:http://prod-dekalog.inria.fr>
+    // where 
+    public boolean index() {
+        boolean hasIndex = false;
+        
+        for (int i = 0; i < getFrom().size();) {
+            Atom at = getFrom().get(i);
+            if (at.getLabel().startsWith(INDEX)) {
+                hasIndex = true;
+                String uri = at.getLabel().substring(INDEX.length()+1);
+                getIndex().add(uri);
+                getFrom().remove(i);
+            }
+            else {
+                i++;
+            }
+        }
+        
+        return hasIndex;
+    }
+    
+    
+
+    public List<String> getIndex() {
+        return index;
+    }
+
+    public void setIndex(List<String> index) {
+        this.index = index;
     }
 
 }

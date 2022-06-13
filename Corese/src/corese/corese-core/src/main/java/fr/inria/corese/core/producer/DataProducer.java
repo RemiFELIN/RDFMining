@@ -74,8 +74,12 @@ public class DataProducer extends GraphObject
         return iterate(getGraph().getTopProperty(), node, n);
     }
 
-    //@Override
     public DataProducer iterate(Node predicate, Node node, int n) {
+        return iterate(predicate, node, null, n);
+    }
+    
+    // pragma: if n == 0 && node2!=null then node2=object node
+    public DataProducer iterate(Node predicate, Node node, Node node2, int n) {
         // optimize special cases
         if (isNamedGraph) {
             if (node == null && from != null && !from.isEmpty()) {
@@ -95,7 +99,7 @@ public class DataProducer extends GraphObject
         } 
 
         // general case
-        setIterable(getGraph().properGetEdges(predicate, node, n));
+        setIterable(getGraph().properGetEdges(predicate, node, node2, n));
         return this;
     }
     
@@ -483,29 +487,17 @@ public class DataProducer extends GraphObject
 
         while (hasNext()) {
             Edge edge = it.next();
-            
             if (last == null) {
                 // ok
             }
             else if (isNamedGraph) {
-//                if (skipEdgeMetadata) {
-//                    // two edges in same graph: skip metadata, in different graph it is ok
-//                    if (edge.getEdgeNode() == null || !same(last.getEdgeNode(), edge.getEdgeNode())) {
-//                        // different properties: ok
-//                    }
-//                    else if (metadataDifferent(last, edge)) {
-//                        // ok
-//                    }
-//                    else if (same(edge.getGraph(), last.getGraph())) {
-//                        continue;
-//                    }
-//                }
+
             } 
             else if (different(last, edge)){
                 // ok
             }
             else {
-                continue;
+               continue;
             }
             
             if (filter != null && ! filter.eval(edge)) {
@@ -544,6 +536,8 @@ public class DataProducer extends GraphObject
             return metadataDifferent(last, edge);
         }
         if (skipEdgeMetadata) {
+            // two edges with same metadata considered as duplicates
+            // g1 s p o t . g2 s p o t considered as duplicates
            return metadataDifferent(last, edge); 
         }
         int size = last.nbNode();
@@ -570,7 +564,7 @@ public class DataProducer extends GraphObject
     }
         
     void record(Edge edge) {
-        if (edge.nbNode() == 2){
+        if (edge.isInternal()) { //(edge.nbNode() == 2 && ! edge.isTripleNode()){
             last = duplicate(edge);
         }
         else {
@@ -652,16 +646,12 @@ public class DataProducer extends GraphObject
         }
     }
 
-    /**
-     * @return the duplicate
-     */
+  
     public boolean isDuplicate() {
         return duplicate;
     }
 
-    /**
-     * @param duplicate the duplicate to set
-     */
+    
     public DataProducer setDuplicate(boolean duplicate) {
         this.duplicate = duplicate;
         return this;

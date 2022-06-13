@@ -96,7 +96,6 @@ public class DatatypeMap implements Cst, RDF, DatatypeValueFactory {
     // 
     public static boolean SEVERAL_NUMBER_SPACE = true;
     // corese behaviour:
-    static boolean literalAsString = true;
     public static boolean DISPLAY_AS_TRIPLE = true;
     private static final String DEFAULT = "default";
     private static final String NWFL = "NWFL";
@@ -109,8 +108,10 @@ public class DatatypeMap implements Cst, RDF, DatatypeValueFactory {
     static final String LIST = ExpType.EXT + "List";
     private static final int INTMAX = 100;
     static IDatatype[] intCache;
-    // if true, restrict datatype match to conform to SPARQL test cases
+    // if true: no datatype entailment, literal as string
     public static boolean SPARQLCompliant = false;
+    public static boolean DATATYPE_ENTAILMENT = true;
+    static boolean LITERAL_AS_STRING = true;
 
     static {
         intCache = new IDatatype[INTMAX];
@@ -263,6 +264,8 @@ public class DatatypeMap implements Cst, RDF, DatatypeValueFactory {
         return IDatatype.UNDEF;
     }
 
+    // define specific code for datatype
+    // for subtype of integer and long -> GENERIC_INTEGER
     static Integer getCode(String datatype) {
         Integer i = dtCode.get(datatype);
         if (i == null) {
@@ -589,6 +592,21 @@ public class DatatypeMap implements Cst, RDF, DatatypeValueFactory {
         return null;
     }
     
+    static String clean(String date) {
+        String[] str = date.split("T");
+        String[] adate = str[0].split("-");
+        if (adate.length==3 && adate[2].length()==4) {
+            String mydate = adate[2]+"-"+adate[1]+"-"+adate[0];
+            if (str.length==1) {
+                return mydate;
+            }
+            else {
+                return mydate+"T"+str[1];
+            }
+        }
+        return date;
+    }
+    
     public static IDatatype newDate(Date date) {
         return newInstance(date);
     }
@@ -659,7 +677,6 @@ public class DatatypeMap implements Cst, RDF, DatatypeValueFactory {
         try {
             dt = createLiteralWE(label, datatype, lang);
         } catch (CoreseDatatypeException e) {
-            // TODO Auto-generated catch block
             logger.error(e.getMessage());
             dt = createUndef(label, datatype);
         }
@@ -688,7 +705,7 @@ public class DatatypeMap implements Cst, RDF, DatatypeValueFactory {
     }
     
     public static IDatatype newLiteral(String label) {
-        if (literalAsString) {
+        if (LITERAL_AS_STRING) {
             return newInstance(label);
         } else {
             return newBasicLiteral(label);
@@ -987,19 +1004,19 @@ public class DatatypeMap implements Cst, RDF, DatatypeValueFactory {
      */
     public static void setSPARQLCompliant(boolean b) {
         SPARQLCompliant = b;
-        literalAsString = !b;
+        LITERAL_AS_STRING = !b;
     }
 
     public static void setLiteralAsString(boolean b) {
-        literalAsString = b;
+        LITERAL_AS_STRING = b;
     }
 
     public static boolean isLiteralAsString() {
-        return literalAsString;
+        return LITERAL_AS_STRING;
     }
 
     static String datatypeURI(String lang) {
-        if (literalAsString && (lang == null || lang == "")) {
+        if (LITERAL_AS_STRING && (lang == null || lang == "")) {
             return xsdstring;
         } else {
             return RDFSLITERAL;
@@ -1007,7 +1024,7 @@ public class DatatypeMap implements Cst, RDF, DatatypeValueFactory {
     }
 
     public static String datatype(String lang) {
-        if (literalAsString && (lang == null || lang == "")) {
+        if (LITERAL_AS_STRING && (lang == null || lang == "")) {
             return qxsdString;
         } else {
             return qrdfsLiteral;
@@ -1097,10 +1114,6 @@ public class DatatypeMap implements Cst, RDF, DatatypeValueFactory {
 
     public static boolean isDecimal(IDatatype dt) {
         return dt.getCode() == IDatatype.DECIMAL;
-    }
-
-    public static boolean isBindable(IDatatype dt) {
-        return ((CoreseDatatype) dt).isBindable();
     }
 
     public static IDatatype getTZ(IDatatype dt) {

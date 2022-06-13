@@ -26,6 +26,23 @@ import java.util.Map;
  */
 public interface IDatatype
         extends Iterable<IDatatype>,  Node, Loopable, DatatypeValue, Comparable {
+    
+    public enum NodeKind {
+        URI(0), BNODE(1), TRIPLE(2), LITERAL(3), UNDEF(4);
+        int index;
+        
+        NodeKind(int n) {
+            index = n;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+        
+        static public int size() {
+            return NodeKind.values().length;
+        }
+    };
 
     static final int VALUE = -1;
     static final int RESULT = -2;
@@ -93,8 +110,6 @@ public interface IDatatype
     boolean isUndefined();
 
     boolean isGeneralized(); // isExtension or isUndefined
-
-    boolean isArray();
 
     boolean isList();
 
@@ -387,10 +402,11 @@ public interface IDatatype
     void setObject(Object obj);
 
     @Override
-    Object getObject();
+    Object getNodeObject();
 
+    @Deprecated
     IDatatype getPublicDatatypeValue();
-
+    @Deprecated
     IDatatype setPublicDatatypeValue(IDatatype dt);
 
     String getContent();
@@ -510,7 +526,7 @@ public interface IDatatype
     /**
      * @return the datatype of this
      */
-    IDatatype datatype();
+    //IDatatype datatype();
 
     IDatatype getDatatype();
 
@@ -518,7 +534,7 @@ public interface IDatatype
     IDatatype getObjectDatatypeValue();
 
     // same as getDatatype but URI return rdfs:Resource
-    IDatatype getIDatatype();
+    //IDatatype getIDatatype();
 
     /**
      * @return the lang of this ('fr', 'en',...)
@@ -554,6 +570,9 @@ public interface IDatatype
     boolean isNumber();
 
     boolean isDecimalInteger();
+    
+    // exact datatype xsd:integer
+    default boolean isXSDInteger() { return false;}
 
     boolean isDate();
 
@@ -565,38 +584,24 @@ public interface IDatatype
     /**
      * ************************************************
      */
-    @Deprecated
-    double getDoubleValue();
-
-    @Deprecated
-    int getIntegerValue();
-
-    @Deprecated
-    int getiValue();
-
-    @Deprecated
-    double getdValue();
 
     @Deprecated
     String getNormalizedLabel();
 
     @Deprecated
-    IDatatype getExtDatatype();
-
-    @Deprecated
     String getLowerCaseLabel();
 
     int getCode();
-
-    boolean semiEquals(IDatatype iod); // get rid of @ lang
-
+    
+    default NodeKind getNodeKind() {
+        return NodeKind.UNDEF;
+    }
+    
     boolean hasLang();
 
     boolean isTrue() throws CoreseDatatypeException;
 
     boolean isTrueAble();
-
-    void setBlank(boolean b);
 
     void setDatatype(String uri);
 
@@ -607,8 +612,6 @@ public interface IDatatype
     void setValue(IDatatype dt);
 
     void setLang(String str);
-
-    long getlValue();
     
     default IDatatype duplicate () {
         return this;

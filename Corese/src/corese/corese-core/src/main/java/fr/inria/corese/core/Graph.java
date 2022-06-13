@@ -25,8 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import fr.inria.corese.sparql.api.IDatatype;
 import fr.inria.corese.sparql.datatype.DatatypeMap;
-import fr.inria.corese.sparql.datatype.XSD;
-import fr.inria.corese.sparql.exceptions.CoreseDatatypeException;
 import fr.inria.corese.sparql.triple.parser.Constant;
 import fr.inria.corese.sparql.triple.parser.Dataset;
 import fr.inria.corese.kgram.api.core.ExpType;
@@ -45,7 +43,10 @@ import fr.inria.corese.core.api.GraphListener;
 import fr.inria.corese.core.api.Log;
 import fr.inria.corese.core.api.Tagger;
 import fr.inria.corese.core.api.ValueResolver;
+import fr.inria.corese.core.edge.EdgeTripleNode;
+import fr.inria.corese.core.edge.TripleNode;
 import fr.inria.corese.core.query.QueryCheck;
+import fr.inria.corese.core.util.Property;
 import java.util.Map;
 import fr.inria.corese.kgram.api.core.Edge;
 import fr.inria.corese.kgram.api.core.PointerType;
@@ -106,6 +107,7 @@ public class Graph extends GraphObject implements
     static final int TAGINDEX = 2;
     static boolean byIndexDefault = true;
     public static boolean VERBOSE = false;
+    public static boolean DEBUG_SPARQL = false;
     public static boolean SKOLEM_DEFAULT = false;
     // graph ?g { } iterate std and external named graph when true
     public static boolean EXTERNAL_NAMED_GRAPH = false;
@@ -194,7 +196,7 @@ public class Graph extends GraphObject implements
     // Node iterator for named Graph
     NodeGraphIndex nodeGraphIndex;
     Log log;
-    List<GraphListener> listen;
+    private List<GraphListener> listenerList;
     Workflow manager;
     EventManager eventManager;
     // @deprecated (use case: crdt datatypes ...)
@@ -207,8 +209,9 @@ public class Graph extends GraphObject implements
     // semantic distance in class/property Hierarchy
     private Distance classDistance, propertyDistance;
     private boolean isSkolem = SKOLEM_DEFAULT;
-    boolean isIndex = true,
+    boolean isIndexable = true,
             isDebug = !true;
+    private boolean debugSparql = DEBUG_SPARQL;
     // edge index sorted by index
     boolean byIndex = byIndexDefault;
     // number of edges
@@ -475,20 +478,31 @@ public class Graph extends GraphObject implements
     /**
      * With CompareNode: manage 1, 01, 1.0 as different Node (with same index)
      * With CompareIndex: manage IDatatype(1) IDatatype(01) IDatatype(1.0) with
-     * same index With CompareIndexStrict: manage IDatatype(1) IDatatype(01)
+     * same index 
+     * With CompareIndexStrict: manage IDatatype(1) IDatatype(01)
      * with same index and 1.0 with different index (sparql compliant)
      */
     public class TreeNode extends TreeMap<IDatatype, Node> {
 
+        // allocate Node, sameTerm semantics
+        // 1 and 01 and 1.0 have different Node
         public TreeNode() {
             super(new CompareNode());
         }
 
-        TreeNode(boolean strict) {
-            super((strict)
-                    ? // todo ?
-                    new CompareIndexStrict()
-                    : new CompareIndex());
+        // allocate Node index
+        TreeNode(boolean entailment) {
+            super((entailment)
+                    ? // with datatype entailment
+                    // index(1) = index(01) = index(1.0)
+                    // same value => same index 
+                    // integer|decimal vs integer|decimal => same index
+                    // integer|decimal vs double|float    => different index                    
+                    new CompareWithDatatypeEntailment() :
+                    // without datatype entailment
+                    // index(1) = index(01) != index(1.0) 
+                    // different datatype => different index
+                    new CompareWithoutDatatypeEntailment());
         }
 
         void put(Node node) {
@@ -500,96 +514,9 @@ public class Graph extends GraphObject implements
         }
     }
 
-    /**
-     * Assign same node index when compatible datatypes (same datatypes or
-     * datatypes both in (integer, long, decimal)) and same value (and possibly
-     * different labels) 1 = 01 = 1.0 = '1'^^xsd:long != 1e0 '1'^^xsd:boolean =
-     * true
-     */
-    class CompareIndex implements Comparator<IDatatype> {
-
-        CompareIndex() {
-        }
-
-        @Override
-        public int compare(IDatatype dt1, IDatatype dt2) {
-            int res;
-            try {
-                // number value comparison with = on values only
-                res = dt1.compare(dt2);
-            } catch (CoreseDatatypeException ex) {
-                return compareWhenException(dt1, dt2);
-            }
-
-            if (res == 0) {
-                // equal by value
-                if ((dt1.isDecimalInteger() && dt2.isDecimalInteger())
-                        || dt1.getCode() == dt2.getCode()) {
-                    // compatible datatypes, same value: same index
-                    return 0;
-                } else {
-                    return generalizedDatatype(dt1).compareTo(generalizedDatatype(dt2));
-                }
-            } else {
-                return res;
-            }
-        }
-
-        /**
-         * boolean vs number incomparable dates
-         *
-         */
-        int compareWhenException(IDatatype dt1, IDatatype dt2) {
-            if (dt1.isDate() && dt2.isDate()) {
-                // some dates are incomparable, compare string date
-                // as they are not equal, we just need to return -1 or +1 
-                // in a deterministic way
-                return dt1.getLabel().compareTo(dt2.getLabel());
-            }
-            return generalizedDatatype(dt1).compareTo(generalizedDatatype(dt2));
-        }
-
-        /*
-         * return same datatype URI for decimal/integer/long
-         * to secure the walk into the table
-         * 
-         */
-        String generalizedDatatype(IDatatype dt) {
-            if (dt.isDecimalInteger()) {
-                return XSD.xsddecimal;
-            }
-            return dt.getDatatypeURI();
-        }
-
-    }
 
     /**
-     * Assign same node index when same datatype and same value (and possibly
-     * different labels) 1 = 01 != 1e0 '1'^^xsd:boolean = true 1 != 1.0
-     */
-    class CompareIndexStrict implements Comparator<IDatatype> {
-
-        CompareIndexStrict() {
-        }
-
-        @Override
-        public int compare(IDatatype dt1, IDatatype dt2) {
-
-            if (dt1.getCode() == dt2.getCode() && dt1.getDatatypeURI().equals(dt2.getDatatypeURI())) {
-                if (dt1.equals(dt2)) {
-                    // same datatype, same value: same index (even if labels are different)
-                    // 1 = 01 ; 1 != 1.0
-                    return 0;
-                }
-            }
-
-            // compare with sameTerm instead of equal value
-            // 1 != 1.0 ; they have different index
-            return dt1.compareTo(dt2);
-        }
-    }
-
-    /**
+     * Comparator for Node allocation where 1 and 01 have different Node with same Node index
      * This Comparator enables to retrieve an occurrence of a given Literal
      * already existing in graph in such a way that two occurrences of same
      * Literal be represented by same Node It represents (1 integer) and (01
@@ -601,6 +528,7 @@ public class Graph extends GraphObject implements
         CompareNode() {
         }
 
+        // sameTerm semantics, strict order, 1 != 01 (to get different Node)
         @Override
         public int compare(IDatatype dt1, IDatatype dt2) {
             int res = dt1.compareTo(dt2);
@@ -641,7 +569,7 @@ public class Graph extends GraphObject implements
         // same index means that SPARQL perform a join on nodes with same index
         // when DatatypeMap.SPARQLCompliant = false (true), 1 and 1.0 have same (different) index
         // corese default is false, which means that corese sparql perform a join on 1 and 1.0 (which is not standard)
-        setLiteralIndexManager(Collections.synchronizedSortedMap(new TreeNode(DatatypeMap.SPARQLCompliant)));
+        setLiteralIndexManager(Collections.synchronizedSortedMap(new TreeNode(DatatypeMap.DATATYPE_ENTAILMENT)));
         // deprecated:
         vliteral = Collections.synchronizedMap(new HashMap<>());
         // URI Node
@@ -771,7 +699,7 @@ public class Graph extends GraphObject implements
      */
     public void setByIndex(boolean b) {
         byIndex = b;
-        for (Index id : getIndexList()) {
+        for (EdgeManagerIndexer id : getIndexList()) {
             id.setByIndex(b);
         }
     }
@@ -855,29 +783,25 @@ public class Graph extends GraphObject implements
     }
 
     public void addListener(GraphListener gl) {
-        if (listen == null) {
-            listen = new ArrayList<>();
+        if (getListenerList() == null) {
+            setListenerList(new ArrayList<>());
         }
-        if (!listen.contains(gl)) {
-            listen.add(gl);
+        if (!listenerList.contains(gl)) {
+            getListenerList().add(gl);
             gl.addSource(this);
         }
     }
 
     public void removeListener(GraphListener gl) {
-        if (listen != null) {
-            listen.remove(gl);
+        if (getListenerList() != null) {
+            getListenerList().remove(gl);
         }
     }
 
     public void removeListener() {
-        if (listen != null) {
-            listen.clear();
+        if (getListenerList() != null) {
+            getListenerList().clear();
         }
-    }
-
-    public List<GraphListener> getListeners() {
-        return listen;
     }
 
     public void setTagger(Tagger t) {
@@ -933,7 +857,6 @@ public class Graph extends GraphObject implements
     synchronized public void setRDFSEntailment(boolean b) {
         getWorkflow().setRDFSEntailment(b);
         if (b) {
-            //setEntail(true);
             getEventManager().start(Event.ActivateEntailment);
             init();
         }
@@ -942,7 +865,6 @@ public class Graph extends GraphObject implements
     public void pragmaRDFSentailment(boolean b) {
         getWorkflow().pragmaRDFSentailment(b);
         if (b) {
-            //setEntail(true);
             getEventManager().start(Event.ActivateEntailment);
         }
     }
@@ -956,7 +878,7 @@ public class Graph extends GraphObject implements
 
     void localSet(String property, boolean value) {
         if (property.equals(Entailment.DUPLICATE_INFERENCE)) {
-            for (Index t : getIndexList()) {
+            for (EdgeManagerIndexer t : getIndexList()) {
                 t.setDuplicateEntailment(value);
             }
         }
@@ -995,7 +917,7 @@ public class Graph extends GraphObject implements
 
         sb.close();
 
-        for (Index t : getIndexList()) {
+        for (EdgeManagerIndexer t : getIndexList()) {
             if (t.getIndex() == 0 || t.cardinality() > 0) {
                 sb.appendNL(t.toRDF());
             }
@@ -1052,12 +974,16 @@ public class Graph extends GraphObject implements
 
         return str;
     }
-
-    public String display() {
-        return display(0);
+    
+    public String display(int max) {
+        return display(0, max);
     }
 
-    public String display(int n) {
+    public String display() {
+        return display(0, Integer.MAX_VALUE);
+    }
+
+    public String display(int n, int max) {
         String sep = System.getProperty("line.separator");
         StringBuilder sb = new StringBuilder();
 
@@ -1072,6 +998,9 @@ public class Graph extends GraphObject implements
                 sb.append((i < 10) ? "0" : "").append(i++).append(" ");
                 sb.append(ent);
                 sb.append(sep);
+                if (i>=max) {
+                    break;
+                }
             }
         }
         return sb.toString();
@@ -1113,6 +1042,10 @@ public class Graph extends GraphObject implements
     public EventManager getEventManager() {
         return eventManager;
     }
+    
+    public void setEventHandler(EventHandler h) {
+        getEventManager().setEventHandler(h);
+    }
 
     public void setVerbose(boolean b) {
         getEventManager().setVerbose(b);
@@ -1149,27 +1082,30 @@ public class Graph extends GraphObject implements
     }
 
     /**
-     * send e.g. by kgram eval() before every query execution restore
-     * consistency if updates have been done, perform entailment when delete is
-     * performed, it is the user responsibility to delete the entailments that
-     * depend on it it can be done using: drop graph kg:entailment Rules are not
-     * automatically run, use re.process()
+     * EventManager call init() before query execution 
+     * First time: Index graph: edge list sorted and reduced, compute graph node index
+     * Next time:  recompute graph node index
+     * All time:   Perform entailment.
      */
     public synchronized void init() {
-        if (isIndex()) {
+        getEventManager().start(Event.InitGraph, isIndexable());
+
+        if (isIndexable()) {
+            // sort edge list and reduce (delete duplicate edges)
             index();
         }
 
         if (getEventManager().isUpdate()) {
             // use case: previously load or sparql update
-            // clean meta properties 
-            // redefine meta properties
-            update();
+            // clear nodeIndexManager
+            onUpdate();
+            // recompute IndexNodeManager
             performIndexNodeManager();
         }
 
         if (getEventManager().isEntail() && getWorkflow().isAvailable()) {
             try {
+                // run manager inference engine
                 process();
             } catch (EngineException ex) {
                 logger.error(ex.getMessage());
@@ -1180,6 +1116,8 @@ public class Graph extends GraphObject implements
             }
         }
 
+        // when entailment has modified the graph
+        // recompute IndexNodeManager
         performIndexNodeManager();
 
         getEventManager().finish(Event.InitGraph);
@@ -1190,21 +1128,15 @@ public class Graph extends GraphObject implements
         return DatatypeMap.TRUE;
     }
 
-    private void update() {
+    private void onUpdate() {
         getEventManager().setUpdate(false);
         // node index
-        clearIndex();
+        clearNodeIndex();
         clearDistance();
         if (getEventManager().isDelete()) {
             manager.onDelete();
             getEventManager().setDelete(false);
         }
-    }
-
-    /**
-     */
-    void startUpdate() {
-
     }
 
     public void clean() {
@@ -1217,7 +1149,7 @@ public class Graph extends GraphObject implements
     public void cleanEdge() {
         // clean rule engine timestamp
         for (Edge ent : getEdges()) {
-            ent.setIndex(-1);
+            ent.setEdgeIndex(-1);
         }
     }
 
@@ -1226,12 +1158,21 @@ public class Graph extends GraphObject implements
     }
 
     // true when index must be sorted 
-    public boolean isIndex() {
-        return isIndex;
+    public boolean isIndexable() {
+        return isIndexable;
     }
-
-    public void setIndex(boolean b) {
-        isIndex = b;
+    
+    public void setIndexable(boolean b) {
+        isIndexable = b;
+    }
+    
+    // already indexed
+    public boolean isIndexed() {
+        return ! isIndexable();
+    }
+    
+    public void setIndexed(boolean b) {
+        isIndexable = !b;
     }
 
     /**
@@ -1250,33 +1191,53 @@ public class Graph extends GraphObject implements
         return values;
     }
 
-    public Index getIndex() {
+    public EdgeManagerIndexer getIndex() {
         return getSubjectIndex();
     }
 
+    void startUpdate() {
+    }
+    
     public void finishUpdate() {
         getIndex().finishUpdate();
     }
+    
+    public void finishRuleEngine() {
+        getIndex().finishRuleEngine();
+    }
+            
+    public void startLoad() {
+        if (size() == 0 || Property.booleanValue(Property.Value.GRAPH_INDEX_LOAD_SKIP)) {
+            // graph is empty, optimize loading as if the graph were not indexed
+            // because in this case, edges are added directly
+            //logger.info("Set graph as not indexed");
+            setIndexed(false);
+        }
+    }
 
     /**
-     * Graph updated, nodeManager content is obsolete
+     * Graph updated: nodeManager content is obsolete
      */
     void eventUpdate() {
         clearNodeManager();
-    }
-
-    /**
-     * Pragma: graph must be indexed first
-     */
-    public void indexNodeManager() {
-        getIndex().indexNodeManager();
-    }
-
+    }   
+    
+    
+    
+    
+    // Clear Index node -> (predicate:position)
     public void clearNodeManager() {
-        for (Index id : getIndexList()) {
+        for (EdgeManagerIndexer id : getIndexList()) {
             id.getNodeManager().desactivate();
         }
     }
+    
+    // Clear Index of nodes in their named graph
+    void clearNodeIndex() {
+        getNodeGraphIndex().clear();
+    }
+
+
 
     /**
      * Pragma: to be called after reduce (after index()))
@@ -1284,7 +1245,7 @@ public class Graph extends GraphObject implements
      * @param b
      */
     public void tuneNodeManager(boolean b) {
-        for (Index id : getIndexList()) {
+        for (EdgeManagerIndexer id : getIndexList()) {
             if (b) {
                 id.getNodeManager().setAvailable(b);
                 if (id.getIndex() == 0) {
@@ -1306,12 +1267,12 @@ public class Graph extends GraphObject implements
             getEventManager().start(Event.IndexGraph);
             basicIndex();
             getEventManager().finish(Event.IndexGraph);
-            setIndex(false);
+            setIndexed(true);
         }
     }
 
     void basicIndex() {
-        for (Index ei : getIndexList()) {
+        for (EdgeManagerIndexer ei : getIndexList()) {
             ei.index();
         }
     }
@@ -1324,7 +1285,7 @@ public class Graph extends GraphObject implements
     }
 
     public void cleanIndex() {
-        for (Index ei : getIndexList()) {
+        for (EdgeManagerIndexer ei : getIndexList()) {
             if (ei.getIndex() != 0) {
                 ei.clean();
             }
@@ -1340,7 +1301,7 @@ public class Graph extends GraphObject implements
     }
 
     void indexGraph() {
-        if (isIndex()) {
+        if (isIndexable()) {
             index();
         }
         performIndexNodeManager();
@@ -1351,14 +1312,18 @@ public class Graph extends GraphObject implements
             indexNodeManager();
         }
     }
-
-    void clearIndex() {
-        //gindex.clear();
-        nodeGraphIndex.clear();
+    
+   /**
+    * Index node -> (predicate:position)
+    * Pragma: graph must be indexed first
+    */
+    public void indexNodeManager() {
+        getIndex().indexNodeManager();
     }
 
+    // Index graph nodes in their named graph
     synchronized void indexNode() {
-        if (nodeGraphIndex.size() == 0) {
+        if (getNodeGraphIndex().size() == 0) {
             getSubjectIndex().indexNode();
         }
     }
@@ -1412,7 +1377,7 @@ public class Graph extends GraphObject implements
     }
 
     void declare(Edge edge, boolean duplicate) {
-        for (Index ei : getIndexList()) {
+        for (EdgeManagerIndexer ei : getIndexList()) {
             if (ei.getIndex() != 0) {
                 ei.declare(edge, duplicate);
             }
@@ -1426,6 +1391,18 @@ public class Graph extends GraphObject implements
     public Edge find(Edge edge) {
         return getSubjectIndex().find(edge);
     }
+    
+    public Edge findEdge(Node s, Node p, Node o) {
+        return getSubjectIndex().findEdge(s, p, o);
+    }
+    
+    public TripleNode findTriple(Node s, Node p, Node o) {
+        Edge edge = findEdge(s, p, o);
+        if (edge == null || ! edge.isTripleNode()) {
+            return null;
+        }
+        return ((EdgeTripleNode) edge).getTriple();
+    }
 
     public boolean exist(Node p, Node n1, Node n2) {
         p = getPropertyNode(p);
@@ -1434,7 +1411,7 @@ public class Graph extends GraphObject implements
         }
         return getSubjectIndex().exist(p, n1, n2);
     }
-
+    
     public Edge addEdgeWithNode(Edge ee) {
         addEdgeNode(ee);
         return addEdge(ee);
@@ -1483,7 +1460,7 @@ public class Graph extends GraphObject implements
                 tmp = addBlank();
             }
             add(n);
-            addEdge(g, cur, fst, n);
+            addEdge(g, cur, fst, n); 
             addEdge(g, cur, rst, tmp);
             cur = tmp;
         }
@@ -1491,36 +1468,36 @@ public class Graph extends GraphObject implements
     }
 
     public Edge addEdge(Edge edge) {
+        //System.out.println("graph add: " + edge);
         return addEdge(edge, true);
     }
 
     public Edge addEdge(Edge edge, boolean duplicate) {
         Edge ent = add(edge, duplicate);
         if (ent != null) {
-            //setUpdate(true);
             getEventManager().process(Event.Insert, ent);
             manager.onInsert(ent.getGraph(), edge);
         }
         return ent;
     }
 
-    public int add(List<Edge> lin) {
-        return add(lin, null, true);
-    }
-
-    public int add(List<Edge> lin, List<Edge> lout, boolean duplicate) {
-        int n = 0;
-        for (Edge ee : lin) {
-            Edge ent = addEdge(ee, duplicate);
-            if (ent != null) {
-                n++;
-                if (lout != null) {
-                    lout.add(ent);
-                }
-            }
-        }
-        return n;
-    }
+//    public int add(List<Edge> lin) {
+//        return add(lin, null, true);
+//    }
+//
+//    public int add(List<Edge> lin, List<Edge> lout, boolean duplicate) {
+//        int n = 0;
+//        for (Edge ee : lin) {
+//            Edge ent = addEdge(ee, duplicate);
+//            if (ent != null) {
+//                n++;
+//                if (lout != null) {
+//                    lout.add(ent);
+//                }
+//            }
+//        }
+//        return n;
+//    }
 
     public void addOpt(Node p, List<Edge> list) {
         if (list.isEmpty()) {
@@ -1540,11 +1517,13 @@ public class Graph extends GraphObject implements
      * Index list
      */
     void add(Node p, List<Edge> list) {
-        for (Index ei : getIndexList()) {
+        for (EdgeManagerIndexer ei : getIndexList()) {
             ei.add(p, list);
         }
-        getEventManager().process(Event.Insert);
-        //setUpdate(true);
+        //getEventManager().process(Event.Insert);
+        for (Edge e : list) {
+            getEventManager().process(Event.Insert, e);
+        }
         size += list.size();
     }
 
@@ -1557,7 +1536,7 @@ public class Graph extends GraphObject implements
             return;
         }
         // fake index not sorted, hence add(edge) is done at end of index list
-        setIndex(true);
+        setIndexed(false);
         HashMap<String, Node> t = new HashMap<>();
 
         for (Edge ee : list) {
@@ -1570,19 +1549,19 @@ public class Graph extends GraphObject implements
         }
 
         for (Node pred : t.values()) {
-            for (Index ei : getIndexList()) {
+            for (EdgeManagerIndexer ei : getIndexList()) {
                 // sort but does not reduce:
                 ei.index(pred);
             }
         }
-        setIndex(false);
+        setIndexed(true);
     }
 
     /**
      * Use case: Entailment PRAGMA: edges in list may exist in graph
      */
     public List<Edge> copy(List<Edge> list) {
-        for (Index id : getIndexList()) {
+        for (EdgeManagerIndexer id : getIndexList()) {
             if (id.getIndex() != 0) {
                 id.clearCache();
             }
@@ -1593,14 +1572,14 @@ public class Graph extends GraphObject implements
         }
 
         // fake Index not sorted to add edges at the end of the Index
-        setIndex(true);
+        setIndexed(false);
         for (Edge ent : list) {
             Edge e = add(ent);
             if (e != null) {
                 getEventManager().process(Event.Insert, e);
             }
         }
-        setIndex(false);
+        setIndexed(true);
         // sort and reduce
         getSubjectIndex().index();
 
@@ -1609,6 +1588,40 @@ public class Graph extends GraphObject implements
 
     public Edge create(Node source, Node subject, Node predicate, Node value) {
         return fac.create(source, subject, predicate, value);
+    }
+    
+    /**
+     * create edge for insert in the graph
+     * pragma: nodes are already inserted
+     */
+    public Edge createForInsert(Node source, Node subject, Node predicate, Node value) {
+        Edge edge = fac.create(source, subject, predicate, value);
+        if (edge.isTripleNode()) {
+            initTripleNode(edge);
+        }
+        return edge;
+    }
+    
+    /**
+     * edge = (g, TripleNode(s p o))
+     * index or share existing (s p o)
+     */
+    void initTripleNode(Edge edge) {
+        Node tripleNode = edge.getTripleNode();
+        if (tripleNode.getDatatypeValue() == null) {
+            IDatatype dt = createTripleReference(edge);
+            Node node = getTripleNode(dt.getLabel());
+            if (node == null) {
+                tripleNode.setDatatypeValue(dt);
+                indexNode(dt, tripleNode);
+                addTripleNode(dt, tripleNode);
+            }
+            else {
+                // share existing TripleNode
+                edge.setTripleNode(node);
+            }
+            edge.getTripleNode().setEdge(tripleNode.getEdge());
+        }
     }
 
     public Edge createDelete(Node source, Node subject, Node predicate, Node value) {
@@ -2040,6 +2053,21 @@ public class Graph extends GraphObject implements
         }
         return node;
     }
+    
+     Node basicAddTripleReference(Node s, Node p, Node o) {
+        String label = reference(s, p, o);
+        Node node = getTripleNode(label);
+        if (node == null) {
+            IDatatype dt = createTripleReference(label);
+            node = new TripleNode(s, p, o);
+            node.setDatatypeValue(dt);
+            dt.setEdge(node.getEdge());
+            indexNode(dt, node);
+            addTripleNode(dt, node);
+        }
+        return node;
+    }
+    
 
 
     public void add(Node node) {
@@ -2278,10 +2306,18 @@ public class Graph extends GraphObject implements
         int index = (n == 0) ? 1 : 0;
         return NodeIterator.create(it, index);
     }
+    
+    public void trace(String format, Object... obj) {
+        if (isDebugSparql()) {
+            logger.info(String.format(format, obj));
+        }
+    }
 
-    public Iterable<Edge> properGetEdges(Node predicate, Node node, int n) {
-        Iterable<Edge> it = getEdges(predicate, node, null, n);
+    public Iterable<Edge> properGetEdges(Node predicate, Node node, Node node2, int n) {
+        trace("Edge iterator for: p=%s n=%s n2=%s", predicate, node, node2);
+        Iterable<Edge> it = getEdges(predicate, node, node2, n);
         if (it == null) {
+            trace("Edge iterator fail for: p=%s n=%s",predicate, node);
             return EMPTY;
         }
         return it;
@@ -3072,7 +3108,7 @@ public class Graph extends GraphObject implements
     Edge basicDelete(Edge edge) {
         Edge res = null;
 
-        for (Index ie : getIndexList()) {
+        for (EdgeManagerIndexer ie : getIndexList()) {
             Edge ent = ie.delete(edge);
             if (isDebug) {
                 logger.debug("delete: " + ie.getIndex() + " " + edge);
@@ -3128,17 +3164,15 @@ public class Graph extends GraphObject implements
     // clear all except graph names.
     // they must be cleared explicitely
     public void clear() {
-        clearIndex();
+        clearNodeIndex();
         clearNodes();
-        for (Index t : getIndexList()) {
+        for (EdgeManagerIndexer t : getIndexList()) {
             t.clear();
         }
         manager.onClear();
         clearDistance();
 
-        isIndex = true;
-//        isUpdate = false;
-//        isDelete = false;
+        setIndexable(true);
         getEventManager().initStatus();
 
         size = 0;
@@ -3198,7 +3232,6 @@ public class Graph extends GraphObject implements
         if (g1 == null) {
             return false;
         }
-        //setUpdate(true);
         getEventManager().process(Event.Insert);
         if (g2 == null) {
             g2 = addGraph(target);
@@ -3282,17 +3315,18 @@ public class Graph extends GraphObject implements
      * *************************************************
      */
     /**
-     * Add a copy of the entity edge Use case: entity comes from another graph,
+     * Add a copy of edge Use case: edge comes from another graph,
      * create a local copy of nodes
      */
     public Edge copy(Edge edge) {
         Node g = basicAddGraph(edge.getGraph().getLabel());
         Node p = basicAddProperty(edge.getEdgeNode().getLabel());
 
-        ArrayList<Node> list = new ArrayList<Node>();
+        ArrayList<Node> list = new ArrayList<>();
 
-        for (int i = 0; i < edge.nbNode(); i++) {
-            Node n = addNode( edge.getNode(i).getValue());
+        // nbNodeIndex() exclude metadata TripleNode as getNode(2)
+        for (int i = 0; i < edge.nbNodeIndex(); i++) {
+            Node n = addNode(edge.getNode(i).getValue());
             list.add(n);
         }
         Edge e = addEdge(g, p, list);
@@ -3304,13 +3338,6 @@ public class Graph extends GraphObject implements
      */
     public Edge copy(Node gNode, Node pred, Edge ent) {
         Edge e = fac.copy(gNode, pred, ent);
-        //fac.setGraph(e, gNode);
-
-        if (hasTag() && e.nbNode() == 3) {
-            // edge has a tag
-            // copy must have a new tag
-            tag(e);
-        }
         Edge res = add(e);
         return res;
     }
@@ -3507,12 +3534,82 @@ public class Graph extends GraphObject implements
         }
     }
     
+    public Edge beforeInsert(Edge edge) {
+        return edge;
+    }
+    
     public Node addTripleReference() {
         return addTripleReference(newTripleReferenceID());
     }
     
     public Node addTripleReference(String label) {
         return basicAddTripleReference(label);
+    }
+    
+    public Node addTripleReference(Node s, Node p, Node o) {
+        if (Property.booleanValue(Property.Value.RDF_STAR_TRIPLE)) {
+            return basicAddTripleReference(s, p, o);
+        }
+        return basicAddTripleReference(reference(s, p, o));
+    }
+    
+    public Node getTripleReference(Node s, Node p, Node o) {
+        return getTripleNode(reference(s, p, o));
+    }  
+    
+    public Node getTripleReference(Edge edge) {
+        return getTripleNode(reference(edge.getSubjectNode(), edge.getPropertyNode(), edge.getObjectNode()));
+    }  
+    
+    public IDatatype createTripleReference(Node s, Node p, Node o) {
+        return createTripleReference(reference(s, p, o));
+    }
+    
+    public IDatatype createTripleReference(Edge edge) {
+        return createTripleReference(edge.getSubjectNode(), edge.getPropertyNode(), edge.getObjectNode());
+    }
+    
+    /**
+     * generate unique reference node ID for given s p o
+     * pragma: nodes MUST have been inserted in the graph to have an index
+     * _:ti.j.k where i, j, k are node index
+     */
+    public String reference(Node s, Node p, Node o) {
+        return String.format("%s%s.%s.%s", TRIPLE_REF, reference(s), reference(p), reference(o));
+    }
+    
+    
+    
+    public String reference(Node n) {
+        IDatatype dt = n.getValue();
+        if (dt.isURI()) {
+            return Integer.toString(n.getIndex());
+        }
+        if (dt.isNumber()) {
+            return referenceNumber(dt);
+        }
+        if (dt.isBoolean()) {
+            // distinguish true from 1
+            return String.format("b%s", dt.getLabel());
+        }
+        // dates may also have same index but different labels, see isDate() above
+        // date with Z and date with +00:00 have same index (same value) but different labels
+        // they should have different ID
+        if (dt.isDate()) {
+            if (DatatypeMap.getTZ(dt).equals("Z")) {
+                return String.format("d%s", n.getIndex());
+            }
+        }
+        return Integer.toString(n.getIndex());
+    }
+    
+    // 1 and 1.0 may have same index -> consider value to differentiate them
+    String referenceNumber(IDatatype dt) {
+        return String.format("%s(%s)", shortDatatypeLabel(dt), dt.getLabel());
+    }
+    
+    String shortDatatypeLabel(IDatatype dt) {
+        return dt.getDatatype().getLabel().substring(NSManager.XSD_LENGTH, NSManager.XSD_LENGTH+3);
     }
     
     public IDatatype createTripleReference() {
@@ -3586,7 +3683,7 @@ public class Graph extends GraphObject implements
     public void setDebugMode(boolean b) {
         setDebug(b);
         manager.setDebug(b);
-        for (Index id : getIndexList()) {
+        for (EdgeManagerIndexer id : getIndexList()) {
             id.getNodeManager().setDebug(b);
         }
         if (getEntailment() != null) {
@@ -3640,30 +3737,30 @@ public class Graph extends GraphObject implements
      * This log would be used to broadcast deletion to peers
      */
     public void logDelete(Edge ent) {
-        if (listen != null) {
-            for (GraphListener gl : listen) {
+        if (getListenerList() != null) {
+            for (GraphListener gl : getListenerList()) {
                 gl.delete(this, ent);
             }
         }
     }
 
     public void logInsert(Edge ent) {
-        if (listen != null) {
-            for (GraphListener gl : listen) {
+        if (getListenerList() != null) {
+            for (GraphListener gl : getListenerList()) {
                 gl.insert(this, ent);
             }
         }
     }
 
     public void declareUpdate(boolean b) {
-        for (Index ind : getIndexList()) {
+        for (EdgeManagerIndexer ind : getIndexList()) {
             ind.declareUpdate(b);
         }
     }
 
     public void logStart(Query q) {
-        if (listen != null) {
-            for (GraphListener gl : listen) {
+        if (getListenerList() != null) {
+            for (GraphListener gl : getListenerList()) {
                 gl.start(this, q);
             }
         }
@@ -3674,24 +3771,24 @@ public class Graph extends GraphObject implements
     }
 
     public void logFinish(Query q, Mappings m) {
-        if (listen != null) {
-            for (GraphListener gl : listen) {
+        if (getListenerList() != null) {
+            for (GraphListener gl : getListenerList()) {
                 gl.finish(this, q, m);
             }
         }
     }
 
     public void logLoad(String path) {
-        if (listen != null) {
-            for (GraphListener gl : listen) {
+        if (getListenerList() != null) {
+            for (GraphListener gl : getListenerList()) {
                 gl.load(path);
             }
         }
     }
 
     public boolean onInsert(Edge ent) {
-        if (listen != null) {
-            for (GraphListener gl : listen) {
+        if (getListenerList() != null) {
+            for (GraphListener gl : getListenerList()) {
                 if (!gl.onInsert(this, ent)) {
                     return false;
                 }
@@ -3748,6 +3845,10 @@ public class Graph extends GraphObject implements
     public boolean isMetadataNode() {
         return isEdgeMetadata() || isMetadata();
     }
+    
+    public boolean isFormerMetadata() {
+        return isMetadataNode() && ! Property.booleanValue(Property.Value.RDF_STAR_TRIPLE);
+    }
 
     public void setMetadata(boolean metadata) {
         this.metadata = metadata;
@@ -3802,7 +3903,7 @@ public class Graph extends GraphObject implements
         this.allGraphNode = allGraphNode;
     }
 
-    EdgeManagerIndexer getSubjectIndex() {
+    public EdgeManagerIndexer getSubjectIndex() {
         return subjectIndex;
     }
 
@@ -3820,6 +3921,22 @@ public class Graph extends GraphObject implements
 
     public void setIndexList(ArrayList<EdgeManagerIndexer> tables) {
         this.tables = tables;
+    }
+
+    public boolean isDebugSparql() {
+        return debugSparql;
+    }
+
+    public void setDebugSparql(boolean debugSparql) {
+        this.debugSparql = debugSparql;
+    }
+
+    public List<GraphListener> getListenerList() {
+        return listenerList;
+    }
+
+    public void setListenerList(List<GraphListener> listenerList) {
+        this.listenerList = listenerList;
     }
 
 }

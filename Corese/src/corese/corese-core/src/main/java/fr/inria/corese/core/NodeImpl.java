@@ -23,6 +23,8 @@ public class NodeImpl extends GraphObject implements Node,  Comparable<NodeImpl>
     int index = -1;
     IDatatype dt;
 
+    public NodeImpl() {}
+    
     NodeImpl(IDatatype val) {
         dt = val;
     }
@@ -158,8 +160,8 @@ public class NodeImpl extends GraphObject implements Node,  Comparable<NodeImpl>
     }
 
     @Override
-    public Object getObject() {
-         return dt.getObject();
+    public Object getNodeObject() {
+         return dt.getNodeObject();
     }
 
     @Override
@@ -173,14 +175,14 @@ public class NodeImpl extends GraphObject implements Node,  Comparable<NodeImpl>
     }
 
 
-    @Override
-    public Object getProperty(int p) {
-        return null;
-    }
-
-    @Override
-    public void setProperty(int p, Object o) {
-    }
+//    @Override
+//    public Object getProperty(int p) {
+//        return null;
+//    }
+//
+//    @Override
+//    public void setProperty(int p, Object o) {
+//    }
 
  
     

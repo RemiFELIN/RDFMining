@@ -2,6 +2,8 @@ package fr.inria.corese.sparql.datatype.extension;
 
 import fr.inria.corese.sparql.api.IDatatype;
 import fr.inria.corese.sparql.api.IDatatypeList;
+import static fr.inria.corese.sparql.datatype.CoreseBoolean.FALSE;
+import static fr.inria.corese.sparql.datatype.CoreseBoolean.TRUE;
 import fr.inria.corese.sparql.datatype.CoreseDatatype;
 import fr.inria.corese.sparql.datatype.DatatypeMap;
 import fr.inria.corese.sparql.triple.parser.NSManager;
@@ -51,7 +53,7 @@ public class CoreseJSON extends CoreseExtension {
     }
     
     @Override
-    public JSONObject getObject() {
+    public JSONObject getNodeObject() {
         return json;
     }
     
@@ -112,9 +114,9 @@ public class CoreseJSON extends CoreseExtension {
             case UNDEF: 
                 switch (value.getDatatypeURI()) {
                     case LIST_DATATYPE: json.put(key, toJSONArray(value)); break;
-                    case JSON_DATATYPE: json.put(key, (JSONObject) value.getObject()); break;
+                    case JSON_DATATYPE: json.put(key, (JSONObject) value.getNodeObject()); break;
                     case MAPPINGS_DATATYPE: 
-                        json.put(key, value.getObject()); 
+                        json.put(key, value.getNodeObject()); 
                         break;
                 }
                 break;
@@ -139,7 +141,7 @@ public class CoreseJSON extends CoreseExtension {
     public IDatatype jsonPath(IDatatype path) {
         JSONPointer jp = new JSONPointer(path.getLabel());
         try {
-            Object res = jp.queryFrom(getObject());
+            Object res = jp.queryFrom(getNodeObject());
             return cast(res);
         }
         catch (JSONPointerException e) {
@@ -262,10 +264,10 @@ public class CoreseJSON extends CoreseExtension {
                             arr.put(i, toJSONArray(value));
                             break;
                         case JSON_DATATYPE:
-                            arr.put(i, (JSONObject) value.getObject());
+                            arr.put(i, (JSONObject) value.getNodeObject());
                             break;
                         case MAPPINGS_DATATYPE:
-                            arr.put(i,  value.getObject());
+                            arr.put(i,  value.getNodeObject());
                             break;    
                     }
                     break;
@@ -315,6 +317,9 @@ public class CoreseJSON extends CoreseExtension {
             String str = (String) obj;
             if (NSManager.isURI(str)) {
                 return DatatypeMap.newResource(str);
+            }
+            else {
+                return DatatypeMap.newInstance(str);
             }
         }
         return DatatypeMap.castObject(obj);

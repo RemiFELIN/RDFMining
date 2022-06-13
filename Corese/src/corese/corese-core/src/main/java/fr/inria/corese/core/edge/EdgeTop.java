@@ -13,6 +13,7 @@ import fr.inria.corese.kgram.api.core.Node;
 import fr.inria.corese.kgram.api.core.PointerType;
 import fr.inria.corese.kgram.api.core.TripleStore;
 import fr.inria.corese.sparql.api.IDatatype;
+import fr.inria.corese.sparql.datatype.DatatypeMap;
 import fr.inria.corese.sparql.triple.parser.AccessRight;
 
 /**
@@ -64,6 +65,11 @@ public abstract class EdgeTop extends GraphObject implements Edge {
     public Node getEdgeNode() {
         return null;
     }
+    
+    @Override
+    public Node getProperty() {
+        return getEdgeNode();
+    }
 
     public void setEdgeNode(Node pred) {
     }
@@ -73,14 +79,11 @@ public abstract class EdgeTop extends GraphObject implements Edge {
         setEdgeNode(pred);
     }
 
-    @Override
-    public Node getProperty() {
-        return getEdgeNode();
-    }
 
     public void setTag(Node node) {
     }
 
+    @Override
     public void setGraph(Node node) {
     }
 
@@ -139,6 +142,36 @@ public abstract class EdgeTop extends GraphObject implements Edge {
     @Override
     public Edge getEdge() {
         return this;
+    }
+    
+    @Override
+    public Node getNode() {
+        return DatatypeMap.createObject(this.toString(), this);
+    } 
+    
+    @Override
+    public boolean contains(Node node) {
+        return getNode(0).same(node) || getNode(1).same(node);
+    }
+    
+    @Override
+    public int nbGraphNode() {
+        return 2;
+    }
+    
+    @Override
+    public int nbNode() {
+        return 2;
+    }
+    
+    @Override
+    public String getEdgeLabel() {
+        return getEdgeNode().getLabel();
+    }
+     
+    @Override
+    public Node getEdgeVariable() {
+        return null;
     }
 
     @Override
@@ -204,10 +237,12 @@ public abstract class EdgeTop extends GraphObject implements Edge {
         this.nested = nested;
     }
 
+    @Override
     public boolean isCreated() {
         return created;
     }
 
+    @Override
     public void setCreated(boolean created) {
         this.created = created;
     }

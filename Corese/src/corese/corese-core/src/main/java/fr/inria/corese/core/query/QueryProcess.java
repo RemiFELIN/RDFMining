@@ -22,6 +22,7 @@ import fr.inria.corese.kgram.core.Mappings;
 import fr.inria.corese.kgram.core.Query;
 import fr.inria.corese.compiler.eval.Interpreter;
 import fr.inria.corese.compiler.eval.QuerySolverVisitor;
+import fr.inria.corese.compiler.federate.FederateVisitor;
 import fr.inria.corese.sparql.triple.function.script.Funcall;
 import fr.inria.corese.sparql.triple.function.script.Function;
 import fr.inria.corese.sparql.triple.function.term.Binding;
@@ -34,6 +35,7 @@ import fr.inria.corese.core.Graph;
 import fr.inria.corese.core.api.DataBroker;
 import fr.inria.corese.core.api.DataBrokerConstruct;
 import fr.inria.corese.core.api.DataManager;
+import fr.inria.corese.core.load.Load;
 import fr.inria.corese.core.logic.Entailment;
 import fr.inria.corese.core.load.LoadException;
 import fr.inria.corese.core.load.QueryLoad;
@@ -42,6 +44,7 @@ import fr.inria.corese.core.print.LogManager;
 import fr.inria.corese.core.print.TripleFormat;
 import fr.inria.corese.core.producer.DataBrokerConstructExtern;
 import fr.inria.corese.core.query.update.GraphManager;
+import fr.inria.corese.core.transform.TemplateVisitor;
 import fr.inria.corese.core.util.Extension;
 import fr.inria.corese.kgram.api.query.ProcessVisitor;
 import fr.inria.corese.kgram.core.ProcessVisitorDefault;
@@ -96,7 +99,6 @@ public class QueryProcess extends QuerySolver {
     ReentrantReadWriteLock lock;
     // Producer may perform match locally
     boolean isMatch = false;
-
     static {
         dbmap = new HashMap<>();
         new Extension().process();
@@ -445,7 +447,7 @@ public class QueryProcess extends QuerySolver {
     }
     
     public Mappings query(String squery, ProcessVisitor vis) throws EngineException {
-        return query(squery, Mapping.create(vis), null);
+        return query(squery, null, Dataset.create(vis));
     }
       
     Mappings doQuery(String squery, Mapping map, Dataset ds) throws EngineException {
@@ -464,7 +466,11 @@ public class QueryProcess extends QuerySolver {
             // Rewrite query when @relax annotation, otherwise do nothing
             addVisitor(new ASTRewriter());
         }
-        return super.compile(squery, ds);
+        Query q = super.compile(squery, ds);
+        if (q.getAST().getLog().getASTSelect()!=null) {
+            getLog().share(q.getAST().getLog());
+        }
+        return q;
     }
     
     public Mappings modifier(String str, Mappings map) throws SparqlException {
@@ -712,26 +718,7 @@ public class QueryProcess extends QuerySolver {
     }
      
     
-    /**
-     * Dataset may contain Binding and/or Context 
-     * Prepare Mapping with Binding/Context for Eval query processing
-     * Binding records Context if any
-     * Note that st:get/st:set consider Context in Query (cf PluginTransform getContext())
-     * ProviderService consider Context in Binding 
-     * Hence we have  Context both in Query and in Binding 
-     * 
-     */
-    Mapping completeMappings(Query q, Mapping m, Dataset ds) {
-        if (ds != null) {           
-            if (ds.getBinding() != null || ds.getContext() != null) {
-                if (m == null) {
-                    m = new Mapping();
-                }
-                return ds.call(m);
-            }
-        }
-        return m;
-    }
+   
     
  
     void dbProducer(Query q) {
@@ -1180,32 +1167,17 @@ public class QueryProcess extends QuerySolver {
 
     // @todo: clean Binding/Context AccessLevel
     IDatatype call(String name, Function function, Context c, Binding b, IDatatype... param) throws EngineException {
-        Eval eval = getEval();
+        Eval eval = getCreateEval();
         eval.getEnvironment().getQuery().setContext(c);
         Binding bind = eval.getBinding();  
         bind.share(b, c);
         return new Funcall(name).callWE((Interpreter) eval.getEvaluator(),
                 bind, eval.getEnvironment(), eval.getProducer(), function, param);
-    } 
-    
-//    IDatatype call(String name, Function function, IDatatype[] param, Context c) throws EngineException {
-//        Eval eval = getEval();
-//        eval.getMemory().getQuery().setContext(c);
-//        Binding b = getBind(eval);
-//        if (c != null) { 
-//            if (c.getBind() != null) {
-//                // share global variables
-//                b.share(c.getBind());
-//            }
-//            b.setAccessLevel(c.getLevel());
-//        }
-//        return new Funcall(name).callWE((Interpreter) eval.getEvaluator(),
-//                b, eval.getMemory(), eval.getProducer(), function, param);
-//    }
+    }   
 
     // Use case: funcall @public functions
     @Override
-    public Eval getEval() throws EngineException {
+    public Eval getCreateEval() throws EngineException {
         if (eval == null) {
             eval = createEval("select where {}  ", null);
         }
@@ -1239,7 +1211,7 @@ public class QueryProcess extends QuerySolver {
      */
     public void prepare() {
         try {
-            new QuerySolverVisitor(getEval()).prepare();
+            new QuerySolverVisitor(getCreateEval()).prepare();
         } catch (EngineException ex) {
         }
     }
@@ -1247,7 +1219,7 @@ public class QueryProcess extends QuerySolver {
     // Default Visitor to execute @event functions
     public ProcessVisitor getDefaultVisitor() {
         try {
-            return getEval().getVisitor();
+            return getCreateEval().getVisitor();
         } catch (EngineException ex) {
             return new ProcessVisitorDefault();
         }
@@ -1260,6 +1232,10 @@ public class QueryProcess extends QuerySolver {
             return getDefaultVisitor();
         }
         return getCurrentEval().getVisitor();
+    }
+    
+    public TemplateVisitor getTemplateVisitor() {
+        return (TemplateVisitor) getCreateBinding().getTransformerVisitor();
     }
     
     
@@ -1382,6 +1358,32 @@ public class QueryProcess extends QuerySolver {
 
     void getLinkedFunctionBasic(String label) throws EngineException {
         getTransformer().getLinkedFunctionBasic(label);
+    }
+    
+    public Graph defineFederation(String path) throws IOException, EngineException, LoadException {
+        Graph g = Graph.create();
+        Load ld = Load.create(g);
+        ld.parse(path);
+        QueryLoad ql = QueryLoad.create();
+        String str = ql.getResource("/query/federation.rq");
+        QueryProcess exec = QueryProcess.create(g);
+        Mappings map = exec.query(str);
+
+        for (Mapping m : map) {
+            IDatatype dt = m.getValue("?uri");
+            IDatatype list = m.getValue("?list");
+            if (dt != null) {
+                System.out.println("federation: " + dt + " : " + list);
+                FederateVisitor.declareFederation(dt.getLabel(), list.getValueList());
+
+                for (IDatatype serv : list.getValueList()) {
+                    System.out.println("access: " + serv.getLabel());
+                    Access.define(serv.getLabel(), true);
+                }
+            }
+        }
+        
+        return g;
     }
 
     Transformer getTransformer() {

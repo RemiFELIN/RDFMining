@@ -286,27 +286,31 @@ public class XMLFormat extends QueryResultFormat {
 
             println(OCOM);
             if (ast.getText() != null) {
-                println(ast.getText());
+                println(protect(ast.getText()));
             }
             println("");
 
             if (b1) {
                 for (String mes : ast.getErrors()) {
-                    println(mes);
+                    println(protect(mes));
                 }
             }
             if (b2) {
                 for (String mes : query.getErrors()) {
-                    println(mes);
+                    println(protect(mes));
                 }
             }
             if (b3) {
                 for (String mes : query.getInfo()) {
-                    println(mes);
+                    println(protect(mes));
                 }
             }
             println(CCOM);
         }
+    }
+    
+    String protect(String mes) {
+        return mes.replace("<!--", "").replace("-->", "");
     }
 
     /**
@@ -373,11 +377,12 @@ public class XMLFormat extends QueryResultFormat {
             if (dt.hasLang()) {
                 printf("<literal xml:lang='%s'>%s</literal>", dt.getLang(), str);
             } else if (dt.getDatatype() != null && dt.getCode() != IDatatype.LITERAL) {
-                if (DatatypeMap.isDouble(dt)) {
-                    //str =  nf.format(dt.doubleValue());
-                    str = String.format("%g", dt.doubleValue());
-                }
-                else if (dt.isExtension()) {
+//                if (DatatypeMap.isDouble(dt)) {
+//                    //str =  nf.format(dt.doubleValue());
+//                    str = String.format("%g", dt.doubleValue());
+//                }
+//                else 
+                if (dt.isExtension()) {
                     str = toXML(dt.getContent());
                 }
                 printf("<literal datatype='%s'>%s</literal>",

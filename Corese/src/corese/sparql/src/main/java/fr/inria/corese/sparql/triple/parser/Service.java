@@ -9,6 +9,7 @@ import java.util.List;
  * @author Olivier Corby, Edelweiss, INRIA 2011
  */
 public class Service extends SourceExp {
+    private static final String UNDEFINED_SERVER = "http://example.org/sparl"; //?_undef_serv";
     public static String SERVER_SEED = "?_server_";
     public static String SERVER_VAR = SERVER_SEED+"0";
     private int number = 0;
@@ -33,6 +34,9 @@ public class Service extends SourceExp {
     }
 
     public static Service create(List<Atom> list, Exp body, boolean b) {
+        if (list.isEmpty()) {
+            list = List.of(getDefaultService(list));
+        } 
         Service s = new Service(getDefaultService(list), body, b);
         s.setServiceList(list);
         return s;
@@ -46,7 +50,8 @@ public class Service extends SourceExp {
     
     static Atom getDefaultService(List<Atom> list) {
         if (list.isEmpty()) {
-            return Variable.create("?undef_serv");           
+            //return Variable.create(UNDEFINED_SERVER);           
+            return Constant.create(UNDEFINED_SERVER);           
         }
         return list.get(0);     
     }
@@ -57,6 +62,22 @@ public class Service extends SourceExp {
     
     public static Service create(List<Atom> list, Exp body) {
         return create(list, body, false);
+    }
+    
+    public static Service newInstance(List<String> list, Exp body) {
+        return create(getList(list), body, false);
+    }
+    
+    public boolean isUndefined() {
+        return getServiceName().getLabel().equals(UNDEFINED_SERVER);
+    }
+    
+    static List<Atom> getList(List<String> list) {
+        ArrayList<Atom> alist = new ArrayList<>();
+        for (String uri : list) {
+            alist.add(Constant.create(uri));
+        }
+        return alist;
     }
     
     public URLServer getCreateURL() {
@@ -83,7 +104,25 @@ public class Service extends SourceExp {
     }
     
     @Override
+    public BasicGraphPattern getBasicGraphPattern() {
+        return getBodyExp().getBasicGraphPattern();        
+    }
+    
+    public BasicGraphPattern bgp() {
+        return getBodyExp().getBasicGraphPattern();        
+    }
+    
+    @Override
     public ASTBuffer toString(ASTBuffer sb) {
+        if (sb.isService()) {
+            if (getServiceList().size()>1) {
+                return union().toString(sb);
+            }
+        }
+        return basicToString(sb);
+    }
+    
+    ASTBuffer basicToString(ASTBuffer sb) {
         sb.append(Term.SERVICE);
         int i = 0;
         if (getServiceName().isVariable()) {
@@ -102,6 +141,21 @@ public class Service extends SourceExp {
         sb.append(" ");
         getBodyExp().pretty(sb);
         return sb;
+    }
+    
+    public Exp union() {
+        Exp res = null;
+        for (int i = getServiceList().size()-1; i>= 0; i--) {
+            Atom at  = getServiceList().get(i);
+            Exp serv = Service.create(at, getBodyExp());
+            if (res == null) {
+                res = serv;
+            }
+            else {
+                res = Union.create(serv, res);
+            }
+        }
+        return res;
     }
 
     public boolean isSilent() {

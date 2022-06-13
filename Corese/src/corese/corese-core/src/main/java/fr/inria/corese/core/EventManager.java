@@ -7,7 +7,9 @@ import static fr.inria.corese.core.Event.Finish;
 import static fr.inria.corese.core.Event.Process;
 import static fr.inria.corese.core.Event.Start;
 import fr.inria.corese.core.logic.Entailment;
-import fr.inria.corese.sparql.triple.update.Update;
+import fr.inria.corese.core.util.Property;
+import static fr.inria.corese.core.util.Property.Value.LOG_NODE_INDEX;
+import fr.inria.corese.kgram.api.core.Edge;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -20,21 +22,26 @@ import org.slf4j.Logger;
  * @author Olivier Corby, Wimmics INRIA I3S, 2017
  *
  */
-public class EventManager {
+public class EventManager implements EventHandler {
 
     private static Logger logger = LoggerFactory.getLogger(EventManager.class);
     public static boolean DEFAULT_VERBOSE = false;
-    Graph graph;
+
+    private Graph graph;
     private boolean verbose    = DEFAULT_VERBOSE;
     private boolean isEntail = true;
     private boolean isUpdate = false;
     private boolean isDelete = false;
     private boolean deletion = false;
     
+    
     EventLogger log;
+    // User defined Event Handler
+    private EventHandler handler;
 
     EventManager(Graph g) {
         graph = g;
+        setEventHandler(this);
     }
     
     public void setMethod(boolean b){
@@ -92,35 +99,101 @@ public class EventManager {
     public void process(Event e) {
         process(e, null);
     }
+    
+    public void process(Event e, Object o1, Object o2) {
+        //trace(Process, e, o1, o2);        
+        switch(e) {
+            case Insert: 
+                setUpdate(true); break;
+            case Delete: 
+                setDelete(true); break;
+            case Finish: 
+                finish(); break;
+        }
+    }
+    
+    public void process(Event e, Edge o1) {
+        switch (e) {
+            case Insert:
+                getEventHandler().insert(o1);
+                setUpdate(true);
+                break;
+        }
+    }
+    
+    public void process(Event e, Edge target, Edge query) {
+        switch(e) {           
+            case Delete: 
+                getEventHandler().delete(query, target);
+                setDelete(true); break;            
+        }
+    }
+    
+    /*****************
+     * EventHandler
+     ****************/
+    @Override
+    public void delete(Edge q, Edge t) {        
+    }
+    
+    @Override
+    public void insert(Edge e) {
+    }  
+    
+    
      
     public void start(Event e, Object o) {
         trace(Start, e, o);
         switch (e) {
             case Query:
+                // sparql query 
+                // (empty) where part of delete/insert data/where
             case RuleEngine:
             case WorkflowParser:
-                graph.init();
+                // index graph + entailment
+                getGraph().init();
+                break;
+                
+            case InitQuery:
+                // fake select where init query exec on load for init Visitor
+            case InitUpdateQuery:
+                // fake select where init query exec on global update query for init Visitor
                 break;
                 
             case Format:
+                // RDF/JSON Format require graph index
             case Process:
-                graph.indexGraph();
+                // specific action require graph index
+                // basic index graph
+                getGraph().indexGraph();
                 break;    
 
             case Update:
-                graph.startUpdate();
+                // global update query
+                getGraph().startUpdate();
                 break;
                 
-            case UpdateStep:                
-                break;    
+            case UpdateStep: 
+                // one step in update query
+                break;  
+                
+            case BasicUpdate:
+                // copy, move, etc.
+                getGraph().init();
+                break;
                 
             case LoadUpdate:
             case LoadAPI:
-                startLoad();
+                // sequence of load can be done without graph index
+                // specific query which require graph index perform 
+                // getGraph().init() or getGraph().indexGraph() here
+                getGraph().startLoad();
                 break;
                                                 
-            case Insert:
             case Delete:             
+            case Insert:
+                 break;
+                
             case Construct:     
                  break;
                 
@@ -144,52 +217,45 @@ public class EventManager {
                 
             case CleanOntology:
                 break;
+                
+            case IndexNodeManager:
+                log(LOG_NODE_INDEX, Event.Start, e, o);
+                break;
        }
     }
-    
-    void startLoad() {
-        if (graph.size() == 0) {
-            // graph is empty, optimize loading as if the graph is to be indexed
-            // because in this case, edges are added directly
-            graph.setIndex(true);
-        }
-    }
-    
-    Workflow getWorkflow() {
-        return graph.getWorkflow();
-    }
-    
-    Entailment getEntailment() {
-        return getWorkflow().getEntailment();
-    }
-    
-    void setEntailment(boolean b) {
-        if (getEntailment() != null) {
-            getEntailment().setActivate(b);
-        }
-    }
+   
 
-    // @todo: check this wrt graph index
     public void finish(Event e, Object o) {
         trace(Finish, e, o);
          switch (e) {
-            case Insert:
-            case Delete:             
-            case LoadUpdate:    
-                graph.indexGraph();            
+             // insert after delete may require up to date NodeIndex
+             // we must compute node index after delete
+             case Delete:
+             case Insert:
+                 getGraph().indexGraph();
+                 break; 
+                                
+            case LoadUpdate: 
+                // SPARQL Update load                 
+                getGraph().finishUpdate();
                 break; 
                 
-            case Construct: 
-                graph.indexGraph();
-                // continue
-                
-            case LoadAPI: 
-                graph.finishUpdate();
-                break; 
-                
-            case UpdateStep:                
-                graph.finishUpdate();
+            case LoadAPI:
+                // Java function load()
+                // there may be several load(), do not index graph yet
+                // next sparql query will do it
+                getGraph().finishUpdate();
                 break;   
+                
+            case UpdateStep: 
+                // one step in update query 
+                getGraph().finishUpdate();
+                break;  
+                                                           
+            case Construct: 
+                getGraph().indexGraph();
+                getGraph().finishUpdate();
+                break;
                 
             case Rule:
                 break;
@@ -202,6 +268,10 @@ public class EventManager {
                 getWorkflow().setActivate(Engine.RULE_ENGINE, false);
                 break;
                 
+            case RuleEngine:
+                getGraph().finishRuleEngine();
+                break;
+                
             case InferenceEngine:
                 break;
                 
@@ -210,22 +280,40 @@ public class EventManager {
                 
             case IndexMetadata:
                 break;
+                
+            case IndexNodeManager:
+                log(LOG_NODE_INDEX, Event.Finish, e, o);
+                break;
+        }
+    }
+    
+    
+ 
+    
+    Workflow getWorkflow() {
+        return getGraph().getWorkflow();
+    }
+    
+    Entailment getEntailment() {
+        return getWorkflow().getEntailment();
+    }
+    
+    void setEntailment(boolean b) {
+        if (getEntailment() != null) {
+            getEntailment().setActivate(b);
+        }
+    }
+    
+    void log(Property.Value prop, Event type, Event e, Object o) {
+        if (Property.booleanValue(prop)) {
+            getLog().log(type, e, o);
         }
     }
 
     public void process(Event e, Object o) {
         process(e, o, null);
     }
-    
-    public void process(Event e, Object o1, Object o2) {
-        trace(Process, e, o1, o2);        
-        switch(e) {
-            case Insert: 
-                setUpdate(true); break;
-            case Delete: setDelete(true); break;
-            case Finish: finish(); break;
-        }
-    }
+      
     
     /**
      * GUI reset Corese
@@ -250,7 +338,7 @@ public class EventManager {
         isUpdate = b;
         if (isUpdate) {
             setEntail(true);
-            graph.eventUpdate();
+            getGraph().eventUpdate();
         }
     }
     
@@ -325,6 +413,17 @@ public class EventManager {
     public void setDeletion(boolean deletion) {
         this.deletion = deletion;
     }
-    
+
+    public void setGraph(Graph graph) {
+        this.graph = graph;
+    }
+
+    public EventHandler getEventHandler() {
+        return handler;
+    }
+
+    public void setEventHandler(EventHandler handler) {
+        this.handler = handler;
+    }
     
 }

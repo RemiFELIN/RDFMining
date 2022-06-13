@@ -14,12 +14,15 @@ import fr.inria.corese.sparql.triple.parser.Atom;
 import fr.inria.corese.sparql.triple.parser.Constant;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Olivier Corby, INRIA 2020
  */
 public class CreateTriple {
+    public static Logger logger = LoggerFactory.getLogger(CreateTriple.class);
     static final String STAR = "*";
 
     private QueryProcess queryProcess;
@@ -30,8 +33,8 @@ public class CreateTriple {
     IDatatype dtpath;
     ArrayList<String> exclude;
     private boolean skip = false;
-    private int limit = Integer.MAX_VALUE;
     int count = 1;
+    int limit = Integer.MAX_VALUE;
 
     
     CreateTriple(){}
@@ -48,7 +51,7 @@ public class CreateTriple {
         graph.getEventManager().start(Event.LoadAPI);
     }
     
-    Graph getGraph() {
+    public Graph getGraph() {
         return graph;
     }
     
@@ -81,7 +84,7 @@ public class CreateTriple {
     }
     
     Edge create(Node g, Node s, Node p, Node o) {
-        return graph.create(g, s, p, o);
+        return graph.createForInsert(g, s, p, o);
     }
     
     Edge create(Node g, Node p, List<Node> list) {
@@ -102,6 +105,7 @@ public class CreateTriple {
             return getDataManager().insert(e);
         }
         else {
+            //System.out.println("CT: add " + e);
             return graph.addEdge(e);
         }
     }
@@ -180,13 +184,16 @@ public class CreateTriple {
 
 
     public boolean accept(String pred) {
+        if (raiseLimit()) {
+            return false;
+        }
         if (count > 100000) {
             graph.getEventManager().process(Event.LoadStep);
             count = 2;
         } else {
             count++;
         }
-        if (isSkip() || graph.size() > limit) {
+        if (isSkip()) {
             return false;
         }
         if (exclude.isEmpty()) {
@@ -199,60 +206,41 @@ public class CreateTriple {
         }
         return true;
     }
+    
+    public boolean raiseLimit() {
+        return graph.size() >= getLimit();
+    }
 
-    /**
-     * @return the queryProcess
-     */
+   
     public QueryProcess getQueryProcess() {
         return queryProcess;
     }
 
-    /**
-     * @param queryProcess the queryProcess to set
-     */
+   
     public void setQueryProcess(QueryProcess queryProcess) {
         this.queryProcess = queryProcess;
     }
 
-    /**
-     * @return the path
-     */
+    
     public String getPath() {
         return path;
     }
 
-    /**
-     * @param path the path to set
-     */
+    
     public void setPath(String path) {
         this.path = path;
     }
 
-    /**
-     * @return the skip
-     */
+   
     public boolean isSkip() {
         return skip;
     }
 
-    /**
-     * @param skip the skip to set
-     */
+    
     public void setSkip(boolean skip) {
         this.skip = skip;
     }
     
-    public int getLimit() {
-        return limit;
-    }
-
-    /**
-     * @param limit the limit to set
-     */
-    public void setLimit(int limit) {
-        this.limit = limit;
-    }
-
     public DataManager getDataManager() {
         return dataManager;
     }
@@ -263,6 +251,14 @@ public class CreateTriple {
     
     boolean hasDataManager() {
         return getDataManager()!=null;
+    }
+    
+    public int getLimit() {
+        return limit;
+    }
+    
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 
 }

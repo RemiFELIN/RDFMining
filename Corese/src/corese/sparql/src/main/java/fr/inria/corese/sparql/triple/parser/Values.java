@@ -85,6 +85,17 @@ public class Values extends Exp {
         return this;
     }
     
+    public boolean isDefined() {
+        for (List<Constant> list : getValues()) {
+            for (Constant cst : list) {
+                if (cst != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
     @Override
     public Values getValuesExp() {
         return this;
@@ -116,7 +127,7 @@ public class Values extends Exp {
                     if (value == null) {
                         sb.append(KeywordPP.UNDEF);
                     } else {
-                        sb.append(value);
+                        value.toString(sb);
                     }
                     sb.append(SPACE);
                 }
@@ -137,6 +148,16 @@ public class Values extends Exp {
         for (Variable var : getVarList()) {
             add(var, list);
         }
+    }
+    
+    // this variable list includedIn varList   
+    public boolean isBound(List<Variable> varList) {
+        for (Variable var : getVarList()) {
+            if (!varList.contains(var)) {
+                return false;
+            }
+        }
+        return true;
     }
     
     @Override

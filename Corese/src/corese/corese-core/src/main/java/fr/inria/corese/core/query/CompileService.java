@@ -1,6 +1,8 @@
 package fr.inria.corese.core.query;
 
 import fr.inria.corese.compiler.eval.Interpreter;
+import fr.inria.corese.core.util.Property;
+import static fr.inria.corese.core.util.Property.Value.SERVICE_LIMIT;
 import java.util.ArrayList;
 
 import fr.inria.corese.sparql.api.IDatatype;
@@ -28,8 +30,11 @@ import fr.inria.corese.sparql.triple.cst.LogKey;
 import fr.inria.corese.sparql.triple.parser.VariableLocal;
 import fr.inria.corese.sparql.triple.parser.context.ContextLog;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CompileService implements URLParam {
+    static Logger logger = LoggerFactory.getLogger(CompileService.class);
     public static final String KG_VALUES = NSManager.KGRAM + "values";
     public static final String KG_FILTER = NSManager.KGRAM + "filter";
     // default binding
@@ -73,43 +78,53 @@ public class CompileService implements URLParam {
      * When no map, use env
      * Create a copy of ast with bindings if any, otherwise return ast as is.
      */
-    public ASTQuery compile(URLServer serv, Query q, Mappings map, int start, int limit) {
-        ASTQuery ast = getAST(q);
+    public ASTQuery compile(URLServer serv, Query q, Mappings map, CompileServiceResult res, int start, int limit) {
+        ASTQuery ast = q.getAST();
         complete(serv, q, ast);
         Query out = q.getOuterQuery();
-//        boolean isValues = isValues(serv, out) || 
-//                (!isFilter(serv, out) && !getProvider().isSparql0(serv.getNode()));
         boolean isValues = getIsValues(serv, out);
         if (map == null || (map.size() == 1 && map.get(0).size() == 0)) {
             // lmap may contain one empty Mapping
             // use env because it may have bindings
             if (isValues) {
-                return bindings(q, getEnv());
+                return bindings(q, getEnvironment());
             } else  {
-                return filter(q, getEnv());
+                return filter(q, getEnvironment());
             } 
         } else if (isValues) {
-            return bindings(serv, q, map, getEnv(), start, limit);
+            return bindings(serv, q, map, res, getEnvironment(), start, limit);
         } else {
-            return filter(serv, q, map, start, limit);
+            return filter(serv, q, map, res, start, limit);
         } 
     }
        
+    // q is service query
+    // ast is query ast
     void complete(URLServer serv, Query q, ASTQuery ast) {
-        int myLimit = serv.intValue(LIMIT);
-        if (myLimit >= 0) {
-            ast.setLimit(myLimit);
-        } else {
-            ASTQuery gast = getAST(q.getOuterQuery());
-            if (gast.hasMetadata(Metadata.LIMIT)) {
-                int limit = gast.getLimit();
-                IDatatype dt = ast.getMetadata().getDatatypeValue(Metadata.LIMIT);
+        if (!ast.hasLimit()) {
+            ASTQuery gast = q.getGlobalQuery().getAST();
+            int myLimit = serv.intValue(LIMIT);
+            if (myLimit >= 0) {
+                // service URL parameter limit=n
+                ast.setLimit(myLimit);
+            } else if (gast.hasMetadata(Metadata.LIMIT)) {
+                // limit of outer query of service (if any)
+                int limit = q.getOuterQuery().getAST().getLimit();
+                // @limit of global query
+                IDatatype dt = gast.getMetaValue(Metadata.LIMIT);
                 if (dt != null) {
                     limit = dt.intValue();
                 }
+                // select lower limit
                 ast.setLimit(Math.min(limit, ast.getLimit()));
+            } else {
+                Integer limit = Property.intValue(SERVICE_LIMIT);
+                if (limit != null) {
+                    ast.setLimit(limit);
+                }
             }
         }
+        //logger.info("Limit: " + ast.getLimit());
     }
 
     boolean getIsValues(URLServer serv, Query q) {
@@ -202,7 +217,7 @@ public class CompileService implements URLParam {
     /**
      * Generate bindings as bindings from Mappings
      */
-    ASTQuery bindings(URLServer url, Query q, Mappings map, Environment env, int start, int limit) {
+    ASTQuery bindings(URLServer url, Query q, Mappings map, CompileServiceResult res, Environment env, int start, int limit) {
         ASTQuery ast =  q.getAST();        
         // in-scope variables
         List<Variable> varList = getVariables(url, q, ast, map);
@@ -213,15 +228,18 @@ public class CompileService implements URLParam {
         for (Variable var : varList) {
             for (int j = start; j < map.size() && j < limit; j++) {
                 Node val = map.get(j).getNodeValue(var.getLabel());
-                if (val != null && !val.isBlank()) {
-                    lvar.add(var);
-                    break;
+                if (val != null) {
+                    if (val.isBlank()) {
+                        res.setBnode(true);
+                    } else {
+                        lvar.add(var);
+                        break;
+                    }
                 }
             }
         }
         
-        Values values = Values.create();
-        
+        Values values = Values.create();        
         if (!lvar.isEmpty()) {
             for (int j = start; j < map.size() && j < limit; j++) {
                 Mapping m = map.get(j);
@@ -238,6 +256,7 @@ public class CompileService implements URLParam {
                     else if (val.isBlank()) {
                         list.add(null);
                         blank = true;
+                        res.setBnode(true);
                     } 
                     else {
                         IDatatype dt =  val.getValue();
@@ -340,31 +359,45 @@ public class CompileService implements URLParam {
     /**
      * Return a copy of ast with values if any or ast itself
      */
-    ASTQuery setValues(ASTQuery aa, Values values) {
+    ASTQuery setValues(ASTQuery ast, Values values) {
         if (success(values)) {
-            ASTQuery ast = aa.copy();           
+            ASTQuery astCopy = ast.copy();           
             BasicGraphPattern body = BasicGraphPattern.create();
             body.add(values);
-            for (Exp e : ast.getBody()) {
-                body.add(e);
+            for (Exp e : astCopy.getBody()) {
+                if (accept(e)) {
+                   body.add(e);
+                }
             }
-            ast.setBody(body);
-            return ast;
+            astCopy.setBody(body);
+            return astCopy;
         } else {
-            return aa;
+            return ast;
         }
     }
+    
+    // remove values var { undef }
+    boolean accept(Exp exp) {
+        if (exp.isValues()) {
+            return exp.getValuesExp().isDefined();
+        }
+        return true;
+    }
+    
+    
     
     /**
      * Return a copy of ast with filter if any or ast itself
      */
     ASTQuery setFilter(ASTQuery aa, Term f) {
         if (f != null) {
-            ASTQuery ast = aa.copy();           
+            ASTQuery ast = aa.copy();
             BasicGraphPattern body = BasicGraphPattern.create();
             for (Exp e : ast.getBody()) {
-                body.add(e);
-            }  
+                if (accept(e)) {
+                    body.add(e);
+                }
+            }
             body.add(f);
             ast.setBody(body);
             return ast;
@@ -414,12 +447,16 @@ public class CompileService implements URLParam {
      * Generate bindings from Mappings as filter
      */
     public ASTQuery filter(URLServer url, Query q, Mappings map, int start, int limit) {
+        return filter(url, q, map, new CompileServiceResult(), start, limit);
+    }
+    
+    public ASTQuery filter(URLServer url, Query q, Mappings map, CompileServiceResult res, int start, int limit) {
         ASTQuery ast =  q.getAST();
         Term filter = null;
         List<Variable> lvar = getVariables(url, q, ast, map);
         
         for (int j = start; j < map.size() && j < limit; j++) {
-            Term f = getFilter(url, q, ast, map.get(j), lvar);
+            Term f = getFilter(url, q, ast, map.get(j), res, lvar);
 
             if (f != null) {                
                 if (filter == null) {
@@ -433,7 +470,7 @@ public class CompileService implements URLParam {
         return setFilter(ast, filter);
     }
     
-    Term getFilter(URLServer url, Query q, ASTQuery ast, Mapping m, List<Variable> lvar) {
+    Term getFilter(URLServer url, Query q, ASTQuery ast, Mapping m, CompileServiceResult res, List<Variable> lvar) {
         ArrayList<Term> lt = new ArrayList<>();
         boolean blank = false;
         
@@ -445,6 +482,7 @@ public class CompileService implements URLParam {
                     // and it will not be available on another server because 
                     // bnode are local
                     blank = true;
+                    res.setBnode(true);
                 }
                 else {                    
                     Term t = filter(ast, var,  valNode.getDatatypeValue());
@@ -570,7 +608,7 @@ public class CompileService implements URLParam {
     /**
      * @return the env
      */
-    public Environment getEnv() {
+    public Environment getEnvironment() {
         return env;
     }
 

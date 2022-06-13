@@ -18,7 +18,7 @@ public class Metadata extends ASTObject
     implements Iterable<String> {
     static final String NL = System.getProperty("line.separator");
     static final int UNDEFINED  = -1;
-    
+    static final String AT = "@";
     public static final int TEST   = 0;
     public static final int DEBUG  = 1;
     public static final int TRACE  = 2;
@@ -88,16 +88,14 @@ public class Metadata extends ASTObject
     // delete update query remove (nested) edge
     public static final int RDF_STAR_DELETE  = 68;
     
-//    public static final int BEFORE  = 51;
-//    public static final int AFTER   = 52;
-//    public static final int PRODUCE = 53;
-//    public static final int RESULT  = 54;
-//    public static final int STATEMENT= 55;
-
+    
     // uncertainty triple metadata
     public static final int METADATA  = 70;
     public static final int VISITOR   = 71;
-    public static final int MOVE     = 72;
+    public static final int MOVE      = 72;
+    public static final int PATH_TYPE = 73;
+    public static final int SLICE     = 74;
+    public static final int FOCUS     = 75;
       
     static final String PREF = NSManager.KGRAM;
     public static final String DISPLAY_TURTLE   = PREF + "turtle";
@@ -136,7 +134,29 @@ public class Metadata extends ASTObject
     public static final String FORM   = "@form";
     public static final String OLD_SERVICE   = "@oldService";
     public static final String SHOW   = "@show";
-             
+    public static final String SELECTION   = "@selection";
+    public static final String DISCOVERY   = "@discovery";
+    public static final String LOOP   = AT+URLParam.LOOP;
+    public static final String START  = AT+URLParam.START;
+    public static final String UNTIL  = AT+URLParam.UNTIL;;
+    public static final String HIDE   = "@hide";
+    
+    public static final String FED_BGP      = "@federateBgp";
+    public static final String FED_JOIN     = "@federateJoin";
+    public static final String FED_OPTIONAL = "@federateOptional";
+    public static final String FED_MINUS    = "@federateMinus";
+    public static final String FED_UNDEFINED= "@federateUndefined";
+    public static final String FED_COMPLETE = "@federateComplete";
+    public static final String FED_PARTITION= "@federatePartition";
+    public static final String FED_SUCCESS  = "@"+URLParam.FED_SUCCESS;
+    public static final String FED_LENGTH   = "@"+URLParam.FED_LENGTH;   
+    public static final String FED_INCLUDE  = "@"+URLParam.FED_INCLUDE;
+    public static final String FED_EXCLUDE  = "@exclude";
+    public static final String FED_BLACKLIST= "@blacklist";
+    public static final String FED_WHITELIST= "@whitelist";
+    public static final String FED_CLASS    = "@federateClass";
+    
+         
     private static HashMap<String, Integer> annotation;    
     private static HashMap<Integer, String> back; 
     
@@ -175,6 +195,7 @@ public class Metadata extends ASTObject
         define("@sparql",   SPARQL);      
         define("@index",    INDEX);      
         define("@limit",    LIMIT);      
+        define("@slice",    SLICE);      
         define("@move",     MOVE);      
         define("@bounce",   BOUNCE);      
         define("@sparqlzero", SPARQL10);      
@@ -186,6 +207,7 @@ public class Metadata extends ASTObject
         define("@type",     TYPE);      
         define("@compile",  COMPILE);      
         define("@path",     PATH);      
+        define("@pathtype", PATH_TYPE);      
         define("@skip",     SKIP);      
         define("@db",       DB);      
         define("@dbfactory",DB_FACTORY);      
@@ -215,6 +237,7 @@ public class Metadata extends ASTObject
         define("@message",  MESSAGE); 
         define("@browse",   BROWSE); 
         define("@merge",    MERGE_SERVICE); 
+        define("@focus",    FOCUS); 
         define("@format",   FORMAT); 
         // update query evaluated as select query
         define("@select",   SELECT); 
@@ -236,7 +259,7 @@ public class Metadata extends ASTObject
     }
     
     public Metadata(){
-        map   = new HashMap<String, String>();
+        map   = new HashMap<>();
         value = new HashMap();               
         literal = new HashMap<>();
     }

@@ -75,6 +75,7 @@ public class ASTParser implements Walker, URLParam {
 
     @Override
     public void start(ASTQuery ast) {
+        init(ast);
     }
 
     @Override
@@ -126,6 +127,24 @@ public class ASTParser implements Walker, URLParam {
     public void leave(Exp exp) {
         processLeave(exp);
     }
+    
+    void init(ASTQuery ast) {
+        index(ast);
+    }
+    
+    // select *
+    // from <index:http://prod-dekalog.inria.fr>
+    // where 
+    // ->
+    // @federation @index <http://prod-dekalog.inria.fr>
+    void index(ASTQuery ast) {
+        boolean index = ast.getDataset().index();
+        if (index) {
+            ast.getCreateMetadata().add(Metadata.FEDERATION);
+        }
+    }
+
+    
 
     /**
      * When @report : declare variable ?_service_report_n
@@ -285,7 +304,12 @@ public class ASTParser implements Walker, URLParam {
             }
         }
         exp.setNumber(nbService++);
-        top().getServiceExpList().add(exp);
+        if (top() == null) {
+            ast.logger.error("AST stack empty");
+        }
+        else {
+            top().getServiceExpList().add(exp);
+        }
     }
 
     /**

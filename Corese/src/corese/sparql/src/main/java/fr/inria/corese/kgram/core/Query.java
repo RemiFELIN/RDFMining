@@ -115,7 +115,7 @@ public class Query extends Exp implements Graphable {
 
     // Transformation profile template
     private Query templateProfile;
-    private Object templateVisitor;
+    //private Object templateVisitor;
     // st:set/st:get Context
     private Context context;
     // current transformer if any
@@ -134,6 +134,7 @@ public class Query extends Exp implements Graphable {
     // nb occurrences of predicates in where
     HashMap<String, Integer> ptable;
     HashMap<String, Edge> etable;
+    // query for class/property definition checking 
     HashMap<Edge, Query> table;
     // Extended queries for additional group by
     List<Query> queries;
@@ -220,6 +221,8 @@ public class Query extends Exp implements Graphable {
     private List<Edge> queryEdgeList;
 
     private HashMap<Edge, Exp> edgeAndContext;
+    private Mappings selection;
+    private Mappings discorevy;
 
     private String service;
 	
@@ -495,7 +498,7 @@ public class Query extends Exp implements Graphable {
     }
     
     boolean needEdge(){
-            return getGlobalQuery().isRelax() || getGlobalQuery().isRule();
+        return getGlobalQuery().isRelax() || getGlobalQuery().isRule();
     }
     
     public boolean isRecDebug() {
@@ -1527,14 +1530,14 @@ public class Query extends Exp implements Graphable {
             case XPATH:
             case EVAL:
                 Edge edge = exp.getEdge();
-                edge.setIndex(iEdge++);                
+                edge.setEdgeIndex(iEdge++);                
                 min = indexExpEdge(query, exp);
                 
                 if (exp.hasPath()) {
                     // x rdf:type t
                     // x rdf:type/rdfs:subClassOf* t
                     Exp ep = exp.getPath();
-                    ep.getEdge().setIndex(edge.getIndex());                    
+                    ep.getEdge().setEdgeIndex(edge.getEdgeIndex());                    
                     indexExpEdge(query, ep);
                 }
                 break;
@@ -2451,21 +2454,21 @@ public class Query extends Exp implements Graphable {
         this.isFun = isFun;
     }
 	 
-    public Object getTemplateVisitor() {
-        if (query == null){
-            return templateVisitor;
-        }
-        return query.getTemplateVisitor();
-    }
-     
-    public void setTemplateVisitor(Object tv) {
-        if (query == null){
-             templateVisitor = tv;
-        }
-        else {
-            query.setTemplateVisitor(tv);
-        }
-    }
+//    public Object getTemplateVisitor() {
+//        if (query == null){
+//            return templateVisitor;
+//        }
+//        return query.getTemplateVisitor();
+//    }
+//     
+//    public void setTemplateVisitor(Object tv) {
+//        if (query == null){
+//             templateVisitor = tv;
+//        }
+//        else {
+//            query.setTemplateVisitor(tv);
+//        }
+//    }
 
    
     public Context getContext() {
@@ -2662,6 +2665,22 @@ public class Query extends Exp implements Graphable {
    
     public void setImportFailure(boolean importFailure) {
         this.importFailure = importFailure;
+    }
+
+    public Mappings getSelection() {
+        return selection;
+    }
+
+    public void setSelection(Mappings selection) {
+        this.selection = selection;
+    }
+
+    public Mappings getDiscorevy() {
+        return discorevy;
+    }
+
+    public void setDiscorevy(Mappings discorevy) {
+        this.discorevy = discorevy;
     }
 
 }

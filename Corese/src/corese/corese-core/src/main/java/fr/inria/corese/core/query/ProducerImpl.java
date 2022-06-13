@@ -61,13 +61,11 @@ public class ProducerImpl
     DataProducer ei;
     private DataManager dataManager;
     private DataBroker dataBroker;
-    Graph graph,
-            // cache for handling (fun() as var) created Nodes
-            local;
+    private Graph graph;
+    Graph local;
     Mapper mapper;
     MatcherImpl match;
     QueryEngine qengine;
-    FuzzyMatch fuzzy = new FuzzyMatch();
     RDFizer toRDF;
     Node graphNode;
     private Query query;
@@ -96,10 +94,6 @@ public class ProducerImpl
     public static ProducerImpl create(Graph g) {
         ProducerImpl p = new ProducerImpl(g);
         return p;
-    }
-
-    public FuzzyMatch getFuzzyMatch() {
-        return fuzzy;
     }
 
     @Override
@@ -192,10 +186,15 @@ public class ProducerImpl
     // eg BIND(node as ?x)
     boolean isExtern(Node node) {
         return node.getIndex() == -1
-                || node.getTripleStore() != graph;
+                || node.getTripleStore() != getGraph();
     }
 
-    boolean isType(Query q, Edge edge) {
+    // ?s rdf:type aClass with corese RDFS entailment
+    // do not focus on aClass because RDFS entailment 
+    // does not generate transitive closure
+    // hence another class may match aClass
+    // in this case return true
+    boolean isSkipTypeObjectNode(Query q, Edge edge) {
         return getDataBroker().isTypeProperty(q, edge);
     }
     
@@ -236,9 +235,8 @@ public class ProducerImpl
         int focusNodeIndex = 0;
 
         Node focusNode = null, objectNode = null;
-        boolean isType = false;
       
-        for (Index ei : graph.getIndexList()) {
+        for (Index ei : getGraph().getIndexList()) {
             // enumerate graph index to get the index i of nodes in edge: 0, 1, GRAPHINDEX
             // by convention the index of last is the index of graph node wich is -1
             // search edge query node with a value or which is a constant
@@ -250,12 +248,12 @@ public class ProducerImpl
                 if (qNode != null) {
                     if (index == 1
                             && qNode.isConstant()
-                            && isType(q, edge)) { //&& graph.hasEntailment())                     
-                        // RDFS entailment on ?x rdf:type c:Engineer
-                        // RDFS entailment does not compute transitive closure of subClassOf
-                        // but it checks subsumption with specific method
-                        // hence no focus on object node because
-                        // we want no dichotomy on c:Engineer because we check subsumption                           
+                            && isSkipTypeObjectNode(q, edge)) { 
+                            // ?s rdf:type aClass with corese RDFS entailment
+                            // do not focus on aClass because RDFS entailment 
+                            // does not generate transitive closure
+                            // hence another class may match aClass
+                            // in this case skip binding
                     } 
                     else {
                         Node val = qNode.isVariable() ? env.getNode(qNode) : null;
@@ -272,8 +270,8 @@ public class ProducerImpl
                             }
                         } else {
                             focusNodeIndex = index;
-                            if (index == 0 && !isType(q, edge)) {
-                                // in case query object Node also have a value
+                            if (index == 0 && !isSkipTypeObjectNode(q, edge)) {
+                                // use case where query edge object is also known
                                 objectNode = getValue(edge.getNode(1),  env);
                             }
                             break;
@@ -289,9 +287,10 @@ public class ProducerImpl
             // Producer for an external named graph 
             // bind (us:graph() as ?g) graph ?g { }
             // GraphStore external named graph
-            it = graph.getDataStore().getDefault(emptyFrom).iterate(predicate, focusNode, focusNodeIndex);
+            it = getGraph().getDataStore().getDefault(emptyFrom).iterate(predicate, focusNode, focusNodeIndex);
         } else {
-            boolean skip = graph.isEdgeMetadata() && edge.nbNode()==2;
+            // if query edge has no metadata: skip target edge metadata
+            boolean skip = getGraph().isEdgeMetadata() && edge.nbNode()==2;
             it = getEdges(namedGraphURI, getNode(namedGraphURI, env), from, predicate, focusNode, objectNode, focusNodeIndex, 
                     skip, getAccessRight(env), isNested(q, edge));
         }
@@ -305,21 +304,21 @@ public class ProducerImpl
         return edge.isNested() || q.getGlobalAST().hasMetadata(RDF_STAR_SELECT);
     }    
     
-    // special case with tricky optimizations for rule engine
+    // special case with optimizations for rule engine
     Iterable<Edge> getRuleEdgeList(Query q, Edge edge, Environment env, Node gNode, List<Node> from, Node predicate) {
         if (q.getEdgeList() != null
-                && edge.getIndex() == q.getEdgeIndex()) {
+                && edge.getEdgeIndex() == q.getEdgeIndex()) {
             // transitive rule (see RuleEngine)
             // there is a list of candidate edges
             return q.getEdgeList();
         } else {
             Exp exp = env.getExp();
             if (exp != null && exp.getEdge() == edge && exp.getLevel() != -1) {
+                // edge level computed by RuleEngine ResultWatcher
                 int level = exp.getLevel();
-                // int n = ILIST;
                 // rule engine requires new edges with level >= exp.getLevel()
                 // ILIST is index of specific Edge Index sorted by reverse level
-                Iterable<Edge> it = graph.getDataStore().getDefault(from).level(level).iterate(predicate, null, ILIST);
+                Iterable<Edge> it = getGraph().getDataStore().getDefault(from).level(level).iterate(predicate, null, ILIST);
                 return localMatch(it, gNode, edge, env);
             }
         }
@@ -350,7 +349,7 @@ public class ProducerImpl
         } else {
             // corese graph iterator
             return getDataProducer(queryGraphNode, targetGraphNode, from, skip, access, nested)
-                    .iterate(predicate, focusNode, focusNodeIndex);
+                    .iterate(predicate, focusNode, objectNode, focusNodeIndex);
         }
     }
     
@@ -420,9 +419,9 @@ public class ProducerImpl
             boolean skip, AccessRight access, boolean nested) {
         DataProducer dp;
         if (queryGraphNode == null) {
-            dp = graph.getDataStore().getDefault(from).setSkipEdgeMetadata(skip);
+            dp = getGraph().getDataStore().getDefault(from).setSkipEdgeMetadata(skip);
         } else {
-            dp = graph.getDataStore().getNamed(from, targetGraphNode).setSkipEdgeMetadata(skip);
+            dp = getGraph().getDataStore().getNamed(from, targetGraphNode).setSkipEdgeMetadata(skip);
         }
         if (AccessRight.isActive()) {
             dp.access(access);
@@ -456,15 +455,6 @@ public class ProducerImpl
     }
 
     /**
-     *
-     */
-    boolean isFuzzy(Edge edge, int i) {
-        int type = fuzzy.fuzzy(edge.getLabel());
-        return 0 <= i && i <= 1
-                && (i == type || type == 2);
-    }
-
-    /**
      * Edge Iterator with rdfs entailment, ?x a us:Person return one occurrence of
      * each value of ?x
      * deprecated:
@@ -474,7 +464,7 @@ public class ProducerImpl
      */
     Iterable<Edge> localMatch(Iterable<Edge> it, Node gNode, Edge edge, Environment env) {
         if (isMatch && !env.getQuery().isRelax()) {
-            MatchIterator mit = new MatchIterator(it, gNode, edge, graph, env, match);
+            MatchIterator mit = new MatchIterator(it, gNode, edge, getGraph(), env, match);
             return mit;
         } else {
             // if query is relax, we want all types to find best match
@@ -559,7 +549,7 @@ public class ProducerImpl
             }
         }
         Iterable<Edge> it = getEdges(gNode, src, from, predicate, start, null, index, 
-                graph.isEdgeMetadata(), getAccessRight(env), isNested(env.getQuery(), edge));
+                getGraph().isEdgeMetadata(), getAccessRight(env), isNested(env.getQuery(), edge));
 
         return it;
     }
@@ -583,7 +573,7 @@ public class ProducerImpl
                 // exclude
             } else {
                 Iterable<Edge> it = getEdges(gNode, src, from, predicate, start, null, index, 
-                        graph.isEdgeMetadata(), getAccessRight(env), isNested(env.getQuery(), edge));
+                        getGraph().isEdgeMetadata(), getAccessRight(env), isNested(env.getQuery(), edge));
 
                 if (it != null) {
                     meta.next(it);
@@ -675,7 +665,7 @@ public class ProducerImpl
             // future: template intermediate result 
             return dt;
         }
-        Node node = graph.getNode(dt, false, false);
+        Node node = getGraph().getNode(dt, false, false);
         if (node != null) {
             return node;
         }
@@ -692,14 +682,29 @@ public class ProducerImpl
     }
 
     @Override
-    public void start(Query q) {
-        graph.getEventManager().start(Event.Query, q.getAST());
+    public void start(Query q) {        
+        getGraph().getEventManager().start(event(q), q.getAST());
     }
-
+    
     @Override
     public void finish(Query q) {
-        graph.getEventManager().finish(Event.Query, q.getAST());
+        getGraph().getEventManager().finish(event(q), q.getAST());
+    }  
+    
+    Event event(Query q) {
+        if (q.getAST().isUpdate()) {
+            // fake query exec on global update query for init purpose (Visitor)
+            return Event.InitUpdateQuery;
+        }
+        if (q.isInitMode()) {
+            // fake select where query for initialization purpose e.g. Visitor
+            return Event.InitQuery;
+        }
+        // sparql query or update where part
+        return Event.Query;
     }
+
+
 
     @Override
     public void initPath(Edge edge, int index) {
@@ -716,7 +721,7 @@ public class ProducerImpl
     @Override
     public boolean isGraphNode(Node gNode, List<Node> from, Environment env) {
         Node node = getValue(gNode, env );
-        if (node != null && graph.containsCoreseNode(node)) {
+        if (node != null && getGraph().containsCoreseNode(node)) {
             if (from.isEmpty()) {
                 return true;
             } else {
@@ -789,11 +794,11 @@ public class ProducerImpl
     @Override
     public boolean isProducer(Node node) {
         IDatatype dt =  node.getValue();
-        if (dt.getObject() != null) {
-            return toRDF.isGraphAble(dt.getObject()) || dt.getObject() instanceof Producer;
+        if (dt.getNodeObject() != null) {
+            return toRDF.isGraphAble(dt.getNodeObject()) || dt.getNodeObject() instanceof Producer;
         }
         // system named graph in a GraphStore
-        return graph.getNamedGraph(node.getLabel()) != null;
+        return getGraph().getNamedGraph(node.getLabel()) != null;
     }
 
     /**
@@ -802,11 +807,11 @@ public class ProducerImpl
     @Override
     public Producer getProducer(Node node, Environment env) {
         IDatatype dt =  node.getValue();
-        Object obj = dt.getObject();
+        Object obj = dt.getNodeObject();
         Graph g = null;
 
         if (obj == null) {
-            g = graph.getNamedGraph(node.getLabel());
+            g = getGraph().getNamedGraph(node.getLabel());
         } else if (obj instanceof Producer) {
             return (Producer) obj;
         } else {
@@ -893,9 +898,9 @@ public class ProducerImpl
 //                        return this.graph.size(predNode);
 //                    }
 //                }
-                Node pred = graph.getPropertyNode(qpgn.getExpNode(PREDICATE).getLabel());
+                Node pred = getGraph().getPropertyNode(qpgn.getExpNode(PREDICATE).getLabel());
                 if (pred != null) {
-                    return this.graph.size(pred);
+                    return this.getGraph().size(pred);
                 }
 
                 //case 3: not found
@@ -915,9 +920,9 @@ public class ProducerImpl
     public int getSize(int type) {
         switch (type) {
             case ALL:
-                return this.graph.size();
+                return this.getGraph().size();
             case PREDICATE:
-                return this.graph.getIndex().size();
+                return this.getGraph().getIndex().size();
             //to do for SUBJECT | OBJECT
             //for the moment, cannot get these values directIProducerQP      
             case SUBJECT:
@@ -944,7 +949,7 @@ public class ProducerImpl
     @Override
     public Edge copy(Edge ent) {
         if (EdgeManagerIndexer.test) {
-            return graph.getEdgeFactory().copy(ent);
+            return getGraph().getEdgeFactory().copy(ent);
         }
         return ent;
     }
@@ -1014,5 +1019,9 @@ public class ProducerImpl
 
     public void setNodeIterator(ProducerImplNode pn) {
         this.pn = pn;
+    }
+
+    public void setGraph(Graph graph) {
+        this.graph = graph;
     }
 }

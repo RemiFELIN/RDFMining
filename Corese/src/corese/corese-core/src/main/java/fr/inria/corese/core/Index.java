@@ -69,7 +69,7 @@ public interface Index {
 
 	void declare(Edge edge);
         
-         void declare(Edge edge, boolean duplicate);        
+        void declare(Edge edge, boolean duplicate);        
 	
 	int size(Node pred);
         
@@ -88,9 +88,7 @@ public interface Index {
         NodeManager getNodeManager();
         
         void finishUpdate();
-        
-        void metadata();
-        	
+                	
 	// ************** Update
 	
 	

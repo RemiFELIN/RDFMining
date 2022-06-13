@@ -82,20 +82,41 @@ public class EdgeImpl extends PointerObject implements Edge {
     String basicTriple() {    
         String str = "";
         String name = label;
-        if (getEdgeVariable() != null) {
-            name = getEdgeVariable().toString();
-        } else if (triple != null) {
-            name = triple.getProperty().getName();
+        
+        if (getTriple()!=null && getTriple().getRegex()!=null) {
+            name = getTriple().getRegex().toString();
         }
-        str += getNode(0) + " " + name;
+        else if (getEdgeVariable() != null) {
+            name = getEdgeVariable().toString();
+        } else if (getTriple() != null) {
+            name = getTriple().getProperty().getName();
+        }
+        
+        str += getNode(0);        
+        str += " " + name;
         for (int i = 1; i < nodes.size(); i++) {
-            str += " " + getNode(i);
+            str += " " + getNode(i);           
         }
         return str;
     }
     
     String nestedTriple() {
-        String str = String.format("<<%s %s %s>> [%s]", getNode(0), getPredicateNode(), getNode(1), getNode(Edge.REF_INDEX));        
+        return nestedTripleBasic();
+    }
+    
+    String nestedTripleDebug() {
+        String str = String.format("<<%s[%s] %s %s[%s]>> [%s]", 
+                getNode(0), getNode(0).isVariable()?getNode(0).getLabel():"",
+                getPredicateNode(), 
+                getNode(1), getNode(1).isVariable()?getNode(1).getLabel():"",
+                getNode(Edge.REF_INDEX).getLabel());        
+        return str;
+    }
+    
+    String nestedTripleBasic() {
+        String str = String.format("<<%s %s %s>> [%s]", 
+                getNode(0), getPredicateNode(), getNode(1), 
+                getNode(Edge.REF_INDEX).getLabel());        
         return str;
     }
 
@@ -215,12 +236,12 @@ public class EdgeImpl extends PointerObject implements Edge {
     }
 
     @Override
-    public int getIndex() {
+    public int getEdgeIndex() {
         return index;
     }
 
     @Override
-    public String getLabel() {
+    public String getEdgeLabel() {
         return label;
     }
 
@@ -240,7 +261,7 @@ public class EdgeImpl extends PointerObject implements Edge {
     }
 
     @Override
-    public void setIndex(int n) {
+    public void setEdgeIndex(int n) {
         index = n;
     }
 

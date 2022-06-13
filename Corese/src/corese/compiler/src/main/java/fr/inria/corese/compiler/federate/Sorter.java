@@ -1,7 +1,6 @@
 package fr.inria.corese.compiler.federate;
 
 import fr.inria.corese.sparql.triple.parser.Exp;
-import fr.inria.corese.sparql.triple.parser.Triple;
 import fr.inria.corese.sparql.triple.parser.Variable;
 import java.util.HashMap;
 import java.util.List;
@@ -9,20 +8,25 @@ import java.util.List;
 /**
  * Sort services in BGP until successive services share variables 
  * if possible
+ * Find best first bgp with constant triple or with filter
  * 
  * @author Olivier Corby, Wimmics INRIA I3S, 2018
  *
  */
 public class Sorter {
     
-    class Table extends HashMap<Exp, List<Variable>> { }
- 
+    class Table extends HashMap<Exp, List<Variable>> { }  
+    FederateVisitor visitor;
+    private SelectorFilter selector;
+    
+    Sorter(FederateVisitor vis) {
+        visitor = vis;
+        selector = new SelectorFilter(vis, vis.getAST());
+    }
     
     void process(Exp bgp) {
-        //if (sortable(bgp)) {
-            first(bgp);
-            sort(bgp);
-        //}
+        first(bgp);
+        sort(bgp);
     }
     
     /**
@@ -30,25 +34,34 @@ public class Sorter {
      * exp with a constant term if any.
      */
     void first(Exp bgp) {
-        int j = -1;
+        SorterResult res;
+        double max = 0;
+        int imax = 0;
+        int i = 0;
         
-        for (int i = 0; i<bgp.size(); i++) {
-            Exp exp = bgp.get(i);
-            if (hasConstant(exp)) {
-                if (i > 0) {
-                    setFirst(bgp, i);
-                }
-                return;
+        for (Exp exp : bgp) {
+            res = newSorterResult();           
+            hasConstant(exp, res);
+            hasFilter(exp, res);            
+            double score = res.score();
+            if (exp.isFilter()) {
+                //skip
+            } 
+            else if (score > max) {
+                max = score;
+                imax = i;
             }
-            else if (j == -1 && hasFilter(exp)) {
-                j = i;
-            }
-        }
-        if (j > 0) {
-            // ee has a filter: put it first
-            setFirst(bgp, j);
+            
+            i++;
         }
         
+        if (imax != 0) {
+            setFirst(bgp, imax);
+        }             
+    }
+    
+    SorterResult newSorterResult() {
+        return new SorterResult(getSelector());
     }
     
     void setFirst(Exp bgp, int i) {
@@ -58,69 +71,66 @@ public class Sorter {
     }
     
     boolean hasConstant(Exp exp) {
-        if (exp.isFilter()) {
-        } // nothing yet
-        else if (exp.isTriple() && exp.getTriple().isConstantNode()) {
-            return true;
+        SorterResult r = newSorterResult();
+        hasConstant(exp, r);
+        return r.getConstantTriple()!=null;
+    }
+
+    // focus on triple with constant
+    void hasConstant(Exp exp, SorterResult res) {
+        if (exp.isTriple()) { 
+            res.submit(exp.getTriple());
         } else if (exp.isBGP()) {
             for (Exp ee : exp.getBody()) {
-                if (hasConstant(ee)) {
-                    return true;
-                }
+                hasConstant(ee, res);
             }
         } else if (exp.isService() || exp.isGraph()) {
-            if (hasConstant(exp.getBodyExp())) {
-                return true;
-            }
+            hasConstant(exp.getBodyExp(), res);
         } else if (exp.isUnion()) {
-            if (hasConstant(exp.get(0)) && hasConstant(exp.get(1))) {
-                return true;
-            }
+            SorterResult r1 = newSorterResult();
+            SorterResult r2 = newSorterResult();
+            hasConstant(exp.get(0), r1);
+            hasConstant(exp.get(1), r2);
+            res.union(r1, r2);
         } else if (exp.isOptional() || exp.isMinus()) {
-            if (hasConstant(exp.get(0))) {
-                return true;
-            }
+            hasConstant(exp.get(0), res);
         }
         else if (exp.isQuery()) {
-            if (hasConstant(exp.getAST().getBody())) {
-                return true;
-            }
+            hasConstant(exp.getAST().getBody(), res);
         }
-        return false;
     }
     
     boolean hasFilter(Exp exp) {
-        if (exp.isFilter() || exp.isValues()) {
-            return true;
-        } 
+        return hasFilter(exp, newSorterResult());
+    }
+    
+    boolean hasFilter(Exp exp, SorterResult res) {
+        if (exp.isFilter()) {
+            res.submit(exp.getFilter());
+        }
+        else if (exp.isValues() && exp.getValuesExp().isDefined()) {
+            res.incrFilter();
+        }
         else if (exp.isBGP()) {
             for (Exp ee : exp.getBody()) {
-                if (hasFilter(ee)) {
-                    return true;
-                }
+                hasFilter(ee, res);
             }
         } else if (exp.isService() || exp.isGraph()) {
-            if (hasFilter(exp.getBodyExp())) {
-                return true;
-            }
+            hasFilter(exp.getBodyExp(), res);
         } else if (exp.isUnion()) {
             if (hasFilter(exp.get(0)) && (hasFilter(exp.get(1)) || hasConstant(exp.get(1)))) {
-                return true;
+                res.incrFilter();
             }
             else if (hasConstant(exp.get(0)) && hasFilter(exp.get(1))) {
-                return true;
+                res.incrFilter();
             }
         } else if (exp.isOptional() || exp.isMinus()) {
-            if (hasFilter(exp.get(0))) {
-                return true;
-            }
+            hasFilter(exp.get(0), res);
         }
         else if (exp.isQuery()) {
-            if (hasFilter(exp.getAST().getBody())) {
-                return true;
-            }
+            hasFilter(exp.getAST().getBody(), res);
         }
-        return false;
+        return res.nbFilter()>0;
     }
     
    /**
@@ -186,7 +196,7 @@ public class Sorter {
             if (exp.isService()) {
                 // ok
             }
-            else if (exp.isBGP() || exp.isUnion() || exp.isOptional() || exp.isMinus() || exp.isGraph()) {
+            else if (exp.isBGP() || exp.isBinaryExp()|| exp.isGraph()) {
                 if (sortable(exp)) {
                     // ok
                 }
@@ -199,6 +209,14 @@ public class Sorter {
             }
         }
         return true;
+    }
+
+    public SelectorFilter getSelector() {
+        return selector;
+    }
+
+    public void setSelector(SelectorFilter selector) {
+        this.selector = selector;
     }
 
 }

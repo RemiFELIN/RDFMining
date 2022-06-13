@@ -1,5 +1,6 @@
 package fr.inria.corese.core.query.update;
 
+import fr.inria.corese.core.Event;
 import fr.inria.corese.core.query.Construct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,44 +52,52 @@ public class ManagerImpl implements Manager {
 
     @Override
     public boolean process(Query q, Basic ope, Dataset ds) throws EngineException  {
-//        String uri = ope.getGraph();
-//        boolean isDefault = ope.isDefault();
-//        boolean isNamed = ope.isNamed();
-//        boolean isAll = ope.isAll();
-//        boolean isSilent = ope.isSilent();
-
         getGraphManager().system(ope);
 
         switch (ope.type()) {
 
             case Update.LOAD:
                 return load(q, ope);
-
-            case Update.CREATE:
-                return create(ope);
-
-            case Update.CLEAR:
-                return clear(ope, ds);
-
-            case Update.DROP:
-                return drop(ope, ds);
-
-            case Update.ADD:
-                return add(ope, ds);
-
-            case Update.MOVE:
-                return move(ope, ds);
-
-            case Update.COPY:
-                return copy(ope, ds);
-
+                
             case Update.PROLOG:
                 return true;
 
+            case Update.CREATE:
+                return create(ope);
+                
+            default:
+                
+                getGraphManager().getGraph().getEventManager()
+                        .start(Event.BasicUpdate, ope);
+                boolean res = true;
+                switch (ope.type()) {
+
+                    case Update.CLEAR:
+                        res = clear(ope, ds);
+                        break;
+
+                    case Update.DROP:
+                        res = drop(ope, ds);
+                        break;
+
+                    case Update.ADD:
+                        res = add(ope, ds);
+                        break;
+
+                    case Update.MOVE:
+                        res = move(ope, ds);
+                        break;
+
+                    case Update.COPY:
+                        res = copy(ope, ds);
+                        break;
+                } 
+                
+                getGraphManager().getGraph().getEventManager()
+                        .finish(Event.BasicUpdate, ope);
+                
+                return res;
         }
-
-        return false;
-
     }
     
     boolean load(Query q, Basic ope) throws  EngineException {
@@ -219,7 +228,6 @@ public class ManagerImpl implements Manager {
         cons.setAccessRight(getAccessRight());
         cons.setDebug(query.isDebug());
         cons.insert(lMap, ds);
-        //lMap.setGraph(getGraphManager().getGraph());
     }
 
     @Override
@@ -228,33 +236,26 @@ public class ManagerImpl implements Manager {
         cons.setAccessRight(getAccessRight());
         cons.setDebug(query.isDebug());
         cons.delete(lMap, ds);
-        //lMap.setGraph(getGraphManager().getGraph());
     }
 
-    /**
-     * @return the level
-     */
+    
     public Level getLevel() {
         return level;
     }
 
-    /**
-     * @param level the level to set
-     */
+    
+    @Override
     public void setLevel(Level level) {
         this.level = level;
     }
 
-    /**
-     * @return the accessRight
-     */
+    
     public AccessRight getAccessRight() {
         return accessRight;
     }
 
-    /**
-     * @param accessRight the accessRight to set
-     */
+   
+    @Override
     public void setAccessRight(AccessRight accessRight) {
         this.accessRight = accessRight;
     }

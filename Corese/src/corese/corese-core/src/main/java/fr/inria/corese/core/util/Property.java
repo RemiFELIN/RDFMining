@@ -2,18 +2,27 @@ package fr.inria.corese.core.util;
 
 import fr.inria.corese.compiler.eval.Interpreter;
 import fr.inria.corese.compiler.eval.QuerySolver;
+import fr.inria.corese.compiler.federate.FederateVisitor;
+import fr.inria.corese.compiler.federate.RewriteBGPList;
+import fr.inria.corese.compiler.federate.SelectorFilter;
+import fr.inria.corese.compiler.federate.SelectorIndex;
+import fr.inria.corese.core.EdgeFactory;
 import fr.inria.corese.core.Graph;
 import fr.inria.corese.core.NodeImpl;
 import fr.inria.corese.core.edge.EdgeTop;
+import fr.inria.corese.core.index.EdgeManagerIndexer;
 import fr.inria.corese.core.load.Load;
 import fr.inria.corese.core.load.LoadException;
+import fr.inria.corese.core.load.QueryLoad;
 import fr.inria.corese.core.load.Service;
 import fr.inria.corese.core.producer.DataFilter;
 import fr.inria.corese.core.query.CompileService;
 import fr.inria.corese.core.query.MatcherImpl;
+import fr.inria.corese.core.query.ProviderService;
 import fr.inria.corese.core.query.QueryProcess;
 import fr.inria.corese.core.rule.RuleEngine;
 import fr.inria.corese.core.transform.Transformer;
+import static fr.inria.corese.core.util.Property.Value.DATATYPE_ENTAILMENT;
 import static fr.inria.corese.core.util.Property.Value.IMPORT;
 import static fr.inria.corese.core.util.Property.Value.LOAD_RULE;
 import static fr.inria.corese.core.util.Property.Value.PREFIX;
@@ -21,6 +30,7 @@ import static fr.inria.corese.core.util.Property.Value.SERVICE_SEND_PARAMETER;
 import static fr.inria.corese.core.util.Property.Value.VARIABLE;
 import fr.inria.corese.core.visitor.solver.QuerySolverVisitorRule;
 import fr.inria.corese.core.visitor.solver.QuerySolverVisitorTransformer;
+import fr.inria.corese.kgram.core.Eval;
 import fr.inria.corese.kgram.core.Mappings;
 import fr.inria.corese.kgram.core.Query;
 import fr.inria.corese.sparql.api.IDatatype;
@@ -37,6 +47,7 @@ import fr.inria.corese.sparql.triple.parser.AccessRight;
 import fr.inria.corese.sparql.triple.parser.Constant;
 import fr.inria.corese.sparql.triple.parser.NSManager;
 import fr.inria.corese.sparql.triple.parser.ParserHandler;
+import fr.inria.corese.sparql.triple.parser.context.ContextLog;
 import fr.inria.corese.sparql.triple.parser.visitor.ASTParser;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -99,6 +110,44 @@ public class Property {
         VARIABLE,
         IMPORT,
         
+        TRACE_MEMORY,
+        TRACE_GENERIC,
+        // generic property for testing purpose
+        TEST_FEDERATE,
+        // turtle file path where federation are defined
+        FEDERATION,
+        // generate partition of connected bgp
+        FEDERATE_BGP,
+        // do not split complete partition if any
+        FEDERATE_PARTITION,
+        // test and use join between right and left exp of optional
+        FEDERATE_OPTIONAL,
+        FEDERATE_MINUS,
+        FEDERATE_UNDEFINED,
+        // complete bgp partition with additional partition of triple alone (as before)
+        FEDERATE_COMPLETE,
+        // source selection with filter
+        FEDERATE_FILTER,
+        FEDERATE_FILTER_ACCEPT,
+        FEDERATE_FILTER_REJECT,
+        // source selection with bind (exists {t1 . t2} as ?b_i)
+        FEDERATE_JOIN,
+        // authorize path in join test
+        FEDERATE_JOIN_PATH,
+        FEDERATE_SPLIT,
+        
+        // index query pattern skip predicate for source discovery
+        FEDERATE_INDEX_SKIP,
+        FEDERATE_INDEX_PATTERN,
+        FEDERATE_INDEX_SUCCESS,
+        FEDERATE_INDEX_LENGTH,
+        
+        FEDERATE_BLACKLIST,
+        FEDERATE_BLACKLIST_EXCEPT,
+        FEDERATE_QUERY_PATTERN,
+        FEDERATE_PREDICATE_PATTERN,
+
+        
         // boolan value
         DISPLAY_URI_AS_PREFIX,
         DISPLAY_EDGE_AS_RDF4J,
@@ -115,6 +164,9 @@ public class Property {
         CONSTRAINT_GRAPH,
         // graph ?g { } iterate std and external named graph
         EXTERNAL_NAMED_GRAPH,
+        GRAPH_INDEX_END,
+        GRAPH_INDEX_TRANSITIVE,
+        GRAPH_INDEX_LOAD_SKIP,
         // rdf* draft
         RDF_STAR,
         // enforce compliance: no literal as subject
@@ -123,6 +175,8 @@ public class Property {
         RDF_STAR_SELECT,
         // joker: asserted delete triple deletes asserted and nested triple (default false)
         RDF_STAR_DELETE,
+        // use TripleNode implementation
+        RDF_STAR_TRIPLE,
         // corese server for micro services
         REENTRANT_QUERY,
         // activate access level control (default is true)
@@ -131,10 +185,15 @@ public class Property {
         ACCESS_RIGHT,
         // activate @event ldscript function call for sparql query processing
         EVENT,
-        VERBOSE,
         SKOLEMIZE,
+        
+        VERBOSE,
         SOLVER_DEBUG,
         TRANSFORMER_DEBUG,
+        
+        LOG_NODE_INDEX,
+        LOG_RULE_CLEAN,
+        
         SOLVER_SORT_CARDINALITY,
         SOLVER_QUERY_PLAN, // STD | ADVANCED
         // string value
@@ -146,13 +205,19 @@ public class Property {
         PREFIX,
         // Testing purpose
         INTERPRETER_TEST,
-        
+        // 1 ; 01 ; 1.0 have different Node
+        // when true:  nodes can be joined by graph matching
+        // when false: they do not join
+        DATATYPE_ENTAILMENT,
         SPARQL_COMPLIANT,
         SPARQL_ORDER_UNBOUND_FIRST,
         
         OWL_CLEAN,
         OWL_CLEAN_QUERY,
         OWL_RL,
+        
+        RULE_TRANSITIVE_FUNCTION,
+        RULE_TRANSITIVE_OPTIMIZE,
         
         FUNCTION_PARAMETER_MAX,
         
@@ -161,6 +226,7 @@ public class Property {
         GUI_BROWSE,
         GUI_XML_MAX,
         GUI_TRIPLE_MAX,
+        GUI_INDEX_MAX,
         // rdf+xml turtle json
         GUI_CONSTRUCT_FORMAT,
         GUI_SELECT_FORMAT,
@@ -196,6 +262,7 @@ public class Property {
         SERVICE_PARAMETER,
         SERVICE_LOG,
         SERVICE_REPORT,
+        SERVICE_DISPLAY_RESULT,
 
         // service result may be RDF graph (e.g. when format=turtle)
         // apply service query on the graph 
@@ -205,6 +272,7 @@ public class Property {
     static {
         singleton = new Property();
         set(SERVICE_SEND_PARAMETER, true);
+        set(DATATYPE_ENTAILMENT, true);
     }
 
     Property() {
@@ -239,7 +307,15 @@ public class Property {
         getSingleton().basicSet(value, str);
     }
     
-     public static void set(Value value, int n) {
+    public static void set(Value value, String... str)  {
+        getSingleton().basicSet(value, str);
+    }
+    
+    public static void set(Value value, double d)  {
+        getSingleton().basicSet(value, Double.toString(d));
+    }
+    
+    public static void set(Value value, int n) {
         getSingleton().basicSet(value, n);
     }
 
@@ -341,7 +417,7 @@ public class Property {
         }
     }
 
-    void define(String name, String value) throws IOException {
+    public void define(String name, String value) throws IOException {
         Value pname = Value.valueOf(name);
         if (value.equals("true") | value.equals("false")) {
             Boolean b = Boolean.valueOf(value);
@@ -388,7 +464,7 @@ public class Property {
             case GRAPH_NODE_AS_DATATYPE:
                 NodeImpl.byIDatatype = b;
                 break;
-                
+                                
             case CONSTRAINT_NAMED_GRAPH:
                 Graph.CONSTRAINT_NAMED_GRAPH = b;
                 break;
@@ -408,7 +484,16 @@ public class Property {
             case SKOLEMIZE:
                 Graph.setDefaultSkolem(b);
                 break;
+                
+            case GRAPH_INDEX_END:
+                EdgeManagerIndexer.RECORD_END = b;
+                break;
 
+            case RDF_STAR_TRIPLE:
+                EdgeFactory.EDGE_TRIPLE_NODE = b;
+                EdgeFactory.OPTIMIZE_EDGE = !b;
+                // continue;
+                
             case RDF_STAR:
                 Graph.setRDFStar(b);
                 ASTParser.RDF_STAR = b;
@@ -424,13 +509,19 @@ public class Property {
                 DataFilter.RDF_STAR_SELECT = b;
                 break;
                 
+            case DATATYPE_ENTAILMENT:
+                // when true: graph match can join 1, 01, 1.0 
+                DatatypeMap.DATATYPE_ENTAILMENT = b;
+                break;
+                
             case SPARQL_COMPLIANT:
                 // default is false
                 // true: literal is different from string
-                // true: do not join 1 and 1.0 
                 // true: from named without from is sparql compliant
                 DatatypeMap.setSPARQLCompliant(b);
                 QuerySolver.SPARQL_COMPLIANT_DEFAULT = b;
+                // SPARQL_COMPLIANT => ! DATATYPE_ENTAILMENT
+                set(DATATYPE_ENTAILMENT, !b);
                 break;
                 
             case SPARQL_ORDER_UNBOUND_FIRST:
@@ -482,6 +573,48 @@ public class Property {
             case INTERPRETER_TEST:
                 Interpreter.testNewEval = b;
                 break;
+                
+            case FEDERATE_BGP:
+                FederateVisitor.FEDERATE_BGP=b;
+                break;
+                
+            case FEDERATE_PARTITION:
+                FederateVisitor.PARTITION=b;
+                break;
+                
+            case FEDERATE_COMPLETE:
+                FederateVisitor.COMPLETE_BGP=b;
+                break;
+                
+            case FEDERATE_FILTER:
+                FederateVisitor.SELECT_FILTER=b;
+                break;
+                
+            case FEDERATE_JOIN:
+                FederateVisitor.SELECT_JOIN=b;
+                FederateVisitor.USE_JOIN=b;
+                break;
+                
+            case FEDERATE_OPTIONAL:
+                FederateVisitor.OPTIONAL=b;
+                break;
+                
+            case FEDERATE_MINUS:
+                FederateVisitor.MINUS=b;
+                break;
+                
+            case FEDERATE_UNDEFINED:
+                FederateVisitor.UNDEFINED=b;
+                break;
+                
+            case FEDERATE_JOIN_PATH:
+                FederateVisitor.SELECT_JOIN_PATH=b;
+                break;
+                    
+            case TRACE_GENERIC:
+                FederateVisitor.TRACE_FEDERATE=b;
+                RewriteBGPList.TRACE_BGP_LIST=b;
+                break;
 
             case SOLVER_SORT_CARDINALITY:
                 QueryProcess.setSort(b);
@@ -500,6 +633,20 @@ public class Property {
                 break;
         }
     }
+    
+    void basicSet(Value value, String... str) {
+        if (isDebug()) {
+          logger.info(value + " = " + str);
+        }  
+        switch (value) {
+            case FEDERATE_BLACKLIST:
+                blacklist(str);
+                break;
+            case FEDERATE_BLACKLIST_EXCEPT:
+                blacklistExcept(str);
+                break;
+        }
+    }
 
     void basicSet(Value value, String str)  {
         if (isDebug()) {
@@ -507,6 +654,50 @@ public class Property {
         }
         getStringProperty().put(value, str);
         switch (value) {
+            
+            case FEDERATION:
+                defineFederation(str);
+                break;
+                
+            case FEDERATE_INDEX_PATTERN:
+                SelectorIndex.QUERY_PATTERN = str;
+                break;
+                
+             case FEDERATE_QUERY_PATTERN:
+                 setQueryPattern(str);
+                break; 
+                
+             case FEDERATE_PREDICATE_PATTERN:
+                 setPredicatePattern(str);
+                break;  
+                
+             case FEDERATE_FILTER_ACCEPT:
+                 setFilterAccept(str);
+                 break;
+                 
+            case FEDERATE_FILTER_REJECT:
+                 setFilterReject(str);
+                 break;
+                 
+            case FEDERATE_INDEX_SKIP:
+                setIndexSkip(str);
+                break;
+                
+            case FEDERATE_BLACKLIST:
+                blacklist(str);
+                break;
+                
+            case FEDERATE_BLACKLIST_EXCEPT:
+                blacklistExcept(str);
+                break; 
+                
+            case FEDERATE_SPLIT:
+                split(str);
+                break;
+                
+            case FEDERATE_INDEX_SUCCESS:
+                FederateVisitor.NB_SUCCESS = Double.valueOf(str);
+                break;    
             
             case LOAD_FORMAT:
                 Load.LOAD_FORMAT = str;
@@ -564,6 +755,87 @@ public class Property {
         }
     }
     
+    void setQueryPattern(String str) {
+        QueryLoad ql = QueryLoad.create();
+        for (Pair pair : getValueList(Value.FEDERATE_QUERY_PATTERN)) {
+            try {
+                SelectorIndex.defineQueryPattern(pair.getKey(), ql.readWE(pair.getPath()));
+            } catch (LoadException ex) {
+                logger.error(ex.getMessage());
+            }
+        }
+    }
+    
+    void setPredicatePattern(String str) {
+        QueryLoad ql = QueryLoad.create();
+        for (Pair pair : getValueList(Value.FEDERATE_PREDICATE_PATTERN)) {
+            try {
+                SelectorIndex.definePredicatePattern(pair.getKey(), ql.readWE(pair.getPath()));
+            } catch (LoadException ex) {
+                logger.error(ex.getMessage());
+            }
+        }
+    }
+    
+    void setFilterAccept(String str) {
+        for (String ope : str.split(SEP)) {
+            SelectorFilter.defineOperator(ope, true);
+        }
+    }
+    
+    void setFilterReject(String str) {
+        for (String ope : str.split(SEP)) {
+            SelectorFilter.rejectOperator(ope, true);
+        }
+    }
+    
+    void setIndexSkip(String str) {
+        for (String ope : str.split(SEP)) {
+            SelectorIndex.skipPredicate(ope);
+        }
+    }
+        
+    void split(String list) {
+        ArrayList<String> alist = new ArrayList<>();
+        for (String str : list.split(SEP)) {
+            alist.add(NSManager.nsm().toNamespace(str));
+        }
+        logger.info("Split: " + alist);
+        FederateVisitor.DEFAULT_SPLIT = alist;
+    }
+    
+    void blacklist(String list) {
+        ArrayList<String> alist = new ArrayList<>();
+        for (String str : list.split(SEP)) {
+            alist.add(str);
+        }
+        FederateVisitor.BLACKLIST = alist;
+    }
+    
+    void blacklistExcept(String list) {
+        ArrayList<String> alist = new ArrayList<>();
+        for (String str : list.split(SEP)) {
+            alist.add(str);
+        }
+        FederateVisitor.BLACKLIST_EXCEPT = alist;
+    }
+
+    void blacklist(String... list) {
+        ArrayList<String> alist = new ArrayList<>();
+        for (String str : list) {
+            alist.add(str);
+        }
+        FederateVisitor.BLACKLIST = alist;
+    }
+    
+    void blacklistExcept(String... list) {
+        ArrayList<String> alist = new ArrayList<>();
+        for (String str : list) {
+            alist.add(str);
+        }
+        FederateVisitor.BLACKLIST_EXCEPT = alist;
+    }
+    
     void basicSet(Value value, int n) {
         if (isDebug()) {
             logger.info(value + " = " + n);
@@ -578,12 +850,22 @@ public class Property {
                 // use integer table
                 break;
                 
+            case SERVICE_DISPLAY_RESULT:
+                ProviderService.DISPLAY_RESULT_MAX = n;
+                ContextLog.DISPLAY_RESULT_MAX=n;
+                Eval.DISPLAY_RESULT_MAX=n;
+                break;
+                
             case LOAD_LIMIT:
                 Load.setLimitDefault(n);
                 break;
                 
             case FUNCTION_PARAMETER_MAX:
                 ASTExtension.FUNCTION_PARAMETER_MAX = n;
+                break;
+                
+            case FEDERATE_INDEX_LENGTH:
+                FederateVisitor.NB_ENDPOINT = n;
                 break;
         }
     }
@@ -633,6 +915,16 @@ public class Property {
             default:
                 QuerySolver.QUERY_PLAN = Query.QP_HEURISTICS_BASED;
                 break;
+        }
+    }
+    
+    void defineFederation(String path) {
+        logger.info("federation: " + path);
+        QueryProcess exec = QueryProcess.create(Graph.create());
+        try {
+            Graph g = exec.defineFederation(path);
+        } catch (IOException | EngineException | LoadException ex) {
+                logger.error(ex.toString());
         }
     }
     

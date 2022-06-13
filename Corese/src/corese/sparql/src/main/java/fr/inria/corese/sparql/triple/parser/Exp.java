@@ -1,12 +1,14 @@
 package fr.inria.corese.sparql.triple.parser;
 
 import fr.inria.corese.sparql.datatype.DatatypeMap;
+import fr.inria.corese.sparql.datatype.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.inria.corese.sparql.exceptions.QuerySemanticException;
 import fr.inria.corese.sparql.triple.api.ASTVisitor;
 import fr.inria.corese.sparql.triple.api.ExpressionVisitor;
+import fr.inria.corese.sparql.triple.api.FederateMerge;
 import fr.inria.corese.sparql.triple.api.Walker;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,7 +35,7 @@ import java.util.logging.Level;
  * @author Olivier Corby
  */
 public abstract class Exp extends TopExp implements Iterable<Exp> {
-
+   
     /**
      * logger from log4j
      */
@@ -101,7 +103,7 @@ public abstract class Exp extends TopExp implements Iterable<Exp> {
 
     @Override
     public Iterator<Exp> iterator() {
-        return body.iterator();
+        return getBody().iterator();
     }
 
     boolean isBinary() {
@@ -113,11 +115,19 @@ public abstract class Exp extends TopExp implements Iterable<Exp> {
     }
 
     public void add(int n, Exp exp) {
-        body.add(n, exp);
+        getBody().add(n, exp);
     }
 
     public void addAll(Exp exp) {
-        body.addAll(exp.getBody());
+        getBody().addAll(exp.getBody());
+    }
+    
+    public void addDistinct(Exp exp) {
+        for (Exp e : exp) {
+            if (! getBody().contains(e)) {
+                getBody().add(e);
+            }
+        }
     }
 
     public List<Exp> getBody() {
@@ -126,7 +136,7 @@ public abstract class Exp extends TopExp implements Iterable<Exp> {
 
     public boolean isConnected(Triple t) {
         for (Exp exp : this) {
-            if (exp.isTriple() && !exp.isFilter()) {
+            if (exp.isTriple()) {
                 if (exp.getTriple().isConnected(t)) {
                     return true;
                 }
@@ -137,7 +147,7 @@ public abstract class Exp extends TopExp implements Iterable<Exp> {
 
     public boolean isConnected(Exp exp) {
         for (Exp ee : exp) {
-            if (ee.isTriple() && !ee.isFilter()) {
+            if (ee.isTriple()) {
                 if (isConnected(ee.getTriple())) {
                     return true;
                 }
@@ -158,6 +168,27 @@ public abstract class Exp extends TopExp implements Iterable<Exp> {
         }
         return false;
     }
+    
+    public List<Triple> intersectionTriple(BasicGraphPattern bgp) {
+        ArrayList<Triple> list = new ArrayList<>();
+        for (Exp exp : this) {
+            if (exp.isTriple()) {
+                if (bgp.getBody().contains(exp)) {
+                    list.add(exp.getTriple());
+                }
+            }
+        }
+        return list;
+    }
+    
+    public boolean hasIntersection(List<BasicGraphPattern> list) {
+        for (BasicGraphPattern exp : list) {
+            if (!intersectionTriple(exp).isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     // BGP body of service, graph
     public Exp getBodyExp() {
@@ -166,7 +197,7 @@ public abstract class Exp extends TopExp implements Iterable<Exp> {
         }
         return this;
     }
-
+    
     public void setBodyExp(Exp exp) {
         set(0, exp);
     }
@@ -220,9 +251,6 @@ public abstract class Exp extends TopExp implements Iterable<Exp> {
         return null;
     }
 
-//	public void setAST(ASTQuery ast){
-//		
-//	}
     public ASTQuery getAST() {
         return null;
     }
@@ -371,6 +399,10 @@ public abstract class Exp extends TopExp implements Iterable<Exp> {
     public Union getUnion() {
         return null;
     }
+    
+    public BasicGraphPattern getBasicGraphPattern(){
+        return null;
+    }
 
     public Exist getExist() {
         return null;
@@ -381,6 +413,10 @@ public abstract class Exp extends TopExp implements Iterable<Exp> {
     }
 
     public boolean isAnd() {
+        return false;
+    }
+    
+    public boolean isStack() {
         return false;
     }
 
@@ -538,6 +574,18 @@ public abstract class Exp extends TopExp implements Iterable<Exp> {
         }
         walker.leave(this);
     }
+    
+    public boolean hasUndefinedService() {
+        for (Exp e : this) {
+            if (e.isService() && e.getService().isUndefined()) {
+                return  true;
+            }
+            if (e.hasUndefinedService()) {
+                return true;
+            }
+        }
+        return false;
+    } 
 
     Exp expandList() {
         BasicGraphPattern bgp = BasicGraphPattern.create();
@@ -554,5 +602,18 @@ public abstract class Exp extends TopExp implements Iterable<Exp> {
             }
         }
     }
-
+    
+    // return bgp list of RDF list if any
+    public List<BasicGraphPattern> getRDFList(List<BasicGraphPattern> list) {
+        return new ExtractList().getRDFList(this, list);
+    }
+    
+    public List<BasicGraphPattern> getBGPWithBnodeVariable(List<BasicGraphPattern> list) {
+        return new ExtractList().getBGPWithBnodeVariable(this, list);
+    }
+    
+    public List<BasicGraphPattern> getBGPWithBnodeVariable(List<BasicGraphPattern> list, FederateMerge fm) {
+        return new ExtractList().getBGPWithBnodeVariable(this, list, fm);
+    }
+ 
 }
