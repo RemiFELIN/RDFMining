@@ -73,5 +73,6 @@ java \
     -p 9100 \
     -lp \
     -pp file://$PROFILE \
-    -init $PROPERTIES
+    -init $PROPERTIES \
+    -su # super user
 
