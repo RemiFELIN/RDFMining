@@ -65,6 +65,10 @@ public class CmdLineParameters {
 			"--timeout" }, usage = "use this time-out (in seconds) for axiom testing", metaVar = "SECONDS")
 	public long timeOut = 0;
 
+	@Option(name = "-l", aliases = {
+			"--loop" }, usage = "Launch SubClassOf assessment with loop operator from Corese", metaVar = "LOOP_CORESE")
+	public boolean loop = false;
+
 	// **************************************************//
 	// List of parameters as the input for GE operation //
 	// **************************************************//

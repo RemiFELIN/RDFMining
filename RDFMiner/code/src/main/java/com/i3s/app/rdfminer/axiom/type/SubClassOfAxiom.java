@@ -3,10 +3,16 @@
  */
 package com.i3s.app.rdfminer.axiom.type;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
+import com.i3s.app.rdfminer.sparql.corese.Format;
+import com.i3s.app.rdfminer.sparql.corese.ResultParser;
 import org.apache.jena.atlas.lib.Timer;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
@@ -274,7 +280,16 @@ public class SubClassOfAxiom extends Axiom {
 			// This is the EKAW 2014 version, without time-out:
 //			numExceptions = endpoint.count("?x",
 //					subClass.graphPattern + "\n" + superClassComplement.graphPattern, 0);
-			getExceptions(endpoint, 1000);
+			if (RDFMiner.parameters.loop) {
+				try {
+					getExceptionsUsingCoreseLoop();
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.exit(1);
+				}
+			} else {
+				getExceptions(endpoint, 1000);
+			}
 //			timeSpent = timer.endTimer();
 			// Log the response time
 //			logger.info("Exceptions query finished - time spent: " + timeSpent + "ms.");
@@ -298,6 +313,39 @@ public class SubClassOfAxiom extends Axiom {
 		// set the ARI of axiom
 		ari = ARI();
 		logger.info("ARI = " + ari);
+	}
+
+	public void getExceptionsUsingCoreseLoop() throws URISyntaxException, IOException {
+		logger.info("Compute the number of exceptions with a proposal optimization and loop operator from Corese ...");
+		CoreseEndpoint corese = new CoreseEndpoint(Global.CORESE_IP_ADDRESS, null);
+		// Writing the query using loop operator, we will ask our Virtuoso server from the Corese server as a SERVICE
+		String query = "@timeout 100000000\n" +
+				"SELECT distinct ?x WHERE \n" +
+				"{\n" +
+				"\n" +
+				"    SERVICE <http://134.59.130.136:9200/sparql?loop=true&limit=1000> {\n" +
+				"        SELECT distinct ?t WHERE {\n" +
+				"            ?x a <http://dbpedia.org/ontology/Eukaryote> , ?t\n" +
+				"        }      \n" +
+				"    }\n" +
+				"    \n" +
+				"    SERVICE <http://134.59.130.136:9200/sparql> {\n" +
+				"        values ?t {undef}\n" +
+				"        FILTER NOT EXISTS {\n" +
+				"            ?z a ?t , <http://schema.org/Country>\n" +
+				"        }\n" +
+				"    }\n" +
+				"\n" +
+				"    SERVICE <http://134.59.130.136:9200/sparql?loop=true&limit=10000> {\n" +
+				"        ?x a <http://dbpedia.org/ontology/Eukaryote> , ?t\n" +
+				"    }\n" +
+				"    \n" +
+				"}";
+		String resultsAsJSON = corese.select(Format.JSON, query);
+		List<String> instances = ResultParser.getResultsfromVariable("x", resultsAsJSON);
+		logger.info(instances.size() + " exception(s) found ...");
+		numExceptions = instances.size();
+		if (numExceptions > 0 && numExceptions < 100) exceptions = instances;
 	}
 
 	public void getExceptions(VirtuosoEndpoint endpoint, int size) {
