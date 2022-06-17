@@ -280,7 +280,7 @@ public class SubClassOfAxiom extends Axiom {
 //			logger.info("Exceptions query finished - time spent: " + timeSpent + "ms.");
 		}
 //		// We don't need to compute exceptions if we get a timeout from exceptions SPARQL request
-		if (numExceptions > 0 && numExceptions < 100 && !isTimeout) {
+		if (numExceptions > 0 && numExceptions < 100 && !isTimeout && RDFMiner.parameters.timeOut > 0) {
 			logger.info(numExceptions + " exception(s) found ! retrieving in collection ...");
 			// retrieve the exceptions
 			ResultSet exc = endpoint.select("DISTINCT ?x WHERE { " + subClass.graphPattern + "\n"
@@ -306,20 +306,6 @@ public class SubClassOfAxiom extends Axiom {
 		List<String> types = new ArrayList<>();
 		// get all types related to the subClassExpression for which it does not exists any ?z of this type and superClassExpression
 		while(offset != numIntersectingClasses) {
-			/*logger.info("[DEBUG]\n" + "distinct(?t) WHERE { " +
-								"{ " +
-									"SELECT ?t WHERE { " +
-									"{ " +
-										"SELECT distinct(?t) WHERE { " +
-											subClass.graphPattern + " ?x a ?t " +
-										"} ORDER BY ?t " +
-									"} " +
-								"} LIMIT " + size + " OFFSET " + offset + " " +
-							"} " +
-							"FILTER NOT EXISTS { " +
-								superClass.graphPattern + " ?x a ?t" +
-							"} } ");*/
-
 			ResultSet cfs = endpoint.select("distinct(?t) WHERE { " +
 					"{ " +
 						"SELECT ?t WHERE { " +
