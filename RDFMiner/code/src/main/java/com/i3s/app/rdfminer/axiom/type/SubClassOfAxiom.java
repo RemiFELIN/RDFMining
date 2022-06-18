@@ -325,7 +325,7 @@ public class SubClassOfAxiom extends Axiom {
 				"\n" +
 				"    SERVICE <http://134.59.130.136:9200/sparql?loop=true&limit=1000> {\n" +
 				"        SELECT distinct ?t WHERE {\n" +
-				"            ?x a <http://dbpedia.org/ontology/Eukaryote> , ?t\n" +
+				"            " + subClass.graphPattern + " ?x a ?t\n" +
 				"        }      \n" +
 				"    }\n" +
 				"    \n" +
@@ -337,7 +337,7 @@ public class SubClassOfAxiom extends Axiom {
 				"    }\n" +
 				"\n" +
 				"    SERVICE <http://134.59.130.136:9200/sparql?loop=true&limit=10000> {\n" +
-				"        ?x a <http://dbpedia.org/ontology/Eukaryote> , ?t\n" +
+				"        " + superClass.graphPattern + " ?x a ?t\n" +
 				"    }\n" +
 				"    \n" +
 				"}";
