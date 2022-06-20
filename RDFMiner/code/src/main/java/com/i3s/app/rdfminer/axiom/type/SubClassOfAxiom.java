@@ -332,12 +332,12 @@ public class SubClassOfAxiom extends Axiom {
 				"    SERVICE <http://134.59.130.136:9200/sparql> {\n" +
 				"        values ?t {undef}\n" +
 				"        FILTER NOT EXISTS {\n" +
-				"            ?z a ?t , <http://schema.org/Country>\n" +
+				"            " + superClass.graphPattern + " ?x a ?t \n" +
 				"        }\n" +
 				"    }\n" +
 				"\n" +
 				"    SERVICE <http://134.59.130.136:9200/sparql?loop=true&limit=10000> {\n" +
-				"        " + superClass.graphPattern + " ?x a ?t\n" +
+				"        " + subClass.graphPattern + " ?x a ?t\n" +
 				"    }\n" +
 				"    \n" +
 				"}";
@@ -379,16 +379,16 @@ public class SubClassOfAxiom extends Axiom {
 		// truncate query
 		// for each types in the list, we will search any instances such as :
 		int i = 0;
-//		int k = 100;
+		int k = 100;
 		// set the LIMIT ... OFFSET ... values
 		int limit = 10000;
 		offset = 0;
 		List<String> instances = new ArrayList<>();
-//		while(i != types.size()) {
-//			int end = Math.min(i + k, types.size());
+		while(i != types.size()) {
+			int end = Math.min(i + k, types.size());
 			StringBuilder body = new StringBuilder(subClass.graphPattern +
 					"?x a ?t values (?t) { ");
-			for(String type : types) {
+			for(String type : types.subList(i, end)) {
 				body.append("(").append(type).append(") ");
 			}
 			body.append("} ");
@@ -413,8 +413,8 @@ public class SubClassOfAxiom extends Axiom {
 				}
 			}
 
-//			i += Math.min(types.size() - i, k);
-//		}
+			i += Math.min(types.size() - i, k);
+		}
 		logger.info(instances.size() + " exception(s) found ...");
 		numExceptions = instances.size();
 		if (numExceptions > 0 && numExceptions < 100) exceptions = instances;
