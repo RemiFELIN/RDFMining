@@ -50,7 +50,7 @@ public abstract class Axiom extends Results {
 	 * <a href="http://www.javaworld.com/article/2077361/learn-java/profiling-cpu-usage-from-within-a-java-application.html">this
 	 * 2002 blog post</a>.</p>
 	 * <p>The implementation in C language of this native method is contained in the two source files
-	 * <code>rdfminer_RDFMiner.h</code> and <code>rdfminer_RDFMiner.c</code>.</p>
+	 * <code>rdfminer_axiom_Axiom.h</code> and <code>rdfminer_axiom_Axiom.c</code>.</p>
 	 *
 	 * @return the number of milliseconds of CPU time used by the current process so far
 	 */

@@ -379,12 +379,12 @@ public class SubClassOfAxiom extends Axiom {
 		// truncate query
 		// for each types in the list, we will search any instances such as :
 		int i = 0;
-		int k = 100;
+		int k = 50;
 		// set the LIMIT ... OFFSET ... values
 		int limit = 10000;
-		offset = 0;
 		List<String> instances = new ArrayList<>();
 		while(i != types.size()) {
+			offset = 0;
 			int end = Math.min(i + k, types.size());
 			StringBuilder body = new StringBuilder(subClass.graphPattern +
 					"?x a ?t values (?t) { ");
@@ -395,7 +395,6 @@ public class SubClassOfAxiom extends Axiom {
 			while(true) {
 //				logger.info("truncate request\n" + "DISTINCT ?x where { " + body + "} LIMIT " + limit + " OFFSET " + offset);
 				ResultSet cfs = endpoint.select("DISTINCT ?x where { " + body + "} LIMIT " + limit + " OFFSET " + offset , 0);
-				//			logger.info("[DEBUG]\ndistinct ?x where { " + body + "} ");
 				while (cfs.hasNext()) {
 					QuerySolution solution = cfs.next();
 					RDFNode x = solution.get("x");
