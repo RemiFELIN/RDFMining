@@ -64,7 +64,7 @@ public class SubClassOfAxiom extends Axiom {
 	 * A map to hold the maximum test time observed so far for an accepted
 	 * SubClassOf axiom.
 	 */
-	public static TimeMap maxTestTime = new TimeMap();
+//	public static TimeMap maxTestTime = new TimeMap();
 
 	/**
 	 * The complexity of current axiom : if one (or both) of the part is composed of two or more URI
@@ -156,7 +156,6 @@ public class SubClassOfAxiom extends Axiom {
 			else if (superClassComplement.contains(rdfNodePair, endpoint)) {
 				numExceptions++;
 				exceptions.add(Expression.sparqlEncode(rdfNodePair.x));
-//				logger.info("Found exception: " + pair);
 			}
 			// A better idea would be to issue a SPARQL query
 			// and let the SPARQL endpoint do the work: see the method below...
@@ -273,10 +272,6 @@ public class SubClassOfAxiom extends Axiom {
 			}
 			
 		} else {
-			// Set a timer to compute the result time of each query
-//			Timer timer = new Timer();
-//			timer.startTimer();
-			// logger.warn("Time Out = 0 s");
 			// This is the EKAW 2014 version, without time-out:
 //			numExceptions = endpoint.count("?x",
 //					subClass.graphPattern + "\n" + superClassComplement.graphPattern, 0);
@@ -290,11 +285,8 @@ public class SubClassOfAxiom extends Axiom {
 			} else {
 				getExceptions(endpoint, 1000);
 			}
-//			timeSpent = timer.endTimer();
-			// Log the response time
-//			logger.info("Exceptions query finished - time spent: " + timeSpent + "ms.");
 		}
-//		// We don't need to compute exceptions if we get a timeout from exceptions SPARQL request
+		// We don't need to compute exceptions if we get a timeout from exceptions SPARQL request
 		if (numExceptions > 0 && numExceptions < 100 && !isTimeout && RDFMiner.parameters.timeOut > 0) {
 			logger.info(numExceptions + " exception(s) found ! retrieving in collection ...");
 			// retrieve the exceptions
@@ -306,11 +298,6 @@ public class SubClassOfAxiom extends Axiom {
 				exceptions.add(Expression.sparqlEncode(x));
 			}
 		}
-		// set the time spent for the computation of exceptions
-//		elapsedTime = timeSpent;
-		// logger.info("Possibility = " + possibility().doubleValue());
-		// logger.info("Necessity = " + necessity().doubleValue());
-		// set the ARI of axiom
 		ari = ARI();
 		logger.info("ARI = " + ari);
 	}
@@ -319,8 +306,8 @@ public class SubClassOfAxiom extends Axiom {
 		logger.info("Compute the number of exceptions with a proposal optimization and loop operator from Corese ...");
 		CoreseEndpoint corese = new CoreseEndpoint(Global.CORESE_IP_ADDRESS, null);
 		// Writing the query using loop operator, we will ask our Virtuoso server from the Corese server as a SERVICE
-		String query = "@timeout 100000000\n" +
-				"SELECT distinct ?x WHERE \n" +
+		String getTypes = "@timeout 100000000\n" +
+				"SELECT distinct ?t WHERE \n" +
 				"{\n" +
 				"\n" +
 				"    SERVICE <http://134.59.130.136:9200/sparql?loop=true&limit=1000> {\n" +
@@ -335,17 +322,48 @@ public class SubClassOfAxiom extends Axiom {
 				"            " + superClass.graphPattern + " ?x a ?t \n" +
 				"        }\n" +
 				"    }\n" +
-				"\n" +
-				"    SERVICE <http://134.59.130.136:9200/sparql?loop=true&limit=10000> {\n" +
-				"        " + subClass.graphPattern + " ?x a ?t\n" +
-				"    }\n" +
-				"    \n" +
 				"}";
-		String resultsAsJSON = corese.select(Format.JSON, query);
-		List<String> instances = ResultParser.getResultsfromVariable("x", resultsAsJSON);
-		logger.info(instances.size() + " exception(s) found ...");
-		numExceptions = instances.size();
-		if (numExceptions > 0 && numExceptions < 100) exceptions = instances;
+		String typesAsJson = corese.select(Format.JSON, getTypes);
+		List<String> types = ResultParser.getResultsfromVariable("t", typesAsJson);
+		if(types.size() != 0)
+			logger.info(types.size() + " type(s) where we don't observe a link with the superClass ...");
+		// truncate list of types and execute the last request
+		List<String> excpt = new ArrayList<>();
+		// define variables used for truncation
+		int i = 0;
+		int k = 50;
+		// define the limit
+		int limit = 10000;
+		while(i != types.size()) {
+			int end = Math.min(i + k, types.size());
+			StringBuilder body = new StringBuilder(subClass.graphPattern +
+					"?x a ?t values (?t) { ");
+			for(String type : types.subList(i, end)) {
+				body.append("(").append(type).append(") ");
+			}
+			body.append("} ");
+			String getInstances = "@timeout 100000000\n" +
+					"SELECT distinct ?x WHERE \n" +
+					"{\n" +
+					"    SERVICE <http://134.59.130.136:9200/sparql?loop=true&limit=" + limit + "> {\n" +
+					"        " + body + "\n" +
+					"    }\n" +
+					"}";
+			String instancesAsJson = corese.select(Format.JSON, getInstances);
+			List<String> instances = ResultParser.getResultsfromVariable("x", instancesAsJson);
+			for(String instance : instances) {
+				// to remove duplicated ?x (cause of truncation)
+				// if a given ?x is not on a list , we add it
+				if(!excpt.contains(instance))
+					excpt.add(instance);
+			}
+
+			i += Math.min(types.size() - i, k);
+		}
+		logger.info(excpt.size() + " exception(s) found ...");
+		numExceptions = excpt.size();
+		// retrieve the exceptions
+		if (numExceptions > 0 && numExceptions < 100) exceptions = excpt;
 	}
 
 	public void getExceptions(VirtuosoEndpoint endpoint, int size) {
@@ -393,7 +411,6 @@ public class SubClassOfAxiom extends Axiom {
 			}
 			body.append("} ");
 			while(true) {
-//				logger.info("truncate request\n" + "DISTINCT ?x where { " + body + "} LIMIT " + limit + " OFFSET " + offset);
 				ResultSet cfs = endpoint.select("DISTINCT ?x where { " + body + "} LIMIT " + limit + " OFFSET " + offset , 0);
 				while (cfs.hasNext()) {
 					QuerySolution solution = cfs.next();
@@ -403,11 +420,9 @@ public class SubClassOfAxiom extends Axiom {
 					if(!instances.contains(Expression.sparqlEncode(x)))
 						instances.add(Expression.sparqlEncode(x));
 				}
-//				logger.info("[DEBUG] cfs.getRowNumber() = " + cfs.getRowNumber());
 				if(cfs.getRowNumber() < limit) {
 					break;
 				} else {
-//					logger.info("[DEBUG] Increment offset ...");
 					offset += limit;
 				}
 			}
