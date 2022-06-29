@@ -39,7 +39,6 @@ public class Crowding {
 		GEIndividual[] survivals = new GEIndividual[2];
 		d1 = distanceP1ToC1 + distanceP2ToC2;
 		d2 = distanceP1ToC2 + distanceP2ToC1;
-		logger.info("The axioms will be evaluated using the following SPARQL Endpoint : " + Global.VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT);
 		if (d1 >= d2) {
 			survivals[0] = compare(parent1, child1, mode);
 			survivals[1] = compare(parent2, child2, mode);

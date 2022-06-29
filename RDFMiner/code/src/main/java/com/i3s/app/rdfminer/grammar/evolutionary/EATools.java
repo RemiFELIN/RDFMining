@@ -227,6 +227,7 @@ public class EATools {
 		Set<Callable<GEIndividual[]>> individualsCallables = new HashSet<Callable<GEIndividual[]>>();
 
 		logger.info("Performing crossover and mutation ...");
+		logger.info("The axioms will be evaluated using the following SPARQL Endpoint : " + Global.VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT);
 
 		List<Crowding> shapesToEvaluate = new ArrayList<>();
 
