@@ -177,7 +177,7 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 	protected Set<RDFNodePair> getNodes(String sparql) {
 		Set<RDFNodePair> classes = new TreeSet<RDFNodePair>();
 		logger.warn("Querying DBpedia with query " + sparql);
-		VirtuosoEndpoint endpoint = new VirtuosoEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES);
+		VirtuosoEndpoint endpoint = new VirtuosoEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES);
 		ResultSet result = endpoint.select(sparql, 0);
 		while (result.hasNext()) {
 			QuerySolution solution = result.next();

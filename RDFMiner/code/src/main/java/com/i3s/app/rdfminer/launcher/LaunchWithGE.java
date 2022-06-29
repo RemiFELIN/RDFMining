@@ -27,6 +27,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -177,24 +179,18 @@ public class LaunchWithGE {
                 break;
         }
 
-        // set an url and prefixes (depending of the mode used)
-        String url = "";
-        String prefixes = "";
-        ArrayList<JSONObject> shapes = null;
         // set the fitness method
         Fitness fit = null;
-        if(RDFMiner.mode.isAxiomMode()) {
-            url = Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT;
-            prefixes = Global.VIRTUOSO_LOCAL_PREFIXES;
+        if (RDFMiner.mode.isAxiomMode()) {
             // set a Fitness method provided to update individuals as OWL 2 Axiom
             fit = new AxiomFitnessEvaluation();
-        } else if(RDFMiner.mode.isShaclMode()) {
-            url = Global.CORESE_IP_ADDRESS;
-            prefixes = Global.CORESE_PREFIXES;
+        } else if (RDFMiner.mode.isShaclMode()) {
             // set a Fitness method provided to update individuals as SHACL Shape
             fit = new ShapeFitnessEvaluation();
-            shapes = new ArrayList<>();
         }
+
+
+
         assert fit != null;
 
         while (curCheckpoint <= parameters.checkpoint) {
@@ -203,7 +199,7 @@ public class LaunchWithGE {
             // First step of the grammatical evolution
             if ((curGeneration == 1) || ((buffer != null) && (!flag))) {
                 // if1
-                candidatePopulation = fit.updatePopulation(candidatePopulation, url, prefixes, null);
+                candidatePopulation = fit.updatePopulation(candidatePopulation, Global.VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT, Global.PREFIXES, null);
             }
             // Checkpoint reached, this is a code to evaluate and save axioms in output file
             if (parameters.populationSize * curGeneration == parameters.kBase * curCheckpoint) {
@@ -222,7 +218,7 @@ public class LaunchWithGE {
                         candidatePopulation2.add(indivi);
                     }
                     logger.info("Evaluating axioms against to the RDF Data of the whole DBPedia.");
-                    fit.updatePopulation(candidatePopulation2, Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES, content);
+                    fit.updatePopulation(candidatePopulation2, Global.SPARQL_ENDPOINT, Global.PREFIXES, content);
                     RDFMiner.content.addAll(content);
                 } else {
                     assert fit instanceof ShapeFitnessEvaluation;

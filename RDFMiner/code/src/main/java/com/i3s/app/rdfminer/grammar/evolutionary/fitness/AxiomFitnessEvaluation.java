@@ -39,6 +39,7 @@ public class AxiomFitnessEvaluation extends Fitness {
 
 		int i = 0;
 
+		logger.info("The axioms will be evaluated using the following SPARQL Endpoint : " + url);
 		logger.info("Begin updating population ...");
 		while (i < population.size()) {
 			if (population.get(0).getPhenotype() == null)
@@ -98,7 +99,7 @@ public class AxiomFitnessEvaluation extends Fitness {
 			axiom.individual.setFitness(fit);
 			newPopulation.add(axiom.individual);
 			// Now, we can fill our JSONObject
-			if (Objects.equals(url, Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT)) {
+			if (Objects.equals(url, Global.SPARQL_ENDPOINT)) {
 				// data about full database of DBPedia
 				DBPediaJSON dbpedia = new DBPediaJSON();
 				if (axiom.getIndividual().isMapped()) {
@@ -130,7 +131,7 @@ public class AxiomFitnessEvaluation extends Fitness {
 		double f = 0;
 		if (indivi.isMapped()) {
 			Axiom axiom = AxiomFactory.create(indivi, indivi.getPhenotype(),
-					new VirtuosoEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES));
+					new VirtuosoEndpoint(Global.VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT, Global.PREFIXES));
 			f = setFitness(axiom);
 		} else {
 			f = 0;
@@ -146,6 +147,7 @@ public class AxiomFitnessEvaluation extends Fitness {
 	public void display(ArrayList<GEIndividual> population, List<JSONObject> axioms, int generation) {
 		int index = population.size();
 		Set<Callable<Void>> callables = new HashSet<>();
+		logger.info("The axioms will be evaluated using the following SPARQL Endpoint : " + Global.VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT);
 		for (int i = 0; i < index; i++) {
 			final int idx = i;
 			callables.add(() -> {
@@ -154,7 +156,7 @@ public class AxiomFitnessEvaluation extends Fitness {
 				// if indivi is correctly formed
 				if (ind.isMapped()) {
 					Axiom a = AxiomFactory.create(ind, ind.getPhenotype(),
-							new VirtuosoEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES));
+							new VirtuosoEndpoint(Global.VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT, Global.PREFIXES));
 					a.generation = generation;
 					axioms.add(a.toJSON());
 				}

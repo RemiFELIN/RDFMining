@@ -39,7 +39,6 @@ public abstract class AxiomGenerator extends Generator {
 	 */
 	public AxiomGenerator() {
 		super(null);
-//		grammar = null;
 	}
 
 	/**
@@ -128,9 +127,7 @@ public abstract class AxiomGenerator extends Generator {
 		} catch (IOException ioe) {
 			logger.info("Cache for " + symbol + " not found. Querying SPARQL endpoint");
 			logger.info("Querying SPARQL endpoint for symbol <" + symbol + "> ...");
-//			"with query:\nSELECT "
-//					+ SparqlEndpoint.prettyPrint(sparql));
-			VirtuosoEndpoint endpoint = new VirtuosoEndpoint(Global.VIRTUOSO_LOCAL_SPARQL_ENDPOINT, Global.VIRTUOSO_LOCAL_PREFIXES);
+			VirtuosoEndpoint endpoint = new VirtuosoEndpoint(Global.VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT, Global.PREFIXES);
 			ResultSet result = endpoint.select(sparql, 0);
 			PrintStream cache = null;
 			try {

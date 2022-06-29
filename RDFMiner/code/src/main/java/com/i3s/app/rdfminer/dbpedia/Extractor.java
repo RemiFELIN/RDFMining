@@ -29,15 +29,15 @@ public class Extractor {
 
 	private static Logger logger = Logger.getLogger(Extractor.class.getName());
 
-	final private static String PREFIXES = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
-			+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-			+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-			+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-			+ "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n" + "PREFIX dc: <http://purl.org/dc/elements/1.1/>\n"
-			+ "PREFIX dbr: <http://dbpedia.org/resource/>\n" + "PREFIX dbp: <http://dbpedia.org/property/>\n"
-			+ "PREFIX : <http://dbpedia.org/resource/>\n" + "PREFIX dbpedia2: <http://dbpedia.org/property/>\n"
-			+ "PREFIX dbpedia: <http://dbpedia.org/>\n" + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n"
-			+ "PREFIX dbo: <http://dbpedia.org/ontology/>\n";
+//	final private static String PREFIXES = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
+//			+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+//			+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+//			+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+//			+ "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n" + "PREFIX dc: <http://purl.org/dc/elements/1.1/>\n"
+//			+ "PREFIX dbr: <http://dbpedia.org/resource/>\n" + "PREFIX dbp: <http://dbpedia.org/property/>\n"
+//			+ "PREFIX : <http://dbpedia.org/resource/>\n" + "PREFIX dbpedia2: <http://dbpedia.org/property/>\n"
+//			+ "PREFIX dbpedia: <http://dbpedia.org/>\n" + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n"
+//			+ "PREFIX dbo: <http://dbpedia.org/ontology/>\n";
 
 	public static ArrayList<String> arrCheckedResource = new ArrayList<String>();
 
@@ -103,7 +103,7 @@ public class Extractor {
 		String data = queue.poll();
 		// Subject
 		Resource s = m.createResource(data);
-		VirtuosoEndpoint endpoint = new VirtuosoEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, PREFIXES);
+		VirtuosoEndpoint endpoint = new VirtuosoEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES);
 		// Set List Objects of res
 		String str = " distinct ?r ?o where {{<" + data + "> ?r ?o. FILTER isIRI(?o). FILTER NOT EXISTS {<" + data
 				+ "> ?r ?o. FILTER(contains(str(?o), \"^\") || contains(str(?o), \"/-\") || contains(str(?o), \",\") || contains(str(?o), \";\") || contains(str(?o), \"!\") || contains(str(?o), \"|\")|| contains(str(?o), \"dbtax\") || contains(str(?r) , \"http://purl.org\") ||contains(str(?r) , \"http://dbpedia.org/ontology/wikiPage\") || contains(str(?r) , \"http://xmlns.com/foaf/0.1/primaryTopic\") || contains(str(?r) , \"http://dbpedia.org/property/wikiPageUsesTemplate\") || contains(str(?o) , \"http://dbpedia.org/class/yago/\") || contains(str(?r) , \"http://dbpedia.org/ontology/abstract\") || contains(str(?r) , \"#comment\") || contains(str(?r) , \"label\") || contains(str(?r) , \"#sameAs\") || contains(str(?r) , \"http://xmlns.com/foaf/0.1/name\") || contains(str(?r) , \"thumbnail\") || contains(str(?r) , \"#wasDerivedFrom\") || contains(str(?r) , \"isPrimaryTopicOf\") || contains(str(?r) , \"depiction\") || contains(str(?r) , \"describedby\") || contains(str(?o) , \"wikidata\") || contains(str(?r) , \"isDefinedBy\") || contains(str(?r) , \"describes\")) } } \n"

@@ -342,7 +342,7 @@ public class EATools {
 				// evaluate them
 				ShapesManager shapesManager = new ShapesManager(childs);
 				// launch evaluation
-				CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP_ADDRESS, Global.CORESE_PREFIXES);
+				CoreseEndpoint endpoint = new CoreseEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES);
 				logger.info("Launch evaluation report for new childs ...");
 				String report = endpoint.getProbabilisticValidationReportFromServer(shapesManager.file);
 				// read evaluation report

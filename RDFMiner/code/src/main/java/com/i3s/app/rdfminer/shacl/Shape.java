@@ -111,7 +111,7 @@ public class Shape extends Results {
         this.shape = this.id + individual.getPhenotype().toString();
         this.uri = getUri();
         // init model
-        this.model = Rio.parse(new StringReader(Global.CORESE_PREFIXES + this.shape), "", RDFFormat.TURTLE);
+        this.model = Rio.parse(new StringReader(Global.PREFIXES + this.shape), "", RDFFormat.TURTLE);
         // Create a new Repository. Here, we choose a database implementation
         // that simply stores everything in main memory.
         this.db = new SailRepository(new MemoryStore());
@@ -144,7 +144,7 @@ public class Shape extends Results {
             // add the model
             con.add(this.model);
             // init query
-            String request = Global.CORESE_PREFIXES + "ASK { " + this.id + " " + predicate + " " + object + " . }";
+            String request = Global.PREFIXES + "ASK { " + this.id + " " + predicate + " " + object + " . }";
             BooleanQuery query = con.prepareBooleanQuery(request);
             // launch and get result
             if(!query.evaluate()) logger.debug(predicate + " is not provided by the shape " + this.id);
@@ -169,7 +169,7 @@ public class Shape extends Results {
             con.add(this.model);
             // init query
             // With this request, we obtain a blank node. In it we can find all excepted results
-            String request = Global.CORESE_PREFIXES + "SELECT ?pred ?obj WHERE { " + this.id + " " + ShaclKW.PROPERTY + " ?bn . \n" +
+            String request = Global.PREFIXES + "SELECT ?pred ?obj WHERE { " + this.id + " " + ShaclKW.PROPERTY + " ?bn . \n" +
                     "?bn ?pred ?obj . }" ;
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
@@ -212,7 +212,7 @@ public class Shape extends Results {
             // add the model
             con.add(this.model);
             // init query
-            String request = Global.CORESE_PREFIXES + "SELECT ?class WHERE { " + this.id + " " + property + " ?y . }";
+            String request = Global.PREFIXES + "SELECT ?class WHERE { " + this.id + " " + property + " ?y . }";
             // init query
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result

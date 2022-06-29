@@ -129,9 +129,9 @@ public class SubClassOfAxiom extends Axiom {
 	 * (<code>ComplementOf</code>(CE<sub>2</sub>))<sup>C</sup>.</li>
 	 * </ul>
 	 * <p>
-	 * This method, which is provided as a fallback in case {@link #update()} does
+	 * This method, which is provided as a fallback in case {@link #update(VirtuosoEndpoint)} does
 	 * not work, uses a much slower, but hopefully safer, way of updating the counts
-	 * than the {@link #update()} method. The extension of the sub-class is
+	 * than the {@link #update(VirtuosoEndpoint)} method. The extension of the sub-class is
 	 * retrieved, than each individual instance is checked for membership in the
 	 * super-class and in the complement of the super-class by issuing two ASK
 	 * queries.
@@ -163,6 +163,7 @@ public class SubClassOfAxiom extends Axiom {
 		logger.info("Reference cardinality: " + referenceCardinality);
 		logger.info("Number of confirmation(s): " + numConfirmations);
 		logger.info("Number of exception(s): " + numExceptions);
+
 	}
 
 	/**
@@ -304,7 +305,7 @@ public class SubClassOfAxiom extends Axiom {
 
 	public void getExceptionsUsingCoreseLoop() throws URISyntaxException, IOException {
 		logger.info("Compute the number of exceptions with a proposal optimization and loop operator from Corese ...");
-		CoreseEndpoint corese = new CoreseEndpoint(Global.CORESE_IP_ADDRESS, null);
+		CoreseEndpoint corese = new CoreseEndpoint(Global.SPARQL_ENDPOINT, null);
 		// Writing the query using loop operator, we will ask our Virtuoso server from the Corese server as a SERVICE
 		String getTypes = "@timeout 100000000\n" +
 				"SELECT distinct ?t WHERE \n" +
@@ -442,8 +443,5 @@ public class SubClassOfAxiom extends Axiom {
 	public long timePredictor() {
 		return timePredictor;
 	}
-
-	@Override
-	public void update() {}
 
 }

@@ -62,7 +62,7 @@ public abstract class Generator {
      * </p>
      *
      * @param symbol the name of a non-terminal symbol for which the productions are
-     *               to be generated
+     *               to be generated!
      * @param sparql a <code>SELECT</code> SPARQL query
      * @throws URISyntaxException Error concerning the syntax of the given URL
      * @throws IOException        Error concerning the execution of the GET request

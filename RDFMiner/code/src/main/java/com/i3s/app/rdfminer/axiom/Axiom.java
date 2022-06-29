@@ -162,7 +162,7 @@ public abstract class Axiom extends Results {
 	/**
 	 * Updates the counts used to compute the possibility and necessity degrees.
 	 */
-	abstract public void update();
+//	abstract public void update();
 
 	/**
 	 * Computes the possibility degree of the axiom, based on the known facts.

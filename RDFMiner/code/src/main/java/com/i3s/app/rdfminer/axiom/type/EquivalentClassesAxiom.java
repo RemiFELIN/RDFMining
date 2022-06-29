@@ -13,6 +13,7 @@ import com.i3s.app.rdfminer.expression.complement.ComplementClassExpression;
 import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 
 import Mapper.Symbol;
+import org.apache.log4j.Logger;
 
 /**
  * A class that represents a <code>EquivalentClasses</code> axiom.
@@ -21,7 +22,9 @@ import Mapper.Symbol;
  *
  */
 public class EquivalentClassesAxiom extends Axiom {
-	
+
+	private static Logger logger = Logger.getLogger(EquivalentClassesAxiom.class.getName());
+
 	/**
 	 * An array of class expressions which are declared to be mutually equivalent.
 	 */
@@ -40,24 +43,26 @@ public class EquivalentClassesAxiom extends Axiom {
 	 *
 	 */
 	public EquivalentClassesAxiom(List<List<Symbol>> arguments, VirtuosoEndpoint endpoint) {
+		long t0 = getProcessCPUTime();
 		equivalentClass = new Expression[arguments.size()];
 		equivalentClassComplement = new Expression[equivalentClass.length];
 		for (int i = 0; i < equivalentClass.length; i++) {
 			equivalentClass[i] = ExpressionFactory.createClass(arguments.get(i));
-			if (equivalentClass[i] instanceof ComplementClassExpression)
+			if (equivalentClass[i] instanceof ComplementClassExpression) {
 				// Handle the double negation in an optimized way:
 				equivalentClassComplement[i] = equivalentClass[i].subExpressions.get(0);
-			else
+			} else {
 				equivalentClassComplement[i] = new ComplementClassExpression(equivalentClass[i]);
-
-			System.out.println("\nclass_" + i + " = " + equivalentClass[i] + "; graph pattern =");
-			System.out.println(VirtuosoEndpoint.prettyPrint(equivalentClass[i].graphPattern));
-
-			System.out.println("\n~class_" + i + " = " + equivalentClassComplement[i] + "; graph pattern =");
-			System.out.println(VirtuosoEndpoint.prettyPrint(equivalentClassComplement[i].graphPattern));
+			}
+			logger.info("\nclass_" + i + " = " + equivalentClass[i] + "; graph pattern =");
+			logger.info(VirtuosoEndpoint.prettyPrint(equivalentClass[i].graphPattern));
+			logger.info("\n~class_" + i + " = " + equivalentClassComplement[i] + "; graph pattern =");
+			logger.info(VirtuosoEndpoint.prettyPrint(equivalentClassComplement[i].graphPattern));
 		}
-
 		update(endpoint);
+		// set elapsedTime as a CPU usage time
+		elapsedTime = getProcessCPUTime() - t0;
+		logger.info("elapsed time = " + elapsedTime + " ms.");
 	}
 
 	/**
@@ -91,16 +96,11 @@ public class EquivalentClassesAxiom extends Axiom {
 	 * <code>DisjointClasses(CE<sub>1</sub> ... CE<sub><var>n</var></sub>)</code> is
 	 * satisfied if ...
 	 * </p>
-	 * <p>
-	 * The {@link #naive_update()} method provides a slower, but hopefully safer,
-	 * way of updating the counts.
-	 * </p>
 	 */
 	@Override
 	public void update(VirtuosoEndpoint endpoint) {
 		confirmations = new ArrayList<String>();
 		exceptions = new ArrayList<String>();
-
 		String refCardGraphPattern = "";
 		for (int i = 0; i < equivalentClass.length; i++) {
 			if (i > 0)
@@ -146,11 +146,6 @@ public class EquivalentClassesAxiom extends Axiom {
 //				exceptions.add(Expression.sparqlEncode(x));
 //			}
 //		}
-	}
-
-	@Override
-	public void update() {
-		// TODO Auto-generated method stub
 	}
 
 }

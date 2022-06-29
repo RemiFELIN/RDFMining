@@ -110,7 +110,7 @@ public class VirtuosoEndpoint {
 	 */
 	public ResultSet select(String sparql, int timeout) {
 		try {
-			String str = prefixes + "SELECT " + sparql;
+			String str = prefixes + "\nSELECT " + sparql;
 			Query query = QueryFactory.create(str);
 			queryExecution = new QueryEngineHTTP(endpoint, query);
 			if(timeout != 0) {

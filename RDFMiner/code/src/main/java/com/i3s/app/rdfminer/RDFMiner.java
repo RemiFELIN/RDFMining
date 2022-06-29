@@ -5,9 +5,16 @@ package com.i3s.app.rdfminer;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import com.i3s.app.rdfminer.grammar.evolutionary.fitness.AxiomFitnessEvaluation;
+import com.i3s.app.rdfminer.grammar.evolutionary.fitness.ShapeFitnessEvaluation;
 import com.i3s.app.rdfminer.mode.Mode;
 import com.i3s.app.rdfminer.mode.TypeMode;
 import com.i3s.app.rdfminer.output.Results;
@@ -136,7 +143,52 @@ public class RDFMiner {
 			mode = new Mode(TypeMode.AXIOMS);
 			results = new AxiomsResultsJSON();
 		}
-		
+
+		// define a SPARQL Endpoint to use if provided
+		if (parameters.sparqlEndpoint != null) {
+			logger.info("A SPARQL Endpoint is specified !");
+			try {
+				// Test if the given url is a valid URL or not
+				new URL(parameters.sparqlEndpoint);
+			} catch (MalformedURLException e) {
+				logger.error("The given SPARQL Endpoint is not a valid URL ...");
+				System.exit(1);
+			}
+			Global.SPARQL_ENDPOINT = parameters.sparqlEndpoint;
+			logger.info("RDFMiner will use the following SPARQL Endpoint : " + Global.SPARQL_ENDPOINT);
+
+		} else {
+			// Define the default SPARQL Endpoint depending of the mode used
+			if (RDFMiner.mode.isAxiomMode()) {
+				Global.SPARQL_ENDPOINT = Global.VIRTUOSO_DBPEDIA_2015_04_SPARQL_ENDPOINT;
+				logger.info("RDFMiner will use the default Virtuoso SPARQL Endpoint : " + Global.SPARQL_ENDPOINT);
+				logger.info("This database contains a dump of DBPedia 2015-04 ...");
+			} else if (RDFMiner.mode.isShaclMode()) {
+				Global.SPARQL_ENDPOINT = Global.CORESE_SPARQL_ENDPOINT;
+				logger.info("RDFMiner will use the default Corese SPARQL Endpoint : " + Global.SPARQL_ENDPOINT);
+			}
+		}
+
+		// define a set of prefixes provided by user (with -prefix option), else use the default prefixes
+		if(parameters.prefixesFile != null) {
+			File prefixesFile = new File(parameters.prefixesFile);
+			if(prefixesFile.exists()) {
+				logger.info("RDFMiner will use the given prefixes file : " + prefixesFile.getAbsolutePath());
+				try {
+					Global.PREFIXES = Files.readString(Path.of(prefixesFile.getAbsolutePath()));
+				} catch (IOException e) {
+					logger.error("Error when reading the prefix file ...");
+					logger.error(e.getMessage());
+					System.exit(1);
+				}
+			} else {
+				logger.error("The given prefixes file does not exists ...");
+				logger.warn("RDFMiner will use the default prefixes to perform SPARQL queries ...");
+			}
+		} else {
+			logger.info("RDFMiner will use the default prefixes to perform SPARQL queries ...");
+		}
+
 		// If parameters.grammaticalEvolution is used, we launch an instance of
 		// Grammar-based genetic programming
 		if(parameters.grammaticalEvolution) {

@@ -138,7 +138,7 @@ public class CoreseEndpoint {
         // fill params
         HashMap<String, String> params = new HashMap<>();
         params.put("mode", PROBABILISTIC_SHACL_EVALUATION);
-        params.put("uri", Global.CORESE_IP_ADDRESS + CORESE_GET_SHACL_SHAPES_ENDPOINT);
+        params.put("uri", Global.SPARQL_ENDPOINT + CORESE_GET_SHACL_SHAPES_ENDPOINT);
         params.put("query", "construct where {?s ?p ?o}");
         params.put("format", Format.TURTLE);
         // send the given file to the server

@@ -42,12 +42,12 @@ public abstract class ShapeGenerator extends Generator {
             logger.warn("Querying with FILTER(strStarts(MD5(?x), " + h + "))...");
             // SPARQL Request
             String classSparql = RequestBuilder.buildSelectRequest(
-                    Global.CORESE_PREFIXES,
+                    Global.PREFIXES,
                     "DISTINCT ?Class",
                     "?x a ?Class . FILTER( strStarts(MD5(str(?Class)) , " + h + ") ) "
             );
             String subjectSparql = RequestBuilder.buildSelectRequest(
-                    Global.CORESE_PREFIXES,
+                    Global.PREFIXES,
                     "DISTINCT (concat('\"', ?sub, '\"') as ?Subject)",
                     "?article dct:subject ?sub . FILTER( strStarts(MD5(str(?Subject)) , " + h + ") ) "
             );
@@ -87,7 +87,7 @@ public abstract class ShapeGenerator extends Generator {
         } catch (IOException ioe) {
             logger.info("Cache for " + symbol + " not found. Querying SPARQL endpoint");
             logger.info("Querying SPARQL endpoint for symbol <" + symbol + "> ...");
-            CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP_ADDRESS, Global.CORESE_PREFIXES);
+            CoreseEndpoint endpoint = new CoreseEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES);
             String jsonResult = endpoint.select(Format.JSON, sparql);
             PrintStream cache = null;
             try {

@@ -46,6 +46,7 @@ public class DisjointClassesAxiom extends Axiom {
 	 * @param endpoint the functional-style expression of the superclass
 	 */
 	public DisjointClassesAxiom(List<List<Symbol>> arguments, VirtuosoEndpoint endpoint) {
+		long t0 = getProcessCPUTime();
 		disjointClass = new Expression[arguments.size()];
 		disjointClassComplement = new Expression[disjointClass.length];
 		for (int i = 0; i < disjointClass.length; i++) {
@@ -57,6 +58,9 @@ public class DisjointClassesAxiom extends Axiom {
 				disjointClassComplement[i] = new ComplementClassExpression(disjointClass[i]);
 		}
 		update(endpoint);
+		// set elapsedTime as a CPU usage time
+		elapsedTime = getProcessCPUTime() - t0;
+		logger.info("elapsed time = " + elapsedTime + " ms.");
 	}
 
 	/**
@@ -121,7 +125,7 @@ public class DisjointClassesAxiom extends Axiom {
 	public void update(VirtuosoEndpoint endpoint) {
 		confirmations = new ArrayList<String>();
 		exceptions = new ArrayList<String>();
-		long timeSpent = 0;
+//		long timeSpent = 0;
 		String refCardGraphPattern = "";
 		for (int i = 0; i < disjointClass.length; i++) {
 			if (i > 0)
@@ -131,9 +135,6 @@ public class DisjointClassesAxiom extends Axiom {
 		int generality1 = 0;
 		int generality2 = 0;
 		int k = 0;
-		// start the timer
-		Timer time = new Timer();
-		time.startTimer();
 		// compute generality and reference cardinality
 		while (k < disjointClass.length) {
 			String generalityGraphPattern = "";
@@ -147,10 +148,9 @@ public class DisjointClassesAxiom extends Axiom {
 			k = k + 2;
 		}
 		logger.info("generality: " + generality);
+		// skipping computing the reference cardinality when generality=0
 		if (generality != 0) {
 			referenceCardinality = endpoint.count("?x", refCardGraphPattern, 0);
-			// skipping computing the reference cardinality when generality=0
-			// logger.info("Number referenceCardinality: " + referenceCardinality);
 			String exceptionGraphPattern = "";
 			for (int i = 0; i < disjointClass.length; i++)
 				exceptionGraphPattern += disjointClass[i].graphPattern + "\n";
@@ -168,8 +168,6 @@ public class DisjointClassesAxiom extends Axiom {
 		} else {
 			referenceCardinality = 0;
 		}
-		// save time spent
-		elapsedTime = time.endTimer();
 		logger.info("referenceCardinality = " + referenceCardinality);
 	}
 
@@ -221,8 +219,5 @@ public class DisjointClassesAxiom extends Axiom {
 	public Expression[] getExpression() {
 		return disjointClass;
 	}
-
-	@Override
-	public void update() {}
 
 }

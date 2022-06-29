@@ -9,7 +9,7 @@ package com.i3s.app.rdfminer;
 public class Global {
 
     /**
-     * This is a banner to present RDF Miner on console
+     * This is a banner to present RDF Miner on a terminal
      */
     public static final String BANNER = "  _____  _____  ______   __  __ _____ _   _ ______ _____  \n"
             + " |  __ \\|  __ \\|  ____| |  \\/  |_   _| \\ | |  ____|  __ \\ \n"
@@ -31,60 +31,81 @@ public class Global {
     public static final String DBPEDIA_TDB_PATH = System.getenv("HOME") + "/tdb/";
 
     /**
+     * The SPARQL Endpoint to use (depending of the mode used)
+     */
+    public static String SPARQL_ENDPOINT = null;
+
+    /**
      * SPARQL endpoint from remote server which contains full instance of DBPedia
      * 2015.04
      */
-    public static final String VIRTUOSO_REMOTE_SPARQL_ENDPOINT = "http://134.59.130.136:8890/sparql";
-
-    /**
-     * prefixes used to perform queries with the remote {@link Global#VIRTUOSO_REMOTE_SPARQL_ENDPOINT
-     * server} endpoint
-     */
-    public final static String VIRTUOSO_REMOTE_PREFIXES = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
-            + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-            + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-            + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-            + "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n" + "PREFIX dc: <http://purl.org/dc/elements/1.1/>\n"
-            + "PREFIX : <http://dbpedia.org/resource/>\n" + "PREFIX dbpedia2: <http://dbpedia.org/property/>\n"
-            + "PREFIX dbpedia: <http://dbpedia.org/>\n" + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n"
-            + "PREFIX dbo: <http://dbpedia.org/ontology/>\n";
+    public final static String VIRTUOSO_DBPEDIA_2015_04_SPARQL_ENDPOINT = "http://134.59.130.136:8890/sparql";
 
     /**
      * SPARQL endpoint from local server which contains 1% of full instance of
      * DBPedia 2015.04
      */
-    public static final String VIRTUOSO_LOCAL_SPARQL_ENDPOINT = "http://172.19.0.2:9000/sparql";
+    public final static String VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT = "http://172.19.0.2:9000/sparql";
+
+    /**
+     * Corese IP Address
+     */
+    public static final String CORESE_SPARQL_ENDPOINT = "http://172.19.0.4:9100/";
+
+    /**
+     * default prefixes used to perform queries with the remote {@link Global#SPARQL_ENDPOINT
+     * SPARQL endpoint}
+     */
+    public static String PREFIXES =
+              "PREFIX owl:      <http://www.w3.org/2002/07/owl#>\n"
+            + "PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>\n"
+            + "PREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#>\n"
+            + "PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+            + "PREFIX foaf:     <http://xmlns.com/foaf/0.1/>\n"
+            + "PREFIX dc:       <http://purl.org/dc/elements/1.1/>\n"
+            + "PREFIX dbr:      <http://dbpedia.org/resource/>\n"
+            + "PREFIX dbp:      <http://dbpedia.org/property/>\n"
+            + "PREFIX dbo:      <http://dbpedia.org/ontology/>\n"
+            + "PREFIX dbpedia:  <http://dbpedia.org/>\n"
+            + "PREFIX skos:     <http://www.w3.org/2004/02/skos/core#>\n"
+            + "PREFIX dbo:      <http://dbpedia.org/ontology/>\n"
+            + "PREFIX ex:       <http://example.org/demo#> \n"
+            + "PREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#> \n"
+            + "PREFIX sp:       <http://spinrdf.org/sp#> \n"
+            + "prefix sh:       <http://www.w3.org/ns/shacl#> \n"
+            + "prefix dct:      <http://purl.org/dc/terms/> \n";
 
     /**
      * prefixes used to perform queries with the local {@link Global#VIRTUOSO_LOCAL_SPARQL_ENDPOINT
      * server} endpoint
      */
-    final public static String VIRTUOSO_LOCAL_PREFIXES = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
-            + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-            + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-            + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-            + "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n" + "PREFIX dc: <http://purl.org/dc/elements/1.1/>\n"
-            + "PREFIX dbr: <http://dbpedia.org/resource/>\n" + "PREFIX dbp: <http://dbpedia.org/property/>\n"
-            + "PREFIX : <http://dbpedia.org/resource/>\n" + "PREFIX dbpedia2: <http://dbpedia.org/property/>\n"
-            + "PREFIX dbpedia: <http://dbpedia.org/>\n" + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n"
-            + "PREFIX dbo: <http://dbpedia.org/ontology/>\n" + "PREFIX ex:    <http://example.org/demo#> \n"
-            + "PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> \n" + "PREFIX sp:    <http://spinrdf.org/sp#> \n";
-
-    /**
-     * Corese IP Address
-     */
-    public static final String CORESE_IP_ADDRESS = "http://172.19.0.4:9100/";
+//    final public static String VIRTUOSO_LOCAL_PREFIXES = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
+//            + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+//            + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+//            + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+//            + "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n"
+//            + "PREFIX dc: <http://purl.org/dc/elements/1.1/>\n"
+//            + "PREFIX dbr: <http://dbpedia.org/resource/>\n"
+//            + "PREFIX dbp: <http://dbpedia.org/property/>\n"
+//            + "PREFIX : <http://dbpedia.org/resource/>\n"
+//            + "PREFIX dbpedia2: <http://dbpedia.org/property/>\n"
+//            + "PREFIX dbpedia: <http://dbpedia.org/>\n"
+//            + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n"
+//            + "PREFIX dbo: <http://dbpedia.org/ontology/>\n"
+//            + "PREFIX ex:    <http://example.org/demo#> \n"
+//            + "PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> \n"
+//            + "PREFIX sp:    <http://spinrdf.org/sp#> \n";
 
     /**
      * Corese prefixes for SHACL Shapes
      */
-    public static final String CORESE_PREFIXES = "base <http://rdfminer.com/shapes/> \n" +
-            "prefix sh: <http://www.w3.org/ns/shacl#> \n" +
-            "prefix rdfminer: <http://ns.inria.fr/rdfminer/shacl#> \n" +
-            "prefix inria: <http://ns.inria.fr/covid19/> \n" +
-            "prefix source: <http://ns.inria.fr/covid19/source#> \n" +
-            "prefix dct: <http://purl.org/dc/terms/> \n" +
-            "prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n\n";
+//    public static final String CORESE_PREFIXES = "base <http://rdfminer.com/shapes/> \n" +
+//            "prefix sh: <http://www.w3.org/ns/shacl#> \n" +
+//            "prefix rdfminer: <http://ns.inria.fr/rdfminer/shacl#> \n" +
+//            "prefix inria: <http://ns.inria.fr/covid19/> \n" +
+//            "prefix source: <http://ns.inria.fr/covid19/source#> \n" +
+//            "prefix dct: <http://purl.org/dc/terms/> \n" +
+//            "prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n\n";
 
     /**
      * Size of the SHACL Shapes ID randomly generated using BNF Grammar

@@ -59,7 +59,7 @@ public class ShapesManager {
     }
 
     private File getFile() {
-        StringBuilder content = new StringBuilder(Global.CORESE_PREFIXES);
+        StringBuilder content = new StringBuilder(Global.PREFIXES);
         if(!population.isEmpty()) {
             for(Shape shape : population) {
                 content.append(shape).append("\n");

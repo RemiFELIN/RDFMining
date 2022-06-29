@@ -29,6 +29,12 @@ public class CmdLineParameters {
 	@Option(name = "-shacl", aliases = { "--shacl-shapes" }, usage = "enable SHACL Shapes mining", metaVar = "SHAPES")
 	public boolean useRandomShaclShapesGenerator = false;
 
+	@Option(name = "-endpoint", aliases = { "--endpoint" }, usage = "specify the SPARQL endpoint to be used for sending requests", metaVar = "ENDPOINT")
+	public String sparqlEndpoint = null;
+
+	@Option(name = "-p", aliases = { "--prefixes" }, usage = "use this file as the prefixes to be used in SPARQL queries", metaVar = "PREFIXES")
+	public String prefixesFile = null;
+
 	/**
 	 * The angular coefficient to be used for dynamic time capping of axiom test.
 	 * <p>

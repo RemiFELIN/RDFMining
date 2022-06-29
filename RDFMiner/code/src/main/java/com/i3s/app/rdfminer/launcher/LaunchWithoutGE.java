@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -72,14 +74,11 @@ public class LaunchWithoutGE {
 		}
 		
 		// ShutDownHook
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				// Save results in output file
-				if (parameters.singleAxiom == null)
-					writeAndFinish();
-			}
-		});
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			// Save results in output file
+			if (parameters.singleAxiom == null)
+				writeAndFinish();
+		}));
 
 		if (parameters.singleAxiom == null) {
 			// as the test of a single axiom is return on standard output, we don't need to
@@ -113,29 +112,17 @@ public class LaunchWithoutGE {
 				// create a callable and add it on list of callables
 				String finalAxiomName = axiomName;
 				callables.add(() -> {
-//					long t0 = RDFMiner.getProcessCPUTime();
 					try {
 						logger.info("Testing axiom: " + finalAxiomName);
-						Axiom a = AxiomFactory.create(null, axiom, new VirtuosoEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES));
+						Axiom a = AxiomFactory.create(null, axiom, new VirtuosoEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES));
 						a.axiomId = finalAxiomName;
-//						long t = RDFMiner.getProcessCPUTime();
-//						a.elapsedTime = t - t0;
-//						if (parameters.singleAxiom != null) {
-//							logger.info("Axiom evaluated !");
-//							logger.info(a.toJSON().toString(2));
-//						}
-//						logger.info("Test completed in " + a.elapsedTime + " ms.");
 						return a;
 					} catch (QueryExceptionHTTP httpError) {
 						logger.error("HTTP Error " + httpError.getMessage() + " making a SPARQL query.");
 						httpError.printStackTrace();
-						writeAndFinish();
-						System.exit(1);
 					} catch (JenaException jenaException) {
 						logger.error("Jena Exception " + jenaException.getMessage() + " making a SPARQL query.");
 						jenaException.printStackTrace();
-						writeAndFinish();
-						System.exit(1);
 					}
 					return null;
 				});
@@ -147,7 +134,7 @@ public class LaunchWithoutGE {
 					} else if (axiomFile != null && parameters.singleAxiom == null) {
 						axiomName = axiomFile.readLine();
 					} else {
-						logger.error("'-a' and '-sa' are used at the same time");
+						logger.error("The options -a and -sa are used at the same time ...");
 						System.exit(1);
 					}
 					if (axiomName == null || axiomName.isEmpty()) {
@@ -156,37 +143,24 @@ public class LaunchWithoutGE {
 					}
 					String finalAxiomName = axiomName;
 					callables.add(() -> {
-//						long t0 = RDFMiner.getProcessCPUTime();
 						logger.info("Testing axiom: " + finalAxiomName);
-						Axiom a = AxiomFactory.create(null, finalAxiomName, new VirtuosoEndpoint(Global.VIRTUOSO_REMOTE_SPARQL_ENDPOINT, Global.VIRTUOSO_REMOTE_PREFIXES));
+						Axiom a = AxiomFactory.create(null, finalAxiomName, new VirtuosoEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES));
 						a.axiomId = finalAxiomName;
-//						long t = RDFMiner.getProcessCPUTime();
-//						a.elapsedTime = t - t0;
 						if (parameters.singleAxiom != null) {
 							logger.info("Axiom evaluated !");
-							logger.info("\n" + a.toJSON().toString(2));
+							logger.info("Result (using JSON format) :\n" + a.toJSON().toString(2));
 						}
-//						logger.info("Test completed in " + a.elapsedTime + " ms.");
 						return a;
 					});
 					if (parameters.singleAxiom != null)
 						break;
 				} catch (IOException e) {
-					writeAndFinish();
 					logger.error("Could not read the next axiom.");
 					e.printStackTrace();
+					writeAndFinish();
 					System.exit(1);
 				}
 			}
-
-//			if (a instanceof SubClassOfAxiom && a.necessity().doubleValue() > 1.0 / 3.0) {
-//				SubClassOfAxiom sa = (SubClassOfAxiom) a;
-//				SubClassOfAxiom.maxTestTime.maxput(sa.timePredictor(), t - t0);
-//			}
-
-//			 print useful results
-//			 logger.info("Num. confirmations: " + a.numConfirmations);
-//			 logger.info("Num. exceptions: " + a.numExceptions);
 
 		}
 

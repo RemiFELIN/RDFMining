@@ -77,7 +77,7 @@ public class ValidationReport {
             // add the model
             con.add(this.model);
             // init query
-            StringBuilder request = new StringBuilder(Global.CORESE_PREFIXES + "SELECT ?shape ?value WHERE { \n" +
+            StringBuilder request = new StringBuilder(Global.PREFIXES + "SELECT ?shape ?value WHERE { \n" +
                     "?x " + ShaclKW.SOURCE_SHAPE + " ?shape .\n" +
                     "?x " + parameter + " ?value .\n" +
                     " VALUES ?shape { ");
@@ -113,7 +113,7 @@ public class ValidationReport {
             // add the model
             con.add(this.model);
             // init query
-            StringBuilder request = new StringBuilder(Global.CORESE_PREFIXES + "SELECT ?shape ?node WHERE { \n" +
+            StringBuilder request = new StringBuilder(Global.PREFIXES + "SELECT ?shape ?node WHERE { \n" +
                     "?x " + ShaclKW.SOURCE_SHAPE + " ?shape .\n" +
                     "?x " + RDFMinerKW.EXCEPTION + " ?ex .\n" +
                     "?ex " + ShaclKW.FOCUS_NODE + " ?node .\n" +
@@ -157,7 +157,7 @@ public class ValidationReport {
             // add the model
             con.add(this.model);
             // init query
-            String request = Global.CORESE_PREFIXES + "SELECT ?shapes WHERE { \n" +
+            String request = Global.PREFIXES + "SELECT ?shapes WHERE { \n" +
                     "?y a " + ShaclKW.VALIDATION_REPORT + " .\n" +
                     "?y " + RDFMinerKW.SUMMARY + " ?x . \n" +
                     "?x " + ShaclKW.SOURCE_SHAPE + " ?shapes . }";
@@ -182,7 +182,7 @@ public class ValidationReport {
             // add the model
             con.add(this.model);
             // init request
-            String request = Global.CORESE_PREFIXES + "SELECT (count(?x) as ?n) WHERE { \n" +
+            String request = Global.PREFIXES + "SELECT (count(?x) as ?n) WHERE { \n" +
                     "?y a " + ShaclKW.VALIDATION_REPORT + " .\n" +
                     "?y " + RDFMinerKW.SUMMARY + " ?x . }";
             // init query
