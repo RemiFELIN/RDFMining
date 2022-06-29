@@ -7,21 +7,11 @@ SPIN_VERSION=2.0.0
 
 # Install RDFMining archtecture
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - Installing RDFMining         v$RDFMINING_VERSION"
-
-# Format our shell scripts 
-# > Allows us to catch errors related to the use of the software with Windows
-# > It does not impact Linux users, as well as the execution of the following script...
+# Clean shell files
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - Formatting of shell scripts useful for the installation of the software ..."
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - 'Init' and 'Final' correspond to the number of lines of current file before and after formatting"
-for script in `find ./../RDFMiner/ ./../Virtuoso/scripts/ ./../Corese/scripts/ . -name "*.sh"`
-do 
-	echo -n "   "$script 
-	echo -n " | Init: "$(cat $script | wc -l)
-	sed -i -e 's/\r$//' $script
-	echo " | Final: "$(cat $script | wc -l)
-done
+./clean_scripts.sh | column -t
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - Done !"
-
 # Generate package from Corese 4.1.1 source code
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - Packaging Corese             v$CORESE_VERSION"
 cd ./../Corese/src/corese/ && mvn -Dmaven.test.skip=true package -q
