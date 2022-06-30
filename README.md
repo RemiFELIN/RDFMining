@@ -49,7 +49,7 @@ rdfmining_virtuoso_1   /bin/bash /virtuoso/script ...   Up      1111/tcp, 8890/t
 ## Parameters
 
 ```
- -a (--axioms) AXIOMFILE                : test axioms contained in this file
+-a (--axioms) AXIOMFILE                : test axioms contained in this file
  -ckp (--Checkpoint) CHECK_POINT        : Checkpoint (default: 3)
  -cr (--type-crossover) TYPE_CROSSOVER  : use as this value as the type of
                                           parent selection operation (default:
@@ -62,9 +62,11 @@ rdfmining_virtuoso_1   /bin/bash /virtuoso/script ...   Up      1111/tcp, 8890/t
                                           diversity method (default: 1)
  -el (--elitism) ELITISM_SELECTION      : use as this value as the choose of
                                           elitism selection (default: 1)
+ -e (--endpoint) ENDPOINT               : specify the SPARQL endpoint to be
+                                          used for sending requests
  -g (--grammar) GRAMMAR                 : use this file as the axiom grammar
-                                          (default: /user/rfelin/homecode/resour
-                                          ces/OWL2Axiom-test.bnf)
+                                          (default: /rdfminer/code/resources/OWL
+                                          2Axiom-test.bnf)
  -ge (--grammatical-evolution)          : activate the grammatical evolution
  GRAMMATICAL_EVOLUTION                    for the axiom's extraction (default:
                                           false)
@@ -81,6 +83,8 @@ rdfmining_virtuoso_1   /bin/bash /virtuoso/script ...   Up      1111/tcp, 8890/t
                                           codon (default: 2147483647)
  -mxw (--max-wrapp) MAX_WRAPP           : use as this value as the max number
                                           of wrapping (default: 1)
+ -p (--prefixes) PREFIXES               : use this file as the prefixes to be
+                                          used in SPARQL queries
  -pc (--prob-cross) PROB_CROSSOVER      : use as this value as the probability
                                           of crossover operation (default: 0.8)
  -pm (--prob-mut) PROB_MUTATION         : use as this value as the probability
