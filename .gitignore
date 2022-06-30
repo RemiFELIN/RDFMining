@@ -23,3 +23,4 @@ Corese/src/corese/git_folder
 *.jar
 *.iml
 *.so
+.dba_pwd_set
