@@ -1,7 +1,6 @@
 version: "3.8"
 services:
     # The main service : RDFMiner
-    # developed by Andrea G. B. Tettamanzi, Thu Huong Nguyen and Rémi Felin
     rdfminer:
         restart: always
         image: rdfminer:1.4
@@ -11,7 +10,7 @@ services:
             - virtuoso
         command: launch
         volumes:
-            - /home/rfelin/projects/RDFMining/IO:/rdfminer/io           # To use it in your own machine, you need to put your own absolute path
+            - /home/xxx/projects/RDFMining/IO:/rdfminer/io           # To use it in your own machine, you need to put your own absolute path
         networks:
             rdfmining_network:
                 ipv4_address: 172.19.0.3
@@ -25,13 +24,11 @@ services:
         ports:
             - "9000:9000"
         volumes:
-            - /home/rfelin/projects/RDFMining/Virtuoso/data:/data       # To use it in your own machine, you need to put your own absolute path
+            - /home/xxx/projects/RDFMining/Virtuoso/data:/data       # To use it in your own machine, you need to put your own absolute path
         networks:
             rdfmining_network:
                 ipv4_address: 172.19.0.2
     # Corese 4.3.0
-    # Developped by Olivier Corby et al.
-    # modified by Rémi Felin in order to validate a SHACL Shape using probabilistic and possibilistic validation
     corese:
         restart: always
         image: corese:4.3.0
@@ -40,8 +37,8 @@ services:
         ports:
             - "9100:9100"
         volumes:
-            - /home/rfelin/projects/RDFMining/Corese/log:/usr/local/corese/log      # To use it in your own machine, you need to put your own absolute path
-            - /home/rfelin/projects/RDFMining/Corese/data:/usr/local/corese/data    # To use it in your own machine, you need to put your own absolute path
+            - /home/xxx/projects/RDFMining/Corese/log:/usr/local/corese/log      # To use it in your own machine, you need to put your own absolute path
+            - /home/xxx/projects/RDFMining/Corese/data:/usr/local/corese/data    # To use it in your own machine, you need to put your own absolute path
         networks:
             rdfmining_network:
                 ipv4_address: 172.19.0.4
