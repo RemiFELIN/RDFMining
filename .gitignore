@@ -24,3 +24,4 @@ Corese/src/corese/git_folder
 *.iml
 *.so
 .dba_pwd_set
+docker-compose.yml

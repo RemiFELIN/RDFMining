@@ -7,6 +7,8 @@ SPIN_VERSION=2.0.0
 
 # Install RDFMining archtecture
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - Installing RDFMining         v$RDFMINING_VERSION"
+# Auto-generate Dockerfile YML file
+./generate_yml.sh
 # Clean shell files
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - Formatting of shell scripts useful for the installation of the software ..."
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - 'Init' and 'Final' correspond to the number of lines of current file before and after formatting"
