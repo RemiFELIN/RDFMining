@@ -72,8 +72,8 @@ public class Global {
             + "PREFIX ex:       <http://example.org/demo#> \n"
             + "PREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#> \n"
             + "PREFIX sp:       <http://spinrdf.org/sp#> \n"
-            + "prefix sh:       <http://www.w3.org/ns/shacl#> \n"
-            + "prefix dct:      <http://purl.org/dc/terms/> \n";
+            + "PREFIX sh:       <http://www.w3.org/ns/shacl#> \n"
+            + "PREFIX dct:      <http://purl.org/dc/terms/> \n";
 
     /**
      * prefixes used to perform queries with the local {@link Global#VIRTUOSO_LOCAL_SPARQL_ENDPOINT

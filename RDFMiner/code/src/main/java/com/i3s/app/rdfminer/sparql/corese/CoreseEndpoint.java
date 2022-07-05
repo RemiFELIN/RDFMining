@@ -168,6 +168,7 @@ public class CoreseEndpoint {
         HttpGet get = new HttpGet(builder.build());
         // Accept header
         get.setHeader("Accept", "*/*");
+//        logger.info("HTTP Request: " + get);
         // exec
         HttpResponse response = httpClient.execute(get);
         // catch status code of the request

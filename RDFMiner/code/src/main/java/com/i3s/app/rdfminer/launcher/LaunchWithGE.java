@@ -199,7 +199,12 @@ public class LaunchWithGE {
             // First step of the grammatical evolution
             if ((curGeneration == 1) || ((buffer != null) && (!flag))) {
                 // if1
-                candidatePopulation = fit.updatePopulation(candidatePopulation, Global.VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT, Global.PREFIXES, null);
+                if(RDFMiner.mode.isAxiomMode()) {
+                    // special case for axiom mode
+                    candidatePopulation = fit.updatePopulation(candidatePopulation, Global.VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT, Global.PREFIXES, null);
+                } else {
+                    candidatePopulation = fit.updatePopulation(candidatePopulation, Global.SPARQL_ENDPOINT, Global.PREFIXES, null);
+                }
             }
             // Checkpoint reached, this is a code to evaluate and save axioms in output file
             if (parameters.populationSize * curGeneration == parameters.kBase * curCheckpoint) {
@@ -244,6 +249,10 @@ public class LaunchWithGE {
             generation.numComplexAxiom = stat.getCountComplexAxiom(distinctCandidatePopulation);
             generation.numComplexAxiomSpecial = stat.getCountComplexAxiomSpecial(distinctCandidatePopulation);
             RDFMiner.stats.generations.add(generation.toJSON());
+            // Log usefull stats concerning the algorithm evolution
+            logger.info("Average fitness: " + generation.averageFitness);
+            logger.info("Diversity coefficient: " + generation.diversityCoefficient);
+            logger.info("Genotype diversity coefficient: " + generation.genotypeDiversityCoefficient);
 
             if (curGeneration * parameters.populationSize < parameters.kBase * parameters.checkpoint) {
                 // if4
