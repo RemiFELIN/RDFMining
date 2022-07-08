@@ -39,17 +39,17 @@ echo "JVM heap space option: $XMX" >> $LOG
 
 
 # Check existing profile or create a new one
-if [ -f "$PROFILE" ]; then
-    echo "Using user-defined profile." >> $LOG
-else
-    # Prepare the Corese profile for loading "data/*"
-    echo "Creating new profile." >> $LOG
-    cat $CORESE/corese-default-profile.ttl > $PROFILE
-    echo "st:loadcontent a sw:Workflow; sw:body (" >> $PROFILE
-    genLoadData "$DATA"
-    echo ').' >> $PROFILE
-    echo '' >> $PROFILE
-fi
+# if [ -f "$PROFILE" ]; then
+#     echo "Using user-defined profile." >> $LOG
+# else
+# Prepare the Corese profile for loading "data/*"
+echo "Creating new profile." >> $LOG
+cat $CORESE/corese-default-profile.ttl > $PROFILE
+echo "st:loadcontent a sw:Workflow; sw:body (" >> $PROFILE
+genLoadData "$DATA"
+echo ').' >> $PROFILE
+echo '' >> $PROFILE
+# fi
 echo "Corese profile:" >> $LOG
 cat $PROFILE  >> $LOG
 
