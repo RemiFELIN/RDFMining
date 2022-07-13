@@ -121,12 +121,13 @@ public class CoreseEndpoint {
         return ResultParser.getResultsFromVariable(var, resultAsJSON);
     }
 
+    public List<String> select(String var, String sparql) throws URISyntaxException, IOException {
+        String resultAsJSON = query(Format.JSON, sparql);
+        return ResultParser.getResultsFromVariable(var, resultAsJSON);
+    }
+
     /**
      * <i>SELECT (count(distinct ?x) as ?n) WHERE { ... }</i> in SERVICE clause
-     * @param sparql
-     * @return
-     * @throws URISyntaxException
-     * @throws IOException
      */
     public int count(String sparql) throws URISyntaxException, IOException {
         String request = buildSelectAllQuery(addFederatedQuery("SELECT (count(distinct ?x) as ?n) WHERE { " + sparql + " }"));

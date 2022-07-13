@@ -75,7 +75,7 @@ public abstract class ShapeGenerator extends Generator {
         } catch (IOException ioe) {
             logger.info("Cache for " + symbol + " not found. Querying SPARQL endpoint");
             logger.info("Querying SPARQL endpoint for symbol <" + symbol + "> ...");
-            CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.SPARQL_ENDPOINT, Global.PREFIXES);
+            CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.PREFIXES);
             PrintStream cache = null;
             try {
                 cache = new PrintStream(cacheName(symbol, sparql));
@@ -83,7 +83,7 @@ public abstract class ShapeGenerator extends Generator {
                 logger.warn("Could not create cache for symbol " + symbol + ".");
             }
 
-            List<String> results = endpoint.selectFederatedQuery(symbol, sparql);
+            List<String> results = endpoint.select(symbol, sparql);
             if(results.size() > 0) {
                 for(String result : results) {
                     // declare a new production
