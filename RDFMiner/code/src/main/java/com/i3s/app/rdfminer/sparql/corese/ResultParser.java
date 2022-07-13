@@ -57,7 +57,7 @@ public class ResultParser {
                 logger.info("Timeout reached !");
                 return null;
             } else {
-                logger.warn("No results are found !");
+//                logger.warn("No results are found !");
                 return results;
             }
         }
