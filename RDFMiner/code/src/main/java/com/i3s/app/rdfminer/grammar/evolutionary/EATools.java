@@ -56,16 +56,13 @@ public class EATools {
 	 * delete twins from a given array of {@link GEChromosome chromosomes}
 	 * 
 	 * @param chromosomes a given array
-	 * @param n
 	 */
 	public static void deleteTwins(GEChromosome[] chromosomes, int n) {
 		// Let's go to the same phantom
 		for (int i = 0; i < n - 1; i++) {
 			for (int k = i + 1; k < n; k++) {
 				if (chromosomes[k] == chromosomes[i]) {
-					for (int j = k; j < n - 1; j++) {
-						chromosomes[j] = chromosomes[j + 1];
-					}
+					if (n - 1 - k >= 0) System.arraycopy(chromosomes, k + 1, chromosomes, k, n - 1 - k);
 					n--;
 					k--;
 				}
@@ -81,8 +78,8 @@ public class EATools {
 	 * @return the filtered list
 	 */
 	public static ArrayList<GEIndividual> getDistinctPopulation(ArrayList<GEIndividual> canPop) {
-		ArrayList<GEIndividual> individuals = new ArrayList<GEIndividual>();
-		Set<Phenotype> phenotypes = new HashSet<Phenotype>();
+		ArrayList<GEIndividual> individuals = new ArrayList<>();
+		Set<Phenotype> phenotypes = new HashSet<>();
 		for (GEIndividual item : canPop) {
 			if (phenotypes.add(item.getPhenotype())) {
 				individuals.add(item);
@@ -99,8 +96,8 @@ public class EATools {
 	 * @return the filtered list
 	 */
 	public static ArrayList<GEIndividual> getDistinctGenotypePopulation(ArrayList<GEIndividual> canPop) {
-		ArrayList<GEIndividual> individuals = new ArrayList<GEIndividual>();
-		Set<Genotype> genotypes = new HashSet<Genotype>();
+		ArrayList<GEIndividual> individuals = new ArrayList<>();
+		Set<Genotype> genotypes = new HashSet<>();
 		for (GEIndividual item : canPop) {
 			if (genotypes.add(item.getGenotype())) {
 				individuals.add(item);
@@ -161,8 +158,8 @@ public class EATools {
 				}
 			}
 		}
-		for (int t = 0; t < individuals.size(); t++) {
-			distinctPopulation.add(individuals.get(t));
+		for (GEIndividual individual : individuals) {
+			distinctPopulation.add(individual);
 		}
 		return distinctPopulation;
 	}
@@ -170,14 +167,13 @@ public class EATools {
 	public static SimplePopulation asymmetricPopulation(SimplePopulation canPop) {
 		SimplePopulation distinctPopulation = new SimplePopulation();
 		ArrayList<GEIndividual> individuals = new ArrayList<>();
-		int i, j, k, m;
+		int k, m = 0;
 		int n = canPop.size();
-		k = m = 0;
-		for (i = 0; i < n; i++) {
+		for (int i = 0; i < n; i++) {
 			individuals.add((GEIndividual) canPop.get(i));
 		}
-		for (i = 1; i < individuals.size() - m; i++) {
-			for (j = 0; j < i; j++) {
+		for (int i = 1; i < individuals.size() - m; i++) {
+			for (int j = 0; j < i; j++) {
 				String ai = individuals.get(i).getPhenotype().toString();
 				String aj = individuals.get(j).getPhenotype().toString();
 				if (ai.equals(aj)) {
@@ -191,8 +187,8 @@ public class EATools {
 				}
 			}
 		}
-		for (int t = 0; t < individuals.size(); t++) {
-			distinctPopulation.add(individuals.get(t));
+		for (GEIndividual individual : individuals) {
+			distinctPopulation.add(individual);
 		}
 		return distinctPopulation;
 	}
@@ -209,25 +205,22 @@ public class EATools {
 	 * @param diversity     the coefficient of diversity
 	 * @param mode			The mode used for the current experiment
 	 * @return a new population
-	 * @throws InterruptedException
-	 * @throws ExecutionException
-	 * @throws IOException
 	 */
 	public static ArrayList<GEIndividual> computeGeneration(ArrayList<GEIndividual> canPop, double proCrossover,
 															double proMutation, int curGeneration, Generator generator, int diversity, Mode mode)
 			throws InterruptedException, ExecutionException, IOException, URISyntaxException {
 
-		ArrayList<GEIndividual> notEvaluatedIndividuals = new ArrayList<GEIndividual>();
+		ArrayList<GEIndividual> notEvaluatedIndividuals = new ArrayList<>();
 		ArrayList<GEIndividual> evaluatedIndividuals = new ArrayList<>();
 
 		// We have a set of threads to compute each tasks
 		ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
 		// 2 differents types of tasks
-		Set<Callable<GEIndividual>> individualCallables = new HashSet<Callable<GEIndividual>>();
-		Set<Callable<GEIndividual[]>> individualsCallables = new HashSet<Callable<GEIndividual[]>>();
+		Set<Callable<GEIndividual>> individualCallables = new HashSet<>();
+		Set<Callable<GEIndividual[]>> individualsCallables = new HashSet<>();
 
 		logger.info("Performing crossover and mutation ...");
-		logger.info("The axioms will be evaluated using the following SPARQL Endpoint : " + Global.VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT);
+		logger.info("The axioms will be evaluated using the following SPARQL Endpoint : " + Global.SPARQL_ENDPOINT);
 
 		List<Crowding> shapesToEvaluate = new ArrayList<>();
 
@@ -394,7 +387,7 @@ public class EATools {
 
 	public static ArrayList<GEIndividual> rouletteWheel(ArrayList<GEIndividual> selectedPopulation) {
 		// RouletteWheel
-		int size = (int) (selectedPopulation.size());
+		int size = selectedPopulation.size();
 		RandomNumberGenerator random;
 		random = new MersenneTwisterFast(System.currentTimeMillis());
 		ProportionalRouletteWheel rl = new ProportionalRouletteWheel(size, random);
@@ -405,7 +398,7 @@ public class EATools {
 	@SuppressWarnings("unchecked")
 	public static ArrayList<GEIndividual> tournament(ArrayList<GEIndividual> selectedPopulation) {
 		// Tournament
-		int size = (int) (selectedPopulation.size());
+		int size = selectedPopulation.size();
 		RandomNumberGenerator random;
 		random = new MersenneTwisterFast(System.currentTimeMillis());
 		TournamentSelect tn = new TournamentSelect(size, size / 10, random);
@@ -414,7 +407,7 @@ public class EATools {
 	}
 
 	public static List<GEIndividual> resizeList(List<GEIndividual> individuals1, List<GEIndividual> individuals2) {
-		List<GEChromosome> chromosomes = new ArrayList<GEChromosome>();
+		List<GEChromosome> chromosomes = new ArrayList<>();
 		for (GEIndividual individual : individuals2) {
 			GEChromosome temp = (GEChromosome) individual.getGenotype().get(0);
 			chromosomes.add(temp);
@@ -453,7 +446,7 @@ public class EATools {
 	}
 
 	public static ArrayList<GEIndividual> getSelectedList(List<GEIndividual> individuals, int size) {
-		ArrayList<GEIndividual> list = new ArrayList<GEIndividual>();
+		ArrayList<GEIndividual> list = new ArrayList<>();
 		Fitness[] fit = sortDescending(individuals);
 		int cnt = 0;
 		while (cnt < size && cnt < individuals.size()) {
@@ -465,8 +458,8 @@ public class EATools {
 				ind.setEvaluated(fit[cnt].getIndividual().isEvaluated());
 				ind.setValid(fit[cnt].getIndividual().isValid());
 				ind.setAge(fit[cnt].getIndividual().getAge());
-				((GEIndividual) ind).setMapped(((GEIndividual) (fit[cnt].getIndividual())).isMapped());
-				((GEIndividual) ind).setUsedCodons(((GEIndividual) (fit[cnt].getIndividual())).getUsedCodons());
+				ind.setMapped(((GEIndividual) (fit[cnt].getIndividual())).isMapped());
+				ind.setUsedCodons(((GEIndividual) (fit[cnt].getIndividual())).getUsedCodons());
 				list.add(ind);
 			}
 			cnt++;
@@ -475,7 +468,7 @@ public class EATools {
 	}
 
 	public static String[][] setTablesPredicates(Logger logger, VirtuosoEndpoint endpoint) {
-		ArrayList<String> predicates = new ArrayList<String>();
+		ArrayList<String> predicates = new ArrayList<>();
 		String sparql = "distinct ?p where {?s ?p ?o}";
 		String p, gp;
 		ResultSet rs = endpoint.select(sparql, 0);
