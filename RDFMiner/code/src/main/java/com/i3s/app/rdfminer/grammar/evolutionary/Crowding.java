@@ -1,14 +1,15 @@
 package com.i3s.app.rdfminer.grammar.evolutionary;
 
-import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.grammar.evolutionary.fitness.AxiomFitnessEvaluation;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.mode.Mode;
-import org.apache.log4j.Logger;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class Crowding {
 
-	private static final Logger logger = Logger.getLogger(Crowding.class.getName());
+//	private static final Logger logger = Logger.getLogger(Crowding.class.getName());
 
 //	protected int size;
 	protected int distanceP1ToC1;
@@ -34,7 +35,7 @@ public class Crowding {
 		this.distanceP2ToC1 = this.distance(this.parent2, this.child1);
 	}
 
-	GEIndividual[] getSurvivalSelection() {
+	GEIndividual[] getSurvivalSelection() throws URISyntaxException, IOException {
 		int d1, d2;
 		GEIndividual[] survivals = new GEIndividual[2];
 		d1 = distanceP1ToC1 + distanceP2ToC2;
@@ -103,7 +104,7 @@ public class Crowding {
 		return dp[len1][len2];
 	}
 
-	public static GEIndividual compare(GEIndividual parent, GEIndividual child, Mode mode) {
+	public static GEIndividual compare(GEIndividual parent, GEIndividual child, Mode mode) throws URISyntaxException, IOException {
 		if(mode.isAxiomMode()) {
 			AxiomFitnessEvaluation fit = new AxiomFitnessEvaluation();
 			// if parent don't have any value for fitness, we need to compute its value

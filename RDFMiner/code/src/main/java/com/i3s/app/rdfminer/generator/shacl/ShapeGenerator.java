@@ -9,6 +9,7 @@ import com.i3s.app.rdfminer.sparql.corese.Format;
 import com.i3s.app.rdfminer.sparql.corese.ResultParser;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
+import org.eclipse.rdf4j.query.algebra.Str;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -41,20 +42,7 @@ public abstract class ShapeGenerator extends Generator {
             String h = String.format("\"%x\"", hexDigit);
             logger.warn("Querying with FILTER(strStarts(MD5(?x), " + h + "))...");
             // SPARQL Request
-            String classSparql = RequestBuilder.buildSelectRequest(
-                    Global.PREFIXES,
-                    "DISTINCT ?Class",
-                    "?x a ?Class . FILTER( strStarts(MD5(str(?Class)) , " + h + ") ) "
-            );
-            String subjectSparql = RequestBuilder.buildSelectRequest(
-                    Global.PREFIXES,
-                    "DISTINCT (concat('\"', ?sub, '\"') as ?Subject)",
-                    "?article dct:subject ?sub . FILTER( strStarts(MD5(str(?Subject)) , " + h + ") ) "
-            );
-
-            generateProductions("Class", classSparql);
-//            generateProductions("Source", sourceSparql);
-//            generateProductions("Subject", subjectSparql);
+            generateProductions("Class", "SELECT DISTINCT ?Class WHERE { ?x a ?Class . FILTER( strStarts(MD5(str(?Class)), " + h + ") ) }");
         }
     }
 
@@ -87,8 +75,7 @@ public abstract class ShapeGenerator extends Generator {
         } catch (IOException ioe) {
             logger.info("Cache for " + symbol + " not found. Querying SPARQL endpoint");
             logger.info("Querying SPARQL endpoint for symbol <" + symbol + "> ...");
-            CoreseEndpoint endpoint = new CoreseEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES);
-            String jsonResult = endpoint.select(Format.JSON, sparql);
+            CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.SPARQL_ENDPOINT, Global.PREFIXES);
             PrintStream cache = null;
             try {
                 cache = new PrintStream(cacheName(symbol, sparql));
@@ -96,7 +83,7 @@ public abstract class ShapeGenerator extends Generator {
                 logger.warn("Could not create cache for symbol " + symbol + ".");
             }
 
-            List<String> results = ResultParser.getResultsfromVariable(symbol, jsonResult);
+            List<String> results = endpoint.selectFederatedQuery(symbol, sparql);
             if(results.size() > 0) {
                 for(String result : results) {
                     // declare a new production

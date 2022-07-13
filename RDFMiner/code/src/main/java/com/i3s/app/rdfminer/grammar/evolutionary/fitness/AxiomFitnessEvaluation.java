@@ -1,5 +1,7 @@
 package com.i3s.app.rdfminer.grammar.evolutionary.fitness;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -9,6 +11,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import com.i3s.app.rdfminer.grammar.evolutionary.Fitness;
+import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -47,7 +50,7 @@ public class AxiomFitnessEvaluation extends Fitness {
 			if (population.get(i).isMapped()) {
 				final int idx = i;
 				callables.add(() -> {
-					VirtuosoEndpoint endpoint = new VirtuosoEndpoint(url, prefixes);
+					CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, url, prefixes);
 					Axiom axiom = AxiomFactory.create(population.get(idx), population.get(idx).getPhenotype(),
 							endpoint);
 					// TODO : num of generation (look if it miss...)
@@ -122,7 +125,7 @@ public class AxiomFitnessEvaluation extends Fitness {
 	}
 
 	@Override
-	public GEIndividual updateIndividual(GEIndividual indivi) {
+	public GEIndividual updateIndividual(GEIndividual indivi) throws URISyntaxException, IOException {
 		if(indivi.getFitness() != null) {
 			// this individual has already been evaluated
 			return indivi;
@@ -131,7 +134,7 @@ public class AxiomFitnessEvaluation extends Fitness {
 		double f = 0;
 		if (indivi.isMapped()) {
 			Axiom axiom = AxiomFactory.create(indivi, indivi.getPhenotype(),
-					new VirtuosoEndpoint(Global.VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT, Global.PREFIXES));
+					new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT, Global.PREFIXES));
 			f = setFitness(axiom);
 		} else {
 			f = 0;
@@ -156,7 +159,7 @@ public class AxiomFitnessEvaluation extends Fitness {
 				// if indivi is correctly formed
 				if (ind.isMapped()) {
 					Axiom a = AxiomFactory.create(ind, ind.getPhenotype(),
-							new VirtuosoEndpoint(Global.VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT, Global.PREFIXES));
+							new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT, Global.PREFIXES));
 					a.generation = generation;
 					axioms.add(a.toJSON());
 				}

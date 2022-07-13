@@ -23,11 +23,13 @@ import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 
 /**
- * @author NGUYEN Thu Huong Extraction of a sample of DBpedia
+ * Extraction of a sample of DBpedia.
+ *
+ * @author NGUYEN Thu Huong
  */
 public class Extractor {
 
-	private static Logger logger = Logger.getLogger(Extractor.class.getName());
+	private static final Logger logger = Logger.getLogger(Extractor.class.getName());
 
 //	final private static String PREFIXES = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
 //			+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
@@ -79,8 +81,7 @@ public class Extractor {
 			m = ModelFactory.createDefaultModel();
 			if (countLines > 10000) {
 				try {
-					if (fout != null)
-						fout.close();
+					fout.close();
 					i++;
 					fout = new FileOutputStream(rootFile + "_" + Integer.toString(i) + ".nt", true);
 					countLines = 0;

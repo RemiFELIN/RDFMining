@@ -102,12 +102,7 @@ public class TruthDegree implements Comparable<TruthDegree> {
 	 */
 	@Override
 	public int compareTo(TruthDegree that) {
-		if (truth < that.truth)
-			return -1;
-		else if (truth == that.truth)
-			return 0;
-		else
-			return 1;
+		return Double.compare(truth, that.truth);
 	}
 
 	/**

@@ -3,23 +3,16 @@
  */
 package com.i3s.app.rdfminer;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
-import com.i3s.app.rdfminer.grammar.evolutionary.fitness.AxiomFitnessEvaluation;
-import com.i3s.app.rdfminer.grammar.evolutionary.fitness.ShapeFitnessEvaluation;
+import com.i3s.app.rdfminer.grammar.evolutionary.CostGP;
+import com.i3s.app.rdfminer.launcher.LaunchWithGE;
+import com.i3s.app.rdfminer.launcher.LaunchWithoutGE;
 import com.i3s.app.rdfminer.mode.Mode;
 import com.i3s.app.rdfminer.mode.TypeMode;
 import com.i3s.app.rdfminer.output.Results;
 import com.i3s.app.rdfminer.output.axiom.AxiomsResultsJSON;
+import com.i3s.app.rdfminer.output.axiom.StatJSON;
 import com.i3s.app.rdfminer.output.shacl.ShapesResultsJSON;
+import com.i3s.app.rdfminer.parameters.CmdLineParameters;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONArray;
@@ -27,11 +20,16 @@ import org.json.JSONObject;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
-import com.i3s.app.rdfminer.grammar.evolutionary.CostGP;
-import com.i3s.app.rdfminer.launcher.LaunchWithGE;
-import com.i3s.app.rdfminer.launcher.LaunchWithoutGE;
-import com.i3s.app.rdfminer.output.axiom.StatJSON;
-import com.i3s.app.rdfminer.parameters.CmdLineParameters;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * The main class of the RDFMiner experimental tool.
@@ -46,7 +44,7 @@ import com.i3s.app.rdfminer.parameters.CmdLineParameters;
  */
 public class RDFMiner {
 
-	private static Logger logger = Logger.getLogger(RDFMiner.class.getName());
+	private static final Logger logger = Logger.getLogger(RDFMiner.class.getName());
 
 	public static CmdLineParameters parameters = new CmdLineParameters();
 
@@ -73,9 +71,8 @@ public class RDFMiner {
 
 	/**
 	 * The entry point of the RDF Miner application.
-	 * @throws InterruptedException 
 	 */
-	public static void main(String[] args) throws InterruptedException, ExecutionException {
+	public static void main(String[] args) throws InterruptedException, ExecutionException, URISyntaxException, IOException {
 
 		// Print the banner of RDF Miner
 		System.out.println(Global.BANNER);
@@ -123,14 +120,16 @@ public class RDFMiner {
 
 		// Create cache folder if it not already exists
 		if(!(new File(Global.CACHE_PATH)).exists()) {
-			(new File(Global.CACHE_PATH)).mkdir();
-			logger.info("Cache folder successfully created");
+			boolean created = (new File(Global.CACHE_PATH)).mkdir();
+			if(created)
+				logger.info("Cache folder successfully created");
 		}
 		
 		if (parameters.singleAxiom == null) {
 			if(!(new File(Global.OUTPUT_PATH + parameters.resultFolder)).exists()) {
-				(new File(Global.OUTPUT_PATH + parameters.resultFolder)).mkdirs();
-				logger.info(Global.OUTPUT_PATH + parameters.resultFolder + " folder successfully created");
+				boolean created = (new File(Global.OUTPUT_PATH + parameters.resultFolder)).mkdirs();
+				if(created)
+					logger.info(Global.OUTPUT_PATH + parameters.resultFolder + " folder successfully created");
 			}
 		}
 		RDFMiner.outputFolder = Global.OUTPUT_PATH + parameters.resultFolder;

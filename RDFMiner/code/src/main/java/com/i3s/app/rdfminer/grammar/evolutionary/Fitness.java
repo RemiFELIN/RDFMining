@@ -3,6 +3,8 @@ package com.i3s.app.rdfminer.grammar.evolutionary;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -28,7 +30,7 @@ public abstract class Fitness {
      * @param indivi a given individual
      * @return the evaluated individual
      */
-    public abstract GEIndividual updateIndividual(GEIndividual indivi);
+    public abstract GEIndividual updateIndividual(GEIndividual indivi) throws URISyntaxException, IOException;
 
     /**
      * Display a given population, fill axioms list (as a set of JSON Object)

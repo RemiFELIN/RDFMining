@@ -1,22 +1,6 @@
 package com.i3s.app.rdfminer.launcher;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.*;
-
-import org.apache.jena.shared.JenaException;
-import org.apache.jena.sparql.engine.http.QueryExceptionHTTP;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-
+import Individuals.Phenotype;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.axiom.Axiom;
@@ -26,19 +10,32 @@ import com.i3s.app.rdfminer.generator.axiom.CandidateAxiomGenerator;
 import com.i3s.app.rdfminer.generator.axiom.IncreasingTimePredictorAxiomGenerator;
 import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
+import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.sparql.engine.http.QueryExceptionHTTP;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
 
-import Individuals.Phenotype;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.*;
 
 public class LaunchWithoutGE {
 
-	private static Logger logger = Logger.getLogger(LaunchWithoutGE.class.getName());
+	private static final Logger logger = Logger.getLogger(LaunchWithoutGE.class.getName());
 	
 	/**
 	 * The first version of RDFMiner launcher
-	 * @throws InterruptedException 
 	 */
-	public void run(CmdLineParameters parameters) throws InterruptedException, ExecutionException {
+	public void run(CmdLineParameters parameters) throws InterruptedException, ExecutionException, URISyntaxException, IOException {
 		
 		AxiomGenerator generator = null;
 		BufferedReader axiomFile = null;
@@ -95,7 +92,7 @@ public class LaunchWithoutGE {
 		// Prepare multi-threading
 		// We have a set of threads to compute each axioms
 		ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
-		Set<Callable<Axiom>> callables = new HashSet<Callable<Axiom>>();
+		Set<Callable<Axiom>> callables = new HashSet<>();
 		List<Axiom> axiomList = new ArrayList<>();
 
 		// assessment of axioms
@@ -114,7 +111,7 @@ public class LaunchWithoutGE {
 				callables.add(() -> {
 					try {
 						logger.info("Testing axiom: " + finalAxiomName);
-						Axiom a = AxiomFactory.create(null, axiom, new VirtuosoEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES));
+						Axiom a = AxiomFactory.create(null, axiom, new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.SPARQL_ENDPOINT, Global.PREFIXES));
 						a.axiomId = finalAxiomName;
 						return a;
 					} catch (QueryExceptionHTTP httpError) {
@@ -144,7 +141,7 @@ public class LaunchWithoutGE {
 					String finalAxiomName = axiomName;
 					callables.add(() -> {
 						logger.info("Testing axiom: " + finalAxiomName);
-						Axiom a = AxiomFactory.create(null, finalAxiomName, new VirtuosoEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES));
+						Axiom a = AxiomFactory.create(null, finalAxiomName, new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.SPARQL_ENDPOINT, Global.PREFIXES));
 						a.axiomId = finalAxiomName;
 						if (parameters.singleAxiom != null) {
 							logger.info("Axiom evaluated !");

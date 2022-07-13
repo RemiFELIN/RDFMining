@@ -3,19 +3,19 @@
  */
 package com.i3s.app.rdfminer.axiom.type;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.jena.atlas.lib.Timer;
-import org.apache.log4j.Logger;
-
+import Mapper.Symbol;
 import com.i3s.app.rdfminer.axiom.Axiom;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.expression.complement.ComplementClassExpression;
+import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
+import org.apache.log4j.Logger;
 
-import Mapper.Symbol;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A class that represents a <code>DisjointClasses</code> axiom.
@@ -25,7 +25,7 @@ import Mapper.Symbol;
  */
 public class DisjointClassesAxiom extends Axiom {
 	
-	private static Logger logger = Logger.getLogger(DisjointClassesAxiom.class.getName());
+	private static final Logger logger = Logger.getLogger(DisjointClassesAxiom.class.getName());
 
 	/**
 	 * An array of class expressions which are declared to be mutually disjoint.
@@ -45,7 +45,7 @@ public class DisjointClassesAxiom extends Axiom {
 	 * @param arguments   the functional-style expression of the subclass
 	 * @param endpoint the functional-style expression of the superclass
 	 */
-	public DisjointClassesAxiom(List<List<Symbol>> arguments, VirtuosoEndpoint endpoint) {
+	public DisjointClassesAxiom(List<List<Symbol>> arguments, CoreseEndpoint endpoint) throws URISyntaxException, IOException {
 		long t0 = getProcessCPUTime();
 		disjointClass = new Expression[arguments.size()];
 		disjointClassComplement = new Expression[disjointClass.length];
@@ -65,12 +65,6 @@ public class DisjointClassesAxiom extends Axiom {
 
 	/**
 	 * Construct the <var>Q</var><sub><code>Dis</code></sub> graph pattern.
-	 * 
-	 * @param j
-	 * @param i
-	 * @param x
-	 * @param y
-	 * @return
 	 */
 	protected String disjunctionGraphPattern(int j, int i, String x, String y) {
 		String dc = Expression.getFreshVariableName();
@@ -106,8 +100,8 @@ public class DisjointClassesAxiom extends Axiom {
 		final String graphPattern3 = "{ " + disjointClass[j].graphPattern + " \n";
 		final String graphPattern4 = disjointClass[i].createGraphPattern("?y", "y") + " \n";
 		String gp2 = graphPattern3;
-		gp2 += "?x" + " a " + dc + ".\n";
-		gp2 += "?y" + " a " + dc + ".\n";
+		gp2 += "?x a " + dc + " .\n";
+		gp2 += "?y a " + dc + " .\n";
 		gp2 += graphPattern4;
 		gp2 += "}\n";
 		return gp2;
@@ -122,39 +116,33 @@ public class DisjointClassesAxiom extends Axiom {
 	 * </p>
 	 */
 	@Override
-	public void update(VirtuosoEndpoint endpoint) {
-		confirmations = new ArrayList<String>();
-		exceptions = new ArrayList<String>();
+	public void update(CoreseEndpoint endpoint) throws URISyntaxException, IOException {
+		confirmations = new ArrayList<>();
+		exceptions = new ArrayList<>();
 //		long timeSpent = 0;
-		String refCardGraphPattern = "";
+		StringBuilder refCardGraphPattern = new StringBuilder();
 		for (int i = 0; i < disjointClass.length; i++) {
 			if (i > 0)
-				refCardGraphPattern += " UNION ";
-			refCardGraphPattern += "{ " + disjointClass[i].graphPattern + " }";
+				refCardGraphPattern.append(" UNION ");
+			refCardGraphPattern.append("{ ").append(disjointClass[i].graphPattern).append(" }");
 		}
-		int generality1 = 0;
-		int generality2 = 0;
+		int generality1, generality2;
 		int k = 0;
 		// compute generality and reference cardinality
 		while (k < disjointClass.length) {
-			String generalityGraphPattern = "";
-			String generalityGraphPattern2 = "";
-			generalityGraphPattern += "{ " + disjointClass[k].graphPattern + " }";
-			generalityGraphPattern2 += "{ " + disjointClass[k + 1].graphPattern + " }";
+			String generalityGraphPattern = "{ " + disjointClass[k].graphPattern + " }";
+			String generalityGraphPattern2 = "{ " + disjointClass[k + 1].graphPattern + " }";
 			// compute the cost of GP
-			generality1 = endpoint.count("?x", generalityGraphPattern, 0);
-			generality2 = endpoint.count("?x", generalityGraphPattern2, 0);
-			generality = Math.min(generality1, generality2);
+			generality = Math.min(endpoint.count(generalityGraphPattern), endpoint.count(generalityGraphPattern2));
 			k = k + 2;
 		}
 		logger.info("generality: " + generality);
 		// skipping computing the reference cardinality when generality=0
 		if (generality != 0) {
-			referenceCardinality = endpoint.count("?x", refCardGraphPattern, 0);
-			String exceptionGraphPattern = "";
-			for (int i = 0; i < disjointClass.length; i++)
-				exceptionGraphPattern += disjointClass[i].graphPattern + "\n";
-			numExceptions = endpoint.count("?x", exceptionGraphPattern, 0);
+			referenceCardinality = endpoint.count(refCardGraphPattern.toString());
+			StringBuilder exceptionGraphPattern = new StringBuilder();
+			for (Expression aClass : disjointClass) exceptionGraphPattern.append(aClass.graphPattern).append("\n");
+			numExceptions = endpoint.count(exceptionGraphPattern.toString());
 //			if (numExceptions > 0 && numExceptions < 100) {
 				// query the exceptions
 				// endpoint.select("TO DO");
@@ -172,14 +160,14 @@ public class DisjointClassesAxiom extends Axiom {
 	}
 
 	public void updateVolker(VirtuosoEndpoint endpoint) {
-		confirmations = new ArrayList<String>();
-		exceptions = new ArrayList<String>();
+		confirmations = new ArrayList<>();
+		exceptions = new ArrayList<>();
 
-		String refCardGraphPattern = "";
+		StringBuilder refCardGraphPattern = new StringBuilder();
 		for (int i = 0; i < disjointClass.length; i++) {
 			if (i > 0)
-				refCardGraphPattern += " UNION ";
-			refCardGraphPattern += "{ " + disjointClass[i].graphPattern + " }";
+				refCardGraphPattern.append(" UNION ");
+			refCardGraphPattern.append("{ ").append(disjointClass[i].graphPattern).append(" }");
 		}
 
 		int generality1 = 0;
@@ -192,19 +180,15 @@ public class DisjointClassesAxiom extends Axiom {
 			generalityGraphPattern2 += "{ " + disjointClass[k + 1].graphPattern + " }";
 			generality1 = endpoint.count("?x", generalityGraphPattern, 0);
 			generality2 = endpoint.count("?x", generalityGraphPattern2, 0);
-			if (generality1 > generality2)
-				generality = generality2;
-			else
-				generality = generality1;
+			generality = Math.min(generality1, generality2);
 			k = k + 2;
 		}
 		// logger.info("Generality :" + generality);
-		referenceCardinality = endpoint.count("?x", refCardGraphPattern, 0);
+		referenceCardinality = endpoint.count("?x", refCardGraphPattern.toString(), 0);
 		// logger.info("number referenceCardinality: " + referenceCardinality);
-		String exceptionGraphPattern = "";
-		for (int i = 0; i < disjointClass.length; i++)
-			exceptionGraphPattern += disjointClass[i].graphPattern + "\n";
-		numExceptions = endpoint.count("?x", exceptionGraphPattern, 0);
+		StringBuilder exceptionGraphPattern = new StringBuilder();
+		for (Expression aClass : disjointClass) exceptionGraphPattern.append(aClass.graphPattern).append("\n");
+		numExceptions = endpoint.count("?x", exceptionGraphPattern.toString(), 0);
 //		if (numExceptions > 0 && numExceptions < 100) {
 //			// query the exceptions
 //			while (endpoint.hasNext()) {

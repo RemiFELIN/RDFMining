@@ -17,8 +17,6 @@ public class UnionExpression extends Expression {
 
 	/**
 	 * Creates a new, empty union expression.
-	 * 
-	 * @param syntax an expression in OWL 2 functional-style syntax.
 	 */
 	public UnionExpression() {
 		super();
@@ -34,13 +32,13 @@ public class UnionExpression extends Expression {
 	@Override
 	public String createGraphPattern(String subject, String object) {
 		Iterator<Expression> i = subExpressions.iterator();
-		String pattern = "";
+		StringBuilder pattern = new StringBuilder();
 		while (i.hasNext()) {
-			pattern += "{ " + i.next().createGraphPattern(subject, object) + " } ";
+			pattern.append("{ ").append(i.next().createGraphPattern(subject, object)).append(" } ");
 			if (i.hasNext())
-				pattern += "UNION\n";
+				pattern.append("UNION\n");
 		}
-		return pattern;
+		return pattern.toString();
 	}
 
 }

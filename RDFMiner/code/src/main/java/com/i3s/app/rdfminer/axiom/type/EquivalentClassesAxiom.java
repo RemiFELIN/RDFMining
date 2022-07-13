@@ -3,6 +3,8 @@
  */
 package com.i3s.app.rdfminer.axiom.type;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +12,7 @@ import com.i3s.app.rdfminer.axiom.Axiom;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.expression.complement.ComplementClassExpression;
+import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 
 import Mapper.Symbol;
@@ -23,7 +26,7 @@ import org.apache.log4j.Logger;
  */
 public class EquivalentClassesAxiom extends Axiom {
 
-	private static Logger logger = Logger.getLogger(EquivalentClassesAxiom.class.getName());
+	private static final Logger logger = Logger.getLogger(EquivalentClassesAxiom.class.getName());
 
 	/**
 	 * An array of class expressions which are declared to be mutually equivalent.
@@ -42,7 +45,7 @@ public class EquivalentClassesAxiom extends Axiom {
 	 * 
 	 *
 	 */
-	public EquivalentClassesAxiom(List<List<Symbol>> arguments, VirtuosoEndpoint endpoint) {
+	public EquivalentClassesAxiom(List<List<Symbol>> arguments, CoreseEndpoint endpoint) throws URISyntaxException, IOException {
 		long t0 = getProcessCPUTime();
 		equivalentClass = new Expression[arguments.size()];
 		equivalentClassComplement = new Expression[equivalentClass.length];
@@ -67,19 +70,13 @@ public class EquivalentClassesAxiom extends Axiom {
 
 	/**
 	 * Construct the <var>Q</var><sub><code>Dis</code></sub> graph pattern.
-	 * 
-	 * @param j
-	 * @param i
-	 * @param x
-	 * @param y
-	 * @return
 	 */
-	protected String equivalentGraphPattern(int j, int i, String x, String y) {
+	protected String equivalentGraphPattern(int j, int i) {
 		String dc = Expression.getFreshVariableName(); // tra lai ki hieu cua Expression "?z_" + (freshVarId++)
 		String z1 = Expression.getFreshVariableName();
 		String z2 = Expression.getFreshVariableName();
 
-		String gp = "{ " + x + " a " + dc + " .\n"; // gp -graphpattern
+		String gp = "{ ?x a " + dc + " .\n"; // gp -graphpattern
 		gp += z1 + " a " + dc + " .\n";
 		gp += equivalentClassComplement[i].createGraphPattern(z1, Expression.getFreshVariableName()) + "\n";
 		gp += "FILTER NOT EXISTS {\n";
@@ -98,31 +95,31 @@ public class EquivalentClassesAxiom extends Axiom {
 	 * </p>
 	 */
 	@Override
-	public void update(VirtuosoEndpoint endpoint) {
-		confirmations = new ArrayList<String>();
-		exceptions = new ArrayList<String>();
-		String refCardGraphPattern = "";
+	public void update(CoreseEndpoint endpoint) throws URISyntaxException, IOException {
+		confirmations = new ArrayList<>();
+		exceptions = new ArrayList<>();
+		StringBuilder refCardGraphPattern = new StringBuilder();
 		for (int i = 0; i < equivalentClass.length; i++) {
 			if (i > 0)
-				refCardGraphPattern += " UNION ";
-			refCardGraphPattern += "{ " + equivalentClass[i].graphPattern + " }";
+				refCardGraphPattern.append(" UNION ");
+			refCardGraphPattern.append("{ ").append(equivalentClass[i].graphPattern).append(" }");
 		}
-		referenceCardinality = endpoint.count("?x", refCardGraphPattern, 0);
+		referenceCardinality = endpoint.count(refCardGraphPattern.toString());
 
-		String confirmationGraphPattern = "";
+		StringBuilder confirmationGraphPattern = new StringBuilder();
 		for (int i = 0; i < equivalentClass.length; i++) {
 			if (i > 0)
-				confirmationGraphPattern += " UNION ";
-			confirmationGraphPattern += "{ ";
+				confirmationGraphPattern.append(" UNION ");
+			confirmationGraphPattern.append("{ ");
 			for (int j = 0; j < equivalentClass.length; j++) {
 				if (j == i)
-					confirmationGraphPattern += equivalentClass[j].graphPattern + "\n";
+					confirmationGraphPattern.append(equivalentClass[j].graphPattern).append("\n");
 				else
-					confirmationGraphPattern += equivalentGraphPattern(j, i, "?x", "?y");
+					confirmationGraphPattern.append(equivalentGraphPattern(j, i));
 			}
-			confirmationGraphPattern += " }";
+			confirmationGraphPattern.append(" }");
 		}
-		numConfirmations = endpoint.count("?x", confirmationGraphPattern, 0);
+		numConfirmations = endpoint.count(confirmationGraphPattern.toString());
 //		if (numConfirmations > 0 && numConfirmations < 100) {
 //			// query the confirmations
 //			RDFMiner.endpoint.select("TO DO", 0);
@@ -132,11 +129,9 @@ public class EquivalentClassesAxiom extends Axiom {
 //				confirmations.add(Expression.sparqlEncode(x));
 //			}
 //		}
-
-		String exceptionGraphPattern = "";
-		for (int i = 0; i < equivalentClass.length; i++)
-			exceptionGraphPattern += equivalentClass[i].graphPattern + "\n";
-		numExceptions = endpoint.count("?x", exceptionGraphPattern, 0);
+		StringBuilder exceptionGraphPattern = new StringBuilder();
+		for (Expression aClass : equivalentClass) exceptionGraphPattern.append(aClass.graphPattern).append("\n");
+		numExceptions = endpoint.count(exceptionGraphPattern.toString());
 //		if (numExceptions > 0 && numExceptions < 100) {
 //			// query the exceptions
 //			RDFMiner.endpoint.select("TO DO", 0);

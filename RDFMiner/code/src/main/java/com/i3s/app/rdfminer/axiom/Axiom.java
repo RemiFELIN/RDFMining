@@ -3,20 +3,19 @@
  */
 package com.i3s.app.rdfminer.axiom;
 
-import java.util.List;
-
-import com.i3s.app.rdfminer.output.Results;
-import com.i3s.app.rdfminer.shacl.ValidationReport;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
+import Mapper.Symbol;
 import com.i3s.app.rdfminer.axiom.type.DisjointClassesAxiom;
 import com.i3s.app.rdfminer.fuzzy.TruthDegree;
 import com.i3s.app.rdfminer.grammar.evolutionary.fitness.AxiomFitnessEvaluation;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
-import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
+import com.i3s.app.rdfminer.output.Results;
+import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import Mapper.Symbol;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.List;
 
 /**
  * An abstract class at the top of the hierarchy of OWL 2 axioms.
@@ -152,17 +151,14 @@ public abstract class Axiom extends Results {
 	 */
 	public double ari = 0.0;
 
-	/* The structure of GP in axiom */
-	protected int numUnionOperators = 0;
-	protected int numFilterOperators = 0;
-	protected int numTriples = 0;
-	protected int numVariables = 0;
-	protected int numInstancesPredicates = 0;
+//	/* The structure of GP in axiom */
+//	protected int numUnionOperators = 0;
+//	protected int numFilterOperators = 0;
+//	protected int numTriples = 0;
+//	protected int numVariables = 0;
+//	protected int numInstancesPredicates = 0;
 
-	/**
-	 * Updates the counts used to compute the possibility and necessity degrees.
-	 */
-//	abstract public void update();
+	//	abstract public void update();
 
 	/**
 	 * Computes the possibility degree of the axiom, based on the known facts.
@@ -181,8 +177,6 @@ public abstract class Axiom extends Results {
 
 	/**
 	 * Computes the necessity degree of the axiom, based on the known facts.
-	 * 
-	 * @return
 	 */
 	public TruthDegree necessity() {
 		double y = 0.0;
@@ -202,20 +196,18 @@ public abstract class Axiom extends Results {
 		return ari;
 	}
 
-	/**
-	 * Compute the cost of the GP
-	 * 
-	 * @return
-	 */
-	public double costGP() {
-		if (generality > 0) {
-			return Math
-					.sqrt(Math.sqrt((2 * numUnionOperators + numFilterOperators + 1) * (numVariables + 1) * numTriples))
-					* Math.sqrt(Math.sqrt(numInstancesPredicates));
-		} else {
-			return 1;
-		}
-	}
+//	/**
+//	 * Compute the cost of the GP
+//	 */
+//	public double costGP() {
+//		if (generality > 0) {
+//			return Math
+//					.sqrt(Math.sqrt((2 * numUnionOperators + numFilterOperators + 1) * (numVariables + 1) * numTriples))
+//					* Math.sqrt(Math.sqrt(numInstancesPredicates));
+//		} else {
+//			return 1;
+//		}
+//	}
 
 	/**
 	 * Get the individual involved by the current axiom
@@ -253,7 +245,7 @@ public abstract class Axiom extends Results {
 	 * and stored in a list.
 	 * </p>
 	 */
-	public void update(VirtuosoEndpoint endpoint) {
+	public void update(CoreseEndpoint endpoint) throws URISyntaxException, IOException {
 	}
 
 	@Override

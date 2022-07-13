@@ -3,18 +3,19 @@
  */
 package com.i3s.app.rdfminer.axiom;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import Mapper.Symbol;
+import Util.Enums;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.axiom.type.DisjointClassesAxiom;
 import com.i3s.app.rdfminer.axiom.type.SubClassOfAxiom;
 import com.i3s.app.rdfminer.grammar.DLFactory;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
-import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
+import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 
-import Mapper.Symbol;
-import Util.Enums;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The axiom factory singleton class is able to construct axioms of various
@@ -97,7 +98,7 @@ public class AxiomFactory extends DLFactory {
 	 * @param syntax an axiom definition in OWL 2 functional-style syntax.
 	 * @return the corresponding axiom.
 	 */
-	public static Axiom create(GEIndividual individual, List<Symbol> syntax, VirtuosoEndpoint endpoint) {
+	public static Axiom create(GEIndividual individual, List<Symbol> syntax, CoreseEndpoint endpoint) throws URISyntaxException, IOException {
 
 		Axiom axiom = null;
 		List<List<Symbol>> arguments = parseArguments(syntax);
@@ -199,11 +200,8 @@ public class AxiomFactory extends DLFactory {
 
 	/**
 	 * Creates an axiom from a text string in OWL 2 functional-style syntax.
-	 * 
-	 * @param str
-	 * @return
 	 */
-	public static Axiom create(GEIndividual individual, String str, VirtuosoEndpoint endpoint) {
+	public static Axiom create(GEIndividual individual, String str, CoreseEndpoint endpoint) throws URISyntaxException, IOException {
 		List<Symbol> list = new ArrayList<Symbol>();
 		String symbol = "";
 		boolean blank = false;

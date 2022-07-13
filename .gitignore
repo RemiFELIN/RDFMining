@@ -25,3 +25,4 @@ Corese/src/corese/git_folder
 *.so
 .dba_pwd_set
 docker-compose.yml
+Corese/data/

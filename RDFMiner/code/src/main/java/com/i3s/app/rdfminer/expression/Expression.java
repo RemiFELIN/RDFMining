@@ -3,16 +3,9 @@
  */
 package com.i3s.app.rdfminer.expression;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
+import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.sparql.RDFNodePair;
+import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.AnonId;
@@ -21,9 +14,11 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
-import com.i3s.app.rdfminer.sparql.RDFNodePair;
-import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
-import com.i3s.app.rdfminer.Global;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.*;
 
 /**
  * This abstract class represent an OWL 2 expression.
@@ -104,7 +99,7 @@ public abstract class Expression {
 	 * </p>
 	 */
 	protected Expression() {
-		subExpressions = new ArrayList<Expression>();
+		subExpressions = new ArrayList<>();
 		extension = null;
 		graphPattern = null;
 		rootSymbol = null;
@@ -198,7 +193,7 @@ public abstract class Expression {
 	 */
 	public Set<RDFNodePair> extension(VirtuosoEndpoint endpoint) {
 		if (extension == null) {
-			extension = new TreeSet<RDFNodePair>();
+			extension = new TreeSet<>();
 
 			if (graphPattern != null) {
 				try {
@@ -217,10 +212,8 @@ public abstract class Expression {
 					cache.close();
 				} catch (IOException ioe) {
 					logger.warn("Cache for " + rootSymbol + " not found. Querying SPARQL endpoint...");
-					// String str = "";
 					try {
 						PrintStream cache = new PrintStream(cacheName());
-
 						for (int hexDigit = 0; hexDigit < 0x10; hexDigit++) {
 							String h = String.format("\"%x\"", hexDigit);
 							// SparqlEndpoint endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT,
@@ -309,7 +302,7 @@ public abstract class Expression {
 	public static RDFNode sparqlDecode(String s, VirtuosoEndpoint endpoint) {
 		// SparqlEndpoint endpoint = new SparqlEndpoint(Global.REMOTE_SPARQL_ENDPOINT, Global.REMOTE_PREFIXES);
 		Model m = endpoint.tdb;
-		RDFNode r = null;
+		RDFNode r;
 		if (s.startsWith("<"))
 			r = m.createResource(s.substring(1, s.length() - 1));
 		else if (s.startsWith("?_"))
@@ -340,16 +333,16 @@ public abstract class Expression {
 
 	@Override
 	public String toString() {
-		String s = rootSymbol;
+		StringBuilder s = new StringBuilder(rootSymbol);
 		Iterator<Expression> i = subExpressions.iterator();
 		if (i.hasNext()) {
-			s += " (";
+			s.append(" (");
 			while (i.hasNext()) {
-				s += " " + i.next();
+				s.append(" ").append(i.next());
 			}
-			s += " )";
+			s.append(" )");
 		}
-		return s;
+		return s.toString();
 	}
 
 	public String getGraphPattern() {

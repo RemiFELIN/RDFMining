@@ -11,6 +11,9 @@ import Util.Enums;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.generator.Generator;
+import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
+import com.i3s.app.rdfminer.sparql.corese.Format;
+import com.i3s.app.rdfminer.sparql.corese.ResultParser;
 import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
@@ -18,7 +21,9 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * An generator of OWL 2 axiom.
@@ -49,7 +54,7 @@ public abstract class AxiomGenerator extends Generator {
 	 * @param v2       if true, we used the second version (minimized) for the
 	 *                 extraction of rules, else the first
 	 */
-	public AxiomGenerator(String fileName, boolean v2) {
+	public AxiomGenerator(String fileName, boolean v2) throws URISyntaxException, IOException {
 		super(fileName);
 		logger.info("Grammar loaded. Adding dynamic productions...");
 		if(v2) {
@@ -58,15 +63,15 @@ public abstract class AxiomGenerator extends Generator {
 			{
 				String h = String.format("\"%x\"", hexDigit);
 				logger.warn("Querying with FILTER(strStarts(MD5(?x), " + h + "))...");
-				generateProductions("Class", "distinct ?class where {?class a owl:Class. FILTER(contains(str(?class), \"http://\")). FILTER( strStarts(MD5(str(?class))  , " + h + ") )  }");
-				generateProductions("ObjectPropertyOf","DISTINCT ?prop WHERE { ?subj ?prop ?obj. FILTER ( isIRI(?obj) ).FILTER( strStarts(MD5(str(?prop)), " + h + ") ) }");
+				generateProductions("Class", "SELECT distinct ?class WHERE {?class a owl:Class . FILTER(contains(str(?class), \"http://\")). FILTER( strStarts(MD5(str(?class)), " + h + ") ) }");
+				generateProductions("ObjectPropertyOf","SELECT distinct ?prop WHERE { ?subj ?prop ?obj . FILTER ( isIRI(?obj) ).FILTER( strStarts(MD5(str(?prop)), " + h + ") ) }");
 			}
 		} else {
 			extract();
 		}
 	}
 
-	public void extract() {
+	public void extract() throws URISyntaxException, IOException {
 		logger.info("AxiomGenerator v1.0 used ...");
 		// Add dynamically-generated productions for the six primitive non-terminals
 		// N.B.: To circumvent the limit imposed by Virtuoso on the number of results,
@@ -76,31 +81,31 @@ public abstract class AxiomGenerator extends Generator {
 			String h = String.format("\"%x\"", hexDigit);
 			logger.warn("Querying with FILTER(strStarts(MD5(?x), " + h + "))...");
 			generateProductions("Class",
-					"DISTINCT ?class WHERE { ?_ a ?class . FILTER( strStarts(MD5(str(?class)), " + h + ") ) }");
+					"SELECT distinct ?class WHERE { ?_ a ?class . FILTER( strStarts(MD5(str(?class)), " + h + ") ) }");
 			if (!(this instanceof CandidateAxiomGenerator)) {
 				// If it is a CandidateAxiomGenerator that is being constructed,
 				// the following dynamic productions are not needed.
 				generateProductions("Class-other-than-owl:Thing",
-						"DISTINCT ?class WHERE { ?_ a ?class . FILTER ( ?class != owl:Thing ) FILTER( strStarts(MD5(str(?class)), "
+						"SELECT distinct ?class WHERE { ?_ a ?class . FILTER ( ?class != owl:Thing ) FILTER( strStarts(MD5(str(?class)), "
 								+ h + ") ) }");
 				generateProductions("ObjectPropertyOf",
-						"DISTINCT ?prop WHERE { ?subj ?prop ?obj . FILTER ( isIRI(?obj) ) FILTER( strStarts(MD5(str(?prop)), "
+						"SELECT distinct ?prop WHERE { ?subj ?prop ?obj . FILTER ( isIRI(?obj) ) FILTER( strStarts(MD5(str(?prop)), "
 								+ h + ") ) }");
 				generateProductions("DataProperty",
-						"DISTINCT ?prop WHERE { ?subj ?prop ?obj . FILTER ( isLiteral(?obj) ) FILTER( strStarts(MD5(str(?prop)), "
+						"SELECT distinct ?prop WHERE { ?subj ?prop ?obj . FILTER ( isLiteral(?obj) ) FILTER( strStarts(MD5(str(?prop)), "
 								+ h + ") ) }");
 				generateProductions("NamedIndividual",
-						"DISTINCT ?ind WHERE { ?ind a ?class . FILTER ( isIRI(?ind) ) FILTER( strStarts(MD5(str(?ind)), "
+						"SELECT distinct ?ind WHERE { ?ind a ?class . FILTER ( isIRI(?ind) ) FILTER( strStarts(MD5(str(?ind)), "
 								+ h + ") ) }");
 				generateProductions("Literal",
-						"DISTINCT ?obj WHERE { ?subj ?prop ?obj . FILTER ( isLiteral(?obj) ) FILTER( strStarts(MD5(str(?obj)), "
+						"SELECT distinct ?obj WHERE { ?subj ?prop ?obj . FILTER ( isLiteral(?obj) ) FILTER( strStarts(MD5(str(?obj)), "
 								+ h + ") ) }");
 			}
 		}
 	}
 
 	@Override
-	protected void generateProductions(String symbol, String sparql) {
+	protected void generateProductions(String symbol, String sparql) throws URISyntaxException, IOException {
 		Rule rule = grammar.findRule(symbol);
 		if (rule == null) {
 			rule = new Rule();
@@ -127,53 +132,40 @@ public abstract class AxiomGenerator extends Generator {
 		} catch (IOException ioe) {
 			logger.info("Cache for " + symbol + " not found. Querying SPARQL endpoint");
 			logger.info("Querying SPARQL endpoint for symbol <" + symbol + "> ...");
-			VirtuosoEndpoint endpoint = new VirtuosoEndpoint(Global.VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT, Global.PREFIXES);
-			ResultSet result = endpoint.select(sparql, 0);
+			CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT, Global.PREFIXES);
 			PrintStream cache = null;
 			try {
 				cache = new PrintStream(cacheName(symbol, sparql));
 			} catch (FileNotFoundException e) {
 				logger.warn("Could not create cache for symbol " + symbol + ".");
 			}
-
-			while (result.hasNext()) {
-				Production prod = new Production();
-				QuerySolution solution = result.next();
-				Iterator<String> i = solution.varNames();
-				String separator = "";
-				while (i.hasNext()) {
-					String varName = i.next();
-					RDFNode node = solution.get(varName);
-					if (node.toString().length() > 0) {
-						// We SPARQL-encode the RDF nodes retrieved
-						// to avoid losing information on the node's type, i.e.,
-						// resource or literal...
-						Symbol t = new Symbol(separator + Expression.sparqlEncode(node), Enums.SymbolType.TSymbol);
-						// This was: Symbol t = new Symbol(separator + node.toString(),
-						// Enums.SymbolType.TSymbol);
-						prod.add(t);
-						// Write the cache with the symbol found
-						assert cache != null;
-						cache.println(t);
-						separator = " ";
-					} else {
-						logger.warn("Found a node with an empty string representation");
-					}
+			List<String> results = endpoint.selectFederatedQuery(symbol, sparql);
+			if(results.size() > 0) {
+				for(String result : results) {
+					// declare a new production
+					Production prod = new Production();
+					// Create a symbol and add the result
+					Symbol t = new Symbol(result, Enums.SymbolType.TSymbol);
+					// add the symbol to production
+					prod.add(t);
+					// Write the cache with the symbol found
+					assert cache != null;
+					cache.println(t + " ");
+					// Adding production founded by SPARQL Request
+					rule.add(prod);
 				}
-				// Adding production founded by SPARQL Request
-				rule.add(prod);
 			}
+
 			if (cache != null)
 				cache.close();
-			logger.info("Done! " + rule.size() + " productions added.");
+			logger.info("Done ! " + rule.size() + " productions added.");
 		}
 	}
 
 	/**
 	 * Generate the next random axiom.
-	 * 
 	 * @return a random axiom
 	 */
-	public abstract Phenotype nextAxiom();
+	public abstract Phenotype nextAxiom() throws URISyntaxException, IOException;
 
 }

@@ -3,34 +3,26 @@
  */
 package com.i3s.app.rdfminer.generator.axiom;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
-
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
-import org.apache.jena.rdf.model.RDFNode;
-import org.apache.log4j.Logger;
-
-import com.i3s.app.rdfminer.Global;
-import com.i3s.app.rdfminer.RDFMiner;
-import com.i3s.app.rdfminer.expression.Expression;
-import com.i3s.app.rdfminer.expression.ExpressionFactory;
-import com.i3s.app.rdfminer.sparql.RDFNodePair;
-import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
-
-//import com.hp.hpl.jena.query.QuerySolution;
-//import com.hp.hpl.jena.rdf.model.RDFNode;
-
 import Individuals.Phenotype;
 import Mapper.Production;
 import Mapper.Rule;
 import Mapper.Symbol;
 import Util.Enums;
+import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.expression.Expression;
+import com.i3s.app.rdfminer.expression.ExpressionFactory;
+import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
+import com.i3s.app.rdfminer.sparql.corese.Format;
+import com.i3s.app.rdfminer.sparql.corese.ResultParser;
+import org.apache.log4j.Logger;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.net.URISyntaxException;
+import java.util.*;
 
 /**
  * An generator of SubClassOf axioms with atomic left- and right-hand side,
@@ -72,7 +64,7 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 	 * An iterator on the classes to be used as the super-class of the candidate
 	 * axiom.
 	 */
-	protected Iterator<RDFNodePair> superClassIterator;
+	protected Iterator<String> superClassIterator;
 
 	/**
 	 * The production containing the subClass currently used as left-hand side of
@@ -83,7 +75,7 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 	/**
 	 * The last node used as superClass.
 	 */
-	protected RDFNode lastNode = null;
+	protected String lastNode = null;
 
 	/**
 	 * The name of a file used to make the generator status persistent, so that in
@@ -124,7 +116,7 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 
 		subClassIterator = rule.iterator();
 		// We assign an empty iterator to the super-class iterator:
-		superClassIterator = (new TreeSet<RDFNodePair>()).iterator();
+		superClassIterator = Collections.emptyIterator();
 
 		try {
 			// Try to read the status file:
@@ -151,12 +143,12 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 			// Now that we have the sub-class iterator correctly positioned...
 			// We have to position the iterator to the super-class.
 			Expression expr = ExpressionFactory.createClass(subClass);
-			Set<RDFNodePair> types = getNodes(
-					"DISTINCT ?class WHERE { " + expr.createGraphPattern("?x", "?y") + "\n" + "?x a ?class . }");
+			Set<String> types = getNodes(
+					"SELECT DISTINCT ?class WHERE { " + expr.createGraphPattern("?x", "?y") + "\n" + "?x a ?class . }");
 			superClassIterator = types.iterator();
 			// Unroll the super class iterator up to the saved super class:
 			while (superClassIterator.hasNext()) {
-				lastNode = superClassIterator.next().x;
+				lastNode = superClassIterator.next();
 				logger.info("Comparing " + superClassName + " to " + lastNode);
 				if (superClassName.equals(lastNode.toString()))
 					break;
@@ -164,6 +156,8 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 
 		} catch (IOException e) {
 			logger.warn("No previously saved status found. Starting from scratch...");
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
 		}
 		logger.warn("Axiom Generator Initialized");
 	}
@@ -174,30 +168,22 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 	 * @param sparql a SPARQL query
 	 * @return the results of the query
 	 */
-	protected Set<RDFNodePair> getNodes(String sparql) {
-		Set<RDFNodePair> classes = new TreeSet<RDFNodePair>();
+	protected Set<String> getNodes(String sparql) throws URISyntaxException, IOException {
 		logger.warn("Querying DBpedia with query " + sparql);
-		VirtuosoEndpoint endpoint = new VirtuosoEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES);
-		ResultSet result = endpoint.select(sparql, 0);
-		while (result.hasNext()) {
-			QuerySolution solution = result.next();
-			RDFNode x = solution.get("class");
-			RDFNode y = solution.get("y");
-			if (!Expression.sparqlEncode(x).equals(subClass.get(0).toString()))
-				classes.add(new RDFNodePair(x, y));
-		}
-		return classes;
+		CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.SPARQL_ENDPOINT, Global.PREFIXES);
+		List<String> results = endpoint.selectFederatedQuery("class", sparql);
+		return new TreeSet<>(results);
 	}
 
 	@Override
-	public Phenotype nextAxiom() {
-		// First of all, save the previous status to file:
+	public Phenotype nextAxiom() throws URISyntaxException, IOException {
+		// First, save the previous status to file:
 		if (subClass != null) {
 			// ... except for the first time
 			try {
 				PrintStream status = new PrintStream(statusFileName);
 				status.println(subClass.get(0).toString());
-				status.println(lastNode.toString()); // Or should we SPARQL-encode it?
+				status.println(lastNode); // Or should we SPARQL-encode it?
 				status.close();
 			} catch (IOException e) {
 				logger.warn("Could not save status.");
@@ -208,14 +194,14 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 			logger.debug("Switching to the next subclass");
 			if (!subClassIterator.hasNext())
 				return null;
-			Set<RDFNodePair> types = null;
+			Set<String> types;
 			// do // Uncomment this to skip classes having fewer than 30 super-classes.
 			// {
 			subClass = subClassIterator.next();
 			logger.debug("Subclass is now " + subClass);
 			Expression expr = ExpressionFactory.createClass(subClass);
 			types = getNodes(
-					"DISTINCT ?class WHERE { " + expr.createGraphPattern("?x", "?y") + "\n" + "?x a ?class . }");
+					"SELECT DISTINCT ?class WHERE { " + expr.createGraphPattern("?x", "?y") + "\n" + "?x a ?class . }");
 			logger.debug("Found " + types.size() + " classes!");
 			// }
 			// while(/* types.size()>=30 || */ types.size()<30);
@@ -227,8 +213,8 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 		axiom.add(new Symbol("(", Enums.SymbolType.TSymbol));
 		axiom.addAll(subClass);
 		axiom.add(new Symbol(" ", Enums.SymbolType.TSymbol));
-		lastNode = superClassIterator.next().x;
-		Symbol superClass = new Symbol(Expression.sparqlEncode(lastNode), Enums.SymbolType.TSymbol);
+		lastNode = superClassIterator.next();
+		Symbol superClass = new Symbol(lastNode, Enums.SymbolType.TSymbol);
 		axiom.add(superClass);
 		axiom.add(new Symbol(")", Enums.SymbolType.TSymbol));
 		return axiom;

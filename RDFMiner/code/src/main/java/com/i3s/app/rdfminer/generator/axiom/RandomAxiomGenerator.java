@@ -4,14 +4,13 @@
 
 package com.i3s.app.rdfminer.generator.axiom;
 
-import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
-
 import Individuals.GEChromosome;
-import Individuals.Genotype;
 import Individuals.Phenotype;
-import Mapper.GEGrammar;
 import Util.Random.MersenneTwisterFast;
 import Util.Random.RandomNumberGenerator;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 /**
  * A generator of random axioms for a given logical language.
@@ -38,7 +37,7 @@ public class RandomAxiomGenerator extends AxiomGenerator {
 	 * 
 	 * @param fileName the name of the file containing the grammar.
 	 */
-	public RandomAxiomGenerator(String fileName, boolean v2) {
+	public RandomAxiomGenerator(String fileName, boolean v2) throws URISyntaxException, IOException {
 		super(fileName, v2);
 		// Set up a pseudo-random number generator
 		random = new MersenneTwisterFast(System.currentTimeMillis());

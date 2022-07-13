@@ -1,7 +1,6 @@
 package com.i3s.app.rdfminer.sparql.corese;
 
 import com.i3s.app.rdfminer.Global;
-import com.i3s.app.rdfminer.sparql.RequestBuilder;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -13,9 +12,14 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Sparql endpoint to manage and request the Corese server
@@ -31,9 +35,19 @@ public class CoreseEndpoint {
     public String url;
 
     /**
+     * The service to query using Corese federated queries
+     */
+    public String service;
+
+    /**
      * The prefixes that will be used to query the SPARQL endpoint.
      */
     public String prefixes;
+
+    /**
+     * The timeout used for each queries
+     */
+    public long timeout = Integer.MAX_VALUE;
 
     /**
      * HTTP client
@@ -70,6 +84,60 @@ public class CoreseEndpoint {
         this.prefixes = prefixes;
     }
 
+    public CoreseEndpoint(String url, String service, String prefixes) {
+        this.url = url;
+        this.service = service;
+        this.prefixes = prefixes;
+    }
+
+    public CoreseEndpoint(String url, String service, String prefixes, long timeout) {
+        this.url = url;
+        this.service = service;
+        this.prefixes = prefixes;
+        this.timeout = timeout;
+    }
+
+    public String addFederatedQuery(String sparql) {
+        return "SERVICE <" + this.service + "> { " + sparql + " }";
+    }
+
+    public String addFederatedQueryWithLoop(String sparql, int limit) {
+        return "SERVICE <" + this.service + "?loop=true&limit=" + limit + "> { " + sparql + " }";
+    }
+
+    public String buildSelectAllQuery(String sparql) {
+        return "@timeout " + this.timeout + "\nSELECT * WHERE { " + sparql + " }";
+    }
+
+    public boolean askFederatedQuery(String sparql) throws URISyntaxException, IOException {
+        String request = "@timeout " + this.timeout + "\nASK WHERE { " + addFederatedQuery(sparql) + " }";
+        String resultAsJSON = query(Format.JSON, request);
+        return ResultParser.getResultFromAskQuery(resultAsJSON);
+    }
+
+    public List<String> selectFederatedQuery(String var, String sparql) throws URISyntaxException, IOException {
+        String request = buildSelectAllQuery(addFederatedQuery(sparql));
+        String resultAsJSON = query(Format.JSON, request);
+        return ResultParser.getResultsFromVariable(var, resultAsJSON);
+    }
+
+    /**
+     * <i>SELECT (count(distinct ?x) as ?n) WHERE { ... }</i> in SERVICE clause
+     * @param sparql
+     * @return
+     * @throws URISyntaxException
+     * @throws IOException
+     */
+    public int count(String sparql) throws URISyntaxException, IOException {
+        String request = buildSelectAllQuery(addFederatedQuery("SELECT (count(distinct ?x) as ?n) WHERE { " + sparql + " }"));
+        String resultAsJSON = query(Format.JSON, request);
+        if(ResultParser.getResultsFromVariable("n", resultAsJSON).get(0) == null) {
+            // timeout reached !
+            return -1;
+        }
+        return Integer.parseInt(ResultParser.getResultsFromVariable("n", resultAsJSON).get(0));
+    }
+
     /**
      * Build a HTTP Request on Corese server : SELECT query
      * @param format the expected format
@@ -78,11 +146,14 @@ public class CoreseEndpoint {
      * @throws URISyntaxException Error concerning the syntax of the given URL
      * @throws IOException Error concerning the execution of the POST request
      */
-    public String select(String format, String sparql) throws URISyntaxException, IOException {
+    public String query(String format, String sparql) throws URISyntaxException, IOException {
         // build the final URL
         final String service = url + CORESE_SPARQL_ENDPOINT;
         // specify all the query params needed to launch a request on Corese server
         HashMap<String, String> params = new HashMap<>();
+        // add prefix to SPARQL Query
+        sparql = Global.PREFIXES + "\n" + sparql;
+        // specify SPARQL and Format in parameters
         params.put("query", sparql);
         params.put("format", format);
         // call the get method and return it result
@@ -93,16 +164,13 @@ public class CoreseEndpoint {
      * Allow to send string content into shapes.ttl stored in the Corese server, it will replace the
      * previous content by the new one
      * @param file the file to upload, must contains SHACL Shapes
-     * @return the HTTP Status code of the request
      * @throws URISyntaxException Error concerning the syntax of the given URL
      * @throws IOException Error concerning the execution of the POST request
      */
     public void sendSHACLShapesToServer(File file) throws URISyntaxException, IOException {
         // build the final URL
-        final String service = url + CORESE_SEND_SHACL_SHAPES_ENDPOINT;
+        final String service = this.url + CORESE_SEND_SHACL_SHAPES_ENDPOINT;
         URIBuilder builder = new URIBuilder(service);
-        // params
-//        builder.setParameter("content", fileContent);
         // POST request
         HttpPost post = new HttpPost(builder.build());
         // set entity
@@ -115,26 +183,9 @@ public class CoreseEndpoint {
             logger.error("Error " + response.getStatusLine().getStatusCode() + " while sending SHACL Shapes on server ...");
     }
 
-//    /**
-//     * Allow to read the SHACL Shapes file (shapes.ttl) stored in the Corese server
-//     * @return the content of the file: shapes.ttl
-//     * @throws URISyntaxException Error concerning the syntax of the given URL
-//     * @throws IOException Error concerning the execution of the POST request
-//     */
-//    public String getSHACLShapesFromServer() throws URISyntaxException, IOException {
-//        // build the final URL
-//        final String service = url + CORESE_GET_SHACL_SHAPES_ENDPOINT;
-//        // call the get method and return it result
-//        return get(service);
-//    }
-
-    /**
-     * Given
-     * @return
-     */
     public String getProbabilisticValidationReportFromServer(File file) throws URISyntaxException, IOException {
         // build the final URL
-        final String service = url + CORESE_SPARQL_ENDPOINT;
+        final String service = this.url + CORESE_SPARQL_ENDPOINT;
         // fill params
         HashMap<String, String> params = new HashMap<>();
         params.put("mode", PROBABILISTIC_SHACL_EVALUATION);
@@ -155,7 +206,8 @@ public class CoreseEndpoint {
      * @throws URISyntaxException Error concerning the syntax of the given URL
      * @throws IOException Error concerning the execution of the POST request
      */
-    public String get(String service, HashMap<String, String>... params) throws URISyntaxException, IOException {
+    @SafeVarargs
+    public final String get(String service, HashMap<String, String>... params) throws URISyntaxException, IOException {
         URIBuilder builder = new URIBuilder(service);
         // params
         if(params.length > 0) {
@@ -189,17 +241,5 @@ public class CoreseEndpoint {
         in.close();
         return sb.toString();
     }
-
-//    public static void main(String[] args) throws URISyntaxException, IOException {
-//        CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP_ADDRESS, Global.CORESE_PREFIXES);
-//        for(int hexDigit = 0; hexDigit<0x10; hexDigit++) {
-//            String h = String.format("\"%x\"", hexDigit);
-//            System.out.println("### h=" + h);
-//            String sparql = RequestBuilder.buildSelectRequest("distinct ?class", "?class a ?z. FILTER(contains(str(?class), \"http://\")). FILTER( strStarts(MD5(str(?class))  , " + h + ") )");
-//            String res = endpoint.select(Format.JSON, sparql);
-//            ResultParser.getResultsfromVariable("class", res);
-//        }
-//
-//    }
 
 }

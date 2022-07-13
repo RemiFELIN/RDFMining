@@ -17,7 +17,14 @@ public class ResultParser {
 
     private static final Logger logger = Logger.getLogger(ResultParser.class);
 
-    public static List<String> getResultsfromVariable(String var, String json) {
+    public static boolean getResultFromAskQuery(String json) {
+        // using org.json, get results (String) into a JSON Object
+        JSONTokener tokener = new JSONTokener(json);
+        JSONObject resultAsJson = new JSONObject(tokener);
+        return resultAsJson.getBoolean("boolean");
+    }
+
+    public static List<String> getResultsFromVariable(String var, String json) {
         List<String> results = new ArrayList<>();
         // if json does not contains any result, we must return an empty list
         if(json == null) {
@@ -46,15 +53,19 @@ public class ResultParser {
         // find for the given variable
         JSONArray bindings = resultsJSON.getJSONObject("results").getJSONArray("bindings");
         if(bindings.length() == 0) {
-            logger.warn("No results are found !");
-            return results;
+            if(json.contains("Read timed out")) {
+                logger.info("Timeout reached !");
+                return null;
+            } else {
+                logger.warn("No results are found !");
+                return results;
+            }
         }
 
         for(int i=0; i<bindings.length(); i++) {
             // get object from given var
             JSONObject choosenVar = bindings.getJSONObject(i).getJSONObject(var);
             String type = choosenVar.getString("type");
-
             if(Objects.equals(type, Format.TYPE_URI)) {
                 // URI case
                 results.add("<" + choosenVar.getString("value") + ">");

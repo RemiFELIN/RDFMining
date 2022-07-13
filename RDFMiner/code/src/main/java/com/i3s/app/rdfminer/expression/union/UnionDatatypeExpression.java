@@ -30,9 +30,8 @@ public class UnionDatatypeExpression extends UnionExpression {
 	public UnionDatatypeExpression(List<List<Symbol>> syntax) {
 		super();
 		rootSymbol = "DataUnionOf";
-		Iterator<List<Symbol>> i = syntax.iterator();
-		while (i.hasNext())
-			subExpressions.add(ExpressionFactory.createDatatype(i.next()));
+		for (List<Symbol> symbols : syntax)
+			subExpressions.add(ExpressionFactory.createDatatype(symbols));
 		graphPattern = createGraphPattern("?x", "?y");
 	}
 

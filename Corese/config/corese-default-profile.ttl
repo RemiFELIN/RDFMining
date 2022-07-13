@@ -4,7 +4,8 @@ st:user a st:Server;
 
 # List endpoints allowed in federated queries + where STTL is allowed to get html templates
 st:access st:namespace
-    <http://localhost:9200/sparql> .
+    <http://localhost:9200/sparql> ,
+    <http://134.59.130.136:8890/sparql> .
 #     <http://localhost/sttl>,
 #     <http://fr.dbpedia.org/sparql>,
 #     <http://dbpedia.org/sparql>,
