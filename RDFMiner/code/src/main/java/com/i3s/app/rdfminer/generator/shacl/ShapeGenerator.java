@@ -1,15 +1,13 @@
 package com.i3s.app.rdfminer.generator.shacl;
 
-import Mapper.*;
+import Mapper.Production;
+import Mapper.Rule;
+import Mapper.Symbol;
 import Util.Enums;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.generator.Generator;
-import com.i3s.app.rdfminer.sparql.RequestBuilder;
-import com.i3s.app.rdfminer.sparql.corese.Format;
-import com.i3s.app.rdfminer.sparql.corese.ResultParser;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
-import org.eclipse.rdf4j.query.algebra.Str;
 
 import java.io.*;
 import java.net.URISyntaxException;

@@ -3,19 +3,16 @@
  */
 package com.i3s.app.rdfminer.expression.extensional;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.TreeSet;
-
+import Mapper.Symbol;
+import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.sparql.RDFNodePair;
+import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 import org.apache.jena.rdf.model.AnonId;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 
-import com.i3s.app.rdfminer.Global;
-import com.i3s.app.rdfminer.sparql.RDFNodePair;
-import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
-
-import Mapper.Symbol;
+import java.util.List;
+import java.util.TreeSet;
 
 /**
  * A class expression of the form ObjectOneOf(...).
@@ -42,14 +39,13 @@ public class ExtensionalClassExpression extends ExtensionalExpression {
 	public ExtensionalClassExpression(List<List<Symbol>> syntax) {
 		super();
 		rootSymbol = "ObjectOneOf (";
-		extension = new TreeSet<RDFNodePair>();
+		extension = new TreeSet<>();
 		VirtuosoEndpoint endpoint = new VirtuosoEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES);
 		Model m = endpoint.tdb;
-		Iterator<List<Symbol>> i = syntax.iterator();
-		
-		while (i.hasNext()) {
+
+		for (List<Symbol> symbols : syntax) {
 			RDFNode r;
-			Symbol sym = i.next().get(0);
+			Symbol sym = symbols.get(0);
 			rootSymbol += " " + sym;
 			// We create an RDF node from the symbol, by removing the "<" and ">"
 			// delimiters, unless it is a blank node
