@@ -40,6 +40,7 @@ import fr.inria.corese.kgram.core.Query;
 import fr.inria.corese.core.Graph;
 import fr.inria.corese.core.load.Load;
 import fr.inria.corese.core.load.LoadException;
+import fr.inria.corese.core.print.LogManager;
 import fr.inria.corese.core.print.ResultFormat;
 import fr.inria.corese.core.print.XMLFormat;
 import fr.inria.corese.core.transform.Transformer;
@@ -53,6 +54,8 @@ import fr.inria.corese.kgram.core.SparqlException;
 import fr.inria.corese.sparql.datatype.RDF;
 import fr.inria.corese.sparql.triple.function.term.Binding;
 import fr.inria.corese.sparql.triple.parser.Metadata;
+import fr.inria.corese.sparql.triple.parser.context.ContextLog;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import org.apache.logging.log4j.Level;
@@ -62,7 +65,6 @@ import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
@@ -88,14 +90,17 @@ public final class MyJPanelQuery extends JPanel {
     static final int GRAPH_PANEL    = 0;
     static final int XML_PANEL      = 1;
     static final int TABLE_PANEL    = 2;
-
+    
     // display max table result
     int maxres = 1000000;
     // display max xml result format
     int maxresxml = 1000;
     
     //Boutton du panneau Query
-    private JButton buttonRun, buttonShacl, buttonPush, buttonCopy, 
+    private JButton buttonRun, buttonShacl, buttonPush, 
+            buttonHeader,
+            buttonLog,
+            buttonCopy, 
             buttonSort, buttonCompare,
             buttonShex, 
             buttonKill, buttonStop, buttonValidate, buttonToSPIN, buttonToSPARQL, 
@@ -126,14 +131,18 @@ public final class MyJPanelQuery extends JPanel {
     private SparqlQueryEditor sparqlQueryEditor;
     private JTextPane serviceEditor;
     private MainFrame mainFrame;
+    // default graph enfine is mainFrame graph engine
+    // but there may be a local graph engine here
+    // use case: query log graph
+    private GraphEngine graphEngine;
     private Exec current;
     private static final String KGSTYLE = ExpType.KGRAM + "style";
     private static final String KGGRAPH = Pragma.GRAPH;
-    private static final Logger logger = LogManager.getLogger(MyJPanelQuery.class.getName());
+    private static final Logger logger = org.apache.logging.log4j.LogManager.getLogger(MyJPanelQuery.class.getName());
     private boolean displayLink = true;
     private QueryExec queryExec;
     private Mappings mappings;
-
+    
     public MyJPanelQuery() {
         super();
         initComponents();
@@ -150,9 +159,24 @@ public final class MyJPanelQuery extends JPanel {
         setFileName(name);
         stylesheet = coreseFrame.getDefaultStylesheet();
     }
-    
+       
     public void setFileName(String name) {
          serviceEditor.setText(name);
+    }
+    
+    @Override
+    public void setVisible(boolean b) {
+        if (!b) {
+            clean();
+        }
+        super.setVisible(b);
+    }
+    
+    void clean() {
+        setMappings(null);
+        if (getCurrent()!=null) {
+            setCurrent(null);
+        }
     }
     
     private void initComponents() {
@@ -166,6 +190,8 @@ public final class MyJPanelQuery extends JPanel {
         buttonShacl = new JButton();
         buttonShex = new JButton();
         buttonPush = new JButton();
+        buttonHeader = new JButton();
+        buttonLog = new JButton();
         buttonCopy = new JButton();
         buttonSort = new JButton();
         buttonCompare = new JButton();
@@ -294,6 +320,8 @@ public final class MyJPanelQuery extends JPanel {
         //Lancer une requête
         // copy current result into new query panel (template)
         buttonPush.setText("Push");
+        buttonHeader.setText("Header");
+        buttonLog.setText("Log");
         // copy current result into last result panel
         buttonCopy.setText("Copy");
         buttonSort.setText("Modifier");
@@ -368,14 +396,16 @@ public final class MyJPanelQuery extends JPanel {
 
         hSeq2.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 257, Short.MAX_VALUE);
         hSeq2.addComponent(buttonRun);
+        hSeq2.addComponent(buttonSort);
         hSeq2.addComponent(buttonShacl);
         hSeq2.addComponent(buttonShex);
+        hSeq2.addComponent(buttonHeader);
+        hSeq2.addComponent(buttonLog);
         hSeq2.addComponent(buttonPush);
         hSeq2.addComponent(buttonCopy);
-        hSeq2.addComponent(buttonSort);
         hSeq2.addComponent(buttonCompare);
         hSeq2.addComponent(buttonStop);
-        hSeq2.addComponent(buttonKill);
+        //hSeq2.addComponent(buttonKill);
         hSeq2.addComponent(buttonValidate);
         hSeq2.addComponent(buttonToSPIN);
         hSeq2.addComponent(buttonToSPARQL);
@@ -406,14 +436,16 @@ public final class MyJPanelQuery extends JPanel {
         GroupLayout.SequentialGroup vSeq1 = pane_listenerLayout.createSequentialGroup();
 
         vParallel2.addComponent(buttonRun);
+        vParallel2.addComponent(buttonSort);
         vParallel2.addComponent(buttonShacl);
         vParallel2.addComponent(buttonShex);
+        vParallel2.addComponent(buttonHeader);
+        vParallel2.addComponent(buttonLog);
         vParallel2.addComponent(buttonPush);
         vParallel2.addComponent(buttonCopy);
-        vParallel2.addComponent(buttonSort);
         vParallel2.addComponent(buttonCompare);
         vParallel2.addComponent(buttonStop);
-        vParallel2.addComponent(buttonKill);
+        //vParallel2.addComponent(buttonKill);
         vParallel2.addComponent(buttonValidate);
         vParallel2.addComponent(buttonToSPIN);
         vParallel2.addComponent(buttonToSPARQL);
@@ -468,6 +500,8 @@ public final class MyJPanelQuery extends JPanel {
         buttonShacl.addActionListener(l_RunListener);
         buttonShex.addActionListener(l_RunListener);
         buttonPush.addActionListener(l_RunListener);
+        buttonHeader.addActionListener(l_RunListener);
+        buttonLog.addActionListener(l_RunListener);
         buttonCopy.addActionListener(l_RunListener);
         buttonSort.addActionListener(l_RunListener);
         buttonCompare.addActionListener(l_RunListener);
@@ -732,6 +766,7 @@ public final class MyJPanelQuery extends JPanel {
             tabbedPaneResults.setSelectedIndex(XML_PANEL);
             return;
         }
+        map.dispose();
         setMappings(map);
         Query q = map.getQuery();
         ASTQuery ast =  q.getAST();
@@ -975,6 +1010,16 @@ public final class MyJPanelQuery extends JPanel {
                         // copy current result into new query editor (as if load query were done)
                         coreseFrame.newQuery(txt, "generated");
                     } 
+                    else if (ev.getSource() == buttonHeader) { 
+                        try {
+                            header(coreseFrame, coreseFrame.readQuery("header.rq"));
+                        } catch (LoadException | IOException ex) {
+                            logger.equals(ex.getMessage());
+                        }
+                    }
+                    else if (ev.getSource() == buttonLog) { 
+                        logger();
+                    }
                     else if (ev.getSource() == buttonCopy) { 
                         // copy current result into last result panel 
                         // (as if load result), for xt:mappings()
@@ -986,10 +1031,10 @@ public final class MyJPanelQuery extends JPanel {
                     else if (ev.getSource() == buttonCompare) { 
                         compare();
                     } 
-                    else if (ev.getSource() == buttonRun || ev.getSource() == buttonValidate 
-                            || ev.getSource() == buttonShacl || ev.getSource() == buttonShex) {
+                    else if (ev.getSource() == buttonRun   || ev.getSource() == buttonValidate 
+                          || ev.getSource() == buttonShacl || ev.getSource() == buttonShex) {
                         // buttonRun
-                        Exec exec = new Exec(coreseFrame, query, isTrace);
+                        Exec exec = newExec(coreseFrame, query, isTrace);
                         setCurrent(exec);
                         exec.setValidate(ev.getSource() == buttonValidate);
                         exec.setShacl(ev.getSource()    == buttonShacl || ev.getSource()    == buttonShex);
@@ -1023,6 +1068,33 @@ public final class MyJPanelQuery extends JPanel {
         };
     }
     
+    // translate log into rdf graph and query this graph
+    // display query results into new panel
+    void header(MainFrame coreseFrame, String query) {
+        try {
+            ContextLog log = getMappings().getBinding().getLog();
+            LogManager man = new LogManager(log);
+            GraphEngine eng = GraphEngine.create(false);
+            // load log as rdf graph
+            eng.loadString(man.toString());
+            // query log rdf graph
+            Mappings map = eng.query(query);
+            // create query panel with log graph instead of corese graph
+            MyJPanelQuery panel = coreseFrame.newQuery(query, "log.rq");
+            panel.setGraphEngine(eng);
+            panel.basicDisplay(map);
+        } catch (EngineException | LoadException ex) {
+            logger.error(ex.getMessage());
+        }
+    }
+    
+    // display in gui elementary query/results from federated query log 
+    void logger() {
+        Binding bind = getMappings().getBinding();
+        ContextLog log = bind.getLog();
+        new LocalResult(mainFrame).process(log);
+    }
+    
     /**
      * User edit order by clause and click button Sort
      * Execute order by on current Mappings, assuming query is "the same"
@@ -1030,7 +1102,7 @@ public final class MyJPanelQuery extends JPanel {
     void modifier(String query) {
         if (getCurrent() == null) {
             logger.info("Undefined Query Exec");
-            setCurrent(new Exec(MainFrame.getSingleton(), query, false));
+            setCurrent(newExec(MainFrame.getSingleton(), query));
         } 
         
         //else {
@@ -1039,7 +1111,6 @@ public final class MyJPanelQuery extends JPanel {
                 Mappings res = getQueryExec().modifier(query, getMappings());
                 Date d2 = new Date();
                 fillTable(res);
-                //setMappings(res);
             } catch (EngineException ex) {
                 logger.error(ex);
             } catch (SparqlException ex) {
@@ -1104,7 +1175,7 @@ public final class MyJPanelQuery extends JPanel {
     void show(String mes, Object... obj) {
         System.out.println(String.format(mes, obj));
     }
-
+    
     void setCurrent(Exec e) {
         current = e;
     }
@@ -1115,8 +1186,19 @@ public final class MyJPanelQuery extends JPanel {
     
     public void exec(MainFrame frame, String query) {
         logger.info("Simple Exec");
-        Exec exec = new Exec(frame, query, false); 
-        exec.process();
+        newExec(frame, query).process();
+    }
+    
+    Exec newExec(MainFrame frame, String query) {
+        return newExec(frame, query, false);
+    }
+    
+    Exec newExec(MainFrame frame, String query, boolean trace) {
+        Exec exec = new Exec(frame, query, trace);
+        if (getGraphEngine()!=null) {
+            exec.setGraphEngine(getGraphEngine());
+        }
+        return exec;
     }
 
     //getteurs et setteurs utiles
@@ -1178,7 +1260,6 @@ public final class MyJPanelQuery extends JPanel {
      * here to be processed by xt:mappings()
      */
     Mappings getQueryMappings() {
-        //return mainFrame.getPreviousMappings();
         return getMappings();
     }
 
@@ -1195,6 +1276,14 @@ public final class MyJPanelQuery extends JPanel {
             return null;
         }
         return getCurrent().getQueryExec();
+    }
+
+    public GraphEngine getGraphEngine() {
+        return graphEngine;
+    }
+
+    public void setGraphEngine(GraphEngine graphEngine) {
+        this.graphEngine = graphEngine;
     }
    
 }

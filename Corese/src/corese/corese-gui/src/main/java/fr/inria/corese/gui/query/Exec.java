@@ -46,12 +46,14 @@ public class Exec extends Thread {
     private boolean shacl = false;
     private boolean shex = false;
     QueryExec current;
+    private GraphEngine graphEngine;
     private Mappings mappings;
 
     public Exec(MainFrame f, String q, boolean b) {
         frame = f;
         query = q;
         debug = b;
+        setGraphEngine(f.getMyCorese());
     }
 
     /**
@@ -102,13 +104,13 @@ public class Exec extends Thread {
     
     QueryExec getQueryExec() {
         if (getCurrent() == null) {
-            setCurrent(QueryExec.create(frame.getMyCorese()));
+            setCurrent(QueryExec.create(getGraphEngine()));
         }
         return getCurrent();
     }
     
     Mappings query() {
-        QueryExec exec = QueryExec.create(frame.getMyCorese());
+        QueryExec exec = QueryExec.create(getGraphEngine());
         setCurrent(exec);
         if (debug) {
             debug(exec);
@@ -136,15 +138,15 @@ public class Exec extends Thread {
     
     void trace(Mappings map) {
         ASTQuery ast = map.getAST();
-        if (ast.isFederateIndex()) {
+        //if (ast.isFederateIndex()) {
             if (!FederateVisitor.getBlacklist().isEmpty()) {
                 logger.info("Blacklist:\n" + FederateVisitor.getBlacklist());
             }
-        }
+        //}
     }
 
     Mappings compile() {
-        QueryExec exec = QueryExec.create(frame.getMyCorese());
+        QueryExec exec = QueryExec.create(getGraphEngine());
         setCurrent(exec);
         if (debug) {
             debug(exec);
@@ -188,7 +190,7 @@ public class Exec extends Thread {
             SPINProcess sp = SPINProcess.create();
             Graph qg = sp.toSpinGraph(query);
             qg.init();
-            Graph gg = ((GraphEngine) frame.getMyCorese()).getGraph();
+            Graph gg = getGraphEngine().getGraph();
             gg.setNamedGraph(qgraph, qg);
             QueryProcess exec = QueryProcess.create(gg, true);
             Mappings map = exec.query(qvalidate);
@@ -265,5 +267,15 @@ public class Exec extends Thread {
         this.mappings = mappings;
         return this;
     }
+
+    public void setGraphEngine(GraphEngine graphEngine) {
+        this.graphEngine = graphEngine;
+    }
+    
+    public GraphEngine getGraphEngine() {
+        //return frame.getMyCorese();
+        return graphEngine;
+    }
+    
 
 }

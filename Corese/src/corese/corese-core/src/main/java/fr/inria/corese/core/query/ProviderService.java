@@ -16,10 +16,13 @@ import fr.inria.corese.kgram.core.Query;
 import fr.inria.corese.core.Event;
 import fr.inria.corese.core.Graph;
 import fr.inria.corese.core.NodeImpl;
+import fr.inria.corese.core.api.DataManager;
 import fr.inria.corese.core.load.LoadException;
 import fr.inria.corese.core.load.Service;
+import fr.inria.corese.core.load.ServiceReport;
 import fr.inria.corese.core.util.Property;
 import static fr.inria.corese.core.util.Property.Value.SERVICE_GRAPH;
+import static fr.inria.corese.core.util.Property.Value.SERVICE_HEADER;
 import static fr.inria.corese.core.util.Property.Value.SERVICE_PARAMETER;
 import static fr.inria.corese.core.util.Property.Value.SERVICE_SLICE;
 import static fr.inria.corese.core.util.Property.Value.SERVICE_TIMEOUT;
@@ -46,10 +49,12 @@ import java.util.Date;
 import java.util.List;
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.ResponseProcessingException;
+import jakarta.ws.rs.core.Cookie;
 import org.json.JSONObject;
 
 /**
  * Service call
+ * Service Report is recorded by ServiceParser -> ServiceReport
  *
  * @author Olivier Corby, Edelweiss INRIA 2021
  */
@@ -62,7 +67,7 @@ public class ProviderService implements URLParam {
     private static final String SERVICE_ERROR = "Service error: ";
     private static final String DB = "db:";
     public static int SLICE_DEFAULT = 100;
-    public static int TIMEOUT_DEFAULT = 5000;
+    public static int TIMEOUT_DEFAULT = 10000;
     public static int DISPLAY_RESULT_MAX = 10;
     private static final String TIMEOUT_EXCEPTION = "SocketTimeoutException";
     private static final String READ_TIMEOUT_EXCEPTION = "SSLProtocolException: Read timed out";
@@ -217,7 +222,10 @@ public class ProviderService implements URLParam {
 
             String name = service.getLabel();
             URLServer url = new URLServer(name, Property.stringValue(SERVICE_PARAMETER));
-            url.setDataset(getGlobalAST().getDataset());
+            if (q.getGlobalQuery().isFederate()) {
+                // federate rewrite service inherit from/from named    
+                url.setDataset(getGlobalAST().getDataset());
+            }
             if (!ok) {
                 url.setUndefined(true);
             }
@@ -231,6 +239,8 @@ public class ProviderService implements URLParam {
             url.encode();
             getLog().add(LogKey.ENDPOINT, url.getServer());
             getLog().add(LogKey.ENDPOINT_CALL, url.getLogURLNumber());
+            getLog().set(url.getLogURLNumber(), LogKey.ENDPOINT_NUMBER, url.getNumber());
+            getLog().set(url.getLogURLNumber(), LogKey.ENDPOINT_URL, url.getServer());
 
             if (ok) {
                 if (getContext() != null && getContext().isFederateIndex()) {
@@ -487,9 +497,9 @@ public class ProviderService implements URLParam {
         if (getGlobalAST().hasMetadata(Metadata.LOOP)
                 || serv.hasParameter(LOOP)
                 || serv.hasParameter(MODE, LOOP)) {
-            int begin   = getValue(serv, START, URLParam.START, 0);
-            int end     = getValue(serv, UNTIL, URLParam.UNTIL, Integer.MAX_VALUE);
-            int myLimit = getValue(serv, LIMIT, URLParam.LIMIT, ast.getLimit());
+            int begin   = getValue(serv, Metadata.START, URLParam.START, 0);
+            int end     = getValue(serv, Metadata.UNTIL, URLParam.UNTIL, Integer.MAX_VALUE);
+            int myLimit = getValue(serv, Metadata.LIMIT_STR, URLParam.LIMIT, ast.getLimit());
             logger.info(String.format("send loop: begin %s end %s limit %s", begin, end, myLimit));
             
             Mappings sol = new Mappings();
@@ -588,7 +598,7 @@ public class ProviderService implements URLParam {
                 return value;
             }
         }
-        if (ast.hasMetadata(meta) && ast.getMetaValue(meta) != null) {
+        if (ast.getMetaValue(meta) != null) {
             return ast.getMetaValue(meta).intValue();
         }
         return n;
@@ -868,15 +878,18 @@ public class ProviderService implements URLParam {
     }
 
     int getTimeout(Node serv, Mappings map) {
-        IDatatype dttimeout = getGlobalAST().getMetadataDatatypeValue(Metadata.TIMEOUT);
+        Integer timeout = TIMEOUT_DEFAULT;
+        IDatatype dttimeout = getGlobalAST().getMetaValue(Metadata.TIMEOUT);
         if (dttimeout != null) {
-            return dttimeout.intValue();
+            timeout = dttimeout.intValue();
+        } else {
+            timeout = Property.intValue(SERVICE_TIMEOUT);
+            if (timeout == null) {
+                timeout = TIMEOUT_DEFAULT;
+            }
         }
-        Integer timeout = Property.intValue(SERVICE_TIMEOUT);
-        if (timeout != null) {
-            return timeout;
-        }
-        return TIMEOUT_DEFAULT;
+        logger.info("Timeout: " + timeout);
+        return timeout;
     }
 
     int getSlice(Node serv, Mappings map) {
@@ -891,17 +904,13 @@ public class ProviderService implements URLParam {
         return SLICE_DEFAULT;
     }
 
-// former: 
-    //getQuery().getGlobalQuery().getSlice();        //slice = getEval().getVisitor().slice(serv, map == null ? Mappings.create(getQuery()) : map);
-//        IDatatype dt = getBinding().getGlobalVariable(Binding.SLICE_SERVICE);
-//        if (dt == null) {
-//            return slice;
-//        }
-//        return dt.intValue();
     Mappings eval(ASTQuery ast, URLServer serv, int timeout, int count)
             throws IOException, EngineException {
         if (isDB(serv.getNode())) {
             return db(getQuery(), serv.getNode());
+        }
+        if (serv.isStorage()) {
+            return storage(ast, serv);
         }
         if (serv.getServer().startsWith(LOCAL_SERVICE)) {
             logger.info("Local service: " + serv);
@@ -909,6 +918,17 @@ public class ProviderService implements URLParam {
             return getDefault().query(ast, getBinding());
         }
         return send(getQuery(), ast, serv, timeout, count);
+    }
+    
+    Mappings storage(ASTQuery ast, URLServer url) throws EngineException {
+        DataManager man = StorageFactory.getDataManager(url.getStoragePath());
+        if (man == null) {
+            throw new EngineException(
+                    String.format("Undefined storage manager: %s %s", url.getServer(), url.getStoragePath()));
+        }
+        QueryProcess exec = QueryProcess.create(man);
+        logger.info(String.format("storage: %s\n%s", url, ast));
+        return exec.query(ast);
     }
 
     /**
@@ -922,7 +942,7 @@ public class ProviderService implements URLParam {
     boolean isDB(Node serv) {
         return serv.getLabel().startsWith(DB);
     }
-
+    
     Mappings send(Query q, ASTQuery ast, URLServer serv, int timeout, int count)
             throws IOException {
         return post(q, ast, serv, timeout, count);
@@ -939,9 +959,64 @@ public class ProviderService implements URLParam {
             //service.setLog(getLog());
             service.setDebug(q.isRecDebug());
             Mappings map = service.query(q, ast, null);
+            log(serv, service.getReport());
             return map;
         } catch (LoadException ex) {
             throw (new IOException(ex.getMessage() + " " + serv.getURL()));
+        }
+    }
+    
+    // record whole header
+    void log(URLServer url, ServiceReport report) {
+        if (report != null && report.getResponse() != null
+                && report.getResponse().getHeaders() != null) {
+
+            for (String name : report.getResponse().getHeaders().keySet()) {
+                String res = report.getResponse().getHeaderString(name);
+                if (res != null) {
+                    getLog().defLabel(url.getLogURLNumber(), name, res);
+                }
+            }
+            for (String name : report.getResponse().getCookies().keySet()) {
+                Cookie res = report.getResponse().getCookies().get(name);
+                if (res != null) {
+                    getLog().defLabel(url.getLogURLNumber(), name.concat("-cookie"), res.toString());
+                }
+            }
+        }
+    }
+
+    // record subset of header
+    void log2(URLServer url, ServiceReport report) {
+        if (report != null && report.getResponse() != null
+                && report.getResponse().getHeaders() != null) {
+            List<String> headerList = Property.listValue(SERVICE_HEADER);
+            if (headerList != null) {
+                
+                for (String header : headerList) {
+                    if (header.equals(Property.STAR)) {
+                        for (String name : report.getResponse().getHeaders().keySet()) {
+                            String res = report.getResponse().getHeaderString(name);
+                            if (res != null) {
+                                getLog().defLabel(url.getLogURLNumber(), name, res);
+                            }
+                        }
+                        for (String name : report.getResponse().getCookies().keySet()) {
+                            Cookie res = report.getResponse().getCookies().get(name);
+                            if (res != null) {
+                                getLog().defLabel(url.getLogURLNumber(), name.concat("-cookie"), res.toString());
+                            }
+                        }
+                    }
+                    else {
+                        String res = report.getResponse().getHeaderString(header);
+                        if (res != null) {
+                            //logger.info(String.format("%s %s=%s", url.toString(), header, res));
+                            getLog().defLabel(url.getLogURLNumber(), header, res);
+                        }
+                    }
+                }
+            }
         }
     }
 

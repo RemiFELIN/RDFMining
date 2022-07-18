@@ -12,23 +12,22 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * This class has two instances and 
- * the first instance contains the second
- * a) uri2bgp:     uri -> (connected bgp) triple with one URI
- * b) uriList2bgp: uri -> (connected bgp) triple with several URI
+ * This class has two instances 
+ * the main instance contains the second one
+ * a) main instance: uri -> (connected bgp) triple with one URI (deprecated)
+ * b) uriList2bgp:   uri -> (connected bgp) triple with several URI
  */
-class URI2BGPList {
+public class URI2BGPList {
     public static boolean TRACE_SKIP = false;
     // uri -> bgp list
     HashMap<String, List<BasicGraphPattern>> uri2bgp;
     // bgp -> uri list
     private BGP2URI bgp2uri;
-    // list of triple in context a) or b)
+    // list of all triples in both instances
     private ArrayList<Triple> tripleList;
     // service with one URI
     private ArrayList<Service> serviceList;
-    // main URI2BGPList for triple with one URI
-    // uriList2bgp for triple with several URI 
+    // uriList2bgp instance for triple with several URI 
     private URI2BGPList uriList2bgp;
     private FederateVisitor visitor;
     
@@ -51,11 +50,17 @@ class URI2BGPList {
         }
     }
     
+    /**
+     * Create bgp2uri map: bgp -> list uri
+     * When several physical occurrences of same (equals) bgp, 
+     * pick one key bgp that represents all of them
+     */
     void bgp2uri() {        
         for (String uri : uri2bgp.keySet()) {
             for (BasicGraphPattern bgp : uri2bgp.get(uri)) {
-                // different bgp object with same content 
-                // must have same key bgp
+                // retrieve key bgp for this bgp
+                // use case: several similar bgp objects represented by 
+                // one bgp object
                 BasicGraphPattern key = getBgp2uri().getKey(bgp);
                 List<String> uriList  = getBgp2uri().get(key);
                 if (uriList == null) {
@@ -148,7 +153,7 @@ class URI2BGPList {
                     } else {
                         // source selection confirm that triple does not join with bgp
                         if (TRACE_SKIP) {
-                            trace("skip: %s %s", triple, uri);
+                            trace("bgp join skip connection: %s %s", triple, uri);
                             trace("%s", bgp);
                         }
                     }

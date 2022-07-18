@@ -61,6 +61,10 @@ public class Service implements URLParam {
     public static final String MIME_TYPE = "application/sparql-results+xml,application/rdf+xml";
     public static final String XML = SPARQL_RESULTS_XML;
     public static final String RDF = RDF_XML;
+    private static final String NAMED_GRAPH_URI = "named-graph-uri";
+    private static final String DEFAULT_GRAPH_URI = "default-graph-uri";
+    public static final String NB_RESULT_MAX = "X-SPARQL-MaxRows";
+
     static HashMap<String, String> redirect;
     
     private ClientBuilder clientBuilder;
@@ -168,8 +172,12 @@ public class Service implements URLParam {
             }
             map.setQuery(query);
             map.init(query);
+            // complete report with response and header
+            // report was recorded in map by ServiceParser 
+            // call to ServiceReport parserReport()
             getCreateReport(query).setAccept(accept)
                     .completeReport(map);
+            //log(getCreateReport());
             return map;
         } catch (LoadException e) {
             // ServiceParser throw exception
@@ -177,6 +185,18 @@ public class Service implements URLParam {
                 return getCreateReport(query).parserReport(e);
             }
             throw e;
+        }
+    }
+    
+    void log(ServiceReport report) {
+        log(report.getResponse());
+    }
+    
+    void log(Response res) {
+        if (res != null) {
+            if (res.getHeaderString(NB_RESULT_MAX) != null) {
+                logger.info(String.format("%s = %s", NB_RESULT_MAX, res.getHeaderString(NB_RESULT_MAX)));
+            }
         }
     }
     
@@ -212,6 +232,7 @@ public class Service implements URLParam {
     
     // https://docs.oracle.com/javaee/7/api/index.html
     public String basicPost(String url, String query, String mime) {
+        //logger.info("Timeout: " + timeout);
         clientBuilder.connectTimeout(timeout, TimeUnit.MILLISECONDS);
         clientBuilder.readTimeout(timeout, TimeUnit.MILLISECONDS);
         Client client = clientBuilder.build(); 
@@ -427,13 +448,17 @@ public class Service implements URLParam {
     void complete(MultivaluedMap<String, String> amap, Dataset ds) {
         if (ds != null) {
             if (!ds.getFrom().isEmpty()) {
-                amap.put("default-graph-uri", ds.getFromStringList());
+                logger.info(String.format("%s\n%s %s", getURL().toString(), DEFAULT_GRAPH_URI, ds.getFromStringList()));
+                amap.put(DEFAULT_GRAPH_URI, ds.getFromStringList());
             }
             if (!ds.getNamed().isEmpty()) {
-                amap.put("named-graph-uri", ds.getNamedStringList());
+                logger.info(getURL().toString());
+                logger.info(String.format("%s\n%s %s", getURL().toString(), NAMED_GRAPH_URI, ds.getNamedStringList()));
+                amap.put(NAMED_GRAPH_URI, ds.getNamedStringList());
             }
         }
     }
+
 
     public String get(String query, String mime) {
         // Server URL without parameters
@@ -745,7 +770,7 @@ public class Service implements URLParam {
     // use case for limit: @federate with one URL -> direct service
     void limit(ASTQuery ast) {
         if (!ast.hasLimit()) {
-            if (ast.hasMetadata(Metadata.LIMIT)) {
+            if (ast.getMetaValue(Metadata.LIMIT)!=null) {
                 ast.setLimit(ast.getMetaValue(Metadata.LIMIT).intValue());
             } else {
                 Integer lim = getURL().intValue(LIMIT);

@@ -8,7 +8,10 @@ import fr.inria.corese.sparql.triple.parser.ASTQuery;
 import fr.inria.corese.sparql.triple.parser.Expression;
 import fr.inria.corese.sparql.triple.parser.URLParam;
 import fr.inria.corese.sparql.triple.parser.URLServer;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,15 +26,20 @@ import org.json.JSONObject;
 public class ContextLog implements URLParam, LogKey {
 
     public static int DISPLAY_RESULT_MAX=10;
+    
+    static String[] shareable = {LogKey.INDEX};
 
     // log service exception list
     private List<EngineException> exceptionList;
     // log service SPARQL Results XML format link href=url
     private List<String> linkList;
+    // labels such as header name
+    private List<String> labelList;
     // federated visitor endpoint selector Mappings
     private Mappings selectMap;
     private Mappings indexMap;
     // subject -> property map
+    // subject = service URL + service call counter
     private SubjectMap subjectMap;
     // federated query
     private ASTQuery ast;
@@ -48,6 +56,7 @@ public class ContextLog implements URLParam, LogKey {
     void init() {
         exceptionList = new ArrayList<>();
         linkList = new ArrayList<>();
+        setLabelList(new ArrayList<>());
         formatList = new ArrayList<>();
         setSubjectMap(new SubjectMap());
     }
@@ -59,6 +68,10 @@ public class ContextLog implements URLParam, LogKey {
     String getSubject() {
         return SUBJECT;
     }
+    
+    public PropertyMap getPropertyMap() {
+        return getSubjectMap().getPropertyMap(getSubject());
+    }
 
     public PropertyMap getPropertyMap(String subject) {
         return getSubjectMap().getPropertyMap(subject);
@@ -66,6 +79,23 @@ public class ContextLog implements URLParam, LogKey {
 
     public IDatatype get(String subject, String property) {
         return getSubjectMap().get(subject, property);
+    }
+    
+    public IDatatype getLabel(String subject, String property) {
+        return getSubjectMap().get(subject, getPredicate(property));
+    }
+    
+    public List<List<String>> getLabelList(String property) {
+        ArrayList<List<String>> list = new ArrayList<>();
+        
+        for (String url : keySet()) {
+            IDatatype dt = getLabel(url, property);
+            if (dt != null) {
+                list.add(List.of(url, property, dt.getLabel()));
+            }
+        }
+        
+        return list;
     }
     
     public String getString(String subject, String property) {
@@ -166,9 +196,31 @@ public class ContextLog implements URLParam, LogKey {
     public void incr(String subject, String property, int value) {
         getSubjectMap().incr(subject, property, value);
     }
+    
+    public String getPredicate(String name) {
+        if (name.startsWith(LogKey.PREF)) {
+            return name;
+        }
+        return LogKey.HEADER_PREF.concat(name);
+    }
 
     public void set(String subject, String property, String value) {
         getSubjectMap().set(subject, property, value);
+    }
+    
+    public void setLabel(String subject, String property, String value) {
+        getSubjectMap().set(subject, getPredicate(property), value);
+    }
+    
+    public void defLabel(String subject, String property, String value) {
+        getSubjectMap().set(subject, getPredicate(property), value);
+        defLabel(property);
+    }
+    
+    public void defLabel(String property) {
+        if (!getLabelList().contains(property)) {
+            getLabelList().add(property);
+        }
     }
 
     public void set(String subject, String property, int value) {
@@ -199,10 +251,26 @@ public class ContextLog implements URLParam, LogKey {
     public void add(String property, String value) {
         getSubjectMap().add(getSubject(), property, value);
     }
+    
+    public void add(String property, IDatatype value) {
+        getSubjectMap().add(getSubject(), property, value);
+    }
+    
+    public void addDistinct(String property, IDatatype value) {
+        addDistinct(getSubject(), property, value);
+    }
 
     // add value to list of value
     public void add(String subject, String property, String value) {
         getSubjectMap().add(subject, property, value);
+    }
+    
+    public void add(String subject, String property, IDatatype value) {
+        getSubjectMap().add(subject, property, value);
+    }
+    
+    public void addDistinct(String subject, String property, IDatatype value) {
+        getSubjectMap().addDistinct(subject, property, value);
     }
 
     public void add(String subject, String property, Object value) {
@@ -223,6 +291,44 @@ public class ContextLog implements URLParam, LogKey {
             sb.append(getASTSelect()).append(NL);
         }
         return sb.toString();
+    }
+    
+    // subset of Log
+    // subset of header specified by Property SERVICE_HEADER
+    public String log() {
+        return log(getLabelList());
+    }
+    
+    public String log(List<String> propertyList) {
+        StringBuilder sb = new StringBuilder();
+
+        for (String url : getSubjectMap().getKeys()) {
+            for (String name : propertyList) {
+                if (name.equals(STAR)) {
+                    for (String pred : getLabelList()) {
+                        IDatatype value = getLabel(url, pred);
+                        if (value != null) {
+                            sb.append(String.format("%s %s %s\n", url, pred, value));
+                        }
+                    }
+                } 
+                else {
+                    IDatatype value = getLabel(url, name);
+                    if (value != null) {
+                        sb.append(String.format("%s %s %s\n", url, name, value));
+                    }
+                }
+            }
+        }
+
+        return sb.toString();
+    }
+    
+    public void logToFile(String fileName) throws IOException {
+        FileWriter file = new FileWriter(fileName);
+        file.write(log());
+        file.flush();
+        file.close();
     }
 
     public boolean isEmpty() {
@@ -341,10 +447,19 @@ public class ContextLog implements URLParam, LogKey {
         if (getExceptionList().isEmpty()) {
             getExceptionList().addAll(log.getExceptionList());
         }
+        
+        for (String prop : getShareable())  {
+            IDatatype dt = log.get(prop);
+            if (dt !=null) {
+                set(prop, dt);
+            }
+        }
     }
     
     
-    
+    String[] getShareable() {
+        return shareable;
+    }
     
     /*****************************
      * 
@@ -473,6 +588,10 @@ public class ContextLog implements URLParam, LogKey {
     public SubjectMap getSubjectMap() {
         return subjectMap;
     }
+    
+    public Collection<String> keySet() {
+        return getSubjectMap().keySet();
+    }
 
     public void setSubjectMap(SubjectMap subjectMap) {
         this.subjectMap = subjectMap;
@@ -534,6 +653,14 @@ public class ContextLog implements URLParam, LogKey {
 
     public void setIndexMap(Mappings indexMap) {
         this.indexMap = indexMap;
+    }
+
+    public List<String> getLabelList() {
+        return labelList;
+    }
+
+    public void setLabelList(List<String> labelList) {
+        this.labelList = labelList;
     }
 
 }

@@ -46,6 +46,8 @@ import fr.inria.corese.core.producer.DataBrokerConstructExtern;
 import fr.inria.corese.core.query.update.GraphManager;
 import fr.inria.corese.core.transform.TemplateVisitor;
 import fr.inria.corese.core.util.Extension;
+import fr.inria.corese.core.util.Property;
+import static fr.inria.corese.core.util.Property.Value.SERVICE_HEADER;
 import fr.inria.corese.kgram.api.query.ProcessVisitor;
 import fr.inria.corese.kgram.core.ProcessVisitorDefault;
 import fr.inria.corese.kgram.core.SparqlException;
@@ -55,11 +57,18 @@ import fr.inria.corese.sparql.triple.parser.Access.Level;
 import fr.inria.corese.sparql.triple.parser.Access.Feature;
 import fr.inria.corese.sparql.triple.parser.AccessRight;
 import fr.inria.corese.sparql.triple.parser.URLParam;
+import fr.inria.corese.sparql.triple.parser.context.ContextLog;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import jakarta.ws.rs.client.ResponseProcessingException;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -745,8 +754,46 @@ public class QueryProcess extends QuerySolver {
         if (!getLog().getLinkList().isEmpty()) {
             map.setLinkList(getLog().getLinkList());
         }
-        
+        traceLog(map);
         processMessage(map);
+    }
+    
+    // display service http header log
+    // header properties specified by SERVICE_HEADER = p1;p2
+    // display whole header: SERVICE_HEADER = * 
+    void traceLog(Mappings map) {
+        List<String> header = Property.listValue(SERVICE_HEADER);
+        
+        if (header != null) {
+            String log = getLog().log(header);
+            
+            if (!log.isEmpty()) {
+                logger.info("\n" + log);
+                // record log in query info 
+                // to be displayed as comment in XML Results format
+                map.getQuery().addInfo(log);
+                traceLogFile(map);
+            }
+        }
+    }   
+    
+    // write header log to file
+    // @save
+    // @save <filename>
+    void traceLogFile(Mappings map) {
+        if (map.getAST().hasMetadata(Metadata.SAVE)) {
+            String fileName = map.getAST().getMetadata().getValue(Metadata.SAVE);
+
+            try {
+                if (fileName == null) {
+                    File tempFile = File.createTempFile("log-", ".txt");
+                    fileName = tempFile.getAbsolutePath();
+                }
+                getLog().logToFile(fileName);
+            } catch (IOException ex) {
+                logger.error(ex.getMessage());
+            }
+        }
     }
     
     void processLog(Query q, Mappings map) {
@@ -763,6 +810,40 @@ public class QueryProcess extends QuerySolver {
                 logger.error(ex.getMessage());
             }
         }
+    }
+    
+    // translate log header into Mappings
+    // use case: gui display log header as query results
+    public Mappings log2Mappings(ContextLog log) throws EngineException {
+        return log2Mappings(log, false);
+    }
+       
+    public Mappings log2Mappings(ContextLog log, boolean blog) throws EngineException {
+        String str = "select * where {?s ?p ?o}";
+        Query q = compile(str);
+        Mappings map = Mappings.create(q);
+        map.init(q);
+        Collection<String> nameList = log.getLabelList();
+        
+        for (String url : log.getSubjectMap().getKeys()) {
+            if (blog) {
+                nameList = log.getPropertyMap(url).keySet();
+            }
+            for (String name : nameList) {
+                IDatatype value = log.getLabel(url, name);
+                
+                if (value !=null) {
+                    ArrayList<Node> valueList = new ArrayList<>();
+                    valueList.add(DatatypeMap.newResource(url));
+                    valueList.add(DatatypeMap.newResource(name));
+                    valueList.add(value);
+                    Mapping m = Mapping.create(q.getSelect(), valueList);
+                    map.add(m);
+                }
+            }
+        }
+        
+        return map;
     }
     
     /**
@@ -1384,6 +1465,14 @@ public class QueryProcess extends QuerySolver {
         }
         
         return g;
+    }
+    
+    public void defineFederation(String name, List<String> list) {
+        FederateVisitor.defineFederation(name, list);
+    }
+    
+    public void defineFederation(String name, String... list) {
+        FederateVisitor.defineFederation(name, Arrays.asList(list));
     }
 
     Transformer getTransformer() {

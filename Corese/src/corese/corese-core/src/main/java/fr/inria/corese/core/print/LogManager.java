@@ -38,11 +38,11 @@ import org.slf4j.LoggerFactory;
 public class LogManager implements LogKey {
 
     private static Logger logger = LoggerFactory.getLogger(LogManager.class);
-
+ 
     ContextLog log;
     StringBuilder sb;
     private boolean debug = false;
-
+    
     public LogManager(ContextLog log) {
         this.log = log;
     }
@@ -117,23 +117,22 @@ public class LogManager implements LogKey {
 
     void main() {
         sb.append(String.format("prefix %s <%s>\n", PREF, NS));
+        sb.append(String.format("prefix %s <%s>\n", HEADER_PREF, HEADER_NS));
 
-//        property("[] a %s ;\n ", EVALUATION_REPORT);
-//        property("%s %s . \n",   DATE, DatatypeMap.newDate());
         if (log.getAST() != null) {
-            property("[] %s \"\"\"\n%s\"\"\" .\n", AST, log.getAST());
+            property("<%s> %s \"\"\"\n%s\"\"\" .\n", SUBJECT, AST, log.getAST());
         }
         if (log.getASTSelect() != null) {
-            property("[] %s \"\"\"\n%s\"\"\" .\n", AST_SELECT, log.getASTSelect());
+            property("<%s> %s \"\"\"\n%s\"\"\" .\n", SUBJECT, AST_SELECT, log.getASTSelect());
         }
         if (log.getSelectMap() != null) {
-            property("[] %s \"\"\"\n%s\"\"\" .\n", RESULT_SELECT, log.getSelectMap());
+            property("<%s> %s \"\"\"\n%s\"\"\" .\n", SUBJECT, RESULT_SELECT, log.getSelectMap());
         }
         if (log.getASTIndex() != null) {
-            property("[] %s \"\"\"\n%s\"\"\" .\n", AST_INDEX, log.getASTIndex());
+            property("<%s> %s \"\"\"\n%s\"\"\" .\n", SUBJECT, AST_INDEX, log.getASTIndex());
         }
         if (log.getIndexMap() != null) {
-            property("[] %s \"\"\"\n%s\"\"\" .\n", RESULT_INDEX, log.getIndexMap());
+            property("<%s> %s \"\"\"\n%s\"\"\" .\n", SUBJECT, RESULT_INDEX, log.getIndexMap());
         }
     }
     

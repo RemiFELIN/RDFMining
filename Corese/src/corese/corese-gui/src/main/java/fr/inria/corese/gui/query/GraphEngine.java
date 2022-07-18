@@ -13,11 +13,13 @@ import fr.inria.corese.compiler.eval.QuerySolverVisitor;
 import fr.inria.corese.core.Event;
 import fr.inria.corese.core.Graph;
 import fr.inria.corese.core.GraphStore;
+import fr.inria.corese.core.api.DataManager;
 import fr.inria.corese.core.load.Build;
 import fr.inria.corese.core.load.Load;
 import fr.inria.corese.core.load.LoadException;
 import fr.inria.corese.core.query.QueryEngine;
 import fr.inria.corese.core.query.QueryProcess;
+import fr.inria.corese.core.query.StorageFactory;
 import fr.inria.corese.core.rule.Cleaner;
 import fr.inria.corese.core.rule.RuleEngine;
 import fr.inria.corese.core.util.Parameter;
@@ -32,6 +34,7 @@ import fr.inria.corese.sparql.triple.parser.Access;
 import fr.inria.corese.sparql.triple.parser.Constant;
 import static fr.inria.corese.core.util.Property.Value.ACCESS_LEVEL;
 import fr.inria.corese.core.util.Tool;
+//import fr.inria.corese.storage.jenatdb1.JenaDataManager;
 import java.io.IOException;
 
 /**
@@ -50,8 +53,8 @@ public class GraphEngine {
     private QueryEngine qengine;
     QueryProcess exec;
     private QuerySolverVisitor visitor;
-    //LoadPlugin plugin;
     Build build;
+    private DataManager dataManager;
 
     private boolean isListGroup = false,
             isDebug = false, linkedFunction = false;
@@ -60,7 +63,15 @@ public class GraphEngine {
         //DatatypeMap.setLiteralAsString(false);
         graph = GraphStore.create(b);
         qengine = QueryEngine.create(graph);
-        exec = QueryProcess.create(graph, true);
+        
+        if (Property.stringValue(STORAGE_PATH) != null) {
+//            setDataManager(new JenaDataManager(Property.pathValue(STORAGE_PATH)));
+            StorageFactory.defineDataManager(Property.pathValue(STORAGE_PATH), getDataManager());
+            logger.info("storage dataset: " + Property.pathValue(STORAGE_PATH));
+        }
+        
+        exec = createQueryProcess();
+        
         try {
             setVisitor(new QuerySolverVisitor(exec.getCreateEval()));
         } catch (EngineException ex) {
@@ -190,8 +201,31 @@ public class GraphEngine {
             logger.error(ex.getMessage());
         }
     }
-
+    
     public QueryProcess createQueryProcess() {
+        QueryProcess qp;
+        
+        if (Property.stringValue(STORAGE_PATH)==null || 
+            Property.booleanValue(STORAGE_SERVICE)) {
+            logger.info("std dataset");
+            qp = createBasicQueryProcess();
+        }
+        else {
+            qp = createStorageQueryProcess();
+        }
+        
+        return qp;
+    }
+    
+    public QueryProcess createStorageQueryProcess() {
+        QueryProcess qp = QueryProcess.create(getDataManager());
+        Load load = Load.create();
+        load.setDataManager(getDataManager());
+        qp.setLoader(load);
+        return qp;
+    }
+
+    public QueryProcess createBasicQueryProcess() {
         QueryProcess qp = QueryProcess.create(graph, true);
         qp.setLoader(loader());
         qp.setListGroup(isListGroup);
@@ -201,16 +235,10 @@ public class GraphEngine {
 
     public Load loader() {
         Load load = Load.create(graph);
-        //load.setEngine(rengine);
         load.setEngine(qengine);
-        //load.setPlugin(plugin);
-        //load.setBuild(build);
         return load;
     }
 
-//    public void setPlugin(LoadPlugin p) {
-//        plugin = p;
-//    }
 
     public void load(String path) throws EngineException, LoadException {
         Load ld = loader();
@@ -219,6 +247,11 @@ public class GraphEngine {
         if (ld.getRuleEngine() != null) {
             setRuleEngine(ld.getRuleEngine());
         }
+    }
+    
+    public void loadString(String rdf) throws EngineException, LoadException {
+        Load ld = loader();
+        ld.loadString(rdf, ld.TURTLE_FORMAT);       
     }
 
     public void loadDirProtect(String path) {
@@ -489,6 +522,14 @@ public class GraphEngine {
 
     public void setRuleEngine(RuleEngine rengine) {
         this.rengine = rengine;
+    }
+
+    public DataManager getDataManager() {
+        return dataManager;
+    }
+
+    public void setDataManager(DataManager dataManager) {
+        this.dataManager = dataManager;
     }
 
 }

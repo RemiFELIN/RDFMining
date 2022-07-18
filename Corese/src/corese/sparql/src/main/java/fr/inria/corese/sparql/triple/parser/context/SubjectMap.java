@@ -54,7 +54,7 @@ public class SubjectMap extends HashMap<String, PropertyMap> implements LogKey {
     public IDatatype get(String subject, String property) {
         return getPropertyMap(subject).get(property);
     }
-    
+       
     public List<String> getStringList(String subject, String property) {
         IDatatype dt = getPropertyMap(subject).get(property);
         if (dt == null) {
@@ -99,6 +99,16 @@ public class SubjectMap extends HashMap<String, PropertyMap> implements LogKey {
         dt.getList().add(createObject(value));
     }
 
+     
+    public void add(String subject, String property, IDatatype value) {
+        IDatatype dt = getPropertyMap(subject).getCreateList(property);
+        dt.getList().add(value);
+    }
+    
+    public void addDistinct(String subject, String property, IDatatype value) {
+        IDatatype dt = getPropertyMap(subject).getCreateList(property);
+        addDistinct(dt, value);
+    }
     
     IDatatype value(String str) {
         if (str == null) {

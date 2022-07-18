@@ -6,7 +6,9 @@ package fr.inria.corese.sparql.triple.cst;
 public interface LogKey {
 
     static final String NS = "http://ns.inria.fr/corese/log/";
+    static final String HEADER_NS = NS+"header/";
     static final String PREF = "ns:";
+    static final String HEADER_PREF = "hd:";
     static final String SUBJECT = NS+"report" ;
     static final String EVALUATION_REPORT = "ns:EvaluationReport";
     static final String REPORT = "ns:ServiceReport";
@@ -19,7 +21,10 @@ public interface LogKey {
     static final String SERVICE_OUTPUT = "ns:serviceOutput"; 
     // list of endpoints
     static final String ENDPOINT = "ns:endpoint";
+    static final String INDEX = "ns:index";
     static final String ENDPOINT_CALL = "ns:endpointCall";
+    static final String ENDPOINT_NUMBER = "ns:endpointNumber";
+    static final String ENDPOINT_URL    = "ns:endpointURL";
     // query that generated an exception 
     static final String QUERY = "ns:query";
     // federate query result of federate rewrite

@@ -14,6 +14,7 @@ import fr.inria.corese.compiler.eval.QuerySolver;
 import fr.inria.corese.kgram.core.Mapping;
 import fr.inria.corese.kgram.core.Mappings;
 import fr.inria.corese.sparql.exceptions.EngineException;
+import fr.inria.corese.sparql.triple.cst.LogKey;
 import fr.inria.corese.sparql.triple.parser.ASTSelector;
 import fr.inria.corese.sparql.triple.parser.Context;
 import fr.inria.corese.sparql.triple.parser.Exp;
@@ -141,10 +142,11 @@ public class Selector {
                 .process();
         Context ct = Context.create().setDiscovery(true);
         Mappings map = getQuerySolver().basicQuery(a, ct); 
+        traceLog(map);
         getVisitor().setDiscovery(map);
         List<String> list = map.getStringValueList(SERVER_VAR); 
         
-        log(a, map);
+        log(url, a, map);
         logger.info("Source discovery:\n"+map);
         logger.info("Source discovery URL list:\n" + list);
         logger.info("Source discovery time: " + time(d1));
@@ -152,11 +154,13 @@ public class Selector {
         return list;
     }
     
-    void log(ASTQuery a, Mappings map) {
+    void log(String url, ASTQuery a, Mappings map) {
         getQuerySolver().getLog().setASTIndex(a);
         getQuerySolver().getLog().setIndexMap(map);
+        getQuerySolver().getLog().set(LogKey.INDEX, url);
         ast.getLog().setASTIndex(a);
         ast.getLog().setIndexMap(map);
+        ast.getLog().set(LogKey.INDEX, url);
         //ast.getLog().setExceptionList(getQuerySolver().getLog().getExceptionList());
     }
     
@@ -187,6 +191,7 @@ public class Selector {
                 ct.setFederateIndex(true);
             }            
             map = getQuerySolver().basicQuery(aa, ct);
+            traceLog(map);
             getVisitor().setMappings(map);
         }
         else {
@@ -236,9 +241,19 @@ public class Selector {
         boolean b = getAstSelector().complete();       
         trace(map, d1, d2);
         logger.info("Source Selection Join Test Success: " + b);
+        // if selection join failure occurs in optional/minus/union/exists
+        // do not fail, else fail
+        // when return false below, query is considered as failing 
+        // and will not be executed
         return b;
     }
     
+    void traceLog(Mappings map) {
+        for (List list : getQuerySolver().getLog().getLabelList("Server")) {
+            logger.info(list.toString());
+        }
+    }
+
     void metadata(ASTQuery aa) {
         if (ast.hasMetadata(Metadata.SHOW)) {
             Metadata meta = new Metadata();
@@ -250,7 +265,7 @@ public class Selector {
             ASTParser walk = new ASTParser(aa).report();
             aa.process(walk);
         }
-        if (ast.hasMetadata(Metadata.TIMEOUT)) {
+        if (ast.getMetaValue(Metadata.TIMEOUT)!=null) {
             aa.getCreateMetadata().add(Metadata.TIMEOUT, ast.getMetaValue(Metadata.TIMEOUT));
         }
     }
@@ -590,7 +605,12 @@ public class Selector {
     // to test existence of join on each endpoint
     // use case: determine if service uri {t1 t2} exists    
     int selectTripleJoin(ASTQuery aa, BasicGraphPattern bgp, int i) {
-        List<BasicGraphPattern> list = new SelectorFilter(getVisitor(), ast).processJoin();
+        SelectorFilter.JoinResult ares = new SelectorFilter(getVisitor(), ast).processJoin();
+        List<BasicGraphPattern> list = ares.getBgpList();
+        // join bgp should fail or not
+        // map: bgp -> fail
+        getAstSelector().setBgpFail(ares.getBgpFail());
+        
         for (BasicGraphPattern exp : list) {
             // exp = {t1 . t2}
             Variable var;
