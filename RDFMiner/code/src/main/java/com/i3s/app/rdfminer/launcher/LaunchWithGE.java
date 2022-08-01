@@ -14,8 +14,6 @@ import com.i3s.app.rdfminer.grammar.evolutionary.fitness.ShapeFitnessEvaluation;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.CandidatePopulation;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.grammar.evolutionary.selection.EliteSelection;
-import com.i3s.app.rdfminer.grammar.evolutionary.selection.TruncationSelection;
-import com.i3s.app.rdfminer.grammar.evolutionary.selection.TypeSelection;
 import com.i3s.app.rdfminer.mode.Mode;
 import com.i3s.app.rdfminer.output.axiom.GenerationJSON;
 import com.i3s.app.rdfminer.output.axiom.AxiomsResultsJSON;
@@ -27,8 +25,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -67,7 +63,7 @@ public class LaunchWithGE {
                 generator = new RandomAxiomGenerator(parameters.grammarFile, true);
                 // set the mode to AXIOMS
 //                mode = new Mode(TypeMode.AXIOMS);
-            } else if (parameters.useRandomShaclShapesGenerator) {
+            } else if (parameters.useShaclMode) {
                 // launch random SHACL Shapes generator
                 logger.info("Initializing the random SHACL Shapes generator with grammar " + parameters.grammarFile + "...");
                 generator = new RandomShapeGenerator(parameters.grammarFile);
@@ -144,7 +140,7 @@ public class LaunchWithGE {
         candidatePopulation = canPop.initialize(buffer, curGeneration);
 
 //        for(GEIndividual ind : candidatePopulation) {
-//            System.out.println("ind: " + ind.getPhenotype());
+//            logger.info("[DEBUG] Individual: " + ind.getPhenotype());
 //        }
 
         // Fill the 'stats' part of the JSON output
@@ -189,13 +185,16 @@ public class LaunchWithGE {
             fit = new ShapeFitnessEvaluation();
         }
 
-
-
         assert fit != null;
 
         while (curCheckpoint <= parameters.checkpoint) {
             System.out.println("\n--------------------------------------------------------\n");
             logger.info("Generation: " + curGeneration);
+
+//            for(GEIndividual ind : candidatePopulation) {
+//                logger.info("[DEBUG] Individual: " + ind.getPhenotype());
+//            }
+
             // First step of the grammatical evolution
             if ((curGeneration == 1) || ((buffer != null) && (!flag))) {
                 // if1

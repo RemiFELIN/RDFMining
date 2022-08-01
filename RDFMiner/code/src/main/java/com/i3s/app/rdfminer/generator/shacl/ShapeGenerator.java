@@ -40,7 +40,10 @@ public abstract class ShapeGenerator extends Generator {
             String h = String.format("\"%x\"", hexDigit);
             logger.warn("Querying with FILTER(strStarts(MD5(?x), " + h + "))...");
             // SPARQL Request
-            generateProductions("Class", "SELECT DISTINCT ?Class WHERE { ?x a ?Class . FILTER( strStarts(MD5(str(?Class)), " + h + ") ) }");
+            generateProductions("Class", "SELECT distinct ?Class WHERE { ?x a ?Class . FILTER( strStarts(MD5(str(?Class)), " + h + ") ) }");
+            generateProductions("Property","SELECT distinct ?Property WHERE { ?subj ?Property ?obj . FILTER ( isIRI(?Property) ) . FILTER( strStarts(MD5(str(?Property)), " + h + ") ) }");
+            generateProductions("Node", "SELECT distinct ?Node WHERE { ?Node ?p ?o . FILTER( strStarts(MD5(str(?Node)), " + h + ") ) } LIMIT 1000");
+            generateProductions("DataType", "SELECT distinct ?DataType WHERE { { SELECT distinct ?o WHERE { ?s ?p ?o . FILTER ( isLiteral(?o) ) } } BIND( datatype(?o) as ?DataType ) . FILTER( strStarts(MD5(str(?DataType)), " + h + ") ) }");
         }
     }
 

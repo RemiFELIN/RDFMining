@@ -10,8 +10,10 @@ import com.i3s.app.rdfminer.generator.axiom.CandidateAxiomGenerator;
 import com.i3s.app.rdfminer.generator.axiom.IncreasingTimePredictorAxiomGenerator;
 import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
+import com.i3s.app.rdfminer.shacl.Shape;
+import com.i3s.app.rdfminer.shacl.ShapesManager;
+import com.i3s.app.rdfminer.shacl.ValidationReport;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
-import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.engine.http.QueryExceptionHTTP;
 import org.apache.log4j.Logger;
@@ -35,7 +37,7 @@ public class LaunchWithoutGE {
 	/**
 	 * The first version of RDFMiner launcher
 	 */
-	public void run(CmdLineParameters parameters) throws InterruptedException, ExecutionException, URISyntaxException, IOException {
+	public void runAxiomEvaluation(CmdLineParameters parameters) throws InterruptedException, ExecutionException, URISyntaxException, IOException {
 		
 		AxiomGenerator generator = null;
 		BufferedReader axiomFile = null;
@@ -179,6 +181,58 @@ public class LaunchWithoutGE {
 		}
 
 		logger.info("Done testing axioms. Exiting.");
+		System.exit(0);
+	}
+
+	/**
+	 * The first version of RDFMiner launcher
+	 */
+	public void runShapeEvaluation(CmdLineParameters parameters) throws URISyntaxException, IOException {
+
+		BufferedReader shapeFile = null;
+
+		// Create an empty JSON object which will be fill with our results
+		RDFMiner.axiomsList = new JSONArray();
+
+		if (parameters.shapeFile != null) {
+			logger.info("Reading SHACL Shapes from file " + parameters.shapeFile + "...");
+			try {
+				// Try to read the status file:
+				shapeFile = new BufferedReader(new FileReader(parameters.shapeFile));
+			} catch (IOException e) {
+				logger.error("Could not open file " + parameters.shapeFile);
+				return;
+			}
+		} else {
+			logger.error("No SHACL file specified !");
+			System.exit(1);
+		}
+
+		// ShutDownHook
+		// Save results in output file
+		Runtime.getRuntime().addShutdownHook(new Thread(this::writeAndFinish));
+
+		// create output file
+		try {
+			RDFMiner.output = new FileWriter(RDFMiner.outputFolder + Global.RESULTS_FILENAME);
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		ShapesManager manager = new ShapesManager(parameters.shapeFile);
+		// launch evaluation
+		CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.SPARQL_ENDPOINT, Global.PREFIXES);
+		String report = endpoint.getProbabilisticValidationReportFromServer(manager.file);
+		ValidationReport validationReport = new ValidationReport(report);
+		for(Shape shape : manager.getPopulation()) {
+			shape.fillParamFromReport(validationReport);
+			// Save a JSON report of the test
+			RDFMiner.axiomsList.put(shape.toJSON());
+		}
+
+		logger.info("Done testing shape. Exiting.");
 		System.exit(0);
 	}
 	

@@ -126,16 +126,17 @@ public class RDFMiner {
 		}
 		
 		if (parameters.singleAxiom == null) {
+			logger.info("Output folder: " + Global.OUTPUT_PATH + parameters.resultFolder);
 			if(!(new File(Global.OUTPUT_PATH + parameters.resultFolder)).exists()) {
 				boolean created = (new File(Global.OUTPUT_PATH + parameters.resultFolder)).mkdirs();
 				if(created)
-					logger.info(Global.OUTPUT_PATH + parameters.resultFolder + " folder successfully created");
+					logger.info("... successfully created !");
 			}
 		}
 		RDFMiner.outputFolder = Global.OUTPUT_PATH + parameters.resultFolder;
 
 		// get the mode used ( SHACL Shapes ; OWL 2 Axioms )
-		if(parameters.useRandomShaclShapesGenerator) {
+		if(parameters.useShaclMode) {
 			mode = new Mode(TypeMode.SHACL_SHAPE);
 			results = new ShapesResultsJSON();
 		} else {
@@ -200,7 +201,11 @@ public class RDFMiner {
 			}
 		} else {
 			LaunchWithoutGE evaluate = new LaunchWithoutGE();
-			evaluate.run(parameters);
+			if(RDFMiner.mode.isAxiomMode()) {
+				evaluate.runAxiomEvaluation(parameters);
+			} else {
+				evaluate.runShapeEvaluation(parameters);
+			}
 		}
 	}
 

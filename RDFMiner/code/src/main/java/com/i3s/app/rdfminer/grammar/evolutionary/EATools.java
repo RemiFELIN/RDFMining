@@ -340,6 +340,7 @@ public class EATools {
 				logger.info("Launch evaluation report for new childs ...");
 				String report = endpoint.getProbabilisticValidationReportFromServer(shapesManager.file);
 				// read evaluation report
+//				logger.info("[DEBUG] report :\n" + report);
 				ValidationReport validationReport = new ValidationReport(report);
 				// set each values finded for each child
 				for(Shape shape : shapesManager.population) {

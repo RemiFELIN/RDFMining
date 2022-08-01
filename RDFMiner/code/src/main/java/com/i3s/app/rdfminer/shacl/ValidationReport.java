@@ -3,6 +3,7 @@ package com.i3s.app.rdfminer.shacl;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.shacl.vocabulary.RDFMinerKW;
 import com.i3s.app.rdfminer.shacl.vocabulary.ShaclKW;
+import org.apache.log4j.Logger;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.util.Literals;
 import org.eclipse.rdf4j.query.BindingSet;
@@ -23,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ValidationReport {
+
+    private static final Logger logger = Logger.getLogger(ValidationReport.class.getName());
 
     public final String content;
 

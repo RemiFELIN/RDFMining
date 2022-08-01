@@ -3,13 +3,14 @@ package com.i3s.app.rdfminer.shacl;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
-import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.LineIterator;
 import org.apache.log4j.Logger;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,22 @@ public class ShapesManager {
     public ArrayList<GEIndividual> individuals;
 
     public File file;
+
+    public ShapesManager(String filePath) throws IOException {
+        // Given a file, we will save each SHACL Shapes in population
+        BufferedReader fileReader = new BufferedReader(new FileReader(filePath));
+        this.file = new File(filePath);
+        while(true) {
+            String line = fileReader.readLine();
+            if (line == null || line.isEmpty()) {
+                break;
+            }
+            if (!line.contains("prefix") && !line.contains("base")) {
+                population.add(new Shape(line));
+            }
+        }
+        logger.info(population.size() + " SHACL Shapes ready to be evaluated !");
+    }
 
     /**
      * Take a list of GEIndividuals and build a list of well-formed SHACL Shapes

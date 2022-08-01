@@ -25,6 +25,8 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A class of SHACL Shape: see <em><a href="https://www.w3.org/TR/shacl/#constraints-section">
@@ -105,13 +107,18 @@ public class Shape extends Results {
      *
      * @param individual
      */
-    public Shape(GEIndividual individual) throws IOException {
+    public Shape(GEIndividual individual) {
         this.individual = individual;
         this.id = generateIDFromIndividual(individual);
         this.shape = this.id + individual.getPhenotype().toString();
-        this.uri = getUri();
+        this.uri = getUriFromID();
         // init model
-        this.model = Rio.parse(new StringReader(Global.PREFIXES + this.shape), "", RDFFormat.TURTLE);
+        try {
+            this.model = Rio.parse(new StringReader(Global.PREFIXES + this.shape), "", RDFFormat.TURTLE);
+        } catch(Exception e) {
+            logger.warn("Error during the parsing of Individual: " + e.getMessage());
+            logger.warn("[DEBUG] Individual: " + this.shape);
+        }
         // Create a new Repository. Here, we choose a database implementation
         // that simply stores everything in main memory.
         this.db = new SailRepository(new MemoryStore());
@@ -128,9 +135,44 @@ public class Shape extends Results {
         // @TODO : sh:targetNode ; sh:targetObjectsOf ; sh:message ; sh:severity
     }
 
-    public String getUri() {
+    public Shape(String shapeName) {
+        this.shape = shapeName;
+        this.id = getID(this.shape);
+        this.uri = getUriFromID();
+        // init model
+        try {
+            this.model = Rio.parse(new StringReader(Global.PREFIXES + this.shape), "", RDFFormat.TURTLE);
+        } catch(Exception e) {
+            logger.warn("Error during the parsing of Individual: " + e.getMessage());
+            logger.warn("[DEBUG] Individual: " + this.shape);
+        }
+        // Create a new Repository. Here, we choose a database implementation
+        // that simply stores everything in main memory.
+        this.db = new SailRepository(new MemoryStore());
+        // search if it is a sh:NodeShape
+        this.isNodeShape = ask("a", ShaclKW.NODESHAPE);
+        // get the targetted class(es) if it provides
+        this.targetClass = getValuesFromProperty(ShaclKW.TARGETCLASS);
+        // get the targetSubjectsOf if it provides
+        this.targetSubjectOf = getValuesFromProperty(ShaclKW.TARGETSUBJECTSOF);
+        // get the targetObjectsOf if it provides
+        this.targetObjectsOf = getValuesFromProperty(ShaclKW.TARGETOBJECTSOF);
+        // search if it provide a sh:property values
+        this.properties = getProperties();
+        // @TODO : sh:targetNode ; sh:message ; sh:severity
+    }
+
+    public String getUriFromID() {
         // We need to transform it before
         return "http://rdfminer.com/shapes/" + this.id.replace("<", "").replace(">", "").strip();
+    }
+
+    public String getID(String shape) {
+        Pattern p = Pattern.compile("(<.*>)  a");
+        Matcher m = p.matcher(shape);
+        if(m.find())
+            return m.group(1);
+        return null;
     }
 
     /**
@@ -274,7 +316,8 @@ public class Shape extends Results {
         json.put("probability", this.probability);
         json.put("generality", this.generality);
         json.put("fitness", this.fitness);
-        json.put("generation", this.individual.getAge());
+        if (this.individual != null) json.put("generation", this.individual.getAge());
+        else json.put("generation", JSONObject.NULL);
         JSONArray exceptions = new JSONArray();
         if(this.exceptions.size() > 0) {
             for(String exception : this.exceptions) {
@@ -293,8 +336,10 @@ public class Shape extends Results {
     }
 
 //    public static void main(String[] args) throws IOException {
-//        Shape s = new Shape();
-//        System.out.println(s.parseString("Nitrogen(+3) compounds"));
+//        String str = "<shape#662473KzkT>  a  sh:NodeShape ;  sh:targetSubjectsOf  <http://greek-lod.math.auth.gr/fire-brigade/resource/incident_FORESTRY>   ;  sh:property [  sh:path  <http://greek-lod.math.auth.gr/fire-brigade/resource/subdivisions_AA>   ;  sh:nodeKind  sh:BlankNodeOrLiteral  ;   ] .  \n";
+//        Shape s = new Shape(str);
+//        System.out.println("shape.id  -> " + s.id);
+//        System.out.println("shape.uri -> " + s.uri);
 //    }
 
 }

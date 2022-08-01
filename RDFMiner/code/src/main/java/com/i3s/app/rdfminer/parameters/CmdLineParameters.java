@@ -26,8 +26,11 @@ public class CmdLineParameters {
 	@Option(name = "-sa", aliases = { "--single-axiom" }, usage = "test a single axiom given", metaVar = "AXIOM")
 	public String singleAxiom = null;
 
+	@Option(name = "-sf", aliases = { "--shapes-file" }, usage = "test shapes contained in this file", metaVar = "SHAPESFILE")
+	public String shapeFile = null;
+
 	@Option(name = "-shacl", aliases = { "--shacl-shapes" }, usage = "enable SHACL Shapes mining", metaVar = "SHAPES")
-	public boolean useRandomShaclShapesGenerator = false;
+	public boolean useShaclMode = false;
 
 	@Option(name = "-e", aliases = { "--endpoint" }, usage = "specify the SPARQL endpoint to be used for sending requests", metaVar = "ENDPOINT")
 	public String sparqlEndpoint = null;

@@ -16,7 +16,7 @@ echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - 'Init' and 'Final' corres
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - Done !"
 # Generate package from Corese 4.1.1 source code
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - Packaging Corese             v$CORESE_VERSION"
-cd ./../Corese/src/corese/ && mvn -Dmaven.test.skip=true package -q
+cd ./../Corese/src/corese/ && mvn -Dmaven.test.skip=true package # -q
 # Import Corese-core JAR in RDFMiner project
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - Extract Corese-core          v$CORESE_VERSION"
 mkdir -p ../../../RDFMiner/dep/corese-jar/corese-core/$CORESE_VERSION/

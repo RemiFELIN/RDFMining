@@ -63,8 +63,8 @@ public abstract class AxiomGenerator extends Generator {
 			{
 				String h = String.format("\"%x\"", hexDigit);
 				logger.warn("Querying with FILTER(strStarts(MD5(?x), " + h + "))...");
-				generateProductions("Class", "SELECT distinct ?class WHERE {?class a owl:Class . FILTER(contains(str(?class), \"http://\")). FILTER( strStarts(MD5(str(?class)), " + h + ") ) }");
-				generateProductions("ObjectPropertyOf","SELECT distinct ?prop WHERE { ?subj ?prop ?obj . FILTER ( isIRI(?obj) ).FILTER( strStarts(MD5(str(?prop)), " + h + ") ) }");
+				generateProductions("Class", "SELECT distinct ?Class WHERE {?Class a owl:Class . FILTER(contains(str(?Class), \"http://\")). FILTER( strStarts(MD5(str(?Class)), " + h + ") ) }");
+				generateProductions("ObjectPropertyOf","SELECT distinct ?ObjectPropertyOf WHERE { ?subj ?ObjectPropertyOf ?obj . FILTER ( isIRI(?obj) ).FILTER( strStarts(MD5(str(?ObjectPropertyOf)), " + h + ") ) }");
 			}
 		} else {
 			extract();
@@ -81,24 +81,24 @@ public abstract class AxiomGenerator extends Generator {
 			String h = String.format("\"%x\"", hexDigit);
 			logger.warn("Querying with FILTER(strStarts(MD5(?x), " + h + "))...");
 			generateProductions("Class",
-					"SELECT distinct ?class WHERE { ?_ a ?class . FILTER( strStarts(MD5(str(?class)), " + h + ") ) }");
+					"SELECT distinct ?Class WHERE { ?_ a ?class . FILTER( strStarts(MD5(str(?class)), " + h + ") ) }");
 			if (!(this instanceof CandidateAxiomGenerator)) {
 				// If it is a CandidateAxiomGenerator that is being constructed,
 				// the following dynamic productions are not needed.
-				generateProductions("Class-other-than-owl:Thing",
-						"SELECT distinct ?class WHERE { ?_ a ?class . FILTER ( ?class != owl:Thing ) FILTER( strStarts(MD5(str(?class)), "
+				generateProductions("ClassOtherThanOwlThing",
+						"SELECT distinct ?ClassOtherThanOwlThing WHERE { ?x a ?ClassOtherThanOwlThing . FILTER ( ?ClassOtherThanOwlThing != owl:Thing ) FILTER( strStarts(MD5(str(?ClassOtherThanOwlThing)), "
 								+ h + ") ) }");
 				generateProductions("ObjectPropertyOf",
-						"SELECT distinct ?prop WHERE { ?subj ?prop ?obj . FILTER ( isIRI(?obj) ) FILTER( strStarts(MD5(str(?prop)), "
+						"SELECT distinct ?ObjectPropertyOf WHERE { ?subj ?ObjectPropertyOf ?obj . FILTER ( isIRI(?obj) ) FILTER( strStarts(MD5(str(?ObjectPropertyOf)), "
 								+ h + ") ) }");
 				generateProductions("DataProperty",
-						"SELECT distinct ?prop WHERE { ?subj ?prop ?obj . FILTER ( isLiteral(?obj) ) FILTER( strStarts(MD5(str(?prop)), "
+						"SELECT distinct ?DataProperty WHERE { ?subj ?DataProperty ?obj . FILTER ( isLiteral(?obj) ) FILTER( strStarts(MD5(str(?DataProperty)), "
 								+ h + ") ) }");
 				generateProductions("NamedIndividual",
-						"SELECT distinct ?ind WHERE { ?ind a ?class . FILTER ( isIRI(?ind) ) FILTER( strStarts(MD5(str(?ind)), "
+						"SELECT distinct ?NamedIndividual WHERE { ?NamedIndividual a ?class . FILTER ( isIRI(?NamedIndividual) ) FILTER( strStarts(MD5(str(?NamedIndividual)), "
 								+ h + ") ) }");
 				generateProductions("Literal",
-						"SELECT distinct ?obj WHERE { ?subj ?prop ?obj . FILTER ( isLiteral(?obj) ) FILTER( strStarts(MD5(str(?obj)), "
+						"SELECT distinct ?Literal WHERE { ?subj ?prop ?Literal . FILTER ( isLiteral(?Literal) ) FILTER( strStarts(MD5(str(?Literal)), "
 								+ h + ") ) }");
 			}
 		}

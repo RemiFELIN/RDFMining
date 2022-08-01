@@ -57,7 +57,8 @@ public class Global {
      * SPARQL endpoint}
      */
     public static String PREFIXES =
-              "PREFIX owl:      <http://www.w3.org/2002/07/owl#>\n"
+              "BASE             <http://rdfminer.com/shapes/>\n"
+            + "PREFIX owl:      <http://www.w3.org/2002/07/owl#>\n"
             + "PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>\n"
             + "PREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#>\n"
             + "PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -65,15 +66,14 @@ public class Global {
             + "PREFIX dc:       <http://purl.org/dc/elements/1.1/>\n"
             + "PREFIX dbr:      <http://dbpedia.org/resource/>\n"
             + "PREFIX dbp:      <http://dbpedia.org/property/>\n"
-            + "PREFIX dbo:      <http://dbpedia.org/ontology/>\n"
             + "PREFIX dbpedia:  <http://dbpedia.org/>\n"
             + "PREFIX skos:     <http://www.w3.org/2004/02/skos/core#>\n"
             + "PREFIX dbo:      <http://dbpedia.org/ontology/>\n"
             + "PREFIX ex:       <http://example.org/demo#> \n"
-            + "PREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#> \n"
             + "PREFIX sp:       <http://spinrdf.org/sp#> \n"
             + "PREFIX sh:       <http://www.w3.org/ns/shacl#> \n"
-            + "PREFIX dct:      <http://purl.org/dc/terms/> \n";
+            + "PREFIX dct:      <http://purl.org/dc/terms/> \n"
+            + "PREFIX rdfminer: <http://ns.inria.fr/rdfminer/shacl#> \n";
 
     /**
      * prefixes used to perform queries with the local {@link Global#VIRTUOSO_LOCAL_SPARQL_ENDPOINT
