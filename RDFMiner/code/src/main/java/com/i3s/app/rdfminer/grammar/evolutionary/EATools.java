@@ -19,6 +19,7 @@ import com.i3s.app.rdfminer.shacl.Shape;
 import com.i3s.app.rdfminer.shacl.ShapesManager;
 import com.i3s.app.rdfminer.shacl.ValidationReport;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
+import com.i3s.app.rdfminer.sparql.corese.CoreseService;
 import org.apache.jena.query.ResultSet;
 import org.apache.log4j.Logger;
 
@@ -338,7 +339,7 @@ public class EATools {
 				// launch evaluation
 				CoreseEndpoint endpoint = new CoreseEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES);
 				logger.info("Launch evaluation report for new childs ...");
-				String report = endpoint.getProbabilisticValidationReportFromServer(shapesManager.file);
+				String report = endpoint.getValidationReportFromServer(shapesManager.file, CoreseService.PROBABILISTIC_SHACL_EVALUATION);
 				// read evaluation report
 //				logger.info("[DEBUG] report :\n" + report);
 				ValidationReport validationReport = new ValidationReport(report);

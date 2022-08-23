@@ -89,6 +89,7 @@ public class ValidationReport {
                 request.append("<").append(uri).append("> ");
             }
             request.append(" } }");
+//            System.out.println("SPARQL Request: " + request);
             TupleQuery query = con.prepareTupleQuery(request.toString());
             // launch and get result
             try (TupleQueryResult result = query.evaluate()) {
@@ -202,6 +203,27 @@ public class ValidationReport {
             db.shutDown();
         }
         return 0;
+    }
+
+    @Override
+    public String toString() {
+        return this.numSummary + " |\n" +
+                this.reportedShapes + " |\n" +
+                this.exceptionsByShape + " |\n" +
+                this.numExceptionsByShape + " |\n" +
+                this.numConfirmationsByShape + " |\n" +
+                this.referenceCardinalityByShape + " |\n" +
+                this.probabilityByShape + " |\n" +
+                this.fitnessByShape + " |\n" +
+                this.generalityByShape;
+    }
+
+    public String prettifyPrint() {
+        return this.content.replace(".@", ".\n@")
+                .replace(".<", ".\n\n<")
+                .replace(";sh", ";\nsh")
+                .replace(";r", ";\nr")
+                .replace("._", ".\n\n_");
     }
 
 //    public static void main(String[] args) throws IOException {

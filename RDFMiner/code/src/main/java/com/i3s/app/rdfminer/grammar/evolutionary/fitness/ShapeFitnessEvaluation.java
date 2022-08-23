@@ -2,12 +2,14 @@ package com.i3s.app.rdfminer.grammar.evolutionary.fitness;
 
 import Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.grammar.evolutionary.Fitness;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.shacl.Shape;
 import com.i3s.app.rdfminer.shacl.ShapesManager;
 import com.i3s.app.rdfminer.shacl.ValidationReport;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
+import com.i3s.app.rdfminer.sparql.corese.CoreseService;
 import fr.inria.corese.core.extension.Core;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -43,8 +45,7 @@ public class ShapeFitnessEvaluation extends Fitness {
             ShapesManager shapesManager = new ShapesManager(population);
             // launch evaluation
             CoreseEndpoint endpoint = new CoreseEndpoint(url, prefixes);
-            String report = endpoint.getProbabilisticValidationReportFromServer(shapesManager.file);
-//            System.out.println("### REPORT\n" + report);
+            String report = endpoint.getValidationReportFromServer(shapesManager.file, CoreseService.PROBABILISTIC_SHACL_EVALUATION);
             // read evaluation report
             ValidationReport validationReport = new ValidationReport(report);
             // For each SHACL Shapes individuals, we set all results of them

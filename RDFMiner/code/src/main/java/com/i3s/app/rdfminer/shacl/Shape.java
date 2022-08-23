@@ -20,7 +20,6 @@ import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -117,7 +116,7 @@ public class Shape extends Results {
             this.model = Rio.parse(new StringReader(Global.PREFIXES + this.shape), "", RDFFormat.TURTLE);
         } catch(Exception e) {
             logger.warn("Error during the parsing of Individual: " + e.getMessage());
-            logger.warn("[DEBUG] Individual: " + this.shape);
+            System.exit(1);
         }
         // Create a new Repository. Here, we choose a database implementation
         // that simply stores everything in main memory.
@@ -135,8 +134,8 @@ public class Shape extends Results {
         // @TODO : sh:targetNode ; sh:targetObjectsOf ; sh:message ; sh:severity
     }
 
-    public Shape(String shapeName) {
-        this.shape = shapeName;
+    public Shape(String content) {
+        this.shape = content;
         this.id = getID(this.shape);
         this.uri = getUriFromID();
         // init model
@@ -162,9 +161,37 @@ public class Shape extends Results {
         // @TODO : sh:targetNode ; sh:message ; sh:severity
     }
 
+    public Shape(String content, String id) {
+//        System.out.println(content);
+        this.shape = content;
+        // TODO: faire mieux ! uniformiser pour les autres constructeurs
+        this.id = this.uri = id;
+        // init model
+        try {
+            this.model = Rio.parse(new StringReader(Global.PREFIXES + this.shape), "", RDFFormat.TURTLE);
+        } catch(Exception e) {
+            logger.warn("Error during the parsing of Individual: " + e.getMessage());
+            System.exit(1);
+        }
+        // Create a new Repository. Here, we choose a database implementation
+        // that simply stores everything in main memory.
+        this.db = new SailRepository(new MemoryStore());
+        // search if it is a sh:NodeShape
+        this.isNodeShape = ask("a", ShaclKW.NODESHAPE);
+        // get the targetted class(es) if it provides
+        this.targetClass = getValuesFromProperty(ShaclKW.TARGETCLASS);
+        // get the targetSubjectsOf if it provides
+        this.targetSubjectOf = getValuesFromProperty(ShaclKW.TARGETSUBJECTSOF);
+        // get the targetObjectsOf if it provides
+        this.targetObjectsOf = getValuesFromProperty(ShaclKW.TARGETOBJECTSOF);
+        // search if it provide a sh:property values
+        this.properties = getProperties();
+        // @TODO : sh:targetNode ; sh:message ; sh:severity
+    }
+
     public String getUriFromID() {
         // We need to transform it before
-        return "http://rdfminer.com/shapes/" + this.id.replace("<", "").replace(">", "").strip();
+        return "http://rdfminer.com/shapes#" + this.id.replace("<", "").replace(">", "").strip();
     }
 
     public String getID(String shape) {
@@ -213,6 +240,7 @@ public class Shape extends Results {
             // With this request, we obtain a blank node. In it we can find all excepted results
             String request = Global.PREFIXES + "SELECT ?pred ?obj WHERE { " + this.id + " " + ShaclKW.PROPERTY + " ?bn . \n" +
                     "?bn ?pred ?obj . }" ;
+//            System.out.println(request);
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
             try (TupleQueryResult result = query.evaluate()) {
@@ -227,8 +255,9 @@ public class Shape extends Results {
                         obj = "\"" + obj.replace("\"", "").replace("\"", "").trim() + "\"";
                         // replace this param in shape by the well-formed param
                         // need to be parsed for special character such as '(', ')', '+', ...
-                        this.shape = this.shape.replace(String.valueOf(solution.getValue("obj")), obj);
+//                        this.shape = this.shape.replace(String.valueOf(solution.getValue("obj")), obj);
                     }
+//                    System.out.println(String.valueOf(solution.getValue("pred")) + " ~ " + obj);
                     results.put(String.valueOf(solution.getValue("pred")), obj);
                 }
             }
@@ -254,7 +283,8 @@ public class Shape extends Results {
             // add the model
             con.add(this.model);
             // init query
-            String request = Global.PREFIXES + "SELECT ?class WHERE { " + this.id + " " + property + " ?y . }";
+            String request = Global.PREFIXES + "SELECT ?y WHERE { " + this.id + " " + property + " ?y . }";
+//            System.out.println("SPARQL request: " + request);
             // init query
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
@@ -263,6 +293,7 @@ public class Shape extends Results {
                 for (BindingSet solution : result) {
                     // add each result on the final list
                     results.add(String.valueOf(solution.getValue("y")));
+//                    System.out.println("result: y -> " + solution.getValue("y"));
                 }
             }
         } finally {
@@ -287,17 +318,16 @@ public class Shape extends Results {
     }
 
     public void fillParamFromReport(ValidationReport report) {
-        this.referenceCardinality = report.referenceCardinalityByShape.get(this.uri);
-        this.numConfirmation = report.numConfirmationsByShape.get(this.uri);
-        this.numException = report.numExceptionsByShape.get(this.uri);
-        this.probability = report.probabilityByShape.get(this.uri);
-        this.generality = report.generalityByShape.get(this.uri);
-        this.fitness = report.fitnessByShape.get(this.uri);
-        if(report.exceptionsByShape.get(this.uri) != null) {
-            this.exceptions = new ArrayList<>(report.exceptionsByShape.get(this.uri));
+        String parsedUri = this.uri.replace("<", "").replace(">", "");
+        this.referenceCardinality = report.referenceCardinalityByShape.get(parsedUri);
+        this.numConfirmation = report.numConfirmationsByShape.get(parsedUri);
+        this.numException = report.numExceptionsByShape.get(parsedUri);
+        this.probability = report.probabilityByShape.get(parsedUri);
+        this.generality = report.generalityByShape.get(parsedUri);
+        this.fitness = report.fitnessByShape.get(parsedUri);
+        if(report.exceptionsByShape.get(parsedUri) != null) {
+            this.exceptions = new ArrayList<>(report.exceptionsByShape.get(parsedUri));
         }
-//        System.out.print("shape: " + this.shape);
-//        System.out.println(" | fitness=" + this.fitness);
     }
 
     @Override

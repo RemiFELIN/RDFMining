@@ -20,6 +20,7 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Sparql endpoint to manage and request the Corese server
@@ -53,26 +54,6 @@ public class CoreseEndpoint {
      * HTTP client
      */
     private final CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-
-    /**
-     * Corese service : SPARQL endpoint
-     */
-    public static final String CORESE_SPARQL_ENDPOINT = "sparql";
-
-    /**
-     * Corese service : send SHACL Shapes endpoint
-     */
-    public final String CORESE_SEND_SHACL_SHAPES_ENDPOINT = "rdfminer/upload";
-
-    /**
-     * Corese service : get SHACL Shapes endpoint
-     */
-    public final String CORESE_GET_SHACL_SHAPES_ENDPOINT = "rdfminer/shacl/shapes";
-
-    /**
-     * Corese params : Probabilistic SHACL Evaluation
-     */
-    public final String PROBABILISTIC_SHACL_EVALUATION = "prob-shacl";
 
     /**
      * Constructor of SparqlEndpoint
@@ -132,11 +113,11 @@ public class CoreseEndpoint {
     public int count(String sparql) throws URISyntaxException, IOException {
         String request = buildSelectAllQuery(addFederatedQuery("SELECT (count(distinct ?x) as ?n) WHERE { " + sparql + " }"));
         String resultAsJSON = query(Format.JSON, request);
-        if(ResultParser.getResultsFromVariable("n", resultAsJSON).get(0) == null) {
+        if(Objects.requireNonNull(ResultParser.getResultsFromVariable("n", resultAsJSON)).get(0) == null) {
             // timeout reached !
             return -1;
         }
-        return Integer.parseInt(ResultParser.getResultsFromVariable("n", resultAsJSON).get(0));
+        return Integer.parseInt(Objects.requireNonNull(ResultParser.getResultsFromVariable("n", resultAsJSON)).get(0));
     }
 
     /**
@@ -149,7 +130,7 @@ public class CoreseEndpoint {
      */
     public String query(String format, String sparql) throws URISyntaxException, IOException {
         // build the final URL
-        final String service = url + CORESE_SPARQL_ENDPOINT;
+        final String service = url + CoreseService.CORESE_SPARQL_ENDPOINT;
         // specify all the query params needed to launch a request on Corese server
         HashMap<String, String> params = new HashMap<>();
         // add prefix to SPARQL Query
@@ -170,7 +151,7 @@ public class CoreseEndpoint {
      */
     public void sendSHACLShapesToServer(File file) throws URISyntaxException, IOException {
         // build the final URL
-        final String service = this.url + CORESE_SEND_SHACL_SHAPES_ENDPOINT;
+        final String service = this.url + CoreseService.CORESE_SEND_SHACL_SHAPES_ENDPOINT;
         URIBuilder builder = new URIBuilder(service);
         // POST request
         HttpPost post = new HttpPost(builder.build());
@@ -184,13 +165,13 @@ public class CoreseEndpoint {
             logger.error("Error " + response.getStatusLine().getStatusCode() + " while sending SHACL Shapes on server ...");
     }
 
-    public String getProbabilisticValidationReportFromServer(File file) throws URISyntaxException, IOException {
+    public String getValidationReportFromServer(File file, String mode) throws URISyntaxException, IOException {
         // build the final URL
-        final String service = this.url + CORESE_SPARQL_ENDPOINT;
+        final String service = this.url + CoreseService.CORESE_SPARQL_ENDPOINT;
         // fill params
         HashMap<String, String> params = new HashMap<>();
-        params.put("mode", PROBABILISTIC_SHACL_EVALUATION);
-        params.put("uri", Global.SPARQL_ENDPOINT + CORESE_GET_SHACL_SHAPES_ENDPOINT);
+        params.put("mode", mode);
+        params.put("uri", Global.SPARQL_ENDPOINT + CoreseService.CORESE_GET_SHACL_SHAPES_ENDPOINT);
         params.put("query", "construct where {?s ?p ?o}");
         params.put("format", Format.TURTLE);
         // send the given file to the server

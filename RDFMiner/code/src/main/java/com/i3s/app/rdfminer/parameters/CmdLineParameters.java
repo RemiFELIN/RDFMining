@@ -20,13 +20,13 @@ public class CmdLineParameters {
 	@Option(name = "-h", aliases = { "--help" }, metaVar = "HELP")
 	public boolean help;
 
-	@Option(name = "-a", aliases = { "--axioms" }, usage = "test axioms contained in this file", metaVar = "AXIOMFILE")
+	@Option(name = "-a", aliases = { "--axioms" }, usage = "test axioms contained in this file", metaVar = "AXIOM_FILE")
 	public String axiomFile = null;
 
 	@Option(name = "-sa", aliases = { "--single-axiom" }, usage = "test a single axiom given", metaVar = "AXIOM")
 	public String singleAxiom = null;
 
-	@Option(name = "-sf", aliases = { "--shapes-file" }, usage = "test shapes contained in this file", metaVar = "SHAPESFILE")
+	@Option(name = "-sf", aliases = { "--shapes-file" }, usage = "test shapes contained in this file", metaVar = "SHAPES_FILE")
 	public String shapeFile = null;
 
 	@Option(name = "-shacl", aliases = { "--shacl-shapes" }, usage = "enable SHACL Shapes mining", metaVar = "SHAPES")
@@ -37,6 +37,9 @@ public class CmdLineParameters {
 
 	@Option(name = "-p", aliases = { "--prefixes" }, usage = "use this file as the prefixes to be used in SPARQL queries", metaVar = "PREFIXES")
 	public String prefixesFile = null;
+
+	@Option(name = "-cs", aliases = { "--classic-shacl" }, usage = "use classic SHACL validation", metaVar = "CLASSIC_SHACL")
+	public boolean useClassicShaclMode = false;
 
 	/**
 	 * The angular coefficient to be used for dynamic time capping of axiom test.

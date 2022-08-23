@@ -14,6 +14,7 @@ import com.i3s.app.rdfminer.shacl.Shape;
 import com.i3s.app.rdfminer.shacl.ShapesManager;
 import com.i3s.app.rdfminer.shacl.ValidationReport;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
+import com.i3s.app.rdfminer.sparql.corese.CoreseService;
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.engine.http.QueryExceptionHTTP;
 import org.apache.log4j.Logger;
@@ -221,15 +222,22 @@ public class LaunchWithoutGE {
 			System.exit(1);
 		}
 
-		ShapesManager manager = new ShapesManager(parameters.shapeFile);
+		ShapesManager shapesManager = new ShapesManager(parameters.shapeFile);
 		// launch evaluation
 		CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.SPARQL_ENDPOINT, Global.PREFIXES);
-		String report = endpoint.getProbabilisticValidationReportFromServer(manager.file);
-		ValidationReport validationReport = new ValidationReport(report);
-		for(Shape shape : manager.getPopulation()) {
-			shape.fillParamFromReport(validationReport);
-			// Save a JSON report of the test
-			RDFMiner.axiomsList.put(shape.toJSON());
+		String report;
+		if(RDFMiner.parameters.useClassicShaclMode) {
+			report = endpoint.getValidationReportFromServer(shapesManager.file, CoreseService.SHACL_EVALUATION);
+			ValidationReport validationReport = new ValidationReport(report);
+			RDFMiner.output.write(validationReport.prettifyPrint());
+		} else {
+			report = endpoint.getValidationReportFromServer(shapesManager.file, CoreseService.PROBABILISTIC_SHACL_EVALUATION);
+			ValidationReport validationReport = new ValidationReport(report);
+			for(Shape shape : shapesManager.getPopulation()) {
+				shape.fillParamFromReport(validationReport);
+				// Save a JSON report of the test
+				RDFMiner.axiomsList.put(shape.toJSON());
+			}
 		}
 
 		logger.info("Done testing shape. Exiting.");
@@ -239,7 +247,8 @@ public class LaunchWithoutGE {
 	public void writeAndFinish() {
 		try {
 			logger.warn("Shutting down RDFMiner ...");
-			RDFMiner.output.write(RDFMiner.axiomsList.toString());
+			if(!RDFMiner.parameters.useClassicShaclMode)
+				RDFMiner.output.write(RDFMiner.axiomsList.toString(2));
 			RDFMiner.output.close();
 		} catch (IOException e) {
 			logger.error("I/O error while closing JSON writer: " + e.getMessage());
