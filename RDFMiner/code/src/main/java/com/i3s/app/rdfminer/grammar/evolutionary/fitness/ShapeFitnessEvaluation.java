@@ -48,6 +48,7 @@ public class ShapeFitnessEvaluation extends Fitness {
             String report = endpoint.getValidationReportFromServer(shapesManager.file, CoreseService.PROBABILISTIC_SHACL_EVALUATION);
             // read evaluation report
             ValidationReport validationReport = new ValidationReport(report);
+//            System.out.println(validationReport.prettifyPrint());
             // For each SHACL Shapes individuals, we set all results of them
             ArrayList<GEIndividual> newPop = new ArrayList<>();
             for(Shape shape : shapesManager.getPopulation()) {

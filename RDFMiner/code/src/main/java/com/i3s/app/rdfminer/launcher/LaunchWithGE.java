@@ -253,7 +253,7 @@ public class LaunchWithGE {
             logger.info("Diversity coefficient: " + generation.diversityCoefficient);
             logger.info("Genotype diversity coefficient: " + generation.genotypeDiversityCoefficient);
 
-            if (curGeneration * parameters.populationSize < parameters.kBase * parameters.checkpoint) {
+            if (curGeneration * parameters.populationSize <= parameters.kBase * parameters.checkpoint) {
                 // if4
                 // STEP 3 - SELECTION OPERATION - Reproduce Selection - Parent Selection
                 ArrayList<GEIndividual> crossoverPopulation, selectedPopulation;

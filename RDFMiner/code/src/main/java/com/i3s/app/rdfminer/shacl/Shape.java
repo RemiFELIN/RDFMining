@@ -191,7 +191,7 @@ public class Shape extends Results {
 
     public String getUriFromID() {
         // We need to transform it before
-        return "http://rdfminer.com/shapes#" + this.id.replace("<", "").replace(">", "").strip();
+        return "http://rdfminer.com/shapes/" + this.id.replace("<", "").replace(">", "").strip();
     }
 
     public String getID(String shape) {
@@ -312,13 +312,16 @@ public class Shape extends Results {
      */
     private String generateIDFromIndividual(GEIndividual individual) {
         // the length of the substring depends of the SHACL Shapes ID size such as :
-        return "<shape#" + String.format("%." + Global.SIZE_ID_SHACL_SHAPES + "s",
+        return "<" + String.format("%." + Global.SIZE_ID_SHACL_SHAPES + "s",
                 Math.abs(individual.getPhenotype().toString().hashCode())) +
                 RandomStringUtils.randomAlphabetic(4) +  "> ";
     }
 
     public void fillParamFromReport(ValidationReport report) {
+//        System.out.println("uri: " + this.uri);
         String parsedUri = this.uri.replace("<", "").replace(">", "");
+//        System.out.println("parsedUri: " + parsedUri);
+//        System.out.println("report.referenceCardinalityByShape: " + report.referenceCardinalityByShape);
         this.referenceCardinality = report.referenceCardinalityByShape.get(parsedUri);
         this.numConfirmation = report.numConfirmationsByShape.get(parsedUri);
         this.numException = report.numExceptionsByShape.get(parsedUri);
@@ -328,6 +331,7 @@ public class Shape extends Results {
         if(report.exceptionsByShape.get(parsedUri) != null) {
             this.exceptions = new ArrayList<>(report.exceptionsByShape.get(parsedUri));
         }
+//        System.out.println(toJSON().toString(2));
     }
 
     @Override
