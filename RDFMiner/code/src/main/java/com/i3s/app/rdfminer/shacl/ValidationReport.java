@@ -1,8 +1,8 @@
 package com.i3s.app.rdfminer.shacl;
 
-import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.shacl.vocabulary.RDFMinerKW;
 import com.i3s.app.rdfminer.shacl.vocabulary.ShaclKW;
+import com.i3s.app.rdfminer.sparql.RequestBuilder;
 import org.apache.log4j.Logger;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.util.Literals;
@@ -80,17 +80,14 @@ public class ValidationReport {
             // add the model
             con.add(this.model);
             // init query
-            StringBuilder request = new StringBuilder(Global.PREFIXES + "SELECT ?shape ?value WHERE { \n" +
-                    "?x " + ShaclKW.SOURCE_SHAPE + " ?shape .\n" +
-                    "?x " + parameter + " ?value .\n" +
-                    " VALUES ?shape { ");
-            // Use the results of getShapes() in order to set values of ?shape
+            StringBuilder shapeValues = new StringBuilder("VALUES ?shape { ");
             for(String uri : this.reportedShapes) {
-                request.append("<").append(uri).append("> ");
+                shapeValues.append("<").append(uri).append("> ");
             }
-            request.append(" } }");
-//            System.out.println("SPARQL Request: " + request);
-            TupleQuery query = con.prepareTupleQuery(request.toString());
+            shapeValues.append("}");
+            String request = RequestBuilder.select("?shape ?value",
+                    "?x " + ShaclKW.SOURCE_SHAPE + " ?shape . ?x " + parameter + " ?value . " + shapeValues);
+            TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
             try (TupleQueryResult result = query.evaluate()) {
                 // we just iterate over all solutions in the result...
@@ -117,17 +114,15 @@ public class ValidationReport {
             // add the model
             con.add(this.model);
             // init query
-            StringBuilder request = new StringBuilder(Global.PREFIXES + "SELECT ?shape ?node WHERE { \n" +
-                    "?x " + ShaclKW.SOURCE_SHAPE + " ?shape .\n" +
-                    "?x " + RDFMinerKW.EXCEPTION + " ?ex .\n" +
-                    "?ex " + ShaclKW.FOCUS_NODE + " ?node .\n" +
-                    " VALUES ?shape { ");
-            // Use the results of getShapes() in order to set values of ?shape
+            StringBuilder shapeValues = new StringBuilder("VALUES ?shape { ");
             for(String uri : this.reportedShapes) {
-                request.append("<").append(uri).append("> ");
+                shapeValues.append("<").append(uri).append("> ");
             }
-            request.append(" } }");
-            TupleQuery query = con.prepareTupleQuery(request.toString());
+            shapeValues.append("}");
+            String request = RequestBuilder.select("?shape ?node",
+                    "?x " + ShaclKW.SOURCE_SHAPE + " ?shape . ?x " + RDFMinerKW.EXCEPTION + " ?ex . " +
+                            "?ex " + ShaclKW.FOCUS_NODE + " ?node ." + shapeValues);
+            TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
             try (TupleQueryResult result = query.evaluate()) {
                 List<String> exceptions = new ArrayList<>();
@@ -161,10 +156,8 @@ public class ValidationReport {
             // add the model
             con.add(this.model);
             // init query
-            String request = Global.PREFIXES + "SELECT ?shapes WHERE { \n" +
-                    "?y a " + ShaclKW.VALIDATION_REPORT + " .\n" +
-                    "?y " + RDFMinerKW.SUMMARY + " ?x . \n" +
-                    "?x " + ShaclKW.SOURCE_SHAPE + " ?shapes . }";
+            String request = RequestBuilder.select("?shapes", "?y a " + ShaclKW.VALIDATION_REPORT + " . " +
+                    "?y " + RDFMinerKW.SUMMARY + " ?x . ?x " + ShaclKW.SOURCE_SHAPE + " ?shapes .");
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
             try (TupleQueryResult result = query.evaluate()) {
@@ -186,9 +179,8 @@ public class ValidationReport {
             // add the model
             con.add(this.model);
             // init request
-            String request = Global.PREFIXES + "SELECT (count(?x) as ?n) WHERE { \n" +
-                    "?y a " + ShaclKW.VALIDATION_REPORT + " .\n" +
-                    "?y " + RDFMinerKW.SUMMARY + " ?x . }";
+            String request = RequestBuilder.select("(count(?x) as ?n)", "?y a " + ShaclKW.VALIDATION_REPORT + " . " +
+                    "?y " + RDFMinerKW.SUMMARY + " ?x .");
             // init query
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
@@ -226,93 +218,4 @@ public class ValidationReport {
                 .replace("._", ".\n\n_");
     }
 
-//    public static void main(String[] args) throws IOException {
-//        Shape shape = new Shape("<http://rdfminer.com/shapes/2>", "<http://rdfminer.com/shapes/2> a sh:NodeShape ; sh:targetClass <http://dbpedia.org/ontology/Species> ;" +
-//                " sh:property [ sh:path rdf:type ; sh:hasValue <http://dbpedia.org/ontology/Eukaryote> ; ] .");
-//        ValidationReport report = new ValidationReport("@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n" +
-//                "@prefix xsh: <http://www.w3.org/ns/shacl#> .\n" +
-//                "@prefix sh: <http://www.w3.org/ns/shacl#> .\n" +
-//                "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" +
-//                "@prefix rdfminer: <http://ns.inria.fr/rdfminer/shacl#> .\n" +
-//                "\n" +
-//                "\n" +
-//                "<urn:uuid:eaa748ac-7c4e-4df7-9a49-5b263042128d> rdf:type sh:ValidationResult ;\n" +
-//                "sh:focusNode <http://rdfminer.com/data/UnvalidData> ;\n" +
-//                "sh:resultMessage \"Fail at: [sh:hasValue <http://dbpedia.org/ontology/Species> ;\\n  sh:path rdf:type]\" ;\n" +
-//                "sh:resultPath rdf:type ;\n" +
-//                "sh:resultSeverity sh:Violation ;\n" +
-//                "sh:sourceConstraintComponent sh:HasValueConstraintComponent ;\n" +
-//                "sh:sourceShape _:b518 ;\n" +
-//                "sh:value <http://dbpedia.org/ontology/Species> .\n" +
-//                "\n" +
-//                "<urn:uuid:53b1c6c6-c507-4591-a505-12ff89546715> rdf:type sh:ValidationResult ;\n" +
-//                "sh:focusNode <http://rdfminer.com/data/UnvalidDataShape21> ;\n" +
-//                "sh:resultMessage \"Fail at: [sh:hasValue <http://dbpedia.org/ontology/Eukaryote> ;\\n  sh:path rdf:type]\" ;\n" +
-//                "sh:resultPath rdf:type ;\n" +
-//                "sh:resultSeverity sh:Violation ;\n" +
-//                "sh:sourceConstraintComponent sh:HasValueConstraintComponent ;\n" +
-//                "sh:sourceShape _:b519 ;\n" +
-//                "sh:value <http://dbpedia.org/ontology/Eukaryote> .\n" +
-//                "\n" +
-//                "<urn:uuid:d1c149fc-de62-454a-b85c-533513a074d6> rdf:type sh:ValidationResult ;\n" +
-//                "sh:focusNode <http://rdfminer.com/data/UnvalidDataShape2> ;\n" +
-//                "sh:resultMessage \"Fail at: [sh:hasValue <http://dbpedia.org/ontology/Eukaryote> ;\\n  sh:path rdf:type]\" ;\n" +
-//                "sh:resultPath rdf:type ;\n" +
-//                "sh:resultSeverity sh:Violation ;\n" +
-//                "sh:sourceConstraintComponent sh:HasValueConstraintComponent ;\n" +
-//                "sh:sourceShape _:b519 ;\n" +
-//                "sh:value <http://dbpedia.org/ontology/Eukaryote> .\n" +
-//                "\n" +
-//                "<urn:uuid:b4cf670c-2b04-4a6f-afad-d40febf7300a> rdf:type sh:ValidationResult ;\n" +
-//                "sh:focusNode <http://rdfminer.com/data/Tata> ;\n" +
-//                "sh:resultMessage \"Fail at: [sh:hasValue <http://dbpedia.org/ontology/Species> ;\\n  sh:path rdf:type]\" ;\n" +
-//                "sh:resultPath rdf:type ;\n" +
-//                "sh:resultSeverity sh:Violation ;\n" +
-//                "sh:sourceConstraintComponent sh:HasValueConstraintComponent ;\n" +
-//                "sh:sourceShape _:b518 ;\n" +
-//                "sh:value <http://dbpedia.org/ontology/Species> .\n" +
-//                "\n" +
-//                "<urn:uuid:a9f0de22-2982-4819-ad61-2726a5b7f999> rdf:type sh:ValidationResult ;\n" +
-//                "sh:focusNode <http://rdfminer.com/data/AnotherValidData> ;\n" +
-//                "sh:resultMessage \"Fail at: [sh:hasValue <http://dbpedia.org/ontology/Eukaryote> ;\\n  sh:path rdf:type]\" ;\n" +
-//                "sh:resultPath rdf:type ;\n" +
-//                "sh:resultSeverity sh:Violation ;\n" +
-//                "sh:sourceConstraintComponent sh:HasValueConstraintComponent ;\n" +
-//                "sh:sourceShape _:b519 ;\n" +
-//                "sh:value <http://dbpedia.org/ontology/Eukaryote> .\n" +
-//                "\n" +
-//                "_:bb0 rdfminer:summary _:bb9 ;\n" +
-//                "rdfminer:summary _:bb16 ;\n" +
-//                "rdf:type sh:ValidationReport ;\n" +
-//                "sh:conforms false ;\n" +
-//                "sh:result <urn:uuid:a9f0de22-2982-4819-ad61-2726a5b7f999> ;\n" +
-//                "sh:result <urn:uuid:53b1c6c6-c507-4591-a505-12ff89546715> ;\n" +
-//                "sh:result <urn:uuid:d1c149fc-de62-454a-b85c-533513a074d6> ;\n" +
-//                "sh:result <urn:uuid:b4cf670c-2b04-4a6f-afad-d40febf7300a> ;\n" +
-//                "sh:result <urn:uuid:eaa748ac-7c4e-4df7-9a49-5b263042128d> .\n" +
-//                "\n" +
-//                "_:bb16 rdfminer:exception <urn:uuid:b4cf670c-2b04-4a6f-afad-d40febf7300a> ;\n" +
-//                "rdfminer:exception <urn:uuid:eaa748ac-7c4e-4df7-9a49-5b263042128d> ;\n" +
-//                "rdfminer:fitness \"0.25\"^^xsd:decimal ;\n" +
-//                "rdfminer:generality \"0.5\"^^xsd:decimal ;\n" +
-//                "rdfminer:numConfirmation 2 ;\n" +
-//                "rdfminer:numException 2 ;\n" +
-//                "rdfminer:probability \"0.5\"^^xsd:decimal ;\n" +
-//                "rdfminer:referenceCardinality 4 ;\n" +
-//                "rdf:type rdfminer:ValidationSummary ;\n" +
-//                "sh:sourceShape <http://rdfminer.com/shapes/EukaryoteScoSpeciesShape> .\n" +
-//                "\n" +
-//                "_:bb9 rdfminer:exception <urn:uuid:a9f0de22-2982-4819-ad61-2726a5b7f999> ;\n" +
-//                "rdfminer:exception <urn:uuid:53b1c6c6-c507-4591-a505-12ff89546715> ;\n" +
-//                "rdfminer:exception <urn:uuid:d1c149fc-de62-454a-b85c-533513a074d6> ;\n" +
-//                "rdfminer:fitness \"0.2500\"^^xsd:decimal ;\n" +
-//                "rdfminer:generality \"0.625\"^^xsd:decimal ;\n" +
-//                "rdfminer:numConfirmation 2 ;\n" +
-//                "rdfminer:numException 3 ;\n" +
-//                "rdfminer:probability \"0.4\"^^xsd:decimal ;\n" +
-//                "rdfminer:referenceCardinality 5 ;\n" +
-//                "rdf:type rdfminer:ValidationSummary ;\n" +
-//                "sh:sourceShape <http://rdfminer.com/shapes/2> .");
-//        System.out.println(shape.toJSON(report));
-//    }
 }

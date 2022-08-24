@@ -36,7 +36,6 @@ public class LaunchWithGE {
 
     /**
      * The second version of RDFMiner launcher, with Grammar Evolutionary
-     *
      * @param parameters all parameters given in the execution of JAR
      */
     public void run(CmdLineParameters parameters) throws Exception {
@@ -53,7 +52,6 @@ public class LaunchWithGE {
         RDFMiner.stats = new StatJSON();
 
         Generator generator = null;
-//        Mode mode = null ;
 
         if (parameters.axiomFile == null) {
             if (parameters.useRandomAxiomGenerator) {
@@ -61,17 +59,12 @@ public class LaunchWithGE {
                 // to generate a new Axioms based on BNF
                 logger.info("Initializing the random axiom generator with grammar " + parameters.grammarFile + "...");
                 generator = new RandomAxiomGenerator(parameters.grammarFile, true);
-                // set the mode to AXIOMS
-//                mode = new Mode(TypeMode.AXIOMS);
             } else if (parameters.useShaclMode) {
                 // launch random SHACL Shapes generator
                 logger.info("Initializing the random SHACL Shapes generator with grammar " + parameters.grammarFile + "...");
                 generator = new RandomShapeGenerator(parameters.grammarFile);
-                // set the mode to SHACL_SHAPE
-//                mode = new Mode(TypeMode.SHACL_SHAPE);
             }
         }
-//        assert mode != null;
 
         // Create the results file
         try {
@@ -138,11 +131,6 @@ public class LaunchWithGE {
                 parameters.typeInitialization, chromosomes, parameters.initLenChromosome, parameters.maxValCodon,
                 parameters.maxWrapp);
         candidatePopulation = canPop.initialize(buffer, curGeneration);
-
-//        for(GEIndividual ind : candidatePopulation) {
-//            logger.info("[DEBUG] Individual: " + ind.getPhenotype());
-//        }
-
         // Fill the 'stats' part of the JSON output
         RDFMiner.stats.populationSize = parameters.populationSize;
         RDFMiner.stats.maxLengthChromosome = parameters.initLenChromosome;
@@ -190,11 +178,6 @@ public class LaunchWithGE {
         while (curCheckpoint <= parameters.checkpoint) {
             System.out.println("\n--------------------------------------------------------\n");
             logger.info("Generation: " + curGeneration);
-
-//            for(GEIndividual ind : candidatePopulation) {
-//                logger.info("[DEBUG] Individual: " + ind.getPhenotype());
-//            }
-
             // First step of the grammatical evolution
             if ((curGeneration == 1) || ((buffer != null) && (!flag))) {
                 // if1
@@ -210,8 +193,6 @@ public class LaunchWithGE {
 
                 if(RDFMiner.mode.isAxiomMode()) {
                     List<JSONObject> content = new ArrayList<>();
-//                    logger.info("\n\nDEBUG: candidatePopulation_size=" + candidatePopulation.size() + "\n");
-//                    fit.display(candidatePopulation, content, curGeneration);
                     ArrayList<GEIndividual> candidatePopulation2 = new ArrayList<>();
                     for (GEIndividual geIndividual : candidatePopulation) {
                         GEIndividual indivi = new GEIndividual();
@@ -254,7 +235,6 @@ public class LaunchWithGE {
             logger.info("Genotype diversity coefficient: " + generation.genotypeDiversityCoefficient);
 
             if (curGeneration * parameters.populationSize <= parameters.kBase * parameters.checkpoint) {
-                // if4
                 // STEP 3 - SELECTION OPERATION - Reproduce Selection - Parent Selection
                 ArrayList<GEIndividual> crossoverPopulation, selectedPopulation;
                 if (parameters.elitism == 1) {
@@ -323,7 +303,6 @@ public class LaunchWithGE {
                     logger.info("sort axioms by generality ...");
                 else
                     logger.info("sort axioms by ARI ...");
-//                logger.info("DEBUG: size_content=" + RDFMiner.content.size());
                 RDFMiner.content.sort(Comparator.comparingDouble(j -> {
                     // if we have disjoint classes axioms, we need to sort using generality
                     if (RDFMiner.type == Type.DISJOINT_CLASSES) {

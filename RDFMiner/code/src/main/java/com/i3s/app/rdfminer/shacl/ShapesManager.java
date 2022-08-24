@@ -4,8 +4,7 @@ import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.shacl.vocabulary.ShaclKW;
-import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
-import com.i3s.app.rdfminer.sparql.corese.CoreseService;
+import com.i3s.app.rdfminer.sparql.RequestBuilder;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.rdf4j.model.Model;
@@ -22,7 +21,6 @@ import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -71,8 +69,8 @@ public class ShapesManager {
             // add the model
             con.add(this.model);
             // init query
-            String request = Global.PREFIXES + "SELECT ?shapes WHERE { \n" +
-                    "?shapes a " + ShaclKW.NODESHAPE + " . }";
+            // "SELECT ?shapes WHERE { \n" + "?shapes a " + ShaclKW.NODESHAPE + " . }";
+            String request = RequestBuilder.select("?shapes", "?shapes a " + ShaclKW.NODESHAPE + " .");
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
             try (TupleQueryResult result = query.evaluate()) {
@@ -82,12 +80,11 @@ public class ShapesManager {
                     // add each result on the final list
                     shapes.add(String.valueOf(solution.getValue("shapes")));
                 }
-//                System.out.println(shapes.size() + " shape(s) has been found !");
                 for(String shape : shapes) {
                     StringBuilder shapeAsNTriple = new StringBuilder();
                     // we will write the content of each sh:property (if it provided by the current shape)
-                    String getTriples = Global.PREFIXES + "SELECT DISTINCT ?s ?p ?o WHERE { \n" +
-                            "{ <" + shape + "> ?p ?o . BIND(<" + shape + "> AS ?s) } UNION { ?s ?p ?o . <" + shape + "> (!<>)* ?o . FILTER(?o != sh:NodeShape) } }";
+                    String getTriples = RequestBuilder.select("DISTINCT ?s ?p ?o", "{ <" + shape + "> ?p ?o . " +
+                            "BIND(<" + shape + "> AS ?s) } UNION { ?s ?p ?o . <" + shape + "> (!<>)* ?o . FILTER(?o != sh:NodeShape) }");
                     try (TupleQueryResult values = con.prepareTupleQuery(getTriples).evaluate()) {
                         for (BindingSet res : values) {
                             String s = String.valueOf(res.getValue("s"));
@@ -97,7 +94,6 @@ public class ShapesManager {
                             if(o.contains("_:")) shapeAsNTriple.append(o + " .\n"); else shapeAsNTriple.append("<" + o + "> .\n");
                         }
                     }
-//                    System.out.println("shape: " + shape + " content ->\n" + shapeAsNTriple);
                     population.add(new Shape(shapeAsNTriple.toString(), "<" + shape + ">"));
                 }
             }
@@ -164,28 +160,6 @@ public class ShapesManager {
 
     public List<Shape> getPopulation() {
         return population;
-    }
-
-    public Shape getShape() {
-        return shape;
-    }
-
-    public void printPopulation() {
-        for (Shape ind : population)
-            logger.info(ind.id);
-    }
-
-    public static void main(String[] args) throws IOException, URISyntaxException {
-        Global.SPARQL_ENDPOINT = Global.CORESE_SPARQL_ENDPOINT;
-        CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.PREFIXES);
-        ShapesManager manager = new ShapesManager("/home/rfelin/projects/RDFMining/IO/shapes_to_evaluate.txt");
-        String report = endpoint.getValidationReportFromServer(manager.file, CoreseService.SHACL_EVALUATION);
-        ValidationReport validationReport = new ValidationReport(report);
-        System.out.println(validationReport.prettifyPrint());
-//        for(Shape shape : manager.getPopulation()) {
-//            shape.fillParamFromReport(validationReport);
-//            System.out.println(shape.toJSON().toString(2));
-//        }
     }
 
 }

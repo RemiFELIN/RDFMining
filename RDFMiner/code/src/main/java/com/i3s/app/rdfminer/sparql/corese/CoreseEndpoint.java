@@ -1,6 +1,7 @@
 package com.i3s.app.rdfminer.sparql.corese;
 
 import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.sparql.RequestBuilder;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -50,6 +51,8 @@ public class CoreseEndpoint {
      */
     public long timeout = Integer.MAX_VALUE;
 
+    public String timeoutParam = "@timeout " + this.timeout + " ";
+
     /**
      * HTTP client
      */
@@ -87,11 +90,11 @@ public class CoreseEndpoint {
     }
 
     public String buildSelectAllQuery(String sparql) {
-        return "@timeout " + this.timeout + "\nSELECT * WHERE { " + sparql + " }";
+        return this.timeoutParam + RequestBuilder.select("*", sparql);// "\nSELECT * WHERE { " + sparql + " }";
     }
 
     public boolean askFederatedQuery(String sparql) throws URISyntaxException, IOException {
-        String request = "@timeout " + this.timeout + "\nASK WHERE { " + addFederatedQuery(sparql) + " }";
+        String request = this.timeoutParam + RequestBuilder.ask(addFederatedQuery(sparql));// "\nASK WHERE { " + addFederatedQuery(sparql) + " }";
         String resultAsJSON = query(Format.JSON, request);
         return ResultParser.getResultFromAskQuery(resultAsJSON);
     }
@@ -111,7 +114,8 @@ public class CoreseEndpoint {
      * <i>SELECT (count(distinct ?x) as ?n) WHERE { ... }</i> in SERVICE clause
      */
     public int count(String sparql) throws URISyntaxException, IOException {
-        String request = buildSelectAllQuery(addFederatedQuery("SELECT (count(distinct ?x) as ?n) WHERE { " + sparql + " }"));
+        // "SELECT (count(distinct ?x) as ?n) WHERE { " + sparql + " }"));
+        String request = buildSelectAllQuery(addFederatedQuery(RequestBuilder.select("(count(distinct ?x) as ?n)", sparql)));
         String resultAsJSON = query(Format.JSON, request);
         if(Objects.requireNonNull(ResultParser.getResultsFromVariable("n", resultAsJSON)).get(0) == null) {
             // timeout reached !
@@ -133,8 +137,6 @@ public class CoreseEndpoint {
         final String service = url + CoreseService.CORESE_SPARQL_ENDPOINT;
         // specify all the query params needed to launch a request on Corese server
         HashMap<String, String> params = new HashMap<>();
-        // add prefix to SPARQL Query
-        sparql = Global.PREFIXES + "\n" + sparql;
         // specify SPARQL and Format in parameters
         params.put("query", sparql);
         params.put("format", format);

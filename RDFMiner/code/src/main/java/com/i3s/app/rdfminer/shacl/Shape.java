@@ -4,6 +4,7 @@ import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.output.Results;
 import com.i3s.app.rdfminer.shacl.vocabulary.ShaclKW;
+import com.i3s.app.rdfminer.sparql.RequestBuilder;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.rdf4j.model.Model;
@@ -213,7 +214,7 @@ public class Shape extends Results {
             // add the model
             con.add(this.model);
             // init query
-            String request = Global.PREFIXES + "ASK { " + this.id + " " + predicate + " " + object + " . }";
+            String request = RequestBuilder.ask(this.id + " " + predicate + " " + object + " .");
             BooleanQuery query = con.prepareBooleanQuery(request);
             // launch and get result
             if(!query.evaluate()) logger.debug(predicate + " is not provided by the shape " + this.id);
@@ -238,27 +239,14 @@ public class Shape extends Results {
             con.add(this.model);
             // init query
             // With this request, we obtain a blank node. In it we can find all excepted results
-            String request = Global.PREFIXES + "SELECT ?pred ?obj WHERE { " + this.id + " " + ShaclKW.PROPERTY + " ?bn . \n" +
-                    "?bn ?pred ?obj . }" ;
-//            System.out.println(request);
+            String request = RequestBuilder.select("?p ?o", this.id + " " + ShaclKW.PROPERTY + " ?bn . " + "?bn ?p ?o .");
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
             try (TupleQueryResult result = query.evaluate()) {
                 // we just iterate over all solutions in the result...
                 for (BindingSet solution : result) {
                     // add each result on the final list
-                    String obj = parseString(String.valueOf(solution.getValue("obj")));
-                    // Parse literal if any (as REGEX)
-                    if(obj.contains("\"") && obj.contains("\"")) {
-                        // remove doube quote, remove all spaces and add double quote as :
-                        // " obj " ~~~> "obj"
-                        obj = "\"" + obj.replace("\"", "").replace("\"", "").trim() + "\"";
-                        // replace this param in shape by the well-formed param
-                        // need to be parsed for special character such as '(', ')', '+', ...
-//                        this.shape = this.shape.replace(String.valueOf(solution.getValue("obj")), obj);
-                    }
-//                    System.out.println(String.valueOf(solution.getValue("pred")) + " ~ " + obj);
-                    results.put(String.valueOf(solution.getValue("pred")), obj);
+                    results.put(String.valueOf(solution.getValue("p")), parse(String.valueOf(solution.getValue("o"))));
                 }
             }
         } finally {
@@ -283,8 +271,7 @@ public class Shape extends Results {
             // add the model
             con.add(this.model);
             // init query
-            String request = Global.PREFIXES + "SELECT ?y WHERE { " + this.id + " " + property + " ?y . }";
-//            System.out.println("SPARQL request: " + request);
+            String request = RequestBuilder.select("?y", this.id + " " + property + " ?y .");// Global.PREFIXES + "SELECT ?y WHERE { " + this.id + " " + property + " ?y . }";
             // init query
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
@@ -293,7 +280,6 @@ public class Shape extends Results {
                 for (BindingSet solution : result) {
                     // add each result on the final list
                     results.add(String.valueOf(solution.getValue("y")));
-//                    System.out.println("result: y -> " + solution.getValue("y"));
                 }
             }
         } finally {
@@ -318,10 +304,7 @@ public class Shape extends Results {
     }
 
     public void fillParamFromReport(ValidationReport report) {
-//        System.out.println("uri: " + this.uri);
         String parsedUri = this.uri.replace("<", "").replace(">", "");
-//        System.out.println("parsedUri: " + parsedUri);
-//        System.out.println("report.referenceCardinalityByShape: " + report.referenceCardinalityByShape);
         this.referenceCardinality = report.referenceCardinalityByShape.get(parsedUri);
         this.numConfirmation = report.numConfirmationsByShape.get(parsedUri);
         this.numException = report.numExceptionsByShape.get(parsedUri);
@@ -331,7 +314,6 @@ public class Shape extends Results {
         if(report.exceptionsByShape.get(parsedUri) != null) {
             this.exceptions = new ArrayList<>(report.exceptionsByShape.get(parsedUri));
         }
-//        System.out.println(toJSON().toString(2));
     }
 
     @Override
@@ -359,21 +341,17 @@ public class Shape extends Results {
             }
         }
         json.put("exceptions", exceptions);
-//        System.out.println(json);
         return json;
     }
 
-    public String parseString(String subject) {
-        return subject.replace("+", "\\+");
-//                replace("(", "\\(").
-//                replace(")", "\\)").
+    public String parse(String subject) {
+        String obj = subject.replace("+", "\\+");
+        // Parse literal if any (as REGEX)
+        if(obj.contains("\"") && obj.contains("\"")) {
+            // remove doube quote, remove all spaces and add double quote
+            obj = "\"" + obj.replace("\"", "").replace("\"", "").trim() + "\"";
+        }
+        return obj;
     }
-
-//    public static void main(String[] args) throws IOException {
-//        String str = "<shape#662473KzkT>  a  sh:NodeShape ;  sh:targetSubjectsOf  <http://greek-lod.math.auth.gr/fire-brigade/resource/incident_FORESTRY>   ;  sh:property [  sh:path  <http://greek-lod.math.auth.gr/fire-brigade/resource/subdivisions_AA>   ;  sh:nodeKind  sh:BlankNodeOrLiteral  ;   ] .  \n";
-//        Shape s = new Shape(str);
-//        System.out.println("shape.id  -> " + s.id);
-//        System.out.println("shape.uri -> " + s.uri);
-//    }
 
 }
