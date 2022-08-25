@@ -1,0 +1,23 @@
+# RDFMiner v1.4
+# Test of SHACL Shapes generation v1.0
+# @author Rémi FELIN
+
+# Example :
+#
+# a sh:NodeShape ; 
+# sh:targetClass Class ;
+# sh:property [ sh:path rdf:type ; sh:hasValue Class ; ] 
+#.
+
+# The subject of the given shape will be generate randomly using Java code
+Shape := ' a ' NodeShape
+NodeShape := 'sh:NodeShape ; ' ShapeBody
+ShapeBody := 'sh:targetClass ' Class ' ; ' ShapeProperty
+ShapeProperty := ' sh:property [ ' PropertyBody ' ] . '
+PropertyBody := ' sh:path rdf:type ; sh:hasValue ' Class ' ; '
+
+# Shape := NodeShape
+# NodeShape := 'a' 'sh:NodeShape' ';' TargetClass
+# TargetClass := 'sh:targetClass' Class ';' SubjectProperty
+# SubjectProperty := 'sh:property' '[' 'sh:path' 'inria:subjects' ';' 'sh:pattern' Subject ';' 'sh:flags' '"i"' ';' ']' '.'
+# Primitives ( Source ; Subject )
