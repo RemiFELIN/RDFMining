@@ -49,21 +49,23 @@ rdfmining_virtuoso_1   /bin/bash /virtuoso/script ...   Up      1111/tcp, 8890/t
 ## Parameters
 
 ```
--a (--axioms) AXIOMFILE                : test axioms contained in this file
+ -a (--axioms) AXIOM_FILE               : test axioms contained in this file
  -ckp (--Checkpoint) CHECK_POINT        : Checkpoint (default: 3)
  -cr (--type-crossover) TYPE_CROSSOVER  : use as this value as the type of
                                           parent selection operation (default:
                                           2)
+ -cs (--classic-shacl) CLASSIC_SHACL    : use classic SHACL validation
+                                          (default: false)
  -d (--dynamic-timeout) ANGULAR_COEFF   : use a dynamic time-out for axiom
                                           testing (default: 0.0)
  -dir (--directory) RESULTFOLDER        : path of output folder (default:
                                           results)
  -div (--diversity) DIVER_METHOD        : use as this value as the chose of
                                           diversity method (default: 1)
- -el (--elitism) ELITISM_SELECTION      : use as this value as the choose of
-                                          elitism selection (default: 1)
  -e (--endpoint) ENDPOINT               : specify the SPARQL endpoint to be
                                           used for sending requests
+ -el (--elitism) ELITISM_SELECTION      : use as this value as the choose of
+                                          elitism selection (default: 1)
  -g (--grammar) GRAMMAR                 : use this file as the axiom grammar
                                           (default: /rdfminer/code/resources/OWL
                                           2Axiom-test.bnf)
@@ -105,6 +107,7 @@ rdfmining_virtuoso_1   /bin/bash /virtuoso/script ...   Up      1111/tcp, 8890/t
  -sez (--size-select) SIZE_SELECTION    : use as this value as the size of
                                           parent selection operation (default:
                                           0.7)
+ -sf (--shapes-file) SHAPES_FILE        : test shapes contained in this file
  -shacl (--shacl-shapes) SHAPES         : enable SHACL Shapes mining (default:
                                           false)
  -shf (--shuffle) SHUFFLE_SELECTION     : use as this value as the chose of
