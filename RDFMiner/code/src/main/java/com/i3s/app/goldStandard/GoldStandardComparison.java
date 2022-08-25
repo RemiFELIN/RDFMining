@@ -51,49 +51,49 @@ public class GoldStandardComparison {
 		return GoldStandardArr[pos1][pos2];
 	}
 
-	@SuppressWarnings("deprecation")
-	public String[][] ConvertExcelResultToArray() throws IOException {
-		int n = 63;
-		String[][] arr = new String[n][n];
-		int i = 0;
-		String excelFilePath = GoldStandardFile;
-		FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
-		Workbook workbook = new XSSFWorkbook(inputStream);
-		Sheet firstSheet = workbook.getSheetAt(0);
-		Iterator<Row> iterator = firstSheet.iterator();
-		Row nextRow;// = iterator.next();
-		Iterator<Cell> cellIterator;// = nextRow.cellIterator();
-		Cell cell; // = cellIterator.next();
-		while (iterator.hasNext()) {
-			nextRow = iterator.next();
-			cellIterator = nextRow.cellIterator();
-			int j = 0;
-			while (cellIterator.hasNext()) {
-				// TODO : resolve deprecated 
-				cell = cellIterator.next();
-				switch (cell.getCellType()) {
-				case Cell.CELL_TYPE_STRING:
-					arr[i][j] = cell.getStringCellValue();
-					System.out.print(arr[i][j]);
-					break;
-				case Cell.CELL_TYPE_BOOLEAN:
-					System.out.print(cell.getBooleanCellValue());
-					break;
-				case Cell.CELL_TYPE_NUMERIC:
-					System.out.print(cell.getNumericCellValue());
-					break;
-				}
-				System.out.print("  ");
-				j++;
-			}
-
-			System.out.println();
-			i++;
-		}
-		workbook.close();
-		inputStream.close();
-		return arr;
-	}
+//	@SuppressWarnings("deprecation")
+//	public String[][] ConvertExcelResultToArray() throws IOException {
+//		int n = 63;
+//		String[][] arr = new String[n][n];
+//		int i = 0;
+//		String excelFilePath = GoldStandardFile;
+//		FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
+//		Workbook workbook = new XSSFWorkbook(inputStream);
+//		Sheet firstSheet = workbook.getSheetAt(0);
+//		Iterator<Row> iterator = firstSheet.iterator();
+//		Row nextRow;// = iterator.next();
+//		Iterator<Cell> cellIterator;// = nextRow.cellIterator();
+//		Cell cell; // = cellIterator.next();
+//		while (iterator.hasNext()) {
+//			nextRow = iterator.next();
+//			cellIterator = nextRow.cellIterator();
+//			int j = 0;
+//			while (cellIterator.hasNext()) {
+//				// TODO : resolve deprecated
+//				cell = cellIterator.next();
+//				switch (cell.getCellType()) {
+//				case Cell.CELL_TYPE_STRING:
+//					arr[i][j] = cell.getStringCellValue();
+//					System.out.print(arr[i][j]);
+//					break;
+//				case Cell.CELL_TYPE_BOOLEAN:
+//					System.out.print(cell.getBooleanCellValue());
+//					break;
+//				case Cell.CELL_TYPE_NUMERIC:
+//					System.out.print(cell.getNumericCellValue());
+//					break;
+//				}
+//				System.out.print("  ");
+//				j++;
+//			}
+//
+//			System.out.println();
+//			i++;
+//		}
+//		workbook.close();
+//		inputStream.close();
+//		return arr;
+//	}
 
 	void setGoldStandard(String[][] GoldStandardArr) {
 		this.GoldStandardArr = GoldStandardArr;

@@ -10,7 +10,7 @@ import java.util.Stack;
  *
  * 
  */
-public class infix {
+public class Infix {
 
 	/**
 	 * 
@@ -121,7 +121,7 @@ public class infix {
 				+ "?x a <http://dbpedia.org/ontology/Article> .\n" + "\n" + "}";
 		String inputExpression = remove(inputString);
 		System.out.println("input Exp: " + inputExpression);
-		System.out.println(infix.evaluate(inputExpression));
+		System.out.println(Infix.evaluate(inputExpression));
 
 	}
 
