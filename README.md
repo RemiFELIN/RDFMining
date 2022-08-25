@@ -125,4 +125,4 @@ rdfmining_virtuoso_1   /bin/bash /virtuoso/script ...   Up      1111/tcp, 8890/t
 
 ## Documentations
 
-All resources about the project are avalaible on [docs](https://github.com/RemiFELIN/RDFMining/tree/main/docs) folder. The [working-paper.pdf](https://github.com/RemiFELIN/RDFMining/tree/main/docs/working-paper.pdf) gives an overview of RDFMiner project (context, aim, ...). Others documents are related to our publications. 
+All resources about the project are avalaible on [docs](https://github.com/RemiFELIN/RDFMining/tree/main/RDFMiner/docs) folder. The [working-paper.pdf](https://github.com/RemiFELIN/RDFMining/blob/main/RDFMiner/docs/working-paper.pdf) gives an overview of RDFMiner project (context, aim, ...). Others documents are related to our publications. 
