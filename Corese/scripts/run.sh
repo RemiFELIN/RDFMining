@@ -5,6 +5,8 @@ CORESE=/usr/local/corese
 JAR=$CORESE/corese-server-$VERSION.jar
 PROFILE=$CORESE/config/corese-profile.ttl
 PROPERTIES=$CORESE/config/corese-properties.ini
+DEFAULT_PROFILE=$CORESE/config/corese-default-profile.ttl
+SPARQL_ENDPOINTS=$CORESE/config/endpoints.txt
 
 LOG4J=file://$CORESE/log4j2.xml
 DATA=$CORESE/data
@@ -26,8 +28,35 @@ function genLoadData() {
     done
 }
 
+function genCoreseDefaultProfile() {
+    echo "Generate corese-default-profile.ttl ..." >> $LOG
+    if [ -f "$DEFAULT_PROFILE" ]; then
+        rm $DEFAULT_PROFILE
+    fi
+    touch $DEFAULT_PROFILE
+    echo "# Content available in the default dataset at /sparql" > $DEFAULT_PROFILE
+    echo "st:user a st:Server; st:content st:loadcontent ." >> $DEFAULT_PROFILE
+    echo "# List endpoints allowed in federated queries + where STTL is allowed to get html templates" >> $DEFAULT_PROFILE
+    echo -n "st:access st:namespace <http://localhost:9200/sparql> , <http://134.59.130.136:8890/sparql>" >> $DEFAULT_PROFILE
+    if [ -f "$SPARQL_ENDPOINTS" ]; then 
+        echo "SPARQL Endpoint provided ! set SPARQL Endpoint !" >> $LOG
+        # read file in input
+        while read endpoint || [ -n "$endpoint" ]; do
+            echo -n " , $endpoint" >> $DEFAULT_PROFILE
+        done < $SPARQL_ENDPOINTS
+        # for endpoint in $@; do
+        #     echo -n " , <$endpoint>" >> $DEFAULT_PROFILE
+        # done
+        echo " ." >> $DEFAULT_PROFILE
+    else
+        echo "No additionnal SPARQL Endpoint provided ! set default SPARQL Endpoint ..." >> $LOG
+        echo "." >> $DEFAULT_PROFILE
+    fi
+}
+
 echo "======================================================================" >> $LOG
 
+genCoreseDefaultProfile
 
 # Check if JVM heap space if given in the env
 # if [ -z "$JVM_XMX" ]; then
@@ -36,7 +65,6 @@ echo "======================================================================" >>
 XMX=-Xmx12G
 # fi
 echo "JVM heap space option: $XMX" >> $LOG
-
 
 # Check existing profile or create a new one
 # if [ -f "$PROFILE" ]; then
@@ -74,5 +102,5 @@ java \
     -lp \
     -pp file://$PROFILE \
     -init $PROPERTIES \
-    -su # super user
+    # -su # super user
 

@@ -10,17 +10,12 @@ import java.util.ArrayList;
 /**
  * This class is used to compute some statistics about results founded
  * 
- * @author NGUYEN Thu Huong Dec 21, 2017
+ * @author NGUYEN Thu Huong, Rémi FELIN
  */
 @XmlRootElement
 public class Statistics {
 
 	public double computeAverageFitness(ArrayList<GEIndividual> individuals) {
-//		for(GEIndividual individual : individuals) {
-//			System.out.println("~~~~~~~~~~~~~~~~~");
-//			System.out.println("individual: " + individual);
-//			System.out.println("fitness= " + individual.getFitness());
-//		}
 		double sumFitness = 0;
 		for (int i = 0; i < individuals.size(); i++) {
 			sumFitness += individuals.get(i).getFitness().getDouble();
@@ -42,11 +37,15 @@ public class Statistics {
 		return count / sizeList;
 	}
 
+	public long getIndividualsWithNonNullFitness(ArrayList<GEIndividual> individuals) {
+		return individuals.stream().filter(individual -> individual.getFitness().getDouble() != 0).count();
+	}
+
 	double getCountTrueGoldStandard(ArrayList<GEIndividual> individuals) {
 		int count = 0;
 		int sizeList = individuals.size();
-		for (int i = 0; i < sizeList; i++) {
-			if (individuals.get(i).isEvaluated()) {
+		for (GEIndividual individual : individuals) {
+			if (individual.isEvaluated()) {
 				count++;
 			}
 		}
@@ -56,11 +55,11 @@ public class Statistics {
 	public double getCountComplexAxiom(ArrayList<GEIndividual> individuals) {
 		int count = 0;
 		int sizeList = individuals.size();
-		for (int i = 0; i < sizeList; i++) {
-			if (individuals.get(i).getPhenotype().toString().contains("ObjectUnionOf")
-					|| individuals.get(i).getPhenotype().toString().contains("ObjectIntersectionOf")
-					|| individuals.get(i).getPhenotype().toString().contains("ObjectAllValuesFrom")
-					|| individuals.get(i).getPhenotype().toString().contains("ObjectSomeValuesFrom")) {
+		for (GEIndividual individual : individuals) {
+			if (individual.getPhenotype().toString().contains("ObjectUnionOf")
+					|| individual.getPhenotype().toString().contains("ObjectIntersectionOf")
+					|| individual.getPhenotype().toString().contains("ObjectAllValuesFrom")
+					|| individual.getPhenotype().toString().contains("ObjectSomeValuesFrom")) {
 				count++;
 			}
 		}
@@ -70,9 +69,9 @@ public class Statistics {
 	public double getCountComplexAxiomSpecial(ArrayList<GEIndividual> individuals) {
 		int count = 0;
 		int sizeList = individuals.size();
-		for (int i = 0; i < sizeList; i++) {
-			if (individuals.get(i).getPhenotype().toString().contains("ObjectAllValuesFrom")
-					|| individuals.get(i).getPhenotype().toString().contains("ObjectSomeValuesFrom")) {
+		for (GEIndividual individual : individuals) {
+			if (individual.getPhenotype().toString().contains("ObjectAllValuesFrom")
+					|| individual.getPhenotype().toString().contains("ObjectSomeValuesFrom")) {
 				count++;
 			}
 		}
@@ -88,5 +87,6 @@ public class Statistics {
 		}
 		return count;
 	}
+
 
 }

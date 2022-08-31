@@ -87,6 +87,7 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     addLineToYML 6 "       volumes:"
     addLineToYML 9 "          - "$WORKSPACE_ABSOLUTE_PATH"Corese/log:/usr/local/corese/log"
     addLineToYML 9 "          - "$WORKSPACE_ABSOLUTE_PATH"Corese/data:/usr/local/corese/data"
+    addLineToYML 9 "          - "$WORKSPACE_ABSOLUTE_PATH"Corese/config:/usr/local/corese/config"
     addLineToYML 6 "       networks:"
     addLineToYML 9 "          rdfmining_network:"
     addLineToYML 12 "               ipv4_address: 172.19.0.4"

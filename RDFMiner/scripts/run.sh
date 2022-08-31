@@ -11,7 +11,7 @@ then
 		[ "${arr[index]}" == "--grammar" ] || \
 		[ "${arr[index]}" == "-s" ] || \
 		[ "${arr[index]}" == "--subclasslist" ]; then
-			echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - set 'x' authorization : "${arr[index + 1]}\
+			echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - set '+x' authorization : "${arr[index + 1]}\
 			" for "${arr[index]}" option"
 			# Set 'x' autorization for each file used
 			chmod +x ${arr[index + 1]}

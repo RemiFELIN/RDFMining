@@ -15,7 +15,7 @@ COPY ./jar/corese-server-$VERSION.jar $CORESE/corese-server-$VERSION.jar
 
 # Config server :
 COPY ./config/log4j2.xml $CORESE/log4j2.xml
-COPY /config/corese-default-profile.ttl $CORESE/corese-default-profile.ttl
+# COPY /config/corese-default-profile.ttl $CORESE/corese-default-profile.ttl
 COPY ./config/corese-default-properties.ini $CORESE/corese-default-properties.ini
 
 # chmod 777 script files

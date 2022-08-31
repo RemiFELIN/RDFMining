@@ -233,6 +233,7 @@ public class LaunchWithGE {
             logger.info("Average fitness: " + generation.averageFitness);
             logger.info("Diversity coefficient: " + generation.diversityCoefficient);
             logger.info("Genotype diversity coefficient: " + generation.genotypeDiversityCoefficient);
+            logger.info("Number of individual(s) with a non-null fitness: " + stat.getIndividualsWithNonNullFitness(distinctCandidatePopulation));
 
             if (curGeneration * parameters.populationSize <= parameters.kBase * parameters.checkpoint) {
                 // STEP 3 - SELECTION OPERATION - Reproduce Selection - Parent Selection
