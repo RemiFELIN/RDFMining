@@ -303,7 +303,7 @@ public class SubClassOfAxiom extends Axiom {
 					endpoint.addFederatedQueryWithLoop("SELECT distinct ?x WHERE { " + body + " }", limit)
 			);
 			String instancesAsJson = endpoint.query(Format.JSON, getInstancesQuery);
-			List<String> instances = ResultParser.getResultsFromVariable("t", instancesAsJson);
+			List<String> instances = ResultParser.getResultsFromVariable("x", instancesAsJson);
 			for(String instance : instances) {
 				// to remove duplicated ?x (cause of truncation)
 				// if a given ?x is not on a list , we add it
