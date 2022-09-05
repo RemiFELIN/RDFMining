@@ -70,7 +70,7 @@ public class ShapesManager {
             con.add(this.model);
             // init query
             // "SELECT ?shapes WHERE { \n" + "?shapes a " + ShaclKW.NODESHAPE + " . }";
-            String request = RequestBuilder.select("?shapes", "?shapes a " + ShaclKW.NODESHAPE + " .");
+            String request = RequestBuilder.select("?shapes", "?shapes a " + ShaclKW.NODESHAPE + " .", true);
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
             try (TupleQueryResult result = query.evaluate()) {
@@ -84,7 +84,7 @@ public class ShapesManager {
                     StringBuilder shapeAsNTriple = new StringBuilder();
                     // we will write the content of each sh:property (if it provided by the current shape)
                     String getTriples = RequestBuilder.select("DISTINCT ?s ?p ?o", "{ <" + shape + "> ?p ?o . " +
-                            "BIND(<" + shape + "> AS ?s) } UNION { ?s ?p ?o . <" + shape + "> (!<>)* ?o . FILTER(?o != sh:NodeShape) }");
+                            "BIND(<" + shape + "> AS ?s) } UNION { ?s ?p ?o . <" + shape + "> (!<>)* ?o . FILTER(?o != sh:NodeShape) }", true);
                     try (TupleQueryResult values = con.prepareTupleQuery(getTriples).evaluate()) {
                         for (BindingSet res : values) {
                             String s = String.valueOf(res.getValue("s"));

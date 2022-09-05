@@ -86,7 +86,7 @@ public class ValidationReport {
             }
             shapeValues.append("}");
             String request = RequestBuilder.select("?shape ?value",
-                    "?x " + ShaclKW.SOURCE_SHAPE + " ?shape . ?x " + parameter + " ?value . " + shapeValues);
+                    "?x " + ShaclKW.SOURCE_SHAPE + " ?shape . ?x " + parameter + " ?value . " + shapeValues, true);
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
             try (TupleQueryResult result = query.evaluate()) {
@@ -121,7 +121,7 @@ public class ValidationReport {
             shapeValues.append("}");
             String request = RequestBuilder.select("?shape ?node",
                     "?x " + ShaclKW.SOURCE_SHAPE + " ?shape . ?x " + RDFMinerKW.EXCEPTION + " ?ex . " +
-                            "?ex " + ShaclKW.FOCUS_NODE + " ?node ." + shapeValues);
+                            "?ex " + ShaclKW.FOCUS_NODE + " ?node ." + shapeValues, true);
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
             try (TupleQueryResult result = query.evaluate()) {
@@ -157,7 +157,7 @@ public class ValidationReport {
             con.add(this.model);
             // init query
             String request = RequestBuilder.select("?shapes", "?y a " + ShaclKW.VALIDATION_REPORT + " . " +
-                    "?y " + RDFMinerKW.SUMMARY + " ?x . ?x " + ShaclKW.SOURCE_SHAPE + " ?shapes .");
+                    "?y " + RDFMinerKW.SUMMARY + " ?x . ?x " + ShaclKW.SOURCE_SHAPE + " ?shapes .", true);
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
             try (TupleQueryResult result = query.evaluate()) {
@@ -180,7 +180,7 @@ public class ValidationReport {
             con.add(this.model);
             // init request
             String request = RequestBuilder.select("(count(?x) as ?n)", "?y a " + ShaclKW.VALIDATION_REPORT + " . " +
-                    "?y " + RDFMinerKW.SUMMARY + " ?x .");
+                    "?y " + RDFMinerKW.SUMMARY + " ?x .", true);
             // init query
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result

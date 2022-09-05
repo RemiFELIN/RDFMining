@@ -214,7 +214,7 @@ public class Shape extends Results {
             // add the model
             con.add(this.model);
             // init query
-            String request = RequestBuilder.ask(this.id + " " + predicate + " " + object + " .");
+            String request = RequestBuilder.ask(this.id + " " + predicate + " " + object + " .", true);
             BooleanQuery query = con.prepareBooleanQuery(request);
             // launch and get result
             if(!query.evaluate()) logger.debug(predicate + " is not provided by the shape " + this.id);
@@ -239,7 +239,7 @@ public class Shape extends Results {
             con.add(this.model);
             // init query
             // With this request, we obtain a blank node. In it we can find all excepted results
-            String request = RequestBuilder.select("?p ?o", this.id + " " + ShaclKW.PROPERTY + " ?bn . " + "?bn ?p ?o .");
+            String request = RequestBuilder.select("?p ?o", this.id + " " + ShaclKW.PROPERTY + " ?bn . " + "?bn ?p ?o .", true);
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
             try (TupleQueryResult result = query.evaluate()) {
@@ -271,7 +271,7 @@ public class Shape extends Results {
             // add the model
             con.add(this.model);
             // init query
-            String request = RequestBuilder.select("?y", this.id + " " + property + " ?y .");// Global.PREFIXES + "SELECT ?y WHERE { " + this.id + " " + property + " ?y . }";
+            String request = RequestBuilder.select("?y", this.id + " " + property + " ?y .", true);// Global.PREFIXES + "SELECT ?y WHERE { " + this.id + " " + property + " ?y . }";
             // init query
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result

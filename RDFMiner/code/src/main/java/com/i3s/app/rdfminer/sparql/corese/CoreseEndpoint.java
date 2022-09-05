@@ -51,8 +51,6 @@ public class CoreseEndpoint {
      */
     public long timeout = Integer.MAX_VALUE;
 
-    public String timeoutParam = "@timeout " + this.timeout + " ";
-
     /**
      * HTTP client
      */
@@ -89,12 +87,14 @@ public class CoreseEndpoint {
         return "SERVICE <" + this.service + "?loop=true&limit=" + limit + "> { " + sparql + " }";
     }
 
+//    public String timeoutParam = "@timeout " + this.timeout + " ";
+
     public String buildSelectAllQuery(String sparql) {
-        return this.timeoutParam + RequestBuilder.select("*", sparql);// "\nSELECT * WHERE { " + sparql + " }";
+        return RequestBuilder.select("*", sparql, this.timeout, true);// "\nSELECT * WHERE { " + sparql + " }";
     }
 
     public boolean askFederatedQuery(String sparql) throws URISyntaxException, IOException {
-        String request = this.timeoutParam + RequestBuilder.ask(addFederatedQuery(sparql));// "\nASK WHERE { " + addFederatedQuery(sparql) + " }";
+        String request = RequestBuilder.ask(addFederatedQuery(sparql), true);// "\nASK WHERE { " + addFederatedQuery(sparql) + " }";
         String resultAsJSON = query(Format.JSON, request);
         return ResultParser.getResultFromAskQuery(resultAsJSON);
     }
@@ -115,7 +115,7 @@ public class CoreseEndpoint {
      */
     public int count(String sparql) throws URISyntaxException, IOException {
         // "SELECT (count(distinct ?x) as ?n) WHERE { " + sparql + " }"));
-        String request = buildSelectAllQuery(addFederatedQuery(RequestBuilder.select("(count(distinct ?x) as ?n)", sparql)));
+        String request = buildSelectAllQuery(addFederatedQuery(RequestBuilder.select("(count(distinct ?x) as ?n)", sparql, this.timeout, false)));
         String resultAsJSON = query(Format.JSON, request);
         if(Objects.requireNonNull(ResultParser.getResultsFromVariable("n", resultAsJSON)).get(0) == null) {
             // timeout reached !
@@ -139,6 +139,7 @@ public class CoreseEndpoint {
         HashMap<String, String> params = new HashMap<>();
         // specify SPARQL and Format in parameters
         params.put("query", sparql);
+//        System.out.println("Request :\n" + sparql);
         params.put("format", format);
         // call the get method and return it result
         return get(service, params);

@@ -14,12 +14,16 @@ public class RequestBuilder {
      * @param body the body of the request such as : <code>( ?s ?p ?o ; ?s a ?o ; ... )</code>
      * @return the SELECT request
      */
-    public static String select(String vars, String body) {
-        return Global.PREFIXES + "\nSELECT " + vars + " WHERE { " + body + " }";
+    public static String select(String vars, String body, boolean setPrefix) {
+        return setPrefix ? Global.PREFIXES + "\nSELECT " + vars + " WHERE { " + body + " }" : "\nSELECT " + vars + " WHERE { " + body + " }";
     }
 
-    public static String ask(String body) {
-        return Global.PREFIXES + "\nASK { " + body + " }";
+    public static String select(String vars, String body, long timeout, boolean setPrefix) {
+        return setPrefix ? Global.PREFIXES + "@timeout " + timeout + "\nSELECT " + vars + " WHERE { " + body + " }" : "\nSELECT " + vars + " WHERE { " + body + " }";
+    }
+
+    public static String ask(String body, boolean setPrefix) {
+        return setPrefix ? Global.PREFIXES + "\nASK { " + body + " }" : "\nASK { " + body + " }";
     }
 
 }
