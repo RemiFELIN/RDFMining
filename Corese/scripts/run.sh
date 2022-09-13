@@ -30,27 +30,27 @@ function genLoadData() {
 
 function genCoreseDefaultProfile() {
     echo "Generate corese-default-profile.ttl ..." >> $LOG
-    if [ -f "$DEFAULT_PROFILE" ]; then
-        rm $DEFAULT_PROFILE
+    if [ -f "$PROFILE" ]; then
+        rm $PROFILE
     fi
-    touch $DEFAULT_PROFILE
-    echo "# Content available in the default dataset at /sparql" > $DEFAULT_PROFILE
-    echo "st:user a st:Server; st:content st:loadcontent ." >> $DEFAULT_PROFILE
-    echo "# List endpoints allowed in federated queries + where STTL is allowed to get html templates" >> $DEFAULT_PROFILE
-    echo -n "st:access st:namespace <http://localhost:9200/sparql> , <http://134.59.130.136:8890/sparql>" >> $DEFAULT_PROFILE
+    touch $PROFILE
+    echo "# Content available in the default dataset at /sparql" > $PROFILE
+    echo "st:user a st:Server; st:content st:loadcontent ." >> $PROFILE
+    echo "# List endpoints allowed in federated queries + where STTL is allowed to get html templates" >> $PROFILE
+    echo -n "st:access st:namespace <http://localhost:9200/sparql> , <http://134.59.130.136:8890/sparql>" >> $PROFILE
     if [ -f "$SPARQL_ENDPOINTS" ]; then 
         echo "SPARQL Endpoint provided ! set SPARQL Endpoint !" >> $LOG
         # read file in input
         while read endpoint || [ -n "$endpoint" ]; do
-            echo -n " , $endpoint" >> $DEFAULT_PROFILE
+            echo -n " , $endpoint" >> $PROFILE
         done < $SPARQL_ENDPOINTS
         # for endpoint in $@; do
         #     echo -n " , <$endpoint>" >> $DEFAULT_PROFILE
         # done
-        echo " ." >> $DEFAULT_PROFILE
+        echo " ." >> $PROFILE
     else
         echo "No additionnal SPARQL Endpoint provided ! set default SPARQL Endpoint ..." >> $LOG
-        echo "." >> $DEFAULT_PROFILE
+        echo "." >> $PROFILE
     fi
 }
 
@@ -72,7 +72,7 @@ echo "JVM heap space option: $XMX" >> $LOG
 # else
 # Prepare the Corese profile for loading "data/*"
 echo "Creating new profile." >> $LOG
-cat $CORESE/corese-default-profile.ttl > $PROFILE
+# cat $DEFAULT_PROFILE > $PROFILE
 echo "st:loadcontent a sw:Workflow; sw:body (" >> $PROFILE
 genLoadData "$DATA"
 echo ').' >> $PROFILE
