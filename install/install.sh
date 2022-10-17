@@ -5,18 +5,18 @@ RDFMINING_VERSION=1.4
 CORESE_VERSION=4.3.0
 SPIN_VERSION=2.0.0
 
-# Install RDFMining archtecture
-echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Installing RDFMining         v$RDFMINING_VERSION"
-# Auto-generate Dockerfile YML file
-./generate_yml.sh
 # Clean shell files
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Formatting of shell scripts useful for the installation of the software ..."
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - 'Init' and 'Final' correspond to the number of lines of current file before and after formatting"
 ./clean_scripts.sh | column -t
+# Install RDFMining architecture
+echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Installing RDFMining         v$RDFMINING_VERSION"
+# Auto-generate Dockerfile YML file
+./generate_yml.sh
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Done !"
 # Generate package from Corese 4.1.1 source code
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Packaging Corese             v$CORESE_VERSION"
-cd ./../Corese/src/corese/ && mvn -Dmaven.test.skip=true package -q
+cd ./../Corese/src/corese/ && mvn -Dmaven.test.skip=true package
 # Import Corese-core JAR in RDFMiner project
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Extract Corese-core          v$CORESE_VERSION"
 mkdir -p ../../../RDFMiner/dep/corese-jar/corese-core/$CORESE_VERSION/
@@ -38,7 +38,7 @@ SPIN_PATH="./RDFMiner/dep/org/topbraid/spin/2.0.0/"
 if [ ! -d "$SPIN_PATH" ]; then 
     echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Download SPIN                v$SPIN_VERSION"
     mkdir -p "$SPIN_PATH"
-    wget -P "$SPIN_PATH" https://www.topquadrant.com/repository/spin/org/topbraid/spin/2.0.0/spin-2.0.0.jar
+    wget -P "$SPIN_PATH" https://archive.topquadrant.com/repository/spin/org/topbraid/spin/2.0.0/spin-2.0.0.jar
 fi
 
 # Build services

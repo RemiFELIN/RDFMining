@@ -28,35 +28,35 @@ function genLoadData() {
     done
 }
 
-function genCoreseDefaultProfile() {
-    echo "Generate corese-default-profile.ttl ..." >> $LOG
-    if [ -f "$PROFILE" ]; then
-        rm $PROFILE
-    fi
-    touch $PROFILE
-    echo "# Content available in the default dataset at /sparql" > $PROFILE
-    echo "st:user a st:Server; st:content st:loadcontent ." >> $PROFILE
-    echo "# List endpoints allowed in federated queries + where STTL is allowed to get html templates" >> $PROFILE
-    echo -n "st:access st:namespace <http://localhost:9200/sparql> , <http://134.59.130.136:8890/sparql>" >> $PROFILE
-    if [ -f "$SPARQL_ENDPOINTS" ]; then 
-        echo "SPARQL Endpoint provided ! set SPARQL Endpoint !" >> $LOG
-        # read file in input
-        while read endpoint || [ -n "$endpoint" ]; do
-            echo -n " , $endpoint" >> $PROFILE
-        done < $SPARQL_ENDPOINTS
-        # for endpoint in $@; do
-        #     echo -n " , <$endpoint>" >> $DEFAULT_PROFILE
-        # done
-        echo " ." >> $PROFILE
-    else
-        echo "No additionnal SPARQL Endpoint provided ! set default SPARQL Endpoint ..." >> $LOG
-        echo "." >> $PROFILE
-    fi
-}
-
 echo "======================================================================" >> $LOG
 
-genCoreseDefaultProfile
+# function genCoreseDefaultProfile() {
+echo "Generate corese-default-profile.ttl ..." >> $LOG
+if [ -f "$PROFILE" ]; then
+    rm $PROFILE
+fi
+touch $PROFILE
+echo "# Content available in the default dataset at /sparql" > $PROFILE
+echo "st:user a st:Server; st:content st:loadcontent ." >> $PROFILE
+echo "# List endpoints allowed in federated queries + where STTL is allowed to get html templates" >> $PROFILE
+echo -n "st:access st:namespace <http://localhost:9200/sparql> , <http://134.59.130.136:8890/sparql>" >> $PROFILE
+if [ -f "$SPARQL_ENDPOINTS" ]; then 
+    echo "SPARQL Endpoint provided ! set SPARQL Endpoint !" >> $LOG
+    # read file in input
+    while read endpoint || [ -n "$endpoint" ]; do
+        echo -n " , $endpoint" >> $PROFILE
+    done < $SPARQL_ENDPOINTS
+    # for endpoint in $@; do
+    #     echo -n " , <$endpoint>" >> $DEFAULT_PROFILE
+    # done
+    echo " ." >> $PROFILE
+else
+    echo "No additionnal SPARQL Endpoint provided ! set default SPARQL Endpoint ..." >> $LOG
+    echo " ." >> $PROFILE
+fi
+# }
+
+# genCoreseDefaultProfile
 
 # Check if JVM heap space if given in the env
 # if [ -z "$JVM_XMX" ]; then
