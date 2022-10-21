@@ -11,6 +11,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import com.i3s.app.rdfminer.grammar.evolutionary.Fitness;
+import com.i3s.app.rdfminer.grammar.evolutionary.fitness.objectives.ObjectivesFitness;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -97,7 +98,8 @@ public class AxiomFitnessEvaluation extends Fitness {
 		ArrayList<GEIndividual> newPopulation = new ArrayList<>();
 		// Update fitness of population
 		for (Axiom axiom : axiomList) {
-			BasicFitness fit = new BasicFitness(setFitness(axiom), axiom.individual);
+			ObjectivesFitness objectivesFitness = new ObjectivesFitness(axiom);
+			BasicFitness fit = new BasicFitness(objectivesFitness.getFitness(), axiom.individual);
 			fit.getIndividual().setValid(true);
 			axiom.individual.setFitness(fit);
 			newPopulation.add(axiom.individual);
@@ -126,6 +128,8 @@ public class AxiomFitnessEvaluation extends Fitness {
 
 	@Override
 	public GEIndividual updateIndividual(GEIndividual indivi) throws URISyntaxException, IOException {
+		// Define a Corese endpoint
+		CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT, Global.PREFIXES);
 		if(indivi.getFitness() != null) {
 			// this individual has already been evaluated
 			return indivi;
@@ -133,9 +137,9 @@ public class AxiomFitnessEvaluation extends Fitness {
 		// in a case of new individual, we need to compute it as a new axiom
 		double f = 0;
 		if (indivi.isMapped()) {
-			Axiom axiom = AxiomFactory.create(indivi, indivi.getPhenotype(),
-					new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT, Global.PREFIXES));
-			f = setFitness(axiom);
+			Axiom axiom = AxiomFactory.create(indivi, indivi.getPhenotype(), endpoint);
+			ObjectivesFitness objectivesFitness = new ObjectivesFitness(axiom);
+			f = objectivesFitness.getFitness();
 		} else {
 			f = 0;
 		}
@@ -179,27 +183,6 @@ public class AxiomFitnessEvaluation extends Fitness {
 			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Compute the fitness of a given axiom by using generality (if it's not equal
-	 * to 0) or the {@link Axiom#possibility() possibility} and
-	 * {@link Axiom#necessity() necessity} values.
-	 * 
-	 * @param axiom a given {@link Axiom axiom}
-	 * @return the value of fitness
-	 */
-	public static double setFitness(Axiom axiom) {
-		// Evaluate axioms with generality formula or (initial) formula with necessity
-		if (axiom.generality != 0) {
-			axiom.fitness = axiom.possibility().doubleValue() * axiom.generality;
-			return axiom.possibility().doubleValue() * axiom.generality;
-		} else {
-			axiom.fitness = axiom.referenceCardinality
-					* ((axiom.possibility().doubleValue() + axiom.necessity().doubleValue()) / 2);
-			return axiom.referenceCardinality
-					* ((axiom.possibility().doubleValue() + axiom.necessity().doubleValue()) / 2);
 		}
 	}
 
