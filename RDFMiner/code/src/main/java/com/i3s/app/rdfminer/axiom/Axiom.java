@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -78,10 +79,15 @@ public abstract class Axiom extends Results {
 	public double generality = 0;
 
 	/**
-	 * The fitness of the axiom correspond to its value evaluated by a function, see
-	 * the {@link AxiomFitnessEvaluation#setFitness(Axiom) evaluation} function used
+	 * The fitness of the axiom correspond to its value evaluated by a function
 	 */
 	public double fitness = 0.0;
+
+	/**
+	 * In the GE applied with Novelty Search context, it contains the similarity values
+	 * in relation to the others individuals in a given population.
+	 */
+	public ArrayList<Double> similarities = new ArrayList<>();
 
 	/**
 	 * The reference cardinality will count all the instances involved by the

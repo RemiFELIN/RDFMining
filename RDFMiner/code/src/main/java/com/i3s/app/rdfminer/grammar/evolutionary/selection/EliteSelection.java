@@ -31,11 +31,14 @@ public class EliteSelection extends EliteOperationSelection {
 	 * @param canPop a given population
 	 */
 	public void setParentsSelectionElitism(ArrayList<GEIndividual> canPop) {
-		List<Individual> candidates = new ArrayList<Individual>();
-		for (int i = 0; i < canPop.size(); i++)
-			candidates.add(canPop.get(i));
+//		System.out.println("canPop size: " + canPop.size());
+		/*for(GEIndividual ind : canPop) {
+			System.out.println("[IND] " + ind.getGenotype() + "\n -> Fitness: " + ind.getFitness().getDouble());
+		}*/
+		List<Individual> candidates = new ArrayList<>(canPop);
 		doOperation(candidates);
-		ArrayList<GEIndividual> selectedPopulation = new ArrayList<GEIndividual>();
+		ArrayList<GEIndividual> selectedPopulation = new ArrayList<>();
+//		System.out.println("getSelectedPopulation size: " + getSelectedPopulation().size());
 		for (int i = 0; i < getSelectedPopulation().size(); i++) {
 			selectedPopulation.add((GEIndividual) getSelectedPopulation().get(i));
 		}
@@ -49,27 +52,27 @@ public class EliteSelection extends EliteOperationSelection {
 	 */
 	public ArrayList<GEIndividual> setupSelectedPopulation(ArrayList<GEIndividual> candidatePopulation) {
 
-		ArrayList<GEIndividual> selectedPopulation = new ArrayList<GEIndividual>(
+		ArrayList<GEIndividual> selectedPopulation = new ArrayList<>(
 				candidatePopulation.size() - elitedPopulation.size());
-		
-		for (int i = 0; i < candidatePopulation.size(); i++) {
+
+		for (GEIndividual individual : candidatePopulation) {
 			int tmp = 0;
-			for (int k = 0; k < elitedPopulation.size(); k++) {
-				String elite = elitedPopulation.get(k).getGenotype().get(0).toString();
-				String can = candidatePopulation.get(i).getGenotype().get(0).toString();
+			for (GEIndividual elitedIndividual : elitedPopulation) {
+				String elite = elitedIndividual.getGenotype().get(0).toString();
+				String can = individual.getGenotype().get(0).toString();
 				if (elite.equals(can)) {
 					tmp++;
 				}
 			}
 			if (tmp == 0) {
-				selectedPopulation.add(candidatePopulation.get(i));
+				selectedPopulation.add(individual);
 			}
 		}
 		return selectedPopulation;
 	}
 
-	void setElitedPopulation(ArrayList<GEIndividual> ElitedPopulation) {
-		this.elitedPopulation = ElitedPopulation;
+	void setElitedPopulation(ArrayList<GEIndividual> elitedPopulation) {
+		this.elitedPopulation = elitedPopulation;
 	}
 
 	public ArrayList<GEIndividual> getElitedPopulation() {

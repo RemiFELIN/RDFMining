@@ -80,7 +80,10 @@ public class LaunchWithGE {
         logger.info("========================================================");
         logger.info("PARAMETERS AS THE INPUTS OF GE");
         logger.info("========================================================");
-        logger.info("POPULATION SIZE : " + parameters.populationSize);
+        logger.info("POPULATION SIZE: " + parameters.populationSize);
+        logger.info("SIZE SELECTION: " + parameters.sizeSelection);
+        int sizeElite = parameters.sizeElite * parameters.populationSize < 1 ? 1 : (int) (parameters.sizeElite * parameters.populationSize);
+        logger.info("SIZE ELITE: " + sizeElite);
         logger.info("TOTAL EFFORT : " + parameters.kBase);
         logger.info("MAX GENERATION NUMBER: " + (parameters.kBase / parameters.populationSize));
         logger.info("INITIALIZED LENGTH CHROMOSOME: " + parameters.initLenChromosome);
@@ -95,10 +98,9 @@ public class LaunchWithGE {
         GEChromosome[] chromosomes = new GEChromosome[parameters.populationSize];
 
         ArrayList<GEIndividual> candidatePopulation;
-        ArrayList<GEIndividual> etilismPopulation = null;
+        ArrayList<GEIndividual> elitismPopulation = null;
         Statistics stat = new Statistics();
 
-        int sizeElite = (int) (parameters.sizeElite * parameters.populationSize);
         int sizeSelection = (int) (parameters.sizeSelection * parameters.populationSize);
 
         int curCheckpoint;
@@ -228,12 +230,13 @@ public class LaunchWithGE {
             generation.averageFitness = stat.computeAverageFitness(distinctCandidatePopulation);
             generation.numComplexAxiom = stat.getCountComplexAxiom(distinctCandidatePopulation);
             generation.numComplexAxiomSpecial = stat.getCountComplexAxiomSpecial(distinctCandidatePopulation);
+            generation.numIndividualsWithNonNullFitness = stat.getIndividualsWithNonNullFitness(distinctCandidatePopulation);
             RDFMiner.stats.generations.add(generation.toJSON());
             // Log usefull stats concerning the algorithm evolution
             logger.info("Average fitness: " + generation.averageFitness);
             logger.info("Diversity coefficient: " + generation.diversityCoefficient);
             logger.info("Genotype diversity coefficient: " + generation.genotypeDiversityCoefficient);
-            logger.info("Number of individual(s) with a non-null fitness: " + stat.getIndividualsWithNonNullFitness(distinctCandidatePopulation));
+            logger.info("Number of individual(s) with a non-null fitness: " + generation.numIndividualsWithNonNullFitness);
 
             if (curGeneration * parameters.populationSize <= parameters.kBase * parameters.checkpoint) {
                 // STEP 3 - SELECTION OPERATION - Reproduce Selection - Parent Selection
@@ -245,12 +248,13 @@ public class LaunchWithGE {
                     logger.info("Selecting elite individuals...");
                     logger.info("Selecting + " + (int) (parameters.sizeElite * 100)
                             + "% elite individuals for the new population");
-                    logger.info("The size of elite population: " + sizeElite);
+//                    logger.info("The size of elite population: " + sizeElite);
                     EliteSelection elite = new EliteSelection(sizeElite);
                     elite.setParentsSelectionElitism(distinctCandidatePopulation);
                     selectedPopulation = elite.setupSelectedPopulation(distinctCandidatePopulation);
-                    etilismPopulation = elite.getElitedPopulation();
-
+                    logger.info("Size of the selected population: " + selectedPopulation.size());
+                    elitismPopulation = elite.getElitedPopulation();
+                    logger.info("Size of the elitism population: " + elitismPopulation.size());
                 } else {
                     selectedPopulation = distinctCandidatePopulation;
                     sizeElite = 0;
@@ -261,7 +265,7 @@ public class LaunchWithGE {
                     crossoverPopulation = candidatePopulation;
                 }
 
-                /* STEP 4 - CROSSOVER OPERATION */
+                /* STEP 4 - CROSSOVER & MUTATION OPERATION */
                 // Crossover single point between 2 individuals of the selected population
                 ArrayList<GEIndividual> crossoverList = new ArrayList<>(crossoverPopulation);
                 // shuffle populations before crossover & mutation
@@ -272,7 +276,7 @@ public class LaunchWithGE {
                         parameters.proCrossover, parameters.proMutation, curGeneration, generator,
                         parameters.diversity, RDFMiner.mode);
 
-                candidatePopulation = canPop.renew(newPopulation, curGeneration, etilismPopulation);
+                candidatePopulation = canPop.renew(newPopulation, curGeneration, elitismPopulation);
                 // Turn to the next generation
                 curGeneration++;
 

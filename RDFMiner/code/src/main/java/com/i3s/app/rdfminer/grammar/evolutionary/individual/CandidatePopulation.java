@@ -119,8 +119,7 @@ public class CandidatePopulation {
 	 */
 	public ArrayList<GEIndividual> renew(ArrayList<GEIndividual> population, int curGeneration,
 			ArrayList<GEIndividual> etilismPopulation) {
-//		System.out.println("renew population : curGen=" + curGeneration);
-		ArrayList<GEIndividual> newPopulation = new ArrayList<GEIndividual>();
+		ArrayList<GEIndividual> newPopulation = new ArrayList<>();
 		if (etilismPopulation != null) {
 			for (GEIndividual individual : etilismPopulation) {
 				individual.setAge(curGeneration + 1);

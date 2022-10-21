@@ -151,7 +151,7 @@ public class CmdLineParameters {
 	public int elitism = 1; // 0- not applying etilism method; 1- applying etilism method
 
 	@Option(name = "-seez", aliases = {
-			"--size-elitie" }, usage = "use as this value as the size of elitism selection", metaVar = "TYPE_SELECTION")
+			"--size-elite" }, usage = "use as this value as the size of elitism selection", metaVar = "SIZE_ELITE")
 	public double sizeElite = 0.02;
 
 	@Option(name = "-div", aliases = {
@@ -184,6 +184,6 @@ public class CmdLineParameters {
 
 	// receives other command line parameters than options
 	@Argument
-	public List<String> arguments = new ArrayList<String>();
+	public List<String> arguments = new ArrayList<>();
 
 }

@@ -15,19 +15,6 @@
     <maven.compiler.target>1.11</maven.compiler.target>
   </properties>
 
-  <!-- <repositories>
-	<repository>
-		<id>local</id>
-		<name>dep-repository</name>
-		<url>file://${basedir}/../dep</url>
-	</repository>
-	<repository>
-		<id>topquadrant</id>
-		<name>spin-repository</name>
-		<url>http://topquadrant.com/repository/spin/</url>
-	</repository>
-  </repositories> -->
-
   <dependencies>
 	  <!-- https://mvnrepository.com/artifact/args4j/args4j -->
 	  <dependency>

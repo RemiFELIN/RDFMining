@@ -239,33 +239,33 @@ public class EATools {
 
 			/* CROSSOVER PHASIS */
 			switch (RDFMiner.parameters.typeCrossover) {
-			case TypeCrossover.SINGLE_POINT_CROSSOVER:
-				// Single-point crossover
-				SinglePointCrossoverAxiom spc = new SinglePointCrossoverAxiom(proCrossover, rand);
-				spc.setFixedCrossoverPoint(false);
-				c1 = new GEChromosome((GEChromosome) parent1.getGenotype().get(0));
-				c2 = new GEChromosome((GEChromosome) parent2.getGenotype().get(0));
-				chromosomes = spc.crossover(c1, c2);
-				child1 = generator.getIndividualFromChromosome(chromosomes[0], curGeneration);
-				child2 = generator.getIndividualFromChromosome(chromosomes[1], curGeneration);
-				break;
-			case TypeCrossover.SUBTREE_CROSSOVER:
-				// subtree crossover
-				SubtreeCrossoverAxioms sca = new SubtreeCrossoverAxioms(proCrossover, rand);
-				GEIndividual[] inds = sca.crossoverTree(parent1, parent2);
-				child1 = inds[0];
-				child2 = inds[1];
-				break;
-			default:
-				// Two point crossover
-				TwoPointCrossover tpc = new TwoPointCrossover(proCrossover, rand);
-				tpc.setFixedCrossoverPoint(true);
-				c1 = new GEChromosome((GEChromosome) parent1.getGenotype().get(0));
-				c2 = new GEChromosome((GEChromosome) parent2.getGenotype().get(0));
-				chromosomes = tpc.crossover(c1, c2);
-				child1 = generator.getIndividualFromChromosome(chromosomes[0], curGeneration);
-				child2 = generator.getIndividualFromChromosome(chromosomes[1], curGeneration);
-				break;
+				case TypeCrossover.SINGLE_POINT_CROSSOVER:
+					// Single-point crossover
+					SinglePointCrossoverAxiom spc = new SinglePointCrossoverAxiom(proCrossover, rand);
+					spc.setFixedCrossoverPoint(false);
+					c1 = new GEChromosome((GEChromosome) parent1.getGenotype().get(0));
+					c2 = new GEChromosome((GEChromosome) parent2.getGenotype().get(0));
+					chromosomes = spc.crossover(c1, c2);
+					child1 = generator.getIndividualFromChromosome(chromosomes[0], curGeneration);
+					child2 = generator.getIndividualFromChromosome(chromosomes[1], curGeneration);
+					break;
+				case TypeCrossover.SUBTREE_CROSSOVER:
+					// subtree crossover
+					SubtreeCrossoverAxioms sca = new SubtreeCrossoverAxioms(proCrossover, rand);
+					GEIndividual[] inds = sca.crossoverTree(parent1, parent2);
+					child1 = inds[0];
+					child2 = inds[1];
+					break;
+				default:
+					// Two point crossover
+					TwoPointCrossover tpc = new TwoPointCrossover(proCrossover, rand);
+					tpc.setFixedCrossoverPoint(true);
+					c1 = new GEChromosome((GEChromosome) parent1.getGenotype().get(0));
+					c2 = new GEChromosome((GEChromosome) parent2.getGenotype().get(0));
+					chromosomes = tpc.crossover(c1, c2);
+					child1 = generator.getIndividualFromChromosome(chromosomes[0], curGeneration);
+					child2 = generator.getIndividualFromChromosome(chromosomes[1], curGeneration);
+					break;
 			}
 
 			/* MUTATION PHASIS */

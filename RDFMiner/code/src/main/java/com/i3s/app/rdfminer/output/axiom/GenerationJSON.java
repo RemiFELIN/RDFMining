@@ -21,6 +21,7 @@ public class GenerationJSON extends Results {
 	public double averageFitness;
 	public double numComplexAxiom;
 	public double numComplexAxiomSpecial;
+	public long numIndividualsWithNonNullFitness;
 
 	@Override
 	public JSONObject toJSON() {
@@ -30,6 +31,7 @@ public class GenerationJSON extends Results {
 		json.put("diversityCoefficient", diversityCoefficient);
 		json.put("genotypeDiversityCoefficient", genotypeDiversityCoefficient);
 		json.put("averageFitness", averageFitness);
+		json.put("numIndividualsWithNonNullFitness", numIndividualsWithNonNullFitness);
 		json.put("numComplexAxiom", numComplexAxiom);
 		json.put("numComplexAxiomSpecial", numComplexAxiomSpecial);
 		return json;
