@@ -5,7 +5,6 @@ package com.i3s.app.rdfminer.grammar.evolutionary.selection;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 
 import Individuals.Individual;

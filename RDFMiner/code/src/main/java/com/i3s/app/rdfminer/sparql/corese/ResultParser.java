@@ -2,6 +2,7 @@ package com.i3s.app.rdfminer.sparql.corese;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -26,6 +27,7 @@ public class ResultParser {
 
     public static List<String> getResultsFromVariable(String var, String json) {
         List<String> results = new ArrayList<>();
+//        System.out.println(json);
         // if json does not contains any result, we must return an empty list
         if(json == null) {
             logger.warn("The given json param is null ...");
@@ -33,7 +35,18 @@ public class ResultParser {
         }
         // using org.json, get results (String) into a JSON Object
         JSONTokener tokener = new JSONTokener(json);
-        JSONObject resultsJSON = new JSONObject(tokener);
+        JSONObject resultsJSON;
+        try {
+            resultsJSON = new JSONObject(tokener);
+        } catch (JSONException e) {
+            // Read time out
+            // i.e. SocketTimeoutException from Corese server
+            if(json.contains("Read timed out")) {
+                logger.info("Timeout reached !");
+            }
+            return null;
+        }
+
 
         // if var is not in json results, return an error
         JSONArray vars = resultsJSON.getJSONObject("head").getJSONArray("vars");
@@ -53,13 +66,13 @@ public class ResultParser {
         // find for the given variable
         JSONArray bindings = resultsJSON.getJSONObject("results").getJSONArray("bindings");
         if(bindings.length() == 0) {
-            if(json.contains("Read timed out")) {
-                logger.info("Timeout reached !");
-                return null;
-            } else {
-//                logger.warn("No results are found !");
-                return results;
-            }
+//            if(json.contains("Read timed out")) {
+//                logger.info("Timeout reached !");
+//                return null;
+//            } else {
+//            logger.warn("No results are found !");
+            return results;
+//            }
         }
 
         for(int i=0; i<bindings.length(); i++) {

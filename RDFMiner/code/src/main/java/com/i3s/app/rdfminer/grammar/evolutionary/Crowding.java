@@ -1,73 +1,103 @@
 package com.i3s.app.rdfminer.grammar.evolutionary;
 
+import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.grammar.evolutionary.fitness.AxiomFitnessEvaluation;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
-import com.i3s.app.rdfminer.mode.Mode;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 public class Crowding {
 
-//	private static final Logger logger = Logger.getLogger(Crowding.class.getName());
+	private static final Logger logger = Logger.getLogger(Crowding.class.getName());
 
 //	protected int size;
 	protected int distanceP1ToC1;
 	protected int distanceP1ToC2;
 	protected int distanceP2ToC1;
 	protected int distanceP2ToC2;
-	protected GEIndividual parent1;
-	protected GEIndividual parent2;
-	protected GEIndividual child1;
-	protected GEIndividual child2;
-	protected Mode mode;
+	protected Axiom axiomParent1;
+	protected Axiom axiomParent2;
+	protected Axiom axiomChild1;
+	protected Axiom axiomChild2;
+	protected ArrayList<Axiom> axioms;
+	protected GEIndividual shapeParent1;
+	protected GEIndividual shapeParent2;
+	protected GEIndividual shapeChild1;
+	protected GEIndividual shapeChild2;
 
-	public Crowding(GEIndividual parent1, GEIndividual parent2, GEIndividual child1, GEIndividual child2, Mode mode) {
+	public Crowding(ArrayList<Axiom> axioms, Axiom axiomParent1, Axiom axiomParent2, Axiom axiomChild1, Axiom axiomChild2) {
 //		this.size = size;
-		this.mode = mode;
-		this.parent1 = parent1;
-		this.parent2 = parent2;
-		this.child1 = child1;
-		this.child2 = child2;
-		this.distanceP1ToC1 = this.distance(this.parent1, this.child1);
-		this.distanceP2ToC2 = this.distance(this.parent2, this.child2);
-		this.distanceP1ToC2 = this.distance(this.parent1, this.child2);
-		this.distanceP2ToC1 = this.distance(this.parent2, this.child1);
+		this.axioms = axioms;
+		this.axiomParent1 = axiomParent1;
+		this.axiomParent2 = axiomParent2;
+		this.axiomChild1 = axiomChild1;
+		this.axiomChild2 = axiomChild2;
+		this.distanceP1ToC1 = this.distance(this.axiomParent1.individual, this.axiomChild1.individual);
+		this.distanceP2ToC2 = this.distance(this.axiomParent2.individual, this.axiomChild2.individual);
+		this.distanceP1ToC2 = this.distance(this.axiomParent1.individual, this.axiomChild2.individual);
+		this.distanceP2ToC1 = this.distance(this.axiomParent2.individual, this.axiomChild1.individual);
 	}
 
-	GEIndividual[] getSurvivalSelection() throws URISyntaxException, IOException {
-		int d1, d2;
+	public Crowding(GEIndividual shapeParent1, GEIndividual shapeParent2, GEIndividual shapeChild1, GEIndividual shapeChild2) {
+		this.shapeParent1 = shapeParent1;
+		this.shapeParent2 = shapeParent2;
+		this.shapeChild1 = shapeChild1;
+		this.shapeChild2 = shapeChild2;
+		this.distanceP1ToC1 = this.distance(this.shapeParent1, this.shapeChild1);
+		this.distanceP2ToC2 = this.distance(this.shapeParent2, this.shapeChild2);
+		this.distanceP1ToC2 = this.distance(this.shapeParent1, this.shapeChild2);
+		this.distanceP2ToC1 = this.distance(this.shapeParent2, this.shapeChild1);
+	}
+
+	public GEIndividual[] getShapesSurvivalSelection() {
 		GEIndividual[] survivals = new GEIndividual[2];
-		d1 = distanceP1ToC1 + distanceP2ToC2;
-		d2 = distanceP1ToC2 + distanceP2ToC1;
-		if (d1 >= d2) {
-			survivals[0] = compare(parent1, child1, mode);
-			survivals[1] = compare(parent2, child2, mode);
+		if (distanceP1ToC1 + distanceP2ToC2 >= distanceP1ToC2 + distanceP2ToC1) {
+			survivals[0] = compareShapes(shapeParent1, shapeChild1);
+			survivals[1] = compareShapes(shapeParent2, shapeChild2);
 		} else {
-			survivals[0] = compare(parent1, child2, mode);
-			survivals[1] = compare(parent2, child1, mode);
+			survivals[0] = compareShapes(shapeParent1, shapeChild2);
+			survivals[1] = compareShapes(shapeParent2, shapeChild1);
 		}
 		return survivals;
 	}
 
-//	public static ArrayList<GEIndividual> getSurvivalSelectionFromList(ArrayList<HashMap<GEIndividual, GEIndividual>> hashMapArrayList) {
-//		ArrayList<GEIndividual> evaluatedIndividuals = new ArrayList<>();
-//		// for each couple of parents and their child
-//		for(HashMap<GEIndividual, GEIndividual> parChild : hashMapArrayList) {
-//			// define individuals
-//			GEIndividual parent1 = (GEIndividual) parChild.keySet().toArray()[0];
-//			GEIndividual parent2 = (GEIndividual) parChild.keySet().toArray()[1];
-//			GEIndividual child1 = parChild.get(parent1);
-//			GEIndividual child2 = parChild.get(parent2);
-//			int distanceP1ToC1 = distance(parent1, child1);
-//			this.distanceP2ToC2 = this.distance(this.parent2, this.child2);
-//			this.distanceP1ToC2 = this.distance(this.parent1, this.child2);
-//			this.distanceP2ToC1 = this.distance(this.parent2, this.child1);
-//			// apply get survival selection
-//			if()
-//		}
-//		return evaluatedIndividuals;
-//	}
+	public Axiom[] getAxiomsSurvivalSelection() throws URISyntaxException, IOException {
+		Axiom[] survivals = new Axiom[2];
+		if (distanceP1ToC1 + distanceP2ToC2 >= distanceP1ToC2 + distanceP2ToC1) {
+			survivals[0] = compareAxioms(axiomParent1, axiomChild1, axioms);
+			survivals[1] = compareAxioms(axiomParent2, axiomChild2, axioms);
+		} else {
+			survivals[0] = compareAxioms(axiomParent1, axiomChild2, axioms);
+			survivals[1] = compareAxioms(axiomParent2, axiomChild1, axioms);
+		}
+		return survivals;
+	}
+
+	public static Axiom compareAxioms(Axiom parent, Axiom child, ArrayList<Axiom> axioms) throws URISyntaxException, IOException {
+		// if parent don't have any value for fitness, we need to compute its value
+		if (parent.individual.getFitness() == null) {
+			logger.info("parent fitness is null, assess it !");
+			parent = AxiomFitnessEvaluation.updateIndividual(parent, axioms);
+		}
+		child = AxiomFitnessEvaluation.updateIndividual(child, axioms);
+//		logger.info("Parent: " + parent.individual.getFitness().getDouble() + " <= child: " + child.individual.getFitness().getDouble() + " ?");
+		if (parent.individual.getFitness().getDouble() < child.individual.getFitness().getDouble()) {
+			logger.info("child is choosen !");
+			return child;
+		} else {
+			logger.info("keep the parent !");
+			return parent;
+		}
+	}
+
+	public static GEIndividual compareShapes(GEIndividual parent, GEIndividual child) {
+		if (parent.getFitness().getDouble() <= child.getFitness().getDouble())
+			return child;
+		return parent;
+	}
 
 	public int distance(GEIndividual a, GEIndividual b) {
 		String word1 = a.getPhenotype().toString();
@@ -102,23 +132,6 @@ public class Crowding {
 			}
 		}
 		return dp[len1][len2];
-	}
-
-	public static GEIndividual compare(GEIndividual parent, GEIndividual child, Mode mode) throws URISyntaxException, IOException {
-		if(mode.isAxiomMode()) {
-			AxiomFitnessEvaluation fit = new AxiomFitnessEvaluation();
-			// if parent don't have any value for fitness, we need to compute its value
-			if (parent.getFitness() == null) {
-				parent = fit.updateIndividual(parent);
-			}
-			child = fit.updateIndividual(child);
-		}
-		// we can compare parent and child
-		if (parent.getFitness().getDouble() <= child.getFitness().getDouble()) {
-			return child;
-		} else {
-			return parent;
-		}
 	}
 
 }

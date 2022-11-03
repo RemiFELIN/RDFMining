@@ -1,19 +1,15 @@
 package com.i3s.app.rdfminer.grammar.evolutionary.individual;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.util.ArrayList;
-
+import Individuals.GEChromosome;
+import Individuals.Phenotype;
+import Util.Random.MersenneTwisterFast;
+import Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.generator.Generator;
 import org.apache.log4j.Logger;
 
-import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
-
-import Individuals.GEChromosome;
-import Individuals.Phenotype;
-import Individuals.Populations.SimplePopulation;
-import Util.Random.MersenneTwisterFast;
-import Util.Random.RandomNumberGenerator;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
 
 /**
  *  Map a set of candidate individual in population
@@ -65,7 +61,7 @@ public class CandidatePopulation {
 			StringBuilder st = new StringBuilder();
 			char ch;
 			int m = 0;
-			ArrayList<Integer> chr = new ArrayList<Integer>();
+			ArrayList<Integer> chr = new ArrayList<>();
 			while ((intch = buffer.read()) != -1) {
 				ch = (char) intch;
 				if (ch != '\n') {
@@ -90,7 +86,7 @@ public class CandidatePopulation {
 			this.chromosomes = initializeChromosomes();
 		}
 		logger.info("Number of chromosomes created: " + chromosomes.length);
-		ArrayList<GEIndividual> population = new ArrayList<GEIndividual>(size);
+		ArrayList<GEIndividual> population = new ArrayList<>(size);
 
 		int j = 0;
 		while (j < size) {
@@ -108,29 +104,6 @@ public class CandidatePopulation {
 		}
 		logger.info("Number of individuals created: " + population.size());
 		return population;
-	}
-
-	/**
-	 * Renew a given population
-	 * @param population a given population
-	 * @param curGeneration the current generation
-	 * @param etilismPopulation a etilism population
-	 * @return a renewed population
-	 */
-	public ArrayList<GEIndividual> renew(ArrayList<GEIndividual> population, int curGeneration,
-			ArrayList<GEIndividual> etilismPopulation) {
-		ArrayList<GEIndividual> newPopulation = new ArrayList<>();
-		if (etilismPopulation != null) {
-			for (GEIndividual individual : etilismPopulation) {
-				individual.setAge(curGeneration + 1);
-				newPopulation.add(individual);
-			}
-		}
-		for (GEIndividual individual : population) {
-			individual.setAge(curGeneration + 1);
-			newPopulation.add(individual);
-		}
-		return newPopulation;
 	}
 
 	//	public void addBestIndividuals(SimplePopulation etilismPopulation) {

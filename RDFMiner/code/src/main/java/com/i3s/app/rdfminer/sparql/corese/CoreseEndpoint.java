@@ -47,7 +47,7 @@ public class CoreseEndpoint {
     public String prefixes;
 
     /**
-     * The timeout used for each queries
+     * The timeout used for each queries (in ms)
      */
     public long timeout = Integer.MAX_VALUE;
 
@@ -90,6 +90,7 @@ public class CoreseEndpoint {
 //    public String timeoutParam = "@timeout " + this.timeout + " ";
 
     public String buildSelectAllQuery(String sparql) {
+//        System.out.println("sparql: " + RequestBuilder.select("*", sparql, this.timeout, true));
         return RequestBuilder.select("*", sparql, this.timeout, true);// "\nSELECT * WHERE { " + sparql + " }";
     }
 
@@ -117,8 +118,9 @@ public class CoreseEndpoint {
         // "SELECT (count(distinct ?x) as ?n) WHERE { " + sparql + " }"));
         String request = buildSelectAllQuery(addFederatedQuery(RequestBuilder.select("(count(distinct ?x) as ?n)", sparql, this.timeout, false)));
         String resultAsJSON = query(Format.JSON, request);
-        if(Objects.requireNonNull(ResultParser.getResultsFromVariable("n", resultAsJSON)).get(0) == null) {
-            // timeout reached !
+        if(resultAsJSON.contains("Read timed out")) {
+            // Read time out
+            // i.e. SocketTimeoutException from Corese server
             return -1;
         }
         return Integer.parseInt(Objects.requireNonNull(ResultParser.getResultsFromVariable("n", resultAsJSON)).get(0));
@@ -225,6 +227,10 @@ public class CoreseEndpoint {
         }
         in.close();
         return sb.toString();
+    }
+
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
     }
 
 }

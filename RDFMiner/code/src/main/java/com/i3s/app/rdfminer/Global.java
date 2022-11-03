@@ -42,10 +42,10 @@ public class Global {
     public final static String VIRTUOSO_DBPEDIA_2015_04_SPARQL_ENDPOINT = "http://134.59.130.136:8890/sparql";
 
     /**
-     * SPARQL endpoint from local server which contains 1% of full instance of
-     * DBPedia 2015.04
+     * SPARQL endpoint from local server used as training dataset (a part of full dataset used)
+     * By default, it contains 1% of full instance of DBPedia 2015.04
      */
-    public final static String VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT = "http://172.19.0.2:9000/sparql";
+    public final static String TRAINING_SPARQL_ENDPOINT = "http://172.19.0.2:9000/sparql";
 
     /**
      * Corese IP Address

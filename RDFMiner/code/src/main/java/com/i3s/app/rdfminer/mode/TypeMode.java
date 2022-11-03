@@ -6,6 +6,10 @@ package com.i3s.app.rdfminer.mode;
  *
  * @author Rémi FELIN
  */
-public enum TypeMode {
-    AXIOMS, SHACL_SHAPE
+public class TypeMode {
+
+    public static final int AXIOMS = 1;
+
+    public static final int SHACL_SHAPE = 2;
+
 }

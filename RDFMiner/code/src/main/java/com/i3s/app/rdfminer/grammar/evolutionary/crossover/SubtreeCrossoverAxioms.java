@@ -44,7 +44,7 @@ public class SubtreeCrossoverAxioms extends SubtreeCrossover {
 			// Prepare to pick one of the branches in individual 1
 			boolean[] wasPicked = new boolean[chromosome1.getUsedGenes()];
 			int pickCount = wasPicked.length;
-			DerivationNode node1 = null;
+			DerivationNode node1;
 			DerivationNode node2 = null;
 			int point1 = 0;
 			int point2 = 0;
@@ -99,7 +99,7 @@ public class SubtreeCrossoverAxioms extends SubtreeCrossover {
 				// the range of all codons. This loop maps from 0..pickCount to
 				// actual codon by skipping over previously picked codons
 				for (int pickIndex = 0; pickIndex < wasPicked.length; pickIndex++)
-					if (wasPicked[pickIndex] == false)
+					if (!wasPicked[pickIndex])
 						if (point1 == 0) {
 							wasPicked[pickIndex] = true;
 							point1 = pickIndex;
@@ -109,14 +109,12 @@ public class SubtreeCrossoverAxioms extends SubtreeCrossover {
 				pickCount--;
 
 				assert point1 >= 0 && point1 < chromosome1.getUsedGenes() : point1;
-				assert pickCount >= 0 : pickCount;
 
 				// Find the tree-node related to the chosen crossover point. As the
 				// point was chosen from the list of used codons, this will always
 				// find the node
 				node1 = GenotypeHelper.findNodeFromCodonIndex(tree1, point1);
 
-				assert node1 != null;
 				// Find the tree-node nearest the chosen crossover point that has
 				// the same type, so that the crossover will map into it
 				node2 = findRelatedNode(tree2, point2, maxPoint2, node1);
@@ -148,20 +146,17 @@ public class SubtreeCrossoverAxioms extends SubtreeCrossover {
 			i1.getMapper().setGenotype(chromosome1);
 			i2.getMapper().setGenotype(chromosome2);
 
-			((GEIndividual) i1).invalidate();
-			((GEIndividual) i2).invalidate();
+			i1.invalidate();
+			i2.invalidate();
 		}
-		childs[0] = (GEIndividual) i1;
-		// System.out.println("ListChild i1= " + ListChild[0]);
-		childs[1] = (GEIndividual) i2;
+
 		// System.out.println("i2= " + ListChild[1]);
-		int Mutationpoint1[] = new int[1];
-		int Mutationpoint2[] = new int[1];
+		int[] Mutationpoint1 = new int[1];
+		int[] Mutationpoint2 = new int[1];
 		if (tree1 != null) {
 			i1.map(0);
 			// DerivationTree tree3 = GenotypeHelper.buildDerivationTree(i1);
 			// System.out.println("Tree3 " + tree3);
-			Mutationpoint1[0] = 0;
 		} else {
 			Mutationpoint1[0] = (int) i2.getGenotype().get(0).getLength() / 2;
 			// System.out.println("fail tree!!!");
@@ -172,13 +167,15 @@ public class SubtreeCrossoverAxioms extends SubtreeCrossover {
 			i2.map(0);
 			// DerivationTree tree4 = GenotypeHelper.buildDerivationTree(i2);
 			// System.out.println("Tree4 " + tree4);
-			Mutationpoint2[0] = 0;
 		} else {
-			Mutationpoint2[0] = (int) i2.getGenotype().get(0).getLength() / 2;
+			Mutationpoint2[0] = i2.getGenotype().get(0).getLength() / 2;
 
 		}
 		i2.setMutationPoints(Mutationpoint2);
 
+		childs[0] = i1;
+		// System.out.println("ListChild i1= " + ListChild[0]);
+		childs[1] = i2;
 		/*
 		 * System.out.println("Child 1 mapped " + Boolean.toString(i1.isMapped()));
 		 * System.out.println("Child 2 mapped " + Boolean.toString(i2.isMapped()));
@@ -195,26 +192,26 @@ public class SubtreeCrossoverAxioms extends SubtreeCrossover {
 		int offset = 0;
 		boolean Continue = true;
 
-		while (Continue == true) {
+		while (Continue) {
 
 			Continue = false;
 			if (codonIndex + offset < codonTotal) {
 				node = GenotypeHelper.findNodeFromCodonIndex(tree, codonIndex + offset);
-				if (node.getData().equals(relatedNode.getData()) == true)
+				if (node.getData().equals(relatedNode.getData()))
 					return node;
 				Continue = true;
 			}
 
 			if (offset != 0 && codonIndex - offset >= 0) {
 				node = GenotypeHelper.findNodeFromCodonIndex(tree, codonIndex - offset);
-				if (node.getData().equals(relatedNode.getData()) == true)
+				if (node.getData().equals(relatedNode.getData()))
 					return node;
 				Continue = true;
 			}
 
 			if (codonIndex + offset == 0 && codonTotal == 0) {
 				node = GenotypeHelper.findNodeFromCodonIndex(tree, 0);
-				if (node.getData().equals(relatedNode.getData()) == true)
+				if (node.getData().equals(relatedNode.getData()))
 					return node;
 				Continue = true;
 			}

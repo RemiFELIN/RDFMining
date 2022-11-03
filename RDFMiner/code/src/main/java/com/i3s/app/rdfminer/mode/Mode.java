@@ -7,14 +7,14 @@ package com.i3s.app.rdfminer.mode;
  */
 public class Mode {
 
-    public TypeMode type;
+    public int type;
 
     /**
      * Set a mode instance using TypeMode enum.
      *
      * @param type a value of TypeMode enum
      */
-    public Mode(TypeMode type) {
+    public Mode(int type) {
         this.type = type;
     }
 

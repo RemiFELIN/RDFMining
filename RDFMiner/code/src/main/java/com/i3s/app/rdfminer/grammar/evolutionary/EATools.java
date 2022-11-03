@@ -11,13 +11,17 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import Individuals.FitnessPackage.BasicFitness;
+import com.i3s.app.rdfminer.entity.axiom.Axiom;
+import com.i3s.app.rdfminer.entity.axiom.AxiomFactory;
 import com.i3s.app.rdfminer.generator.Generator;
+import com.i3s.app.rdfminer.grammar.evolutionary.selection.EliteSelection;
 import com.i3s.app.rdfminer.grammar.evolutionary.selection.TruncationSelection;
 import com.i3s.app.rdfminer.grammar.evolutionary.selection.TypeSelection;
 import com.i3s.app.rdfminer.mode.Mode;
-import com.i3s.app.rdfminer.shacl.Shape;
-import com.i3s.app.rdfminer.shacl.ShapesManager;
-import com.i3s.app.rdfminer.shacl.ValidationReport;
+import com.i3s.app.rdfminer.entity.shacl.Shape;
+import com.i3s.app.rdfminer.entity.shacl.ShapesManager;
+import com.i3s.app.rdfminer.entity.shacl.ValidationReport;
+import com.i3s.app.rdfminer.parameters.CmdLineParameters;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import com.i3s.app.rdfminer.sparql.corese.CoreseService;
 import org.apache.jena.query.ResultSet;
@@ -72,13 +76,13 @@ public class EATools {
 	}
 
 	/**
-	 * Remove the duplicate(s) individual(s) from a given list and returns the
+	 * Remove the duplicate(s) phenotype(s) from a given list and returns the
 	 * filtered list
 	 * 
 	 * @param canPop a given list to be filtered
 	 * @return the filtered list
 	 */
-	public static ArrayList<GEIndividual> getDistinctPopulation(ArrayList<GEIndividual> canPop) {
+	public static ArrayList<GEIndividual> getDistinctPhenotypePopulationFromAxioms(ArrayList<GEIndividual> canPop) {
 		ArrayList<GEIndividual> individuals = new ArrayList<>();
 		Set<Phenotype> phenotypes = new HashSet<>();
 		for (GEIndividual item : canPop) {
@@ -93,19 +97,31 @@ public class EATools {
 	 * Remove the duplicate(s) genotype(s) from a given list and returns the
 	 * filtered list
 	 * 
-	 * @param canPop a given list to be filtered
+	 * @param axioms a given list to be filtered
 	 * @return the filtered list
 	 */
-	public static ArrayList<GEIndividual> getDistinctGenotypePopulation(ArrayList<GEIndividual> canPop) {
-		ArrayList<GEIndividual> individuals = new ArrayList<>();
+	public static ArrayList<Axiom> getDistinctGenotypePopulationFromAxioms(ArrayList<Axiom> axioms) {
+		ArrayList<Axiom> distinctAxioms = new ArrayList<>();
 		Set<Genotype> genotypes = new HashSet<>();
-		for (GEIndividual item : canPop) {
-			if (genotypes.add(item.getGenotype())) {
-				individuals.add(item);
+		for (Axiom axiom : axioms) {
+			if (genotypes.add(axiom.individual.getGenotype())) {
+				distinctAxioms.add(axiom);
 			}
 		}
-		return individuals;
+		return distinctAxioms;
 	}
+
+	public static ArrayList<Shape> getDistinctGenotypePopulationFromShapes(ArrayList<Shape> shapes) {
+		ArrayList<Shape> distinctShapes = new ArrayList<>();
+		Set<Genotype> genotypes = new HashSet<>();
+		for (Shape shape : shapes) {
+			if (genotypes.add(shape.individual.getGenotype())) {
+				distinctShapes.add(shape);
+			}
+		}
+		return distinctShapes;
+	}
+
 
 	public static ArrayList<GEIndividual> getTypeSelection(int type, ArrayList<GEIndividual> selectedPopulation, int sizeElite, int sizeSelection) {
 		switch (type) {
@@ -136,7 +152,52 @@ public class EATools {
 		}
 	}
 
-	public static SimplePopulation distincPhenotypePopulation(SimplePopulation canPop) {
+	/**
+	 * Renew a given axioms population
+	 * @param axioms a given population
+	 * @param curGeneration the current generation
+	 * @param etilismAxioms a etilism population
+	 * @return a renewed population
+	 */
+	public static ArrayList<Axiom> renewAxioms(int curGeneration, ArrayList<Axiom> axioms, ArrayList<Axiom> etilismAxioms) {
+		ArrayList<Axiom> newAxioms = new ArrayList<>();
+		if (etilismAxioms != null) {
+			for (Axiom etilismAxiom : etilismAxioms) {
+				logger.info("Elitism axiom: " + etilismAxiom.axiomId + "\n genotype: " + etilismAxiom.individual.getGenotype() + " fitness = " + etilismAxiom.individual.getFitness().getDouble());
+				etilismAxiom.individual.setAge(curGeneration);
+				newAxioms.add(etilismAxiom);
+			}
+		}
+		for (Axiom axiom : axioms) {
+			axiom.individual.setAge(curGeneration);
+			newAxioms.add(axiom);
+		}
+		return newAxioms;
+	}
+
+	/**
+	 * Renew a given SHACL Shapes population
+	 * @param shapes a given population
+	 * @param curGeneration the current generation
+	 * @param etilismShapes a etilism population
+	 * @return a renewed population
+	 */
+	public static ArrayList<Shape> renewShapes(int curGeneration, ArrayList<Shape> shapes, ArrayList<Shape> etilismShapes) {
+		ArrayList<Shape> newShapes = new ArrayList<>();
+		if (etilismShapes != null) {
+			for (Shape etilismShape : etilismShapes) {
+				etilismShape.individual.setAge(curGeneration);
+				newShapes.add(etilismShape);
+			}
+		}
+		for (Shape shape : shapes) {
+			shape.individual.setAge(curGeneration);
+			newShapes.add(shape);
+		}
+		return newShapes;
+	}
+
+	public static SimplePopulation distinctPhenotypePopulation(SimplePopulation canPop) {
 		SimplePopulation distinctPopulation = new SimplePopulation();
 		ArrayList<GEIndividual> individuals = new ArrayList<>();
 		int n = canPop.size();
@@ -198,41 +259,140 @@ public class EATools {
 	 * To compute all tasks about crossover, mutation and evaluation phasis of
 	 * genetical algorithm
 	 * 
-	 * @param canPop        the candidate population
+	 * @param axioms        the candidate population
 	 * @param proCrossover  the probability to make a crossover on individual
 	 * @param proMutation   the probability to make a mutation on individual
 	 * @param curGeneration the current generation
 	 * @param generator     an instance of {@link Generator Generator}
 	 * @param diversity     the coefficient of diversity
-	 * @param mode			The mode used for the current experiment
 	 * @return a new population
 	 */
-	public static ArrayList<GEIndividual> computeGeneration(ArrayList<GEIndividual> canPop, double proCrossover,
-															double proMutation, int curGeneration, Generator generator, int diversity, Mode mode)
+	public static ArrayList<Axiom> computeAxiomsGeneration(ArrayList<Axiom> axioms, double proCrossover,
+															double proMutation, int curGeneration, Generator generator, int diversity)
 			throws InterruptedException, ExecutionException, IOException, URISyntaxException {
 
-		ArrayList<GEIndividual> notEvaluatedIndividuals = new ArrayList<>();
-		ArrayList<GEIndividual> evaluatedIndividuals = new ArrayList<>();
-
+		ArrayList<Axiom> newAxioms = new ArrayList<>();
 		// We have a set of threads to compute each tasks
 		ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
-		// 2 differents types of tasks
-		Set<Callable<GEIndividual>> individualCallables = new HashSet<>();
-		Set<Callable<GEIndividual[]>> individualsCallables = new HashSet<>();
-
+		Set<Callable<Axiom[]>> axiomsCallables = new HashSet<>();
 		logger.info("Performing crossover and mutation ...");
 		logger.info("The axioms will be evaluated using the following SPARQL Endpoint : " + Global.SPARQL_ENDPOINT);
-
-		List<Crowding> shapesToEvaluate = new ArrayList<>();
+		// In this version, we only consider OWL axioms
+		if(RDFMiner.parameters.useNoveltySearch) {
+			NoveltySearch noveltySearch = new NoveltySearch(new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES));
+			axioms = noveltySearch.updateSimilarities(axioms);
+		}
 
 		int m = 0;
-
-		while (m <= canPop.size() - 2) {
+		while (m <= axioms.size() - 2) {
 
 			RandomNumberGenerator rand = new MersenneTwisterFast();
 			// get the two individuals which are neighbours
-			GEIndividual parent1 = canPop.get(m);
-			GEIndividual parent2 = canPop.get(m + 1);
+			GEIndividual parent1 = axioms.get(m).individual;
+			GEIndividual parent2 = axioms.get(m + 1).individual;
+			GEIndividual child1, child2;
+			GEChromosome[] chromosomes;
+
+			/* CROSSOVER PHASIS */
+			switch (RDFMiner.parameters.typeCrossover) {
+				case TypeCrossover.SINGLE_POINT_CROSSOVER:
+					// Single-point crossover
+					SinglePointCrossoverAxiom spc = new SinglePointCrossoverAxiom(proCrossover, rand, generator, curGeneration);
+					spc.setFixedCrossoverPoint(true);
+					child1 = parent1;
+					child2 = parent2;
+//					logger.
+					GEIndividual[] childs = spc.doOperation(child1, child2);
+					child1 = childs[0];
+					child2 = childs[1];
+					logger.info("---");
+					break;
+				case TypeCrossover.SUBTREE_CROSSOVER:
+					// subtree crossover
+					SubtreeCrossoverAxioms sca = new SubtreeCrossoverAxioms(proCrossover, rand);
+					GEIndividual[] inds = sca.crossoverTree(parent1, parent2);
+					child1 = inds[0];
+					child2 = inds[1];
+					break;
+				default:
+					// Two point crossover
+					TwoPointCrossover tpc = new TwoPointCrossover(proCrossover, rand);
+					tpc.setFixedCrossoverPoint(true);
+					chromosomes = tpc.crossover(
+							new GEChromosome((GEChromosome) parent1.getGenotype().get(0)),
+							new GEChromosome((GEChromosome) parent2.getGenotype().get(0))
+					);
+					child1 = generator.getIndividualFromChromosome(chromosomes[0], curGeneration);
+					child2 = generator.getIndividualFromChromosome(chromosomes[1], curGeneration);
+					break;
+			}
+
+			/* MUTATION PHASIS */
+//			RandomNumberGenerator rand1 = new MersenneTwisterFast();
+			IntFlipMutation mutation = new IntFlipMutation(proMutation, new MersenneTwisterFast());
+			// make mutation and return new childs from it
+			GEIndividual newChild1 = mutation.doOperation(child1, generator, curGeneration, child1.getMutationPoints());
+			GEIndividual newChild2 = mutation.doOperation(child2, generator, curGeneration, child2.getMutationPoints());
+			// if using crowding method in survival selection
+			if (diversity == 1) {
+				// fill callables of crowding to compute
+				ArrayList<Axiom> parentAxioms = axioms;
+				int finalM = m;
+				axiomsCallables.add(() -> new Crowding(
+						parentAxioms,
+						parentAxioms.get(finalM),
+						parentAxioms.get(finalM +1),
+						AxiomFactory.create(newChild1, newChild1.getPhenotype(), new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.SPARQL_ENDPOINT, Global.PREFIXES)),
+						AxiomFactory.create(newChild2, newChild2.getPhenotype(), new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.SPARQL_ENDPOINT, Global.PREFIXES)))
+						.getAxiomsSurvivalSelection());
+			}
+			m = m + 2;
+		}
+
+		logger.info("Crossover & Mutation done");
+		logger.info("CROWDING diversity method used ...");
+		logger.info(axiomsCallables.size() + " tasks ready to be launched !");
+		// Submit tasks
+		List<Future<Axiom[]>> futures = executor.invokeAll(axiomsCallables);
+		// fill the evaluated individuals
+		for (Future<Axiom[]> future : futures) {
+			newAxioms.addAll(Arrays.asList(future.get()));
+		}
+		// Shutdown the service
+		executor.shutdown();
+		executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+		return newAxioms;
+	}
+
+	/**
+	 * To compute all tasks about crossover, mutation and evaluation phasis of
+	 * genetical algorithm
+	 *
+	 * @param shapes        the candidate population
+	 * @param proCrossover  the probability to make a crossover on individual
+	 * @param proMutation   the probability to make a mutation on individual
+	 * @param curGeneration the current generation
+	 * @param generator     an instance of {@link Generator Generator}
+	 * @param diversity     the coefficient of diversity
+	 * @return a new population
+	 */
+	public static ArrayList<Shape> computeShapesGeneration(ArrayList<Shape> shapes, double proCrossover,
+														   double proMutation, int curGeneration, Generator generator, int diversity)
+			throws InterruptedException, IOException, URISyntaxException {
+
+		ArrayList<GEIndividual> evaluatedIndividuals = new ArrayList<>();
+
+		logger.info("Performing crossover and mutation ...");
+//		logger.info("The SHACL Shapes will be evaluated using the following SPARQL Endpoint : " + Global.SPARQL_ENDPOINT);
+		List<Crowding> shapesToEvaluate = new ArrayList<>();
+
+		int m = 0;
+		while (m <= shapes.size() - 2) {
+
+			RandomNumberGenerator rand = new MersenneTwisterFast();
+			// get the two individuals which are neighbours
+			GEIndividual parent1 = shapes.get(m).individual;
+			GEIndividual parent2 = shapes.get(m + 1).individual;
 			GEIndividual child1, child2;
 			GEChromosome[] chromosomes;
 			GEChromosome c1, c2;
@@ -241,13 +401,19 @@ public class EATools {
 			switch (RDFMiner.parameters.typeCrossover) {
 				case TypeCrossover.SINGLE_POINT_CROSSOVER:
 					// Single-point crossover
-					SinglePointCrossoverAxiom spc = new SinglePointCrossoverAxiom(proCrossover, rand);
-					spc.setFixedCrossoverPoint(false);
-					c1 = new GEChromosome((GEChromosome) parent1.getGenotype().get(0));
-					c2 = new GEChromosome((GEChromosome) parent2.getGenotype().get(0));
-					chromosomes = spc.crossover(c1, c2);
-					child1 = generator.getIndividualFromChromosome(chromosomes[0], curGeneration);
-					child2 = generator.getIndividualFromChromosome(chromosomes[1], curGeneration);
+					// TODO
+//					SinglePointCrossoverAxiom spc = new SinglePointCrossoverAxiom(proCrossover, rand);
+//					spc.setFixedCrossoverPoint(false);
+					child1 = parent1;
+					child2 = parent2;
+//					logger.
+//					spc.doOperation(List.of(child1, child2));
+//					logger.info("");
+//					c1 = new GEChromosome((GEChromosome) parent1.getGenotype().get(0));
+//					c2 = new GEChromosome((GEChromosome) parent2.getGenotype().get(0));
+//					chromosomes = spc.crossover(c1, c2);
+//					child1 = generator.getIndividualFromChromosome(chromosomes[0], curGeneration);
+//					child2 = generator.getIndividualFromChromosome(chromosomes[1], curGeneration);
 					break;
 				case TypeCrossover.SUBTREE_CROSSOVER:
 					// subtree crossover
@@ -269,121 +435,79 @@ public class EATools {
 			}
 
 			/* MUTATION PHASIS */
-			RandomNumberGenerator rand1 = new MersenneTwisterFast();
-			IntFlipMutation mutation = new IntFlipMutation(proMutation, rand1);
+//			RandomNumberGenerator rand1 = new MersenneTwisterFast();
+			IntFlipMutation mutation = new IntFlipMutation(proMutation, new MersenneTwisterFast());
 			// make mutation and return new childs from it
 			GEIndividual newChild1 = mutation.doOperation(child1, generator, curGeneration, child1.getMutationPoints());
 			GEIndividual newChild2 = mutation.doOperation(child2, generator, curGeneration, child2.getMutationPoints());
 			// if using crowding method in survival selection
 			if (diversity == 1) {
-				if(mode.isAxiomMode()) {
-					// fill callables of crowding to compute
-					final int idx = m;
-					individualsCallables.add(() -> new Crowding(canPop.get(idx), canPop.get(idx + 1), newChild1, newChild2, mode)
-							.getSurvivalSelection());
-					// evaluatedIndividuals.add(crowd.SurvivalSelection()[0]);
-					// evaluatedIndividuals.add(crowd.SurvivalSelection()[1]);
-				} else if(mode.isShaclMode()) {
-					shapesToEvaluate.add(new Crowding(parent1, parent2, newChild1, newChild2, mode));
-				}
-			} else {
-				// if choosing children for the new population
-				notEvaluatedIndividuals.add(newChild1);
-				notEvaluatedIndividuals.add(newChild2);
+				logger.info("CROWDING diversity method used ...");
+				shapesToEvaluate.add(new Crowding(parent1, parent2, newChild1, newChild2));
 			}
 			m = m + 2;
 		}
-
 		logger.info("Crossover & Mutation done");
-
-		// if Crowding is not choose, we need to compute each fitness for new axioms
-		if (notEvaluatedIndividuals.size() > 0) {
-
-			logger.info("Starting population assessment ...");
-			// fill callables of individuals to evaluate
-			for (GEIndividual individual : notEvaluatedIndividuals) {
-				individualCallables.add(() -> {
-					AxiomFitnessEvaluation fit = new AxiomFitnessEvaluation();
-					return fit.updateIndividual(individual);
-				});
-			}
-
-			logger.info(individualCallables.size() + " tasks ready to be launched !");
-			// Submit tasks
-			List<Future<GEIndividual>> futures = executor.invokeAll(individualCallables);
-			// fill the evaluated individuals
-			for (Future<GEIndividual> future : futures) {
-				evaluatedIndividuals.add(future.get());
-			}
-			logger.info(evaluatedIndividuals.size() + " individuals added !");
-			// Shutdown the service
-			executor.shutdown();
-			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-		} else {
-			// if crowding is chosen, we need to compute and return the individuals chosen
-			// (between parents and childs) in function of their fitness
-			logger.info("CROWDING diversity method used ...");
-			// SHACL MODE
-			// we decide if we keep the parent or the child for each couple of individuals
-			if(mode.isShaclMode()) {
-				logger.info(shapesToEvaluate.size() + " couples of new shapes (childs) to evaluate ...");
-				// for each child in crowding method
-				ArrayList<GEIndividual> childs = new ArrayList<>();
-				for(Crowding crowding : shapesToEvaluate) {
-					childs.add(crowding.child1);
-					childs.add(crowding.child2);
-				}
+		logger.info(shapesToEvaluate.size() + " couples of new shapes (childs) to evaluate ...");
+		// for each child in crowding method
+		ArrayList<GEIndividual> childs = new ArrayList<>();
+		for(Crowding crowding : shapesToEvaluate) {
+			childs.add(crowding.shapeChild1);
+			childs.add(crowding.shapeChild2);
+		}
 //				logger.info("Size crowding list: " + shapesToEvaluate.size());
-				// evaluate them
-				ShapesManager shapesManager = new ShapesManager(childs);
-				// launch evaluation
-				CoreseEndpoint endpoint = new CoreseEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES);
-				logger.info("Launch evaluation report for new childs ...");
-				String report = endpoint.getValidationReportFromServer(shapesManager.file, CoreseService.PROBABILISTIC_SHACL_EVALUATION);
-				// read evaluation report
+		// evaluate them
+		ShapesManager shapesManager = new ShapesManager(childs);
+		// launch evaluation
+		CoreseEndpoint endpoint = new CoreseEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES);
+		logger.info("Launch evaluation report for new childs ...");
+		String report = endpoint.getValidationReportFromServer(shapesManager.file, CoreseService.PROBABILISTIC_SHACL_EVALUATION);
+		// read evaluation report
 //				logger.info("[DEBUG] report :\n" + report);
-				ValidationReport validationReport = new ValidationReport(report);
-				// set each values finded for each child
-				for(Shape shape : shapesManager.population) {
-					shape.fillParamFromReport(validationReport);
-					// modify crowding with updated childs
-					for(Crowding crowding : shapesToEvaluate) {
-						if(crowding.child1 == shape.individual) {
-							// set the fitness of the child
-							BasicFitness fit = new BasicFitness((Double) shape.fitness, crowding.child1);
-							fit.setIndividual(crowding.child1);
-							fit.getIndividual().setValid(true);
-							crowding.child1.setFitness(fit);
-						} else if(crowding.child2 == shape.individual) {
-							// set the fitness of the child
-							BasicFitness fit = new BasicFitness((Double) shape.fitness, crowding.child2);
-							fit.setIndividual(crowding.child2);
-							fit.getIndividual().setValid(true);
-							crowding.child2.setFitness(fit);
-						}
-					}
+		ValidationReport validationReport = new ValidationReport(report);
+		// set each values finded for each child
+		ArrayList<Shape> childShapes = new ArrayList<>();
+		for(Shape shape : shapesManager.population) {
+			shape.fillParamFromReport(validationReport);
+			// add new childs in a list
+			childShapes.add(shape);
+			// modify crowding with updated childs
+			for(Crowding crowding : shapesToEvaluate) {
+				if(crowding.shapeChild1 == shape.individual) {
+					// set the fitness of the child
+					BasicFitness fit = new BasicFitness((Double) shape.fitness, crowding.shapeChild1);
+					fit.setIndividual(crowding.shapeChild1);
+					fit.getIndividual().setValid(true);
+					crowding.shapeChild1.setFitness(fit);
+				} else if(crowding.shapeChild2 == shape.individual) {
+					// set the fitness of the child
+					BasicFitness fit = new BasicFitness((Double) shape.fitness, crowding.shapeChild2);
+					fit.setIndividual(crowding.shapeChild2);
+					fit.getIndividual().setValid(true);
+					crowding.shapeChild2.setFitness(fit);
 				}
-				// launch survival selection and save it in evaluatedIndividuals list
-				for(Crowding crowding : shapesToEvaluate) {
-					evaluatedIndividuals.addAll(List.of(crowding.getSurvivalSelection()));
-				}
-
-			} else if(mode.isAxiomMode()) {
-				logger.info(individualsCallables.size() + " tasks ready to be launched !");
-				// Submit tasks
-				List<Future<GEIndividual[]>> futures = executor.invokeAll(individualsCallables);
-				// fill the evaluated individuals
-				for (Future<GEIndividual[]> future : futures) {
-					evaluatedIndividuals.addAll(Arrays.asList(future.get()));
-				}
-				// Shutdown the service
-				executor.shutdown();
-				executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 			}
+		}
+		// launch survival selection and save it in evaluatedIndividuals list
+		for(Crowding crowding : shapesToEvaluate) {
+			evaluatedIndividuals.addAll(List.of(crowding.getShapesSurvivalSelection()));
+		}
 
+		ArrayList<Shape> newShapes = new ArrayList<>();
+		for(GEIndividual survival : evaluatedIndividuals) {
+			for(Shape shape : shapes) {
+				if(survival.getGenotype() == shape.individual.getGenotype()) {
+					newShapes.add(shape);
+				}
+			}
+			for(Shape shape : childShapes) {
+				if(survival.getGenotype() == shape.individual.getGenotype()) {
+					newShapes.add(shape);
+				}
+			}
 		}
 		// return the modified individuals
-		return evaluatedIndividuals;
+		return newShapes;
 
 	}
 
@@ -496,6 +620,46 @@ public class EATools {
 			j++;
 		}
 		return arr;
+	}
+
+	public static ArrayList<Axiom> bindIndividualsWithAxioms(ArrayList<GEIndividual> individuals, ArrayList<Axiom> axioms) {
+		ArrayList<Axiom> newAxioms = new ArrayList<>();
+		for(GEIndividual individual : individuals) {
+			for(Axiom axiom : axioms) {
+				if(individual.getGenotype() == axiom.individual.getGenotype()) {
+					newAxioms.add(axiom);
+				}
+			}
+		}
+		return newAxioms;
+	}
+
+	public static ArrayList<Shape> bindIndividualsWithShapes(ArrayList<GEIndividual> individuals, ArrayList<Shape> shapes) {
+		ArrayList<Shape> newShapes = new ArrayList<>();
+		for(GEIndividual individual : individuals) {
+			for(Shape shape : shapes) {
+				if(individual.getGenotype() == shape.individual.getGenotype()) {
+					newShapes.add(shape);
+				}
+			}
+		}
+		return newShapes;
+	}
+
+	public static ArrayList<GEIndividual> getIndividualsFromAxioms(ArrayList<Axiom> axioms) {
+		ArrayList<GEIndividual> individuals = new ArrayList<>();
+		for(Axiom axiom : axioms) {
+			individuals.add(axiom.individual);
+		}
+		return individuals;
+	}
+
+	public static ArrayList<GEIndividual> getIndividualsFromShapes(ArrayList<Shape> shapes) {
+		ArrayList<GEIndividual> individuals = new ArrayList<>();
+		for(Shape shape : shapes) {
+			individuals.add(shape.individual);
+		}
+		return individuals;
 	}
 
 }

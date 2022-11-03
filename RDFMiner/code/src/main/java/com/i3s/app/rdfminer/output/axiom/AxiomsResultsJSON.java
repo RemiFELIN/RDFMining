@@ -1,21 +1,30 @@
 package com.i3s.app.rdfminer.output.axiom;
 
-import java.util.List;
-
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.output.Results;
-import com.i3s.app.rdfminer.shacl.ValidationReport;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 /**
  * 
- * This class is used to map all results on a object and generate a {@link org.json.JSONObject}
+ * This class is used to map all results on an object and generate a {@link org.json.JSONObject}
  * of it
  * 
  * @author Rémi FELIN
  *
  */
 public class AxiomsResultsJSON extends Results {
+
+	public AxiomsResultsJSON() {
+		// set the content part of the results
+		// i.e. a set of assessed OWL Axioms or SHACL Shapes
+		RDFMiner.content = new ArrayList<>();
+		// set statistics
+		// i.e. parameters used; statistics over generations; ...
+		RDFMiner.stats = new StatJSON();
+	}
 
 	@Override
 	public JSONObject toJSON() {

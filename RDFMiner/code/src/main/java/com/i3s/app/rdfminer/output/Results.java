@@ -1,6 +1,5 @@
 package com.i3s.app.rdfminer.output;
 
-import com.i3s.app.rdfminer.shacl.ValidationReport;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -8,7 +7,6 @@ import java.util.List;
 public abstract class Results {
 
     public List<JSONObject> content;
-
     public JSONObject stats;
 
     /**

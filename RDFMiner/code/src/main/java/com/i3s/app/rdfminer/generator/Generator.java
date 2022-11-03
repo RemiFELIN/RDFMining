@@ -95,6 +95,11 @@ public abstract class Generator {
         individual.setUsedCodons(chromosome.getUsedGenes());
         individual.setUsedWraps(grammar.getUsedWraps() - 1);
         individual.setAge(generation);
+        // set a random mutation point
+        int value = (int) Math.round(Math.random() * individual.getGenotype().get(0).getLength());
+        int[] arr = new int[]{value};
+        individual.setMutationPoints(arr);
+        // set a random
         if (valid) individual.setMapped(true);
 
         return individual;

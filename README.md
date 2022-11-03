@@ -72,12 +72,13 @@ rdfmining_virtuoso_1   /bin/bash /virtuoso/script ...   Up      1111/tcp, 8890/t
  -ge (--grammatical-evolution)          : activate the grammatical evolution
  GRAMMATICAL_EVOLUTION                    for the axiom's extraction (default:
                                           false)
+ -gen (--max-generation) MAX_GENERATION : the maximum number of generation
+                                          (default: 50)
  -gsd (--gold-standard) GOLD_STANDARD   : use as this value as the input
                                           Goldstandard file (default:
                                           GoldStandard.xlsx)
  -init (--init-len) INITLEN_CHROMOSOME  : use as this value as the initial
                                           length of chromosome (default: 20)
- -kb (--K_Base) K_BASE                  : KBase (default: 5000)
  -l (--loop) LOOP_CORESE                : Launch SubClassOf assessment with
                                           loop operator from Corese (default:
                                           false)
@@ -85,6 +86,8 @@ rdfmining_virtuoso_1   /bin/bash /virtuoso/script ...   Up      1111/tcp, 8890/t
                                           codon (default: 2147483647)
  -mxw (--max-wrapp) MAX_WRAPP           : use as this value as the max number
                                           of wrapping (default: 1)
+ -ns (--novelty-search) NOVELTY_SEARCH  : use Novelty Search approach (default:
+                                          false)
  -p (--prefixes) PREFIXES               : use this file as the prefixes to be
                                           used in SPARQL queries
  -pc (--prob-cross) PROB_CROSSOVER      : use as this value as the probability
@@ -102,7 +105,7 @@ rdfmining_virtuoso_1   /bin/bash /virtuoso/script ...   Up      1111/tcp, 8890/t
  -se (--type-select) TYPE_SELECTION     : use as this value as the type of
                                           parent selection operation (default:
                                           2)
- -seez (--size-elitie) TYPE_SELECTION   : use as this value as the size of
+ -seez (--size-elite) SIZE_ELITE        : use as this value as the size of
                                           elitism selection (default: 0.02)
  -sez (--size-select) SIZE_SELECTION    : use as this value as the size of
                                           parent selection operation (default:
@@ -121,7 +124,7 @@ rdfmining_virtuoso_1   /bin/bash /virtuoso/script ...   Up      1111/tcp, 8890/t
 ```
 > The container takes the same parameters as RDFMiner jar file
 
-> For instance : ```sudo docker-compose exec rdfminer ./rdfminer/scripts/run.sh -ge -r -g /rdfminer/io/OWL2Axiom-test9.bnf -dir example/ -ps 100 -kb 1000 -ckp 1 -pc 0.8 -pm 0.01 -sez 0.7 -el 1 -seez 0.02 -init 6 -div 1 -mxw 1 -se 2```
+> For instance : ```sudo docker-compose exec rdfminer ./rdfminer/scripts/run.sh -ge -r -l -g /rdfminer/io/OWL2Axiom-test9.bnf -dir example/ -ps 100 -gen 10 -ckp 1 -pc 0.8 -pm 0.01 -sez 0.7 -el 1 -seez 0.02 -init 6 -div 1 -mxw 1 -se 2```
 
 ## Documentations
 

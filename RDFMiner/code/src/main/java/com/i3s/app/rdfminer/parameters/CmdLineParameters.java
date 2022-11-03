@@ -41,6 +41,9 @@ public class CmdLineParameters {
 	@Option(name = "-cs", aliases = { "--classic-shacl" }, usage = "use classic SHACL validation", metaVar = "CLASSIC_SHACL")
 	public boolean useClassicShaclMode = false;
 
+	@Option(name = "-ns", aliases = { "--novelty-search" }, usage = "use Novelty Search approach", metaVar = "NOVELTY_SEARCH")
+	public boolean useNoveltySearch = false;
+
 	/**
 	 * The angular coefficient to be used for dynamic time capping of axiom test.
 	 * <p>
@@ -176,8 +179,8 @@ public class CmdLineParameters {
 //			"--FileAxioms" }, usage = "use as this value as the name of output statistics axioms", metaVar = "STATISTICS_AXIOMS")
 //	public String FileAxioms = "AxiomsStatistics";
 
-	@Option(name = "-kb", aliases = { "--K_Base" }, usage = "KBase", metaVar = "K_BASE")
-	public int kBase = 5000;
+	@Option(name = "-gen", aliases = { "--max-generation" }, usage = "the maximum number of generation", metaVar = "MAX_GENERATION")
+	public int maxGeneration = 50;
 
 	@Option(name = "-ckp", aliases = { "--Checkpoint" }, usage = "Checkpoint", metaVar = "CHECK_POINT")
 	public int checkpoint = 3;
