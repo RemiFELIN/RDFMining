@@ -70,8 +70,6 @@ public class NSManager extends ASTObject {
     public static final String DBPEDIA = "http://dbpedia.org/resource/";
     public static final String RESOURCE = "http://ns.inria.fr/corese/";
     public static final String CORESE = "http://ns.inria.fr/corese/";
-    // RDFMiner project
-    public static final String RDFMINER = "http://ns.inria.fr/rdfminer/shacl#";
     public static final String RULE  = CORESE+"rule/";
     public static final String HTTP = "http://ns.inria.fr/http/";
     public static final String GEO = "http://www.w3.org/2003/01/geo/wgs84_pos#";
@@ -89,6 +87,8 @@ public class NSManager extends ASTObject {
     public static final String SHAPE = SHACL;
     public static final String SHACL_JAVA = "function://fr.inria.corese.core.extension.SHACL.";
     public static final String SHACL_SHACL = RESOURCE+"data/shaclshacl.ttl";
+    // Probabilistic SHACL
+    public static final String PROBSHACL = "http://www.w3.org/ns/probabilistic-shacl#";
 
     public static final String COSNS = RDFS.COSNS;
     public static final String COS = RDFS.COS;
@@ -330,8 +330,8 @@ public class NSManager extends ASTObject {
         def.put(INDEX, "idx");
         def.put(GEO, "geo");
         //def.put(HTTP, "http");
-        // RDFMiner project
-        def.put(RDFMINER, "rdfminer");
+        // Probabilistic SHACL
+        def.put(PROBSHACL, "psh");
     }
 
     // add default namespaces
@@ -340,8 +340,6 @@ public class NSManager extends ASTObject {
             defNamespace(ns, getDefaultNS().get(ns));
         }
         defPrefix("xsh", SHACL);
-        // RDFMiner project
-        // defPrefix("rdfminer", RDFMINER);
     }
 
     public boolean isSystem(String ns) {

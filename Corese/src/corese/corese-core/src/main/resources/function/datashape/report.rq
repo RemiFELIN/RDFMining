@@ -3,7 +3,7 @@
 #
 # Olivier Corby - Wimmics Inria I3S - 2016-2020
 #
-prefix rdfminer: <http://ns.inria.fr/rdfminer/shacl#>
+prefix psh: <http://www.w3.org/ns/probabilistic-shacl#>
 prefix sh:   <http://www.w3.org/ns/shacl#> 
 prefix xsh:  <http://www.w3.org/ns/shacl#> 
 prefix shex: <http://ns.inria.fr/shex/shacl#>
@@ -94,7 +94,7 @@ function xsd:boolean sh:result(report, subReport, name, sh, cst, dt:graph shape,
                 sh:store(report, res, sh:resultMessage2, mesfun)) ;
                             
         sh:store(report, res, sh:sourceConstraintComponent, def) ;
-        sh:store(report, res, sh:sourceShape, sh) ;
+        sh:store(report, res, sh:sourceShape, shapeName) ;
                                                 
         if (sh:isValue(path)) {
                 sh:store(report, res, sh:resultPath, sh:prettyNodeOrList(shape, path))
@@ -140,33 +140,34 @@ function xsd:boolean sh:result(report, subReport, name, sh, cst, dt:graph shape,
 # Extended SHACL Report component
 function sh:addExtendedShaclReport(report, exceptions) {
     set(summary = bnode());
-    sh:store(report, abnode, rdfminer:summary, summary);
-    sh:store(report, summary, rdf:type, rdfminer:ValidationSummary);
-    # sh:store(report, summary, rdfminer:mode, "Probabilistic");
+    sh:store(report, abnode, psh:summary, summary);
+    sh:store(report, summary, rdf:type, psh:ValidationSummary);
+    # sh:store(report, summary, psh:mode, "Probabilistic");
     # shapeName is defined on <main.rq> sh:shacleval(shape, focus)
     sh:store(report, summary, sh:sourceShape, shapeName);
     # referenceCardinality is defined on <main.rq> sh:shacleval(shape, focus)
-    sh:store(report, summary, rdfminer:referenceCardinality, referenceCardinality);
+    sh:store(report, summary, psh:referenceCardinality, referenceCardinality);
     # numException is defined by the size of exceptions list such as :
     set(numException = xt:size(exceptions));
-    sh:store(report, summary, rdfminer:numException, numException);
+    sh:store(report, summary, psh:numException, numException);
     # numConfirmation is defined by referenceCardinality and the size of exceptions list such as : 
     set(numConfirmation = (referenceCardinality - numException));
-    sh:store(report, summary, rdfminer:numConfirmation, numConfirmation);
+    sh:store(report, summary, psh:numConfirmation, numConfirmation);
     # prob of a future instance in this shape may be conform
     set(probability = (numConfirmation / referenceCardinality));
-    sh:store(report, summary, rdfminer:probability, probability);
+    sh:store(report, summary, psh:probability, probability);
     # to validate
     set(generality = (referenceCardinality / numInstances));
-    sh:store(report, summary, rdfminer:generality, generality);
-    sh:store(report, summary, rdfminer:fitness, generality * probability);
+    sh:store(report, summary, psh:generality, generality);
+    # @TODO a faire au niveau de psh et non de la validation !!!
+    # sh:store(report, summary, psh:fitness, generality * probability);
     # rule : log exceptions if 0<len(exceptions)<=100
-    if(xt:size(exceptions)>0 && xt:size(exceptions)<=100) {
-        for(exception in dt:list(exceptions)) {
-            sh:store(report, summary, rdfminer:exception, exception);
-        }
-    }
-    # sh:store(report, summary, rdfminer:exceptions, exceptions);
+    # if(xt:size(exceptions)>0 && xt:size(exceptions)<=100) {
+    #     for(exception in dt:list(exceptions)) {
+    #         sh:store(report, summary, psh:exception, exception);
+    #     }
+    # }
+    # sh:store(report, summary, psh:exceptions, exceptions);
 }
 
 #

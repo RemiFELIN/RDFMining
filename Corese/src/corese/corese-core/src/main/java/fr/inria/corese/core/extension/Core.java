@@ -71,8 +71,8 @@ public class Core extends PluginImpl implements FunctionEvaluator {
         prefix = new HashMap<>();
         define("sh", NSManager.SHAPE);
         define("msh", MSH);
-        // add RDFMiner endpoint to the prefixes
-        define("rdfminer", NSManager.RDFMINER);
+        // add probabilistic SHACL prefix
+        define("psh", NSManager.PROBSHACL);
     }
     
     static void defSignature() {

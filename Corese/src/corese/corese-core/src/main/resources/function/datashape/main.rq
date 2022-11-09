@@ -8,7 +8,7 @@ prefix xsh:  <http://www.w3.org/ns/shacl#>
 prefix shex: <http://ns.inria.fr/shex/shacl#>
 prefix dct: <http://purl.org/dc/terms/>
 prefix fun:  <function://fr.inria.corese.core.extension.Extension>
-prefix rdfminer: <http://ns.inria.fr/rdfminer/shacl#>
+prefix psh: <http://www.w3.org/ns/probabilistic-shacl#>
 
 @import  <api/define.rq> <focus.rq> <ppathparser.rq> <ppath.rq> <operator.rq> <operatorext.rq> <core.rq>  <path.rq> <constraint.rq>  <target.rq> <report.rq>
 
