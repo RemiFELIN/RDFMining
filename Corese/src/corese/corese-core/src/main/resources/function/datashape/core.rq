@@ -4,6 +4,7 @@
 # Olivier Corby - Wimmics Inria I3S - 2016-2019
 #
 
+# prefix psh: <http://www.w3.org/ns/probabilistic-shacl#>
 prefix sh:  <http://www.w3.org/ns/shacl#> 
 prefix msh: <http://ns.inria.fr/shacl/>
 prefix shex: <http://ns.inria.fr/shex/shacl#>
@@ -309,13 +310,41 @@ function sh:coreboolean(shape, cst) {
         }
 }
 
+# Contributions 
+# Probabilistic SHACL 
+# Binomial formulas 
+# @author Rémi FELIN
 
+function sh:fac(n) {
+    if (n = 0, 1, ?n * sh:fac(?n - 1))
+}
 
+function sh:pow(n, p) {
+    if (p = 0, 1, ?n * sh:pow(?n, ?p - 1))
+}
 
+function sh:comb(n, k) {
+    return (sh:fac(?n) / (sh:fac(?k) * sh:fac(?n - ?k)))
+}
 
+# P(X = k)
+function sh:binomial(n, p, k) {
+    # sh:log("core.rq", "sh:binomial", concat("bin(", n, ", ", p, ", ", k, ") = ", sh:comb(?n, ?k) * sh:pow(?p, ?k) * sh:pow(1 - ?p, ?n - ?k)));
+    return (sh:comb(?n, ?k) * sh:pow(?p, ?k) * sh:pow(1 - ?p, ?n - ?k))
+}
 
+# P(X <= k)
+# example:  P(X <= 1) = P(X = 0) + P(X = 1)
+function sh:binomialEqualOrLess(n, p, k) {
+    if(k = 0, sh:binomial(?n, ?p, 0), sh:binomial(?n, ?p, ?k) + sh:binomialEqualOrLess(?n, ?p, ?k - 1))
+}
 
-
+# P(X >= k) 
+# example:  P(X >= 2) with n=3 -> P(X = 2) + P(X = 3)
+function sh:binomialEqualOrGreater(n, p, k) {
+    if(k = n, sh:binomial(?n, ?p, ?n), sh:binomial(?n, ?p, ?k) + sh:binomialEqualOrGreater(?n, ?p, ?k + 1))
+    # return (1 - sh:binomialEqualOrLess(n, p, k - 1))
+}
 
 
 
