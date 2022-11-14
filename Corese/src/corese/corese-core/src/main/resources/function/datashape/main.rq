@@ -29,11 +29,14 @@ function dt:graph sh:shacl() {
 #
 # extended shacl function : probabilistic or possibilistic mode
 #
-function dt:graph sh:extendedshacl(dt:graph shape, int) {
+function dt:graph sh:extendedshacl(dt:graph shape, int, n, k) {
     if (sh:trace(), xt:print("shacl:"), true);
     sh:java(false);
     set(mode = xsd:integer(int));
     set(extended = true);
+    set(probShaclN = xsd:integer(n));
+    set(probShaclK = xsd:integer(k));
+    sh:log("main.rq", "sh:extendedshacl", concat("N=", probShaclN, " and K=", probShaclK));
     if (mode == 1, 
         sh:log("main.rq", "sh:extendedshacl", "Probabilistic mode"),
         if(mode == 2, 

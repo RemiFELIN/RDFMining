@@ -208,17 +208,17 @@ public class Shacl {
     }
 
     /**
-     * SHACL Evaluation with a given mode (probabilistic or possibilistic)
+     * probabilistic SHACL Evaluation (usage for Corese GUI)
      * @return
      * @throws EngineException
      */
     public Graph eval(int mode) throws EngineException {
-        return eval(EXTENDED_SHACL, getShacl(), mode);
+        return eval(EXTENDED_SHACL, getShacl(), mode, 10, 7);
     }
 
-    public Graph eval(Graph shacl, int mode) throws EngineException {
+    public Graph eval(Graph shacl, int mode, int n, int k) throws EngineException {
         setShacl(shacl);
-        return eval(EXTENDED_SHACL, shacl, mode);
+        return eval(EXTENDED_SHACL, shacl, mode, n, k);
     }
     
     /**

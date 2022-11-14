@@ -403,6 +403,9 @@ public class TripleStore implements URLParam {
         Graph shacl = Graph.create();
         Load ld = Load.create(shacl);
         InputStream stream = null;
+        // Default values for 'n' and 'k' parameters
+        int n = 10;
+        int k = 7;
         try {
             if(ds.getContext().get(URLParam.CONTENT) != null) {
                 stream = new ByteArrayInputStream(ds.getContext().get(URLParam.CONTENT).stringValue().getBytes(StandardCharsets.UTF_8));
@@ -412,14 +415,30 @@ public class TripleStore implements URLParam {
                     ld.parse(dt.getLabel());
                 }
             }
-
+            // Manage params :
+            // for 'n'
+            if(ds.getContext().get(URLParam.PROB_SHACL_N) != null) {
+                n = Integer.parseInt(ds.getContext().get(URLParam.PROB_SHACL_N).getLabel());
+            } else {
+                logger.warn("The prob-shacl validator will use the default value: n=" + n);
+            }
+            // for 'k'
+            if(ds.getContext().get(URLParam.PROB_SHACL_K) != null) {
+                k = Integer.parseInt(ds.getContext().get(URLParam.PROB_SHACL_K).getLabel());
+            } else {
+                logger.warn("The prob-shacl validator will use the default value: k=" + k);
+            }
+            if (k > n) {
+                logger.warn("k > n ! set k = n ...");
+                k = n;
+            }
 
         } catch (LoadException ex) {
             logger.error(ex.getMessage());
             throw new EngineException(ex) ;
         }
         Shacl sh = new Shacl(getGraph());
-        Graph res = sh.eval(shacl, Shacl.PROBABILISTIC_MODE);
+        Graph res = sh.eval(shacl, Shacl.PROBABILISTIC_MODE, n, k);
         QueryProcess exec = QueryProcess.create(res);
         exec.setDebug(ds.getContext().isDebug());
         Mappings map = exec.query(query);
