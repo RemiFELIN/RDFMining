@@ -1,10 +1,12 @@
 package com.i3s.app.rdfminer.entity.shacl;
 
 import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.entity.shacl.vocabulary.ShaclKW;
 import com.i3s.app.rdfminer.sparql.RequestBuilder;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.jena.vocabulary.RDF;
 import org.apache.log4j.Logger;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.query.BindingSet;
@@ -304,10 +306,14 @@ public class Shape {
         this.numException = report.numExceptionsByShape.get(parsedUri);
         this.probability = report.probabilityByShape.get(parsedUri);
         this.generality = report.generalityByShape.get(parsedUri);
-        this.fitness = report.fitnessByShape.get(parsedUri);
+        this.fitness = computeFitness();
         if(report.exceptionsByShape.get(parsedUri) != null) {
             this.exceptions = new ArrayList<>(report.exceptionsByShape.get(parsedUri));
         }
+    }
+
+    public double computeFitness() {
+        return this.probability.doubleValue() * this.generality.doubleValue();
     }
 
     @Override
@@ -330,10 +336,13 @@ public class Shape {
         JSONArray exceptions = new JSONArray();
         if(this.exceptions.size() > 0) {
             for(String exception : this.exceptions) {
-                exceptions.put(exception);
+                exceptions.put("<" + exception + ">");
             }
         }
         json.put("exceptions", exceptions);
+        // Probabilistic params
+        json.put("n", Integer.valueOf(RDFMiner.parameters.probShaclN));
+        json.put("k", Integer.valueOf(RDFMiner.parameters.probShaclK));
         return json;
     }
 

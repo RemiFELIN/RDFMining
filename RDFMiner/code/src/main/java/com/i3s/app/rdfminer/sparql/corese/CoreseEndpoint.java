@@ -1,6 +1,7 @@
 package com.i3s.app.rdfminer.sparql.corese;
 
 import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.sparql.RequestBuilder;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -179,6 +180,9 @@ public class CoreseEndpoint {
         params.put("uri", Global.SPARQL_ENDPOINT + CoreseService.CORESE_GET_SHACL_SHAPES_ENDPOINT);
         params.put("query", "construct where {?s ?p ?o}");
         params.put("format", Format.TURTLE);
+        // v2 : binomial distribution
+        params.put("n", RDFMiner.parameters.probShaclN);
+        params.put("k", RDFMiner.parameters.probShaclK);
         // send the given file to the server
         sendSHACLShapesToServer(file);
         // send GET request

@@ -157,7 +157,7 @@ function sh:addExtendedShaclReport(report, exceptions) {
     # v1 :
     # set(probability = (numConfirmation / referenceCardinality));
     # v2: 
-    set(probability = sh:binomialEqualOrGreater(probShaclN, numConfirmation / referenceCardinality, probShaclN));
+    set(probability = sh:binomialEqualOrGreater(probShaclN, numConfirmation / referenceCardinality, probShaclK));
     sh:store(report, summary, psh:probability, probability);
     # to validate
     set(generality = (referenceCardinality / numInstances));

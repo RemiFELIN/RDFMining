@@ -73,7 +73,7 @@ public class Global {
             + "PREFIX sp:       <http://spinrdf.org/sp#> \n"
             + "PREFIX sh:       <http://www.w3.org/ns/shacl#> \n"
             + "PREFIX dct:      <http://purl.org/dc/terms/> \n"
-            + "PREFIX rdfminer: <http://ns.inria.fr/rdfminer/shacl#> \n";
+            + "PREFIX psh:      <http://www.w3.org/ns/probabilistic-shacl#> \n";
 
     /**
      * prefixes used to perform queries with the local {@link Global#VIRTUOSO_LOCAL_SPARQL_ENDPOINT

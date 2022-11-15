@@ -5,7 +5,7 @@ public class CoreseService {
     /**
      * Corese service : SPARQL endpoint
      */
-    public static final String CORESE_SPARQL_ENDPOINT = "sparql";
+    public static final String CORESE_SPARQL_ENDPOINT = "sparql/psh";
 
     /**
      * Corese service : send SHACL Shapes endpoint

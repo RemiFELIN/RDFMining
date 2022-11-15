@@ -43,8 +43,8 @@ public class Evaluator {
 		AxiomGenerator generator = null;
 		BufferedReader axiomFile = null;
 
-		// Create an empty JSON object which will be fill with our results
-		RDFMiner.axiomsList = new JSONArray();
+		// Create an empty JSON array which will be fill with our results
+		RDFMiner.evaluatedEntities = new JSONArray();
 		
 		if (parameters.axiomFile == null) {
 			if (parameters.singleAxiom == null) {
@@ -178,7 +178,7 @@ public class Evaluator {
 
 		for(Axiom axiom : axiomList) {
 			// Save a JSON report of the test
-			RDFMiner.axiomsList.put(axiom.toJSON());
+			RDFMiner.evaluatedEntities.put(axiom.toJSON());
 		}
 
 		logger.info("Done testing axioms. Exiting.");
@@ -193,7 +193,7 @@ public class Evaluator {
 		BufferedReader shapeFile = null;
 
 		// Create an empty JSON object which will be fill with our results
-		RDFMiner.axiomsList = new JSONArray();
+		RDFMiner.evaluatedEntities = new JSONArray();
 
 		if (parameters.shapeFile != null) {
 			logger.info("Reading SHACL Shapes from file " + parameters.shapeFile + "...");
@@ -236,11 +236,12 @@ public class Evaluator {
 			RDFMiner.output.write(validationReport.prettifyPrint());
 		} else {
 			report = endpoint.getValidationReportFromServer(shapesManager.file, CoreseService.PROBABILISTIC_SHACL_EVALUATION);
+//			logger.info("REPORT:\n" + report);
 			ValidationReport validationReport = new ValidationReport(report);
 			for(Shape shape : shapesManager.getPopulation()) {
 				shape.fillParamFromReport(validationReport);
 				// Save a JSON report of the test
-				RDFMiner.axiomsList.put(shape.toJSON());
+				RDFMiner.evaluatedEntities.put(shape.toJSON());
 			}
 		}
 
@@ -252,7 +253,7 @@ public class Evaluator {
 		try {
 			logger.warn("Shutting down RDFMiner ...");
 			if(!RDFMiner.parameters.useClassicShaclMode)
-				RDFMiner.output.write(RDFMiner.axiomsList.toString(2));
+				RDFMiner.output.write(RDFMiner.evaluatedEntities.toString(2));
 			RDFMiner.output.close();
 		} catch (IOException e) {
 			logger.error("I/O error while closing JSON writer: " + e.getMessage());

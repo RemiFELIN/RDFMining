@@ -288,6 +288,7 @@ public class SPARQLRestAPI implements ResultFormatDef, URLParam {
      * .
      */
     @GET
+    @Path("/psh")
     @Produces({SPARQL_RESULTS_XML, XML})
     public Response getTriplesXMLForGet(@jakarta.ws.rs.core.Context HttpServletRequest request,
             // name of server from SPARQLService
@@ -306,7 +307,7 @@ public class SPARQLRestAPI implements ResultFormatDef, URLParam {
             @QueryParam("n") String n,
             @QueryParam("k") String k,
             @QueryParam("uri")    List<String> uri) {
-        
+
         logger.info("getTriplesXMLForGet" );
         String ft = request.getHeader("Accept");
         System.out.println("accept: " + ft);
@@ -396,7 +397,6 @@ public class SPARQLRestAPI implements ResultFormatDef, URLParam {
             @QueryParam("uri")    List<String> uri) {
         
         logger.info("getHTMLForGet");
-        
         if ((query == null || query.isEmpty()) && 
             (mode==null||mode.isEmpty())) {
             query = "select * where {?s ?p ?o} limit 5";

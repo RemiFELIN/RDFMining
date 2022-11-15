@@ -9,6 +9,8 @@ public class ShaclKW {
      */
     public static final String VALIDATION_REPORT = SHACL + "ValidationReport";
 
+    public static final String VALIDATION_RESULT = SHACL + "ValidationResult";
+
     /**
      * The "sh:sourceShape" of a shape
      */

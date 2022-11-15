@@ -55,7 +55,7 @@ public class RDFMiner {
 	public static String outputFolder;
 	
 	// v1.0 evaluate data
-	public static JSONArray axiomsList;
+	public static JSONArray evaluatedEntities;
 	// v1.2 miner data
 	public static Results results;
 	public static StatJSON stats;
