@@ -213,12 +213,12 @@ public class Shacl {
      * @throws EngineException
      */
     public Graph eval(int mode) throws EngineException {
-        return eval(EXTENDED_SHACL, getShacl(), mode, 10, 7);
+        return eval(EXTENDED_SHACL, getShacl(), mode, DatatypeMap.createLiteral(String.valueOf(0.1), fr.inria.corese.sparql.datatype.RDF.xsddouble));
     }
 
-    public Graph eval(Graph shacl, int mode, int n, int k) throws EngineException {
+    public Graph eval(Graph shacl, int mode, IDatatype p) throws EngineException {
         setShacl(shacl);
-        return eval(EXTENDED_SHACL, shacl, mode, n, k);
+        return eval(EXTENDED_SHACL, shacl, mode, p);
     }
     
     /**

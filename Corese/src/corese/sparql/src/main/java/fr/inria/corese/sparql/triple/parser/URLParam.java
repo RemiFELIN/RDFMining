@@ -66,8 +66,7 @@ public interface URLParam {
     static final String SHACL = "shacl";
     // Probabilistic SHACL
     static final String PROBABILISTIC_SHACL = "prob-shacl";
-    static final String PROB_SHACL_N = "n";
-    static final String PROB_SHACL_K = "k";
+    static final String PROB_SHACL_P = "p";
 
     static final String REQUEST = "request";
     static final String BEFORE = "before";

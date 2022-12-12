@@ -5,6 +5,7 @@ import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.entity.shacl.vocabulary.ShaclKW;
 import com.i3s.app.rdfminer.sparql.RequestBuilder;
+import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.rdf4j.model.Model;
@@ -21,6 +22,7 @@ import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -51,7 +53,7 @@ public class ShapesManager {
 
     public File file;
 
-    public ShapesManager(String filePath) {
+    public ShapesManager(String filePath) throws URISyntaxException, IOException {
         Path path = Path.of(filePath);
         // init model
         try {
@@ -111,7 +113,7 @@ public class ShapesManager {
      *
      * @param individuals individuals generated
      */
-    public ShapesManager(ArrayList<GEIndividual> individuals) throws IOException {
+    public ShapesManager(ArrayList<GEIndividual> individuals) throws IOException, URISyntaxException {
         this.individuals = individuals;
         for (GEIndividual individual : individuals) {
             population.add(new Shape(individual));
@@ -120,7 +122,7 @@ public class ShapesManager {
         this.file = getFile();
     }
 
-    public ShapesManager(Shape shape) {
+    public ShapesManager(Shape shape) throws URISyntaxException, IOException {
         this.shape = shape;
         // set the file content to evaluate this SHACL Shapes on server
         this.file = getFile();
@@ -130,16 +132,10 @@ public class ShapesManager {
         this.individuals = new ArrayList<>(updatedIndividuals);
     }
 
-    private File getFile() {
+    private File getFile() throws URISyntaxException, IOException {
         StringBuilder content = new StringBuilder(Global.PREFIXES);
-        if(!population.isEmpty()) {
-            for(Shape shape : population) {
-                content.append(shape).append("\n");
-            }
-        } else if(this.shape != null){
-            // set only one shape in fileContent
-            content.append(this.shape).append("\n");
-        }
+        CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.SPARQL_ENDPOINT, Global.PREFIXES);
+        content.append(endpoint.getFileFromServer());
         // Now, we can create (or edit) the file to send
         File file = new File(RDFMiner.outputFolder + "shapes.ttl");
         if(!file.exists()) {

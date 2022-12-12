@@ -13,6 +13,7 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
+import org.apache.logging.log4j.core.Core;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -181,12 +182,16 @@ public class CoreseEndpoint {
         params.put("query", "construct where {?s ?p ?o}");
         params.put("format", Format.TURTLE);
         // v2 : binomial distribution
-        params.put("n", RDFMiner.parameters.probShaclN);
-        params.put("k", RDFMiner.parameters.probShaclK);
+        params.put("p", RDFMiner.parameters.probShaclP);
         // send the given file to the server
         sendSHACLShapesToServer(file);
         // send GET request
         return get(service, params);
+    }
+
+    public String getFileFromServer() throws URISyntaxException, IOException {
+        final String service = this.url + CoreseService.CORESE_GET_SHACL_SHAPES_ENDPOINT;
+        return get(service);
     }
 
     /**

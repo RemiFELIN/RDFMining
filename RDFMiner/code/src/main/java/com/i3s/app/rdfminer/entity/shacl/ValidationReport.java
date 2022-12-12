@@ -154,7 +154,7 @@ public class ValidationReport {
                 // we just iterate over all solutions in the result...
                 for (BindingSet solution : result) {
                     // add each result on the final list
-                    results.add(String.valueOf(solution.getValue("shapes")));
+                    results.add(String.valueOf(solution.getValue("shape")));
                 }
             }
         } finally {

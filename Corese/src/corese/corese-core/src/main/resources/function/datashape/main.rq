@@ -29,16 +29,14 @@ function dt:graph sh:shacl() {
 #
 # extended shacl function : probabilistic or possibilistic mode
 #
-function dt:graph sh:extendedshacl(dt:graph shape, int, n, k) {
+function dt:graph sh:extendedshacl(dt:graph shape, m, p) {
     if (sh:trace(), xt:print("shacl:"), true);
     sh:java(false);
-    set(mode = xsd:integer(int));
+    set(mode = xsd:integer(m));
     set(extended = true);
-    set(probShaclN = xsd:integer(n));
-    set(probShaclK = xsd:integer(k));
-    sh:log("main.rq", "sh:extendedshacl", concat("N=", probShaclN, " and K=", probShaclK));
+    set(prob = p);
     if (mode == 1, 
-        sh:log("main.rq", "sh:extendedshacl", "Probabilistic mode"),
+        sh:log("main.rq", "sh:extendedshacl", concat("Probabilistic mode used with p=", prob)),
         if(mode == 2, 
             sh:log("main.rq", "sh:extendedshacl", "Possibilistic mode"), 
             sh:log("main.rq", "sh:extendedshacl", "ERROR this ID is not found !")
@@ -126,10 +124,10 @@ function sh:shacleval(shape, focus) {
     # sh:log("main.rq", "sh:shacleval", "start...");
     let (suc = true) {
         for ((sh list) in focus) {
-            sh:log("main.rq", "sh:shacleval", "focus ...");
             if (sh:trace(), xt:print("target:", coalesce(sh, "undef"), xt:size(list), list), true);
-            sh:log("main.rq", "sh:shacleval", concat("bound(sh)=", bound(sh), " and xt:size(list)=", xt:size(list)));
+            # sh:log("main.rq", "sh:shacleval", concat("focus ", sh));
             if (bound(sh) && xt:size(list) > 0) {
+                sh:log("main.rq", "sh:shacleval", concat("xt:size(list)=", xt:size(list)));
                 set(abnode = sh:bnodeid());
                 if(extended) {
                     # sh:log("main.rq", "sh:shacleval", concat("referenceCardinality=", xt:size(list)));
@@ -141,7 +139,7 @@ function sh:shacleval(shape, focus) {
                     set(exceptions = xt:list());
                     # now, we will calculate the total number of instances in the dataset
                     set(numInstances = sh:getNumInstances());
-                    # sh:log("main.rq", "sh:shacleval", concat("numInstances=", numInstances));
+                    sh:log("main.rq", "sh:shacleval", concat("n_triples=", numInstances));
                 } ;
                 # set the final report as global variable
                 set(rep = sh:validationReport());
@@ -156,6 +154,9 @@ function sh:shacleval(shape, focus) {
                     sh:addExtendedShaclReport(rep, exceptions);
                 } ;
             }
+            # else {
+            #     sh:log("main.rq", "sh:shacleval", concat("bound: ", bound(sh), " and xt:size(list)=", xt:size(list)));
+            # }
         } ;
         # if the RDF graph is conform, we set the report to conform such as :
         if(coalesce(!fail, true)) {

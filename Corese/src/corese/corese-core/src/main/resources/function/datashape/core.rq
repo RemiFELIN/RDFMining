@@ -315,22 +315,56 @@ function sh:coreboolean(shape, cst) {
 # Binomial formulas 
 # @author Rémi FELIN
 
-function sh:fac(n) {
-    if (n = 0, 1, ?n * sh:fac(?n - 1))
-}
+# function sh:fac(n) {
+#     # sh:log("core.rq", "sh:fac", concat("fac(", n, ")"));
+#     # not scalable :
+#     if (n = 0, 1, return (?n * sh:fac(?n - 1)))
+# }
 
-function sh:pow(n, p) {
-    if (p = 0, 1, ?n * sh:pow(?n, ?p - 1))
-}
+# Optimized pow (n po)
+# function sh:pow(a, b) {
+#     # sh:log("core.rq", "sh:pow", concat("pow(", n, ", ", po, ")"));
+#     # Not scalable :
+#     # if (po = 0, 1, return (?n * sh:pow(?n, ?po - 1)))
+#     # Exponentiation by Squaring
+#     if(?b = 1) {
+#         return (?a)
+#     };
+#     if(?b%2 = 1) {
+#         return (?a * sh:pow(?a, ?b - 1))
+#     };
+#     set(tmp_exp = sh:pow(?a, ?b / 2));
+#     return (tmp_exp * tmp_exp)
+# }
 
+# Optimized combinaison (n k)
 function sh:comb(n, k) {
-    return (sh:fac(?n) / (sh:fac(?k) * sh:fac(?n - ?k)))
+    # not scalable :
+    # return (sh:fac(?n) / (sh:fac(?k) * sh:fac(?n - ?k)))
+    if(?k>?n-?k) {
+        ?k=?n - ?k;
+    };
+    set(coef = 1);
+    # sh:log("core.rq", "sh:comb", concat("k=", k));
+    for (i in xt:iota(0, ?k - 1)) {
+        set(coef=coef*(?n - i));
+        set(coef=floor(coef/(i+1)));
+        # sh:log("core.rq", "sh:comb", concat("coef=", coef));
+    };
+    return (coef)
 }
+
+# function sh:floor(dec) {
+#     sh:log("core.rq", "sh:floor", concat("dec=", dec));
+#     let (select * where { bind(FLOOR(?dec) as ?o) } ) {
+#         return (o)
+#     }
+# }
 
 # P(X = k)
 function sh:binomial(n, p, k) {
-    # sh:log("core.rq", "sh:binomial", concat("bin(", n, ", ", p, ", ", k, ") = ", sh:comb(?n, ?k) * sh:pow(?p, ?k) * sh:pow(1 - ?p, ?n - ?k)));
-    return (sh:comb(?n, ?k) * sh:pow(?p, ?k) * sh:pow(1 - ?p, ?n - ?k))
+    # sh:log("core.rq", "sh:binomial", concat("bin(", n, ", ", p, ", ", k, ") = ", sh:comb(?n, ?k)));
+    return (sh:comb(?n, ?k) * power(?p, ?k) * power(1 - ?p, ?n - ?k))
 }
 
 # P(X <= k)

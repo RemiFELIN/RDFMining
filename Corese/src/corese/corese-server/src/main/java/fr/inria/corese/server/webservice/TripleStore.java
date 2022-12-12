@@ -1,6 +1,8 @@
 package fr.inria.corese.server.webservice;
 
 import fr.inria.corese.server.webservice.message.TripleStoreLog;
+import fr.inria.corese.sparql.datatype.CoreseDouble;
+import fr.inria.corese.sparql.datatype.RDF;
 import fr.inria.corese.sparql.exceptions.EngineException;
 import fr.inria.corese.sparql.triple.parser.Dataset;
 import fr.inria.corese.kgram.core.Mappings;
@@ -404,8 +406,7 @@ public class TripleStore implements URLParam {
         Load ld = Load.create(shacl);
         InputStream stream = null;
         // Default values for 'n' and 'k' parameters
-        int n = 10;
-        int k = 7;
+        double p = 0.2;
         try {
             if(ds.getContext().get(URLParam.CONTENT) != null) {
                 stream = new ByteArrayInputStream(ds.getContext().get(URLParam.CONTENT).stringValue().getBytes(StandardCharsets.UTF_8));
@@ -415,22 +416,12 @@ public class TripleStore implements URLParam {
                     ld.parse(dt.getLabel());
                 }
             }
-            // Manage params :
-            // for 'n'
-            if(ds.getContext().get(URLParam.PROB_SHACL_N) != null) {
-                n = Integer.parseInt(ds.getContext().get(URLParam.PROB_SHACL_N).getLabel());
+            // Manage p param
+            if(ds.getContext().get(URLParam.PROB_SHACL_P) != null) {
+                p = Double.parseDouble(ds.getContext().get(URLParam.PROB_SHACL_P).getLabel());
+                logger.info("p=" + p);
             } else {
-                logger.warn("The prob-shacl validator will use the default value: n=" + n);
-            }
-            // for 'k'
-            if(ds.getContext().get(URLParam.PROB_SHACL_K) != null) {
-                k = Integer.parseInt(ds.getContext().get(URLParam.PROB_SHACL_K).getLabel());
-            } else {
-                logger.warn("The prob-shacl validator will use the default value: k=" + k);
-            }
-            if (k > n) {
-                logger.warn("k > n ! set k = n ...");
-                k = n;
+                logger.warn("The prob-shacl validator will use the default p value: p=" + p);
             }
 
         } catch (LoadException ex) {
@@ -438,7 +429,7 @@ public class TripleStore implements URLParam {
             throw new EngineException(ex) ;
         }
         Shacl sh = new Shacl(getGraph());
-        Graph res = sh.eval(shacl, Shacl.PROBABILISTIC_MODE, n, k);
+        Graph res = sh.eval(shacl, Shacl.PROBABILISTIC_MODE, DatatypeMap.createLiteral(String.valueOf(p), RDF.xsddouble));
         QueryProcess exec = QueryProcess.create(res);
         exec.setDebug(ds.getContext().isDebug());
         Mappings map = exec.query(query);

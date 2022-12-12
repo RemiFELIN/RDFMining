@@ -302,13 +302,25 @@ public class Shape {
     public void fillParamFromReport(ValidationReport report) {
         String parsedUri = this.uri.replace("<", "").replace(">", "");
         this.referenceCardinality = report.referenceCardinalityByShape.get(parsedUri);
-        this.numConfirmation = report.numConfirmationsByShape.get(parsedUri);
-        this.numException = report.numExceptionsByShape.get(parsedUri);
-        this.probability = report.probabilityByShape.get(parsedUri);
-        this.generality = report.generalityByShape.get(parsedUri);
-        this.fitness = computeFitness();
-        if(report.exceptionsByShape.get(parsedUri) != null) {
-            this.exceptions = new ArrayList<>(report.exceptionsByShape.get(parsedUri));
+        // if referenceCardinality is null, it means that no supports are found for this shape
+        if(this.referenceCardinality == null) {
+            this.referenceCardinality = this.numException = this.probability = this.generality = this.fitness = 0;
+        } else {
+            this.numConfirmation = report.numConfirmationsByShape.get(parsedUri);
+            this.numException = report.numExceptionsByShape.get(parsedUri);
+            this.probability = report.probabilityByShape.get(parsedUri);
+            this.generality = report.generalityByShape.get(parsedUri);
+//            logger.warn("PARSED URI: " + parsedUri);
+//            logger.warn("(normal uri): " + this.uri);
+//            logger.warn("referenceCardinality: " + this.referenceCardinality);
+//            logger.warn("numConfirmation: " + this.numConfirmation);
+//            logger.warn("numException: " + this.numException);
+//            logger.warn("probability: " + this.probability);
+//            logger.warn("generality: " + this.generality);
+            this.fitness = computeFitness();
+            if(report.exceptionsByShape.get(parsedUri) != null) {
+                this.exceptions = new ArrayList<>(report.exceptionsByShape.get(parsedUri));
+            }
         }
     }
 
@@ -324,7 +336,7 @@ public class Shape {
     public JSONObject toJSON() {
         JSONObject json = new JSONObject();
         // set params
-        json.put("shape", this.shape);
+        json.put("shape", this.id); // @todo fix it
         json.put("referenceCardinality", this.referenceCardinality);
         json.put("numConfirmation", this.numConfirmation);
         json.put("numException", this.numException);
@@ -341,8 +353,7 @@ public class Shape {
         }
         json.put("exceptions", exceptions);
         // Probabilistic params
-        json.put("n", Integer.valueOf(RDFMiner.parameters.probShaclN));
-        json.put("k", Integer.valueOf(RDFMiner.parameters.probShaclK));
+        json.put("p", Integer.valueOf(RDFMiner.parameters.probShaclP));
         return json;
     }
 

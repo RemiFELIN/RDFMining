@@ -80,14 +80,13 @@ public class SPARQLResult implements ResultFormatDef, URLParam    {
      * @param type is format specified by content negotiation http header (consider type otherwise format)
      * @param transform is list of transformation such as st:map
      * @param content is list of the content given by parameter
-     * @param n use for probabilistic SHACL: value n for binomial formulas 
-     * @param k use for probabilistic SHACL: value k for binomial formulas
+     * @param p is the maximal rate of violations for a given shape (used as 'p' param for binomial distribution)
      */
     public Response getResultFormat(String name, String oper, 
             List<String> uri, List<String> param, List<String> mode,
             String query, String access, 
             List<String> defaut, List<String> named,
-            String format, int type, List<String> transform, String content, String n, String k) {
+            String format, int type, List<String> transform, String content, String p) {
            
         try {  
             logger.info("Endpoint URL: " + getRequest().getRequestURL());
@@ -101,7 +100,7 @@ public class SPARQLResult implements ResultFormatDef, URLParam    {
             beforeRequest(getRequest(), query);
             Dataset ds = createDataset(getRequest(), defaut, named, access);
                                   
-            beforeParameter(ds, oper, uri, param, mode, transform, content, n, k);
+            beforeParameter(ds, oper, uri, param, mode, transform, content, p);
             Mappings map = getTripleStore(name).query(getRequest(), query, ds);
             complete(map, ds.getContext());
             afterParameter(ds, map);
@@ -192,7 +191,7 @@ public class SPARQLResult implements ResultFormatDef, URLParam    {
      * parameter recorded in context 
      */
     Dataset beforeParameter(Dataset ds, String oper, List<String> uri, 
-            List<String> param, List<String> mode, List<String> transform, String content, String n, String k) {
+            List<String> param, List<String> mode, List<String> transform, String content, String p) {
         if (oper != null) {
             ds.getContext().set(OPER, oper);
             List<String> federation = new ArrayList<>();
@@ -294,18 +293,8 @@ public class SPARQLResult implements ResultFormatDef, URLParam    {
         }
 
         // Probabilistic SHACL
-//        logger.info("n=" + n + " and k=" + k);
-        // 'n' parameter
-        if (n != null) {
-//            logger.info("decode n --> " + decode(n));
-            ds.getContext().set(URLParam.PROB_SHACL_N, decode(n));
-//            logger.info("get context for n --> " + ds.getContext().get(URLParam.PROB_SHACL_N));
-        }
-        // 'k' parameter
-        if (k != null) {
-//            logger.info("decode k --> " + decode(k));
-            ds.getContext().set(URLParam.PROB_SHACL_K, decode(k));
-//            logger.info("get context for k --> " + ds.getContext().get(URLParam.PROB_SHACL_K));
+        if (p != null) {
+            ds.getContext().set(URLParam.PROB_SHACL_P, decode(p));
         }
 
         if (!ds.getContext().hasValue(USER)) {

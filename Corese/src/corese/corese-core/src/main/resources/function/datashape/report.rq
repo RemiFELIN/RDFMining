@@ -139,6 +139,7 @@ function xsd:boolean sh:result(report, subReport, name, sh, cst, dt:graph shape,
 
 # Extended SHACL Report component
 function sh:addExtendedShaclReport(report, exceptions) {
+    sh:log("core.rq", "sh:binomial", "extended report !");
     set(summary = bnode());
     sh:store(report, abnode, psh:summary, summary);
     sh:store(report, summary, rdf:type, psh:ValidationSummary);
@@ -157,12 +158,22 @@ function sh:addExtendedShaclReport(report, exceptions) {
     # v1 :
     # set(probability = (numConfirmation / referenceCardinality));
     # v2: 
-    set(probability = sh:binomialEqualOrGreater(probShaclN, numConfirmation / referenceCardinality, probShaclK));
+    # sh:binomialEqualOrLess(n, p, k)
+    sh:log("core.rq", "sh:binomial", "start binomiale !");
+    # sh:log("core.rq", "sh:binomial", concat("refc=", referenceCardinality, "/prob=", prob, "/numExc=", numException));
+    # sh:comb(2, 2);
+    # sh:comb(10, 10);
+    # sh:comb(50, 10);
+    # sh:comb(100, 10);
+    # sh:binomial(10,0.01,1);
+    # sh:binomial(99,0.01,10);
+    # sh:binomial(100,0.01,10);
+    # sh:binomial(1000,0.01,10);
+    set(probability = sh:binomial(referenceCardinality, 0.01, numException));
     sh:store(report, summary, psh:probability, probability);
     # to validate
     set(generality = (referenceCardinality / numInstances));
     sh:store(report, summary, psh:generality, generality);
-    # @TODO a faire au niveau de psh et non de la validation !!!
     # sh:store(report, summary, psh:fitness, generality * probability);
     # rule : log exceptions if 0<len(exceptions)<=100
     # if(xt:size(exceptions)>0 && xt:size(exceptions)<=100) {

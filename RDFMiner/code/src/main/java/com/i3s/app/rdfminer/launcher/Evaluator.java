@@ -238,6 +238,10 @@ public class Evaluator {
 			report = endpoint.getValidationReportFromServer(shapesManager.file, CoreseService.PROBABILISTIC_SHACL_EVALUATION);
 //			logger.info("REPORT:\n" + report);
 			ValidationReport validationReport = new ValidationReport(report);
+//			logger.warn("report.content:\n" + validationReport.content);
+			for(String shapes : validationReport.reportedShapes) {
+				logger.warn(shapes);
+			}
 			for(Shape shape : shapesManager.getPopulation()) {
 				shape.fillParamFromReport(validationReport);
 				// Save a JSON report of the test
