@@ -288,7 +288,7 @@ public class SPARQLRestAPI implements ResultFormatDef, URLParam {
      * .
      */
     @GET
-    @Path("/psh")
+    @Path("/xml")
     @Produces({SPARQL_RESULTS_XML, XML})
     public Response getTriplesXMLForGet(@jakarta.ws.rs.core.Context HttpServletRequest request,
             // name of server from SPARQLService

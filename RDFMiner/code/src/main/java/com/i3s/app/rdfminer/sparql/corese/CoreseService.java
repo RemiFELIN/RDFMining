@@ -3,9 +3,14 @@ package com.i3s.app.rdfminer.sparql.corese;
 public class CoreseService {
 
     /**
+     * Corese service : load RDF Data
+     */
+    public static final String CORESE_LOAD_RDF = "sparql/load";
+
+    /**
      * Corese service : SPARQL endpoint
      */
-    public static final String CORESE_SPARQL_ENDPOINT = "sparql/psh";
+    public static final String CORESE_SPARQL_ENDPOINT = "sparql/xml";
 
     /**
      * Corese service : send SHACL Shapes endpoint
@@ -15,7 +20,7 @@ public class CoreseService {
     /**
      * Corese service : get SHACL Shapes endpoint
      */
-    public static final String CORESE_GET_SHACL_SHAPES_ENDPOINT = "rdfminer/shacl/shapes";
+    public static final String CORESE_GET_SHACL_SHAPES_ENDPOINT = "rdfminer/file/content";
 
     /**
      * Corese params : Probabilistic SHACL Evaluation

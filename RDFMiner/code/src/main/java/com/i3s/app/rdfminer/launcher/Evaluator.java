@@ -15,16 +15,20 @@ import com.i3s.app.rdfminer.entity.shacl.ShapesManager;
 import com.i3s.app.rdfminer.entity.shacl.ValidationReport;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import com.i3s.app.rdfminer.sparql.corese.CoreseService;
+import com.i3s.app.rdfminer.statistics.Statistics;
+import org.apache.commons.math3.distribution.ChiSquaredDistribution;
+import org.apache.commons.math3.stat.inference.ChiSquareTest;
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.engine.http.QueryExceptionHTTP;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -211,15 +215,13 @@ public class Evaluator {
 
 		// ShutDownHook
 		// Save results in output file
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			logger.warn("Shutting down RDFMiner ...");
-			// Save results in output file
-			writeAndFinish();
-		}));
+		//			logger.warn("Shutting down RDFMiner ...");
+		// Save results in output file
+		Runtime.getRuntime().addShutdownHook(new Thread(Evaluator::writeAndFinish));
 
 		// create output file
 		try {
-			RDFMiner.output = new FileWriter(RDFMiner.outputFolder + Global.RESULTS_FILENAME);
+			RDFMiner.output = new FileWriter(RDFMiner.outputFolder + Global.SHACL_VALIDATION_REPORT_FILENAME);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
@@ -229,41 +231,104 @@ public class Evaluator {
 		ShapesManager shapesManager = new ShapesManager(parameters.shapeFile);
 		// launch evaluation
 		CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.SPARQL_ENDPOINT, Global.PREFIXES);
-		String report;
-		if(RDFMiner.parameters.useClassicShaclMode) {
-			report = endpoint.getValidationReportFromServer(shapesManager.file, CoreseService.SHACL_EVALUATION);
-			ValidationReport validationReport = new ValidationReport(report);
-			RDFMiner.output.write(validationReport.prettifyPrint());
-		} else {
-			report = endpoint.getValidationReportFromServer(shapesManager.file, CoreseService.PROBABILISTIC_SHACL_EVALUATION);
-//			logger.info("REPORT:\n" + report);
-			ValidationReport validationReport = new ValidationReport(report);
-//			logger.warn("report.content:\n" + validationReport.content);
-			for(String shapes : validationReport.reportedShapes) {
-				logger.warn(shapes);
-			}
-			for(Shape shape : shapesManager.getPopulation()) {
-				shape.fillParamFromReport(validationReport);
-				// Save a JSON report of the test
-				RDFMiner.evaluatedEntities.put(shape.toJSON());
+		// Launch SHACL evaluation from the Corese server and get the result in turtle
+		String report = endpoint.getValidationReportFromServer(shapesManager.file, CoreseService.PROBABILISTIC_SHACL_EVALUATION);
+//		ValidationReport validationReport = new ValidationReport(report);
+		String pretiffyReport = report.replace(".@", ".\n@")
+				.replace(".<", ".\n\n<")
+				.replace(";sh", ";\nsh")
+				.replace(";psh", ";\npsh")
+				.replace(";r", ";\nr")
+				.replace("._", ".\n\n_");
+		logger.info("Writting validation report in " + RDFMiner.outputFolder + Global.SHACL_VALIDATION_REPORT_FILENAME + " ...");
+		RDFMiner.output.write(pretiffyReport);
+		RDFMiner.output.close();
+		// Hypothesis test
+		ValidationReport validationReport = new ValidationReport(report);
+		// save the result of statistic test into RDF triples
+		// in order to put it in Corese graph and get its value into STTL Transformation and HTML result
+		// In the same way, we note the acceptance (or not) of a given shape using proportion or hypothesis testing
+		logger.info("Writting hypothesis test results in " + Global.SHACL_HYPOTHESIS_TEST_FILENAME);
+		FileWriter hypothesisTestFw = new FileWriter(RDFMiner.outputFolder + Global.SHACL_HYPOTHESIS_TEST_FILENAME);
+		hypothesisTestFw.write(Global.PREFIXES + "\n");
+		for(Shape shape : shapesManager.getPopulation()) {
+			// get shapes with metrics
+			shape.fillParamFromReport(validationReport);
+			// X^2 computation
+			double nExcTheo = shape.referenceCardinality.doubleValue() * Double.parseDouble(RDFMiner.parameters.probShaclP);
+			double nConfTheo = shape.referenceCardinality.doubleValue() - nExcTheo;
+			// if observed error is lower, accept the shape
+			if(shape.numException.doubleValue() <= nExcTheo) {
+				hypothesisTestFw.write(shape.id + " ex:acceptance \"true\"^^xsd:boolean .\n");
+			}  else if (nExcTheo >= 5 && nConfTheo >= 5) {
+				// apply statistic test X2
+				Double X2 = (Math.pow(shape.numException.doubleValue() - nExcTheo, 2) / nExcTheo) +
+					(Math.pow(shape.numConfirmation.doubleValue() - nConfTheo, 2) / nConfTheo);
+//				logger.info("p-value = " + X2);
+				hypothesisTestFw.write(shape.id + " ex:pvalue \"" + X2 + "\"^^xsd:double .\n");
+				double critical = new ChiSquaredDistribution(1).inverseCumulativeProbability(1 - RDFMiner.parameters.alpha);
+				if (X2 <= critical) {
+					// Accepted !
+					hypothesisTestFw.write(shape.id + " ex:acceptance \"true\"^^xsd:boolean .\n");
+				} else {
+					// rejected !
+					hypothesisTestFw.write(shape.id + " ex:acceptance \"false\"^^xsd:boolean .\n");
+				}
+			} else {
+				// rejected !
+				hypothesisTestFw.write(shape.id + " ex:acceptance \"false\"^^xsd:boolean .\n");
 			}
 		}
-
+		hypothesisTestFw.close();
+		// send hypothesis result to Corese graph
+		endpoint.sendFileToServer(new File(RDFMiner.outputFolder + Global.SHACL_HYPOTHESIS_TEST_FILENAME), Global.SHACL_HYPOTHESIS_TEST_FILENAME);
+		endpoint.sendRDFDataToDB(endpoint.getFilePathFromServer(Global.SHACL_HYPOTHESIS_TEST_FILENAME));
+		// Send the SHACL Validation Report and shapes graph into Corese graph in order to
+		// perform a HTML report with STTL transformation
+		endpoint.sendFileToServer(new File(RDFMiner.outputFolder + Global.SHACL_VALIDATION_REPORT_FILENAME), Global.SHACL_VALIDATION_REPORT_FILENAME);
+		endpoint.sendRDFDataToDB(endpoint.getFilePathFromServer(Global.SHACL_VALIDATION_REPORT_FILENAME));
+		// load shapes graph in corese DB
+		endpoint.sendRDFDataToDB(endpoint.getFilePathFromServer(Global.SHACL_SHAPES_FILENAME));
+		// STTL Transformation
+		// load template
+		logger.info("Perform STTL Transformation ...");
+		String sttl = Files.readString(Path.of(Global.PROBABILISTIC_STTL_TEMPLATE), StandardCharsets.UTF_8);
+		// perform sttl query
+		String sttl_result = endpoint.getHTMLResultFromSTTLTransformation(sttl);
+		// write results in output file
+		logger.info("Writting results in " + Global.PROBABILISTIC_STTL_RESULT_AS_HTML);
+		FileWriter fw = new FileWriter(RDFMiner.outputFolder + Global.PROBABILISTIC_STTL_RESULT_AS_HTML);
+		fw.write(sttl_result);
+		fw.close();
 		logger.info("Done testing shape. Exiting.");
 		System.exit(0);
 	}
 	
 	public static void writeAndFinish() {
-		try {
-			logger.warn("Shutting down RDFMiner ...");
-			if(!RDFMiner.parameters.useClassicShaclMode)
-				RDFMiner.output.write(RDFMiner.evaluatedEntities.toString(2));
-			RDFMiner.output.close();
-		} catch (IOException e) {
-			logger.error("I/O error while closing JSON writer: " + e.getMessage());
-			e.printStackTrace();
-			System.exit(1);
-		}
+		logger.warn("Shutting down RDFMiner ...");
 	}
 
+	public static void main(String[] args) {
+		System.out.println( new ChiSquaredDistribution(1).inverseCumulativeProbability(1 - RDFMiner.parameters.alpha) );
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

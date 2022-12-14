@@ -53,6 +53,21 @@ public class Statistics {
 		}
 	}
 
+//	/**
+//	 * compute the statistical test <var>X²<sub>S</sub></var> of a shape <var>S</var> for hypothesis testing.
+//	 * @param shape <var>S</var>
+//	 * @return value of <var>X²<sub>S</sub></var>
+//	 */
+//	public static Double computeChiSquareOnedegreeOfFreedom(Shape shape) {
+//		// Theorical proportion of exceptions
+//		double nExcTheo = shape.referenceCardinality.doubleValue() * Double.parseDouble(RDFMiner.parameters.probShaclP);
+//		double nConfTheo = shape.referenceCardinality.doubleValue() - nExcTheo;
+//		if(shape.numException.doubleValue() <= nExcTheo || nExcTheo < 5 || nConfTheo < 5)
+//			return null;
+//		return (Math.pow(shape.numException.doubleValue() - nExcTheo, 2) / nExcTheo) +
+//				(Math.pow(shape.numConfirmation.doubleValue() - nConfTheo, 2) / nConfTheo);
+//	}
+
 	public double computeAverageFitnessFromAxioms(ArrayList<Axiom> axioms) {
 		double sumFitness = 0;
 		for(Axiom axiom : axioms) {

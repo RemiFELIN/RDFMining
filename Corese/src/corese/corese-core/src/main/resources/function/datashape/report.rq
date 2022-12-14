@@ -115,18 +115,9 @@ function xsd:boolean sh:result(report, subReport, name, sh, cst, dt:graph shape,
         };
         # Extended SHACL 
         if(extended == true && sh:isAViolation(sev)) {
-            # if(isURI(foc) && sh:isExist(foc)) {
-            #     sh:log("report.rq", "sh:result", concat("exception URI Valid : ~> ", foc));
-            #     xt:add(exceptions, res);
-            # } 
-            # else if (isURI(foc) && !sh:isExist(foc)) {
-            #     sh:log("report.rq", "sh:result", concat("exception URI No Valid : ~> ", foc));
-            # } 
-            # else {
             # fill the list of exceptions 
             sh:log("report.rq", "sh:result", concat("exception ~> ", foc));
             xt:add(exceptions, res);
-            # }
         } ;
         
         sh:resultFunction(report, subReport, res, sh, name, foc, path, node);
@@ -145,7 +136,7 @@ function sh:addExtendedShaclReport(report, exceptions) {
     sh:store(report, summary, rdf:type, psh:ValidationSummary);
     # sh:store(report, summary, psh:mode, "Probabilistic");
     # shapeName is defined on <main.rq> sh:shacleval(shape, focus)
-    sh:store(report, summary, sh:sourceShape, shapeName);
+    sh:store(report, summary, psh:focusShape, shapeName);
     # referenceCardinality is defined on <main.rq> sh:shacleval(shape, focus)
     sh:store(report, summary, psh:referenceCardinality, referenceCardinality);
     # numException is defined by the size of exceptions list such as :
@@ -154,34 +145,11 @@ function sh:addExtendedShaclReport(report, exceptions) {
     # numConfirmation is defined by referenceCardinality and the size of exceptions list such as : 
     set(numConfirmation = (referenceCardinality - numException));
     sh:store(report, summary, psh:numConfirmation, numConfirmation);
-    # prob of a future instance in this shape may be conform
-    # v1 :
-    # set(probability = (numConfirmation / referenceCardinality));
-    # v2: 
-    # sh:binomialEqualOrLess(n, p, k)
-    sh:log("core.rq", "sh:binomial", "start binomiale !");
-    # sh:log("core.rq", "sh:binomial", concat("refc=", referenceCardinality, "/prob=", prob, "/numExc=", numException));
-    # sh:comb(2, 2);
-    # sh:comb(10, 10);
-    # sh:comb(50, 10);
-    # sh:comb(100, 10);
-    # sh:binomial(10,0.01,1);
-    # sh:binomial(99,0.01,10);
-    # sh:binomial(100,0.01,10);
-    # sh:binomial(1000,0.01,10);
-    set(probability = sh:binomial(referenceCardinality, 0.01, numException));
-    sh:store(report, summary, psh:probability, probability);
-    # to validate
+    # sh:log("core.rq", "sh:binomial", "start binomiale !");
+    set(likelihood = sh:binomial(referenceCardinality, prob, numException));
+    sh:store(report, summary, psh:likelihood, likelihood);
     set(generality = (referenceCardinality / numInstances));
     sh:store(report, summary, psh:generality, generality);
-    # sh:store(report, summary, psh:fitness, generality * probability);
-    # rule : log exceptions if 0<len(exceptions)<=100
-    # if(xt:size(exceptions)>0 && xt:size(exceptions)<=100) {
-    #     for(exception in dt:list(exceptions)) {
-    #         sh:store(report, summary, psh:exception, exception);
-    #     }
-    # }
-    # sh:store(report, summary, psh:exceptions, exceptions);
 }
 
 #

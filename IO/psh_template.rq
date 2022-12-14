@@ -1,0 +1,72 @@
+prefix psh:  <http://www.w3.org/ns/probabilistic-shacl#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix sh:   <http://www.w3.org/ns/shacl#>
+prefix ex:   <http://example.org/demo#>
+
+template {
+   format {
+      """
+<html>\n\n
+   <body>
+      <style>
+         table { width : 100%%; }
+         tr:nth-child(even) { background-color : #E8EBF5; }
+         tr:nth-child(odd)  { background-color : #CED4E5; } 
+         th { background-color : #82e6ff; }
+      </style>
+      <table>
+         <!-- Header -->
+         <tr>
+            <th>antecedent</th>
+            <th>consequent</th>
+            <th>referenceCardinality</th>
+            <th>#exceptions</th>
+            <th>likelihood</th>
+            <th>generality</th>
+            <th>X<sup>2</sup><sub>S</sub></th>
+            <th>Acceptance</th>
+         </tr>
+         <!-- Results from Probabilistic SHACL Validation Report -->
+         %s
+      </table>
+   </body>
+
+</html>
+      """
+
+      group { 
+         format {
+            """
+         <tr>
+            <td>%s</td>
+            <td>%s</td>
+            <td>%s</td>
+            <td>%s</td>
+            <td>%s</td>
+            <td>%s</td>
+            <td>%s</td>
+            <td>%s</td>
+         </tr>
+            """       
+            ?ant ?con ?refc ?nexc ?likelihood ?generality ?X ?accept
+         }
+      }
+   }
+}
+where  {
+   ?bn a psh:ValidationSummary ; 
+      psh:referenceCardinality ?refc ;
+      psh:likelihood ?likelihood ; 
+      psh:generality ?generality ; 
+      psh:numException ?nexc ; 
+      psh:focusShape ?shape .
+   ?shape sh:targetClass ?nant ; 
+      sh:property ?p ;
+      ex:acceptance ?accept .
+   ?p sh:hasValue ?ncon .
+   ?nant rdfs:label ?ant .
+   ?ncon rdfs:label ?con .
+   optional { ?shape ex:pvalue ?X . }
+   bind(if(bound(?X), ?X, " ") as ?X)
+}
+order by ?ant ?con ?nexc ?likelihood ?generality ?X ?accept

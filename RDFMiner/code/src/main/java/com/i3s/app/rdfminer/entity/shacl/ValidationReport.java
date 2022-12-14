@@ -16,6 +16,7 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.eclipse.rdf4j.sail.memory.model.DecimalMemLiteral;
+import org.eclipse.rdf4j.sail.memory.model.NumericMemLiteral;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -47,7 +48,7 @@ public class ValidationReport {
 
     public final HashMap<String, Number> generalityByShape;
 
-    public final HashMap<String, Number> probabilityByShape;
+    public final HashMap<String, Number> likelihoodByShape;
 
     public final HashMap<String, Number> referenceCardinalityByShape;
 
@@ -68,7 +69,7 @@ public class ValidationReport {
         this.numExceptionsByShape = getNumericalInValSummaryByShape(ProbabilisticShaclKW.NUM_EXCEPTION);
         this.numConfirmationsByShape = getNumericalInValSummaryByShape(ProbabilisticShaclKW.NUM_CONFIRMATION);
         this.referenceCardinalityByShape = getNumericalInValSummaryByShape(ProbabilisticShaclKW.REFERENCE_CARDINALITY);
-        this.probabilityByShape = getNumericalInValSummaryByShape(ProbabilisticShaclKW.PROBABILITY);
+        this.likelihoodByShape = getNumericalInValSummaryByShape(ProbabilisticShaclKW.LIKELIHOOD);
 //        this.fitnessByShape = getNumericalInValSummaryByShape(RDFMinerKW.FITNESS);
         this.generalityByShape = getNumericalInValSummaryByShape(ProbabilisticShaclKW.GENERALITY);
     }
@@ -81,14 +82,14 @@ public class ValidationReport {
             con.add(this.model);
             // init query
             String request = RequestBuilder.select("?shape ?value",
-                    "?v " + ProbabilisticShaclKW.SUMMARY + " ?bn . ?bn " + ShaclKW.SOURCE_SHAPE + " ?shape ; " + parameter + " ?value", true);
+                    "?v " + ProbabilisticShaclKW.SUMMARY + " ?bn . ?bn " + ProbabilisticShaclKW.FOCUS_SHAPE + " ?shape ; " + parameter + " ?value", true);
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
             try (TupleQueryResult result = query.evaluate()) {
                 // we just iterate over all solutions in the result...
                 for (BindingSet solution : result) {
                     // add each result on the final list
-                    if(solution.getValue("value").getClass() == DecimalMemLiteral.class) {
+                    if(solution.getValue("value").getClass() == DecimalMemLiteral.class || solution.getValue("value").getClass() == NumericMemLiteral.class) {
                         results.put(String.valueOf(solution.getValue("shape")), Literals.getDoubleValue(solution.getValue("value"), 0));
                     } else {
                         results.put(String.valueOf(solution.getValue("shape")), Literals.getIntValue(solution.getValue("value"), 0));
@@ -109,7 +110,7 @@ public class ValidationReport {
             // add the model
             con.add(this.model);
             String request = RequestBuilder.select("?shape ?node",
-                    "?a " + ProbabilisticShaclKW.SUMMARY + " ?bn . ?bn " + ShaclKW.SOURCE_SHAPE + " ?shape . " +
+                    "?a " + ProbabilisticShaclKW.SUMMARY + " ?bn . ?bn " + ProbabilisticShaclKW.FOCUS_SHAPE + " ?shape . " +
                             "?x a " + ShaclKW.VALIDATION_RESULT + "; " + ShaclKW.SOURCE_SHAPE + " ?shape; " + ShaclKW.FOCUS_NODE + " ?node", true);
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
@@ -146,7 +147,7 @@ public class ValidationReport {
             con.add(this.model);
             // init query
             String request = RequestBuilder.select("distinct ?shape", "?y a " + ProbabilisticShaclKW.VALIDATION_SUMMARY + "; " +
-                    ShaclKW.SOURCE_SHAPE + " ?shape", true);
+                    ProbabilisticShaclKW.FOCUS_SHAPE + " ?shape", true);
 //            logger.info("request: " + request);
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
@@ -194,7 +195,7 @@ public class ValidationReport {
                 this.numExceptionsByShape + " |\n" +
                 this.numConfirmationsByShape + " |\n" +
                 this.referenceCardinalityByShape + " |\n" +
-                this.probabilityByShape + " |\n" +
+                this.likelihoodByShape + " |\n" +
 //                this.fitnessByShape + " |\n" +
                 this.generalityByShape;
     }

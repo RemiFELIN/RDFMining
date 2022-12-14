@@ -8,13 +8,15 @@ public class ProbabilisticShaclKW {
 
     public static final String VALIDATION_SUMMARY = PROBABILISTIC_SHACL + "ValidationSummary";
 
+    public static final String FOCUS_SHAPE = PROBABILISTIC_SHACL + "focusShape";
+
     public static final String GENERALITY = PROBABILISTIC_SHACL + "generality";
 
     public static final String NUM_CONFIRMATION = PROBABILISTIC_SHACL + "numConfirmation";
 
     public static final String NUM_EXCEPTION = PROBABILISTIC_SHACL + "numException";
 
-    public static final String PROBABILITY = PROBABILISTIC_SHACL + "probability";
+    public static final String LIKELIHOOD = PROBABILISTIC_SHACL + "likelihood";
 
     public static final String REFERENCE_CARDINALITY = PROBABILISTIC_SHACL + "referenceCardinality";
 

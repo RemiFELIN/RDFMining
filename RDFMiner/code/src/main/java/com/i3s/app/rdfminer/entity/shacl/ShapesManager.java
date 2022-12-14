@@ -55,6 +55,7 @@ public class ShapesManager {
 
     public ShapesManager(String filePath) throws URISyntaxException, IOException {
         Path path = Path.of(filePath);
+        this.file = new File(filePath);
         // init model
         try {
             this.model = Rio.parse(new StringReader(Files.readString(path)), "", RDFFormat.TURTLE);
@@ -104,7 +105,7 @@ public class ShapesManager {
             db.shutDown();
         }
         // set the file content to evaluate this SHACL Shapes on server
-        this.file = getFile();
+//        this.file = editAndGetServerFile();
         logger.info(population.size() + " SHACL Shapes ready to be evaluated !");
     }
 
@@ -119,40 +120,40 @@ public class ShapesManager {
             population.add(new Shape(individual));
         }
         // set the file content to evaluate this SHACL Shapes on server
-        this.file = getFile();
+//        this.file = editAndGetServerFile();
     }
 
     public ShapesManager(Shape shape) throws URISyntaxException, IOException {
         this.shape = shape;
         // set the file content to evaluate this SHACL Shapes on server
-        this.file = getFile();
+//        this.file = editAndGetServerFile();
     }
 
     public void updateIndividualList(ArrayList<GEIndividual> updatedIndividuals) {
         this.individuals = new ArrayList<>(updatedIndividuals);
     }
 
-    private File getFile() throws URISyntaxException, IOException {
-        StringBuilder content = new StringBuilder(Global.PREFIXES);
-        CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.SPARQL_ENDPOINT, Global.PREFIXES);
-        content.append(endpoint.getFileFromServer());
-        // Now, we can create (or edit) the file to send
-        File file = new File(RDFMiner.outputFolder + "shapes.ttl");
-        if(!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        // set content of file
-        try {
-            FileUtils.writeStringToFile(file, content.toString(), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return file;
-    }
+//    private File editAndGetServerFile() throws URISyntaxException, IOException {
+//        StringBuilder content = new StringBuilder();
+//        CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.SPARQL_ENDPOINT, Global.PREFIXES);
+//        content.append(endpoint.getFileFromServer());
+//        // Now, we can create (or edit) the file to send
+//        File file = new File(RDFMiner.outputFolder + "shapes.ttl");
+//        if(!file.exists()) {
+//            try {
+//                file.createNewFile();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        // set content of file
+//        try {
+//            FileUtils.writeStringToFile(file, content.toString(), StandardCharsets.UTF_8);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return file;
+//    }
 
     public List<Shape> getPopulation() {
         return population;

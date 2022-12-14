@@ -36,8 +36,8 @@ public class Global {
     public static String SPARQL_ENDPOINT = null;
 
     /**
-     * SPARQL endpoint from remote server which contains full instance of DBPedia
-     * 2015.04
+     * SPARQL endpoint from remote server
+     * It contains a mirror of DBPedia 2015.04 (english version)
      */
     public final static String VIRTUOSO_DBPEDIA_2015_04_SPARQL_ENDPOINT = "http://134.59.130.136:8890/sparql";
 
@@ -76,38 +76,6 @@ public class Global {
             + "PREFIX psh:      <http://www.w3.org/ns/probabilistic-shacl#> \n";
 
     /**
-     * prefixes used to perform queries with the local {@link Global#VIRTUOSO_LOCAL_SPARQL_ENDPOINT
-     * server} endpoint
-     */
-//    final public static String VIRTUOSO_LOCAL_PREFIXES = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
-//            + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-//            + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-//            + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-//            + "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n"
-//            + "PREFIX dc: <http://purl.org/dc/elements/1.1/>\n"
-//            + "PREFIX dbr: <http://dbpedia.org/resource/>\n"
-//            + "PREFIX dbp: <http://dbpedia.org/property/>\n"
-//            + "PREFIX : <http://dbpedia.org/resource/>\n"
-//            + "PREFIX dbpedia2: <http://dbpedia.org/property/>\n"
-//            + "PREFIX dbpedia: <http://dbpedia.org/>\n"
-//            + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n"
-//            + "PREFIX dbo: <http://dbpedia.org/ontology/>\n"
-//            + "PREFIX ex:    <http://example.org/demo#> \n"
-//            + "PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> \n"
-//            + "PREFIX sp:    <http://spinrdf.org/sp#> \n";
-
-    /**
-     * Corese prefixes for SHACL Shapes
-     */
-//    public static final String CORESE_PREFIXES = "base <http://rdfminer.com/shapes/> \n" +
-//            "prefix sh: <http://www.w3.org/ns/shacl#> \n" +
-//            "prefix rdfminer: <http://ns.inria.fr/rdfminer/shacl#> \n" +
-//            "prefix inria: <http://ns.inria.fr/covid19/> \n" +
-//            "prefix source: <http://ns.inria.fr/covid19/source#> \n" +
-//            "prefix dct: <http://purl.org/dc/terms/> \n" +
-//            "prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n\n";
-
-    /**
      * Size of the SHACL Shapes ID randomly generated using BNF Grammar
      */
     public static final int SIZE_ID_SHACL_SHAPES = 6;
@@ -121,6 +89,25 @@ public class Global {
      * Name of output results file in JSON
      */
     public static final String RESULTS_FILENAME = "results.json";
+
+    /**
+     * Name of SHACL Validation report (Classic; probabilistic) file using turtle (.ttl) format
+     */
+    public static final String SHACL_VALIDATION_REPORT_FILENAME = "shacl_report.ttl";
+
+    public static final String SHACL_SHAPES_FILENAME = "shapes.ttl";
+
+    public static final String SHACL_HYPOTHESIS_TEST_FILENAME = "hypothesis_test.ttl";
+
+    /**
+     * Path to the probabilisitic STTL Template file (.rq format)
+     */
+    public static final String PROBABILISTIC_STTL_TEMPLATE = OUTPUT_PATH + "psh_template.rq";
+
+    /**
+     * Path to the probabilisitic STTL Template result (html)
+     */
+    public static final String PROBABILISTIC_STTL_RESULT_AS_HTML = "results.html";
 
     /**
      * .cache files folder path

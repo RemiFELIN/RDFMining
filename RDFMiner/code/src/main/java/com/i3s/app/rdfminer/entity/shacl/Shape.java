@@ -94,7 +94,7 @@ public class Shape {
     public Number referenceCardinality;
     public Number numConfirmation;
     public Number numException;
-    public Number probability;
+    public Number likelihood;
     public Number generality;
     public Number fitness;
     public List<String> exceptions = new ArrayList<>();
@@ -304,19 +304,12 @@ public class Shape {
         this.referenceCardinality = report.referenceCardinalityByShape.get(parsedUri);
         // if referenceCardinality is null, it means that no supports are found for this shape
         if(this.referenceCardinality == null) {
-            this.referenceCardinality = this.numException = this.probability = this.generality = this.fitness = 0;
+            this.referenceCardinality = this.numException = this.likelihood = this.generality = this.fitness = 0;
         } else {
             this.numConfirmation = report.numConfirmationsByShape.get(parsedUri);
             this.numException = report.numExceptionsByShape.get(parsedUri);
-            this.probability = report.probabilityByShape.get(parsedUri);
+            this.likelihood = report.likelihoodByShape.get(parsedUri);
             this.generality = report.generalityByShape.get(parsedUri);
-//            logger.warn("PARSED URI: " + parsedUri);
-//            logger.warn("(normal uri): " + this.uri);
-//            logger.warn("referenceCardinality: " + this.referenceCardinality);
-//            logger.warn("numConfirmation: " + this.numConfirmation);
-//            logger.warn("numException: " + this.numException);
-//            logger.warn("probability: " + this.probability);
-//            logger.warn("generality: " + this.generality);
             this.fitness = computeFitness();
             if(report.exceptionsByShape.get(parsedUri) != null) {
                 this.exceptions = new ArrayList<>(report.exceptionsByShape.get(parsedUri));
@@ -325,7 +318,7 @@ public class Shape {
     }
 
     public double computeFitness() {
-        return this.probability.doubleValue() * this.generality.doubleValue();
+        return this.likelihood.doubleValue() * this.generality.doubleValue();
     }
 
     @Override
@@ -340,7 +333,7 @@ public class Shape {
         json.put("referenceCardinality", this.referenceCardinality);
         json.put("numConfirmation", this.numConfirmation);
         json.put("numException", this.numException);
-        json.put("probability", this.probability);
+        json.put("likelihood", this.likelihood);
         json.put("generality", this.generality);
         json.put("fitness", this.fitness);
         if (this.individual != null) json.put("generation", this.individual.getAge());
@@ -353,7 +346,7 @@ public class Shape {
         }
         json.put("exceptions", exceptions);
         // Probabilistic params
-        json.put("p", Integer.valueOf(RDFMiner.parameters.probShaclP));
+        json.put("p", Double.valueOf(RDFMiner.parameters.probShaclP));
         return json;
     }
 

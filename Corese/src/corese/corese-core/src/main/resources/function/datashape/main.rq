@@ -121,6 +121,11 @@ function dt:graph sh:shacl(dt:graph shape, focus) {
 # focus = mappings or list(sh=nodeShape; list=targetNodeList)
 #
 function sh:shacleval(shape, focus) {
+    # now, we will calculate the total number of instances in the dataset
+    if (extended) {
+        set(numInstances = sh:getNumInstances());
+        sh:log("main.rq", "sh:shacleval", concat("n_triples=", numInstances));
+    } ;
     # sh:log("main.rq", "sh:shacleval", "start...");
     let (suc = true) {
         for ((sh list) in focus) {
@@ -137,9 +142,6 @@ function sh:shacleval(shape, focus) {
                     set(shapeName = sh);
                     # For each shape, we will create a list of exceptions
                     set(exceptions = xt:list());
-                    # now, we will calculate the total number of instances in the dataset
-                    set(numInstances = sh:getNumInstances());
-                    sh:log("main.rq", "sh:shacleval", concat("n_triples=", numInstances));
                 } ;
                 # set the final report as global variable
                 set(rep = sh:validationReport());

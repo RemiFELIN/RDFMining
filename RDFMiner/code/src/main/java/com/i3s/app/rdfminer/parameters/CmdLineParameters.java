@@ -37,6 +37,9 @@ public class CmdLineParameters {
 	@Option(name = "-shacl-p", aliases = { "--shacl-probability" }, usage = "set the value of p for SHACL probabilistic mode", metaVar = "SHACL_PROB_P")
 	public String probShaclP = String.valueOf(0.05);
 
+	@Option(name = "-shacl-a", aliases = { "--shacl-alpha" }, usage = "set the value of alpha for SHACL probabilistic mode (Hypothesis testing)", metaVar = "SHACL_PROB_A")
+	public double alpha = 0.05;
+
 	@Option(name = "-e", aliases = { "--endpoint" }, usage = "specify the SPARQL endpoint to be used for sending requests", metaVar = "ENDPOINT")
 	public String sparqlEndpoint = null;
 
