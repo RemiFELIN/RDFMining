@@ -8,13 +8,14 @@ template {
       """
 <html>\n\n
    <body>
+      <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
       <style>
          table { width : 100%%; }
          tr:nth-child(even) { background-color : #E8EBF5; }
          tr:nth-child(odd)  { background-color : #CED4E5; } 
          th { background-color : #82e6ff; }
       </style>
-      <table>
+      <table class="sortable">
          <!-- Header -->
          <tr>
             <th>antecedent</th>
@@ -37,7 +38,7 @@ template {
       group { 
          format {
             """
-         <tr>
+         <tr class="item">
             <td>%s</td>
             <td>%s</td>
             <td>%s</td>
@@ -66,7 +67,7 @@ where  {
    ?p sh:hasValue ?ncon .
    ?nant rdfs:label ?ant .
    ?ncon rdfs:label ?con .
-   optional { ?shape ex:pvalue ?X . }
-   bind(if(bound(?X), ?X, " ") as ?X)
+   optional { ?shape ex:pvalue ?val . }
+   bind(if(bound(?val), ?val, " ") as ?X)
 }
-order by ?ant ?con ?nexc ?likelihood ?generality ?X ?accept
+order by ?ant ?con ?refc ?nexc ?likelihood ?generality ?X ?accept

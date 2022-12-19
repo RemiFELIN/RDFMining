@@ -251,32 +251,39 @@ public class Evaluator {
 		logger.info("Writting hypothesis test results in " + Global.SHACL_HYPOTHESIS_TEST_FILENAME);
 		FileWriter hypothesisTestFw = new FileWriter(RDFMiner.outputFolder + Global.SHACL_HYPOTHESIS_TEST_FILENAME);
 		hypothesisTestFw.write(Global.PREFIXES + "\n");
+		logger.info(validationReport.reportedShapes.size() + " shapes has been evaluated !");
+//		logger.info("[DEBUG] validationReport.reportedShapes.get(0) = " + validationReport.reportedShapes.get(0));
 		for(Shape shape : shapesManager.getPopulation()) {
-			// get shapes with metrics
-			shape.fillParamFromReport(validationReport);
-			// X^2 computation
-			double nExcTheo = shape.referenceCardinality.doubleValue() * Double.parseDouble(RDFMiner.parameters.probShaclP);
-			double nConfTheo = shape.referenceCardinality.doubleValue() - nExcTheo;
-			// if observed error is lower, accept the shape
-			if(shape.numException.doubleValue() <= nExcTheo) {
-				hypothesisTestFw.write(shape.id + " ex:acceptance \"true\"^^xsd:boolean .\n");
-			}  else if (nExcTheo >= 5 && nConfTheo >= 5) {
-				// apply statistic test X2
-				Double X2 = (Math.pow(shape.numException.doubleValue() - nExcTheo, 2) / nExcTheo) +
-					(Math.pow(shape.numConfirmation.doubleValue() - nConfTheo, 2) / nConfTheo);
-//				logger.info("p-value = " + X2);
-				hypothesisTestFw.write(shape.id + " ex:pvalue \"" + X2 + "\"^^xsd:double .\n");
-				double critical = new ChiSquaredDistribution(1).inverseCumulativeProbability(1 - RDFMiner.parameters.alpha);
-				if (X2 <= critical) {
-					// Accepted !
+//			logger.info("[DEBUG] shape.id = " + shape.id);
+			if(validationReport.reportedShapes.contains(shape.id.replace("<", "").replace(">", ""))) {
+				// get shapes with metrics
+				shape.fillParamFromReport(validationReport);
+				// X^2 computation
+				double nExcTheo = shape.referenceCardinality.doubleValue() * Double.parseDouble(RDFMiner.parameters.probShaclP);
+				double nConfTheo = shape.referenceCardinality.doubleValue() - nExcTheo;
+				// if observed error is lower, accept the shape
+				if(shape.numException.doubleValue() <= nExcTheo) {
 					hypothesisTestFw.write(shape.id + " ex:acceptance \"true\"^^xsd:boolean .\n");
+				}  else if (nExcTheo >= 5 && nConfTheo >= 5) {
+					// apply statistic test X2
+					Double X2 = (Math.pow(shape.numException.doubleValue() - nExcTheo, 2) / nExcTheo) +
+							(Math.pow(shape.numConfirmation.doubleValue() - nConfTheo, 2) / nConfTheo);
+//				logger.info("p-value = " + X2);
+					hypothesisTestFw.write(shape.id + " ex:pvalue \"" + X2 + "\"^^xsd:double .\n");
+					double critical = new ChiSquaredDistribution(1).inverseCumulativeProbability(1 - RDFMiner.parameters.alpha);
+					if (X2 <= critical) {
+						// Accepted !
+						hypothesisTestFw.write(shape.id + " ex:acceptance \"true\"^^xsd:boolean .\n");
+					} else {
+						// rejected !
+						hypothesisTestFw.write(shape.id + " ex:acceptance \"false\"^^xsd:boolean .\n");
+					}
 				} else {
 					// rejected !
 					hypothesisTestFw.write(shape.id + " ex:acceptance \"false\"^^xsd:boolean .\n");
 				}
 			} else {
-				// rejected !
-				hypothesisTestFw.write(shape.id + " ex:acceptance \"false\"^^xsd:boolean .\n");
+				logger.warn("Shape to remove: " + shape.id);
 			}
 		}
 		hypothesisTestFw.close();

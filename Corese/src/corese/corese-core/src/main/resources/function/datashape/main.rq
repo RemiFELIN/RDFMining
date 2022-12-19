@@ -156,9 +156,9 @@ function sh:shacleval(shape, focus) {
                     sh:addExtendedShaclReport(rep, exceptions);
                 } ;
             }
-            # else {
-            #     sh:log("main.rq", "sh:shacleval", concat("bound: ", bound(sh), " and xt:size(list)=", xt:size(list)));
-            # }
+            else {
+                sh:log("main.rq", "sh:shacleval", "The current shape is not considered ...");
+            } ;
         } ;
         # if the RDF graph is conform, we set the report to conform such as :
         if(coalesce(!fail, true)) {
