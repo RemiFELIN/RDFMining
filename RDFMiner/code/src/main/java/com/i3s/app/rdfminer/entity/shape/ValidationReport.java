@@ -1,7 +1,7 @@
-package com.i3s.app.rdfminer.shacl;
+package com.i3s.app.rdfminer.entity.shape;
 
-import com.i3s.app.rdfminer.shacl.vocabulary.RDFMinerKW;
-import com.i3s.app.rdfminer.shacl.vocabulary.ShaclKW;
+import com.i3s.app.rdfminer.entity.shape.vocabulary.ProbabilisticShacl;
+import com.i3s.app.rdfminer.entity.shape.vocabulary.Shacl;
 import com.i3s.app.rdfminer.sparql.RequestBuilder;
 import org.apache.log4j.Logger;
 import org.eclipse.rdf4j.model.Model;
@@ -65,12 +65,12 @@ public class ValidationReport {
         // set a Map< str , List<str> > which contains a list of exceptions by Shape
         this.exceptionsByShape = getExceptionsByShape();
         // set a Map< str , number > which contains the numerical values by Shape
-        this.numExceptionsByShape = getNumericalInValSummaryByShape(RDFMinerKW.NUM_EXCEPTION);
-        this.numConfirmationsByShape = getNumericalInValSummaryByShape(RDFMinerKW.NUM_CONFIRMATION);
-        this.referenceCardinalityByShape = getNumericalInValSummaryByShape(RDFMinerKW.REFERENCE_CARDINALITY);
-        this.probabilityByShape = getNumericalInValSummaryByShape(RDFMinerKW.PROBABILITY);
-        this.fitnessByShape = getNumericalInValSummaryByShape(RDFMinerKW.FITNESS);
-        this.generalityByShape = getNumericalInValSummaryByShape(RDFMinerKW.GENERALITY);
+        this.numExceptionsByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.NUM_EXCEPTION);
+        this.numConfirmationsByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.NUM_CONFIRMATION);
+        this.referenceCardinalityByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.REFERENCE_CARDINALITY);
+        this.probabilityByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.PROBABILITY);
+        this.fitnessByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.FITNESS);
+        this.generalityByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.GENERALITY);
     }
 
     public HashMap<String, Number> getNumericalInValSummaryByShape(String parameter) {
@@ -86,7 +86,7 @@ public class ValidationReport {
             }
             shapeValues.append("}");
             String request = RequestBuilder.select("?shape ?value",
-                    "?x " + ShaclKW.SOURCE_SHAPE + " ?shape . ?x " + parameter + " ?value . " + shapeValues, true);
+                    "?x " + Shacl.SOURCE_SHAPE + " ?shape . ?x " + parameter + " ?value . " + shapeValues, true);
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
             try (TupleQueryResult result = query.evaluate()) {
@@ -120,8 +120,8 @@ public class ValidationReport {
             }
             shapeValues.append("}");
             String request = RequestBuilder.select("?shape ?node",
-                    "?x " + ShaclKW.SOURCE_SHAPE + " ?shape . ?x " + RDFMinerKW.EXCEPTION + " ?ex . " +
-                            "?ex " + ShaclKW.FOCUS_NODE + " ?node ." + shapeValues, true);
+                    "?x " + Shacl.SOURCE_SHAPE + " ?shape . ?x " + ProbabilisticShacl.EXCEPTION + " ?ex . " +
+                            "?ex " + Shacl.FOCUS_NODE + " ?node ." + shapeValues, true);
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
             try (TupleQueryResult result = query.evaluate()) {
@@ -156,8 +156,8 @@ public class ValidationReport {
             // add the model
             con.add(this.model);
             // init query
-            String request = RequestBuilder.select("?shapes", "?y a " + ShaclKW.VALIDATION_REPORT + " . " +
-                    "?y " + RDFMinerKW.SUMMARY + " ?x . ?x " + ShaclKW.SOURCE_SHAPE + " ?shapes .", true);
+            String request = RequestBuilder.select("?shapes", "?y a " + Shacl.VALIDATION_REPORT + " . " +
+                    "?y " + ProbabilisticShacl.SUMMARY + " ?x . ?x " + Shacl.SOURCE_SHAPE + " ?shapes .", true);
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
             try (TupleQueryResult result = query.evaluate()) {
@@ -179,8 +179,8 @@ public class ValidationReport {
             // add the model
             con.add(this.model);
             // init request
-            String request = RequestBuilder.select("(count(?x) as ?n)", "?y a " + ShaclKW.VALIDATION_REPORT + " . " +
-                    "?y " + RDFMinerKW.SUMMARY + " ?x .", true);
+            String request = RequestBuilder.select("(count(?x) as ?n)", "?y a " + Shacl.VALIDATION_REPORT + " . " +
+                    "?y " + ProbabilisticShacl.SUMMARY + " ?x .", true);
             // init query
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result

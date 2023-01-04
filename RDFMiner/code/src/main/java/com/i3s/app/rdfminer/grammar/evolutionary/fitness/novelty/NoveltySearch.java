@@ -1,11 +1,9 @@
-package com.i3s.app.rdfminer.grammar.evolutionary.fitness;
+package com.i3s.app.rdfminer.grammar.evolutionary.fitness.novelty;
 
 import Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.Global;
-import com.i3s.app.rdfminer.axiom.Axiom;
-import com.i3s.app.rdfminer.axiom.AxiomFactory;
-import com.i3s.app.rdfminer.grammar.evolutionary.fitness.novelty.NoveltyFitness;
-import com.i3s.app.rdfminer.grammar.evolutionary.fitness.novelty.Similarity;
+import com.i3s.app.rdfminer.entity.axiom.Axiom;
+import com.i3s.app.rdfminer.entity.axiom.AxiomFactory;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -46,7 +44,7 @@ public class NoveltySearch {
                 }
             }
 //            logger.info("similarities for " + phi1.argumentClasses + ": " + phi1.similarities);
-            double fitness = new NoveltyFitness(phi1).getFitness();
+            double fitness = new Novelty(phi1).getFitness();
 //            logger.info("fitness value = " + fitnessForA.getFitness());
             BasicFitness fit = new BasicFitness(fitness, phi1.individual);
             fit.getIndividual().setValid(true);
@@ -92,7 +90,7 @@ public class NoveltySearch {
                 }
             }
             logger.info("similarities for " + a.argumentClasses + ": " + a.similarities);
-            NoveltyFitness fitnessForA = new NoveltyFitness(a);
+            Novelty fitnessForA = new Novelty(a);
             logger.info("fitness value = " + fitnessForA.getFitness());
         }
 

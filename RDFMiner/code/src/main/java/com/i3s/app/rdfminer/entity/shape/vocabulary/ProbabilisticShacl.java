@@ -1,6 +1,6 @@
-package com.i3s.app.rdfminer.shacl.vocabulary;
+package com.i3s.app.rdfminer.entity.shape.vocabulary;
 
-public class RDFMinerKW {
+public class ProbabilisticShacl {
 
     public static final String RDFMINER = "rdfminer:";
 

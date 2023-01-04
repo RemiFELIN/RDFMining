@@ -1,12 +1,12 @@
 package com.i3s.app.rdfminer.grammar.evolutionary.fitness.novelty;
 
-import com.i3s.app.rdfminer.axiom.Axiom;
+import com.i3s.app.rdfminer.entity.axiom.Axiom;
 
-public class NoveltyFitness {
+public class Novelty {
 
     private Axiom phi;
 
-    public NoveltyFitness(Axiom phi) {
+    public Novelty(Axiom phi) {
         this.phi = phi;
     }
 

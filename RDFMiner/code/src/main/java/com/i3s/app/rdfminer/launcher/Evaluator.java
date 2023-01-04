@@ -3,16 +3,15 @@ package com.i3s.app.rdfminer.launcher;
 import Individuals.Phenotype;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
-import com.i3s.app.rdfminer.axiom.Axiom;
-import com.i3s.app.rdfminer.axiom.AxiomFactory;
+import com.i3s.app.rdfminer.entity.axiom.Axiom;
+import com.i3s.app.rdfminer.entity.axiom.AxiomFactory;
+import com.i3s.app.rdfminer.entity.shape.Shape;
+import com.i3s.app.rdfminer.entity.shape.ShapesManager;
+import com.i3s.app.rdfminer.entity.shape.ValidationReport;
 import com.i3s.app.rdfminer.generator.axiom.AxiomGenerator;
 import com.i3s.app.rdfminer.generator.axiom.CandidateAxiomGenerator;
 import com.i3s.app.rdfminer.generator.axiom.IncreasingTimePredictorAxiomGenerator;
 import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
-import com.i3s.app.rdfminer.parameters.CmdLineParameters;
-import com.i3s.app.rdfminer.shacl.Shape;
-import com.i3s.app.rdfminer.shacl.ShapesManager;
-import com.i3s.app.rdfminer.shacl.ValidationReport;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import com.i3s.app.rdfminer.sparql.corese.CoreseService;
 import org.apache.jena.shared.JenaException;
@@ -25,20 +24,40 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.*;
 
-public class LaunchWithoutGE {
+public class Evaluator {
 
-	private static final Logger logger = Logger.getLogger(LaunchWithoutGE.class.getName());
+	private static final Logger logger = Logger.getLogger(Evaluator.class.getName());
+
+	public Evaluator()
+			throws URISyntaxException, IOException, ExecutionException, InterruptedException {
+		// special case where -af and -sf are used in the same time
+		if(RDFMiner.parameters.axiomFile != null && RDFMiner.parameters.shapeFile != null) {
+			logger.error("(--axioms-file) and (--shapes-file) are used in the same time !");
+			System.exit(1);
+		} else if(RDFMiner.parameters.axiomFile != null) {
+			// launch axioms evaluator
+			runAxiomEvaluation();
+		} else if(RDFMiner.parameters.shapeFile != null) {
+			// launch shapes evaluator
+			runShapeEvaluation();
+		} else {
+			logger.error("No files provided !");
+			logger.warn("use (--axioms-file) to assess an OWL axioms file OR (--shapes-file) to assess a SHACL shapes file");
+			System.exit(1);
+		}
+	}
 	
 	/**
 	 * The first version of RDFMiner launcher
 	 */
-	public void runAxiomEvaluation(CmdLineParameters parameters) throws InterruptedException, ExecutionException, URISyntaxException, IOException {
+	public void runAxiomEvaluation() throws InterruptedException, ExecutionException, URISyntaxException, IOException {
 		
 		AxiomGenerator generator = null;
 		BufferedReader axiomFile = null;
@@ -46,29 +65,29 @@ public class LaunchWithoutGE {
 		// Create an empty JSON object which will be fill with our results
 		RDFMiner.axiomsList = new JSONArray();
 		
-		if (parameters.axiomFile == null) {
-			if (parameters.singleAxiom == null) {
-				if (parameters.useRandomAxiomGenerator) {
+		if (RDFMiner.parameters.axiomFile == null) {
+			if (RDFMiner.parameters.singleAxiom == null) {
+				if (RDFMiner.parameters.useRandomAxiomGenerator) {
 					logger.info(
-							"Initializing the random axiom generator with grammar " + parameters.grammarFile + "...");
-					generator = new RandomAxiomGenerator(parameters.grammarFile, false);
-				} else if (parameters.subClassList != null) {
+							"Initializing the random axiom generator with grammar " + RDFMiner.parameters.grammarFile + "...");
+					generator = new RandomAxiomGenerator(RDFMiner.parameters.grammarFile, false);
+				} else if (RDFMiner.parameters.subClassList != null) {
 					logger.info("Initializing the increasing TP axiom generator...");
-					generator = new IncreasingTimePredictorAxiomGenerator(parameters.subClassList);
+					generator = new IncreasingTimePredictorAxiomGenerator(RDFMiner.parameters.subClassList);
 				} else {
 					logger.info("Initializing the candidate axiom generator...");
-					generator = new CandidateAxiomGenerator(parameters.grammarFile, false);
+					generator = new CandidateAxiomGenerator(RDFMiner.parameters.grammarFile, false);
 				}
 			} else {
 				logger.info("launch test on a single axiom");
 			}
 		} else {
-			logger.info("Reading axioms from file " + parameters.axiomFile + "...");
+			logger.info("Reading axioms from file " + RDFMiner.parameters.axiomFile + "...");
 			try {
 				// Try to read the status file:
-				axiomFile = new BufferedReader(new FileReader(parameters.axiomFile));
+				axiomFile = new BufferedReader(new FileReader(RDFMiner.parameters.axiomFile));
 			} catch (IOException e) {
-				logger.error("Could not open file " + parameters.axiomFile);
+				logger.error("Could not open file " + RDFMiner.parameters.axiomFile);
 				return;
 			}
 		}
@@ -76,11 +95,11 @@ public class LaunchWithoutGE {
 		// ShutDownHook
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			// Save results in output file
-			if (parameters.singleAxiom == null)
+			if (RDFMiner.parameters.singleAxiom == null)
 				writeAndFinish();
 		}));
 
-		if (parameters.singleAxiom == null) {
+		if (RDFMiner.parameters.singleAxiom == null) {
 			// as the test of a single axiom is return on standard output, we don't need to
 			// write file of the results
 			try {
@@ -114,7 +133,7 @@ public class LaunchWithoutGE {
 				callables.add(() -> {
 					try {
 						logger.info("Testing axiom: " + finalAxiomName);
-						Axiom a = AxiomFactory.create(null, axiom, new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.SPARQL_ENDPOINT, Global.PREFIXES));
+						Axiom a = AxiomFactory.create(null, axiom, new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
 						a.axiomId = finalAxiomName;
 						return a;
 					} catch (QueryExceptionHTTP httpError) {
@@ -129,9 +148,9 @@ public class LaunchWithoutGE {
 
 			} else {
 				try {
-					if (axiomFile == null && parameters.singleAxiom != null) {
-						axiomName = parameters.singleAxiom;
-					} else if (axiomFile != null && parameters.singleAxiom == null) {
+					if (axiomFile == null && RDFMiner.parameters.singleAxiom != null) {
+						axiomName = RDFMiner.parameters.singleAxiom;
+					} else if (axiomFile != null && RDFMiner.parameters.singleAxiom == null) {
 						axiomName = axiomFile.readLine();
 					} else {
 						logger.error("The options -a and -sa are used at the same time ...");
@@ -144,15 +163,15 @@ public class LaunchWithoutGE {
 					String finalAxiomName = axiomName;
 					callables.add(() -> {
 						logger.info("Testing axiom: " + finalAxiomName);
-						Axiom a = AxiomFactory.create(null, finalAxiomName, new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.SPARQL_ENDPOINT, Global.PREFIXES));
+						Axiom a = AxiomFactory.create(null, finalAxiomName, new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
 						a.axiomId = finalAxiomName;
-						if (parameters.singleAxiom != null) {
+						if (RDFMiner.parameters.singleAxiom != null) {
 							logger.info("Axiom evaluated !");
 							logger.info("Result (using JSON format) :\n" + a.toJSON().toString(2));
 						}
 						return a;
 					});
-					if (parameters.singleAxiom != null)
+					if (RDFMiner.parameters.singleAxiom != null)
 						break;
 				} catch (IOException e) {
 					logger.error("Could not read the next axiom.");
@@ -188,20 +207,20 @@ public class LaunchWithoutGE {
 	/**
 	 * The first version of RDFMiner launcher
 	 */
-	public void runShapeEvaluation(CmdLineParameters parameters) throws URISyntaxException, IOException {
+	public void runShapeEvaluation() throws URISyntaxException, IOException {
 
 		BufferedReader shapeFile = null;
 
 		// Create an empty JSON object which will be fill with our results
 		RDFMiner.axiomsList = new JSONArray();
 
-		if (parameters.shapeFile != null) {
-			logger.info("Reading SHACL Shapes from file " + parameters.shapeFile + "...");
+		if (RDFMiner.parameters.shapeFile != null) {
+			logger.info("Reading SHACL Shapes from file " + RDFMiner.parameters.shapeFile + "...");
 			try {
 				// Try to read the status file:
-				shapeFile = new BufferedReader(new FileReader(parameters.shapeFile));
+				shapeFile = new BufferedReader(new FileReader(RDFMiner.parameters.shapeFile));
 			} catch (IOException e) {
-				logger.error("Could not open file " + parameters.shapeFile);
+				logger.error("Could not open file " + RDFMiner.parameters.shapeFile);
 				return;
 			}
 		} else {
@@ -222,9 +241,9 @@ public class LaunchWithoutGE {
 			System.exit(1);
 		}
 
-		ShapesManager shapesManager = new ShapesManager(parameters.shapeFile);
+		ShapesManager shapesManager = new ShapesManager(Path.of(RDFMiner.parameters.shapeFile));
 		// launch evaluation
-		CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.SPARQL_ENDPOINT, Global.PREFIXES);
+		CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
 		String report;
 		if(RDFMiner.parameters.useClassicShaclMode) {
 			report = endpoint.getValidationReportFromServer(shapesManager.file, CoreseService.SHACL_EVALUATION);
@@ -236,7 +255,7 @@ public class LaunchWithoutGE {
 			for(Shape shape : shapesManager.getPopulation()) {
 				shape.fillParamFromReport(validationReport);
 				// Save a JSON report of the test
-				RDFMiner.axiomsList.put(shape.toJSON());
+//				RDFMiner.axiomsList.put(shape.toJSON());
 			}
 		}
 

@@ -1,6 +1,6 @@
 package com.i3s.app.rdfminer.grammar.evolutionary.fitness.novelty;
 
-import com.i3s.app.rdfminer.axiom.Axiom;
+import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 
 import java.io.IOException;

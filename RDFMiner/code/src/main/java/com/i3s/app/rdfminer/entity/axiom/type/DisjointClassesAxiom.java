@@ -1,10 +1,10 @@
 /**
  * 
  */
-package com.i3s.app.rdfminer.axiom.type;
+package com.i3s.app.rdfminer.entity.axiom.type;
 
 import Mapper.Symbol;
-import com.i3s.app.rdfminer.axiom.Axiom;
+import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.expression.complement.ComplementClassExpression;
@@ -61,6 +61,8 @@ public class DisjointClassesAxiom extends Axiom {
 		// set elapsedTime as a CPU usage time
 		elapsedTime = getProcessCPUTime() - t0;
 		logger.info("elapsed time = " + elapsedTime + " ms.");
+		// set fitness
+		computeFitness();
 	}
 
 	/**

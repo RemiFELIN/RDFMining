@@ -20,26 +20,27 @@ public class CmdLineParameters {
 	@Option(name = "-h", aliases = { "--help" }, metaVar = "HELP")
 	public boolean help;
 
-	@Option(name = "-a", aliases = { "--axioms" }, usage = "test axioms contained in this file", metaVar = "AXIOM_FILE")
-	public String axiomFile = null;
-
 	@Option(name = "-sa", aliases = { "--single-axiom" }, usage = "test a single axiom given", metaVar = "AXIOM")
 	public String singleAxiom = null;
 
+	// FILES (evaluator part)
 	@Option(name = "-sf", aliases = { "--shapes-file" }, usage = "test shapes contained in this file", metaVar = "SHAPES_FILE")
 	public String shapeFile = null;
 
-	@Option(name = "-shacl", aliases = { "--shacl-shapes" }, usage = "enable SHACL Shapes mining", metaVar = "SHAPES")
-	public boolean useShaclMode = false;
-
-	@Option(name = "-e", aliases = { "--endpoint" }, usage = "specify the SPARQL endpoint to be used for sending requests", metaVar = "ENDPOINT")
-	public String sparqlEndpoint = null;
+	@Option(name = "-af", aliases = { "--axioms-file" }, usage = "test axioms contained in this file", metaVar = "AXIOM_FILE")
+	public String axiomFile = null;
 
 	@Option(name = "-p", aliases = { "--prefixes" }, usage = "use this file as the prefixes to be used in SPARQL queries", metaVar = "PREFIXES")
 	public String prefixesFile = null;
 
 	@Option(name = "-cs", aliases = { "--classic-shacl" }, usage = "use classic SHACL validation", metaVar = "CLASSIC_SHACL")
 	public boolean useClassicShaclMode = false;
+
+	@Option(name = "-target", aliases = { "--target-endpoint" }, usage = "specify the SPARQL endpoint to be used for sending requests", metaVar = "TARGET")
+	public String targetSparqlEndpoint = null;
+
+	@Option(name = "-train", aliases = { "--train-endpoint" }, usage = "specify the SPARQL endpoint to be used as a training dataset", metaVar = "TRAIN")
+	public String trainSparqlEndpoint = null;
 
 	/**
 	 * The angular coefficient to be used for dynamic time capping of axiom test.
@@ -66,8 +67,12 @@ public class CmdLineParameters {
 	@Option(name = "-dir", aliases = { "--directory" }, usage = "path of output folder", metaVar = "RESULTFOLDER")
 	public String resultFolder = "results";
 
-	@Option(name = "-r", aliases = { "--random" }, usage = "test randomly generated axioms")
+	// GENERATOR
+	@Option(name = "-ra", aliases = { "--random-axiom" }, usage = "use the random axiom generator")
 	public boolean useRandomAxiomGenerator = false;
+
+	@Option(name = "-rs", aliases = { "--random-shapes" }, usage = "enable SHACL Shapes mining", metaVar = "SHAPES")
+	public boolean useRandomShaclShapeGenerator = false;
 
 	@Option(name = "-s", aliases = {
 			"--subclassof-list" }, usage = "test subClassOf axioms generated from the list of subclasses in the given file", metaVar = "FILE")

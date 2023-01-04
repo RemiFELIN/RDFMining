@@ -1,6 +1,6 @@
-package com.i3s.app.rdfminer.shacl.vocabulary;
+package com.i3s.app.rdfminer.entity.shape.vocabulary;
 
-public class ShaclKW {
+public class Shacl {
 
     public static final String SHACL = "sh:";
 

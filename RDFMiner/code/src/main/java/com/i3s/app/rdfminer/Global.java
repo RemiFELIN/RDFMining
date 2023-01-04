@@ -31,21 +31,20 @@ public class Global {
     public static final String DBPEDIA_TDB_PATH = System.getenv("HOME") + "/tdb/";
 
     /**
-     * The SPARQL Endpoint to use (depending of the mode used)
+     * The SPARQL Endpoint targetted (to query it)
      */
-    public static String SPARQL_ENDPOINT = null;
+    public static String TARGET_SPARQL_ENDPOINT = null;
 
     /**
-     * SPARQL endpoint from remote server which contains full instance of DBPedia
-     * 2015.04
+     * SPARQL endpoint from remote server which contains full instance of DBPedia 2015.04
      */
     public final static String VIRTUOSO_DBPEDIA_2015_04_SPARQL_ENDPOINT = "http://134.59.130.136:8890/sparql";
 
     /**
-     * SPARQL endpoint from local server which contains 1% of full instance of
-     * DBPedia 2015.04
+     * SPARQL endpoint from local server used as training dataset (a part of full dataset used)
+     * By default, it contains 1% of full instance of DBPedia 2015.04
      */
-    public final static String VIRTUOSO_SMALL_DBPEDIA_2015_04_SPARQL_ENDPOINT = "http://172.19.0.2:9000/sparql";
+    public final static String TRAINING_SPARQL_ENDPOINT = "http://172.19.0.2:9000/sparql";
 
     /**
      * Corese IP Address
@@ -53,7 +52,7 @@ public class Global {
     public static final String CORESE_SPARQL_ENDPOINT = "http://172.19.0.4:9100/";
 
     /**
-     * default prefixes used to perform queries with the remote {@link Global#SPARQL_ENDPOINT
+     * default prefixes used to perform queries with the remote {@link Global#TARGET_SPARQL_ENDPOINT
      * SPARQL endpoint}
      */
     public static String PREFIXES =

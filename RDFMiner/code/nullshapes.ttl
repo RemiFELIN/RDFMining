@@ -1,0 +1,29 @@
+BASE             <http://rdfminer.com/shapes/>
+PREFIX owl:      <http://www.w3.org/2002/07/owl#>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX foaf:     <http://xmlns.com/foaf/0.1/>
+PREFIX dc:       <http://purl.org/dc/elements/1.1/>
+PREFIX dbr:      <http://dbpedia.org/resource/>
+PREFIX dbp:      <http://dbpedia.org/property/>
+PREFIX dbpedia:  <http://dbpedia.org/>
+PREFIX skos:     <http://www.w3.org/2004/02/skos/core#>
+PREFIX dbo:      <http://dbpedia.org/ontology/>
+PREFIX ex:       <http://example.org/demo#> 
+PREFIX sp:       <http://spinrdf.org/sp#> 
+PREFIX sh:       <http://www.w3.org/ns/shacl#> 
+PREFIX dct:      <http://purl.org/dc/terms/> 
+PREFIX rdfminer: <http://ns.inria.fr/rdfminer/shacl#> 
+<http://rdfminer.com/shapes/2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+<http://rdfminer.com/shapes/2> <http://www.w3.org/ns/shacl#targetClass> <http://www.wikidata.org/entity/Q14863991> .
+<http://rdfminer.com/shapes/2> <http://www.w3.org/ns/shacl#property> _:node1glotmkh3x1 .
+_:node1glotmkh3x1 <http://www.w3.org/ns/shacl#path> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> .
+_:node1glotmkh3x1 <http://www.w3.org/ns/shacl#hasValue> <http://www.wikidata.org/entity/Q14875321> .
+
+<http://rdfminer.com/shapes/4> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+<http://rdfminer.com/shapes/4> <http://www.w3.org/ns/shacl#targetClass> <http://www.wikidata.org/entity/Q1> .
+<http://rdfminer.com/shapes/4> <http://www.w3.org/ns/shacl#property> _:node1glotmkh3x2 .
+_:node1glotmkh3x2 <http://www.w3.org/ns/shacl#path> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> .
+_:node1glotmkh3x2 <http://www.w3.org/ns/shacl#hasValue> <http://www.wikidata.org/entity/Q2> .
+

@@ -1,12 +1,12 @@
 /**
  * 
  */
-package com.i3s.app.rdfminer.axiom.type;
+package com.i3s.app.rdfminer.entity.axiom.type;
 
 import Mapper.Symbol;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
-import com.i3s.app.rdfminer.axiom.Axiom;
+import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.expression.complement.ComplementClassExpression;
@@ -94,6 +94,8 @@ public class SubClassOfAxiom extends Axiom {
 		// set elapsedTime as a CPU usage time
 		logger.info("ARI = " + ari);
 		elapsedTime = getProcessCPUTime() - t0;
+		// set fitness
+		computeFitness();
 		logger.info("elapsed time = " + elapsedTime + " ms.");
 	}
 
@@ -273,7 +275,7 @@ public class SubClassOfAxiom extends Axiom {
 
 	public void getExceptionsUsingCoreseLoop() throws URISyntaxException, IOException {
 		logger.info("Compute the number of exceptions with a proposal optimization and loop operator from Corese ...");
-		CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.SPARQL_ENDPOINT, null);
+		CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.TARGET_SPARQL_ENDPOINT, null);
 		// Writing the query using loop operator, we will ask our Virtuoso server from the Corese server as a SERVICE
 		String getTypesQuery = endpoint.buildSelectAllQuery(
 				endpoint.addFederatedQueryWithLoop("SELECT distinct ?t WHERE { " + subClass.graphPattern + " ?x a ?t }", 1000) + "\n" +

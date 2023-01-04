@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.i3s.app.rdfminer.output.Results;
-import com.i3s.app.rdfminer.shacl.ValidationReport;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

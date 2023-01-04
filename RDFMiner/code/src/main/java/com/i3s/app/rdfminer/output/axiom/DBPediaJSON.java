@@ -1,7 +1,6 @@
 package com.i3s.app.rdfminer.output.axiom;
 
 import com.i3s.app.rdfminer.output.Results;
-import com.i3s.app.rdfminer.shacl.ValidationReport;
 import org.json.JSONObject;
 
 /**

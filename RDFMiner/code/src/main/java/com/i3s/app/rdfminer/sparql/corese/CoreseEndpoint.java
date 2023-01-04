@@ -174,7 +174,7 @@ public class CoreseEndpoint {
         // fill params
         HashMap<String, String> params = new HashMap<>();
         params.put("mode", mode);
-        params.put("uri", Global.SPARQL_ENDPOINT + CoreseService.CORESE_GET_SHACL_SHAPES_ENDPOINT);
+        params.put("uri", Global.TARGET_SPARQL_ENDPOINT + CoreseService.CORESE_GET_SHACL_SHAPES_ENDPOINT);
         params.put("query", "construct where {?s ?p ?o}");
         params.put("format", Format.TURTLE);
         // send the given file to the server

@@ -1,8 +1,12 @@
 package com.i3s.app.rdfminer.output.axiom;
 
+import com.i3s.app.rdfminer.entity.Entity;
+import com.i3s.app.rdfminer.grammar.evolutionary.EATools;
 import com.i3s.app.rdfminer.output.Results;
-import com.i3s.app.rdfminer.shacl.ValidationReport;
+import com.i3s.app.rdfminer.statistics.Statistics;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * 
@@ -19,9 +23,18 @@ public class GenerationJSON extends Results {
 	public double diversityCoefficient;
 	public double genotypeDiversityCoefficient;
 	public double averageFitness;
-	public double numComplexAxiom;
-	public double numComplexAxiomSpecial;
 	public long numIndividualsWithNonNullFitness;
+
+	public void setGenerationJSON(ArrayList<Entity> entities, ArrayList<Entity> distinctEntities, int curGeneration) {
+		Statistics stat = new Statistics();
+		this.idGeneration = curGeneration;
+		this.numSuccessMapping = stat.getCountSuccessMapping(distinctEntities);
+		this.diversityCoefficient = (double) distinctEntities.size() / entities.size();
+		this.genotypeDiversityCoefficient = (double) EATools.getDistinctGenotypePopulation(entities).size()
+				/ entities.size();
+		this.averageFitness = stat.computeAverageFitness(distinctEntities);
+		this.numIndividualsWithNonNullFitness = stat.getEntitiesWithNonNullFitness(distinctEntities);
+	}
 
 	@Override
 	public JSONObject toJSON() {
@@ -32,8 +45,6 @@ public class GenerationJSON extends Results {
 		json.put("genotypeDiversityCoefficient", genotypeDiversityCoefficient);
 		json.put("averageFitness", averageFitness);
 		json.put("numIndividualsWithNonNullFitness", numIndividualsWithNonNullFitness);
-		json.put("numComplexAxiom", numComplexAxiom);
-		json.put("numComplexAxiomSpecial", numComplexAxiomSpecial);
 		return json;
 	}
 

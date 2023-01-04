@@ -11,13 +11,14 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import Individuals.FitnessPackage.BasicFitness;
+import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.grammar.evolutionary.selection.TruncationSelection;
 import com.i3s.app.rdfminer.grammar.evolutionary.selection.TypeSelection;
 import com.i3s.app.rdfminer.mode.Mode;
-import com.i3s.app.rdfminer.shacl.Shape;
-import com.i3s.app.rdfminer.shacl.ShapesManager;
-import com.i3s.app.rdfminer.shacl.ValidationReport;
+import com.i3s.app.rdfminer.entity.shape.Shape;
+import com.i3s.app.rdfminer.entity.shape.ShapesManager;
+import com.i3s.app.rdfminer.entity.shape.ValidationReport;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import com.i3s.app.rdfminer.sparql.corese.CoreseService;
 import org.apache.jena.query.ResultSet;
@@ -92,19 +93,18 @@ public class EATools {
 	/**
 	 * Remove the duplicate(s) genotype(s) from a given list and returns the
 	 * filtered list
-	 * 
 	 * @param canPop a given list to be filtered
 	 * @return the filtered list
 	 */
-	public static ArrayList<GEIndividual> getDistinctGenotypePopulation(ArrayList<GEIndividual> canPop) {
-		ArrayList<GEIndividual> individuals = new ArrayList<>();
+	public static ArrayList<Entity> getDistinctGenotypePopulation(ArrayList<Entity> canPop) {
+		ArrayList<Entity> entities = new ArrayList<>();
 		Set<Genotype> genotypes = new HashSet<>();
-		for (GEIndividual item : canPop) {
-			if (genotypes.add(item.getGenotype())) {
-				individuals.add(item);
+		for (Entity entity : canPop) {
+			if (genotypes.add(entity.individual.getGenotype())) {
+				entities.add(entity);
 			}
 		}
-		return individuals;
+		return entities;
 	}
 
 	public static ArrayList<GEIndividual> getTypeSelection(int type, ArrayList<GEIndividual> selectedPopulation, int sizeElite, int sizeSelection) {
@@ -213,22 +213,17 @@ public class EATools {
 
 		ArrayList<GEIndividual> notEvaluatedIndividuals = new ArrayList<>();
 		ArrayList<GEIndividual> evaluatedIndividuals = new ArrayList<>();
-
 		// We have a set of threads to compute each tasks
 		ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
 		// 2 differents types of tasks
 		Set<Callable<GEIndividual>> individualCallables = new HashSet<>();
 		Set<Callable<GEIndividual[]>> individualsCallables = new HashSet<>();
-
+		logger.info("The entities will be evaluated using the following SPARQL Endpoint : " + Global.TARGET_SPARQL_ENDPOINT);
 		logger.info("Performing crossover and mutation ...");
-		logger.info("The axioms will be evaluated using the following SPARQL Endpoint : " + Global.SPARQL_ENDPOINT);
-
 		List<Crowding> shapesToEvaluate = new ArrayList<>();
-
 		int m = 0;
 
 		while (m <= canPop.size() - 2) {
-
 			RandomNumberGenerator rand = new MersenneTwisterFast();
 			// get the two individuals which are neighbours
 			GEIndividual parent1 = canPop.get(m);
@@ -236,7 +231,6 @@ public class EATools {
 			GEIndividual child1, child2;
 			GEChromosome[] chromosomes;
 			GEChromosome c1, c2;
-
 			/* CROSSOVER PHASIS */
 			switch (RDFMiner.parameters.typeCrossover) {
 				case TypeCrossover.SINGLE_POINT_CROSSOVER:
@@ -281,8 +275,6 @@ public class EATools {
 					final int idx = m;
 					individualsCallables.add(() -> new Crowding(canPop.get(idx), canPop.get(idx + 1), newChild1, newChild2, mode)
 							.getSurvivalSelection());
-					// evaluatedIndividuals.add(crowd.SurvivalSelection()[0]);
-					// evaluatedIndividuals.add(crowd.SurvivalSelection()[1]);
 				} else if(mode.isShaclMode()) {
 					shapesToEvaluate.add(new Crowding(parent1, parent2, newChild1, newChild2, mode));
 				}
@@ -293,12 +285,9 @@ public class EATools {
 			}
 			m = m + 2;
 		}
-
 		logger.info("Crossover & Mutation done");
-
 		// if Crowding is not choose, we need to compute each fitness for new axioms
 		if (notEvaluatedIndividuals.size() > 0) {
-
 			logger.info("Starting population assessment ...");
 			// fill callables of individuals to evaluate
 			for (GEIndividual individual : notEvaluatedIndividuals) {
@@ -307,7 +296,6 @@ public class EATools {
 					return fit.updateIndividual(individual);
 				});
 			}
-
 			logger.info(individualCallables.size() + " tasks ready to be launched !");
 			// Submit tasks
 			List<Future<GEIndividual>> futures = executor.invokeAll(individualCallables);
@@ -337,7 +325,7 @@ public class EATools {
 				// evaluate them
 				ShapesManager shapesManager = new ShapesManager(childs);
 				// launch evaluation
-				CoreseEndpoint endpoint = new CoreseEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES);
+				CoreseEndpoint endpoint = new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
 				logger.info("Launch evaluation report for new childs ...");
 				String report = endpoint.getValidationReportFromServer(shapesManager.file, CoreseService.PROBABILISTIC_SHACL_EVALUATION);
 				// read evaluation report

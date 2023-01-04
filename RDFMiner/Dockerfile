@@ -12,9 +12,6 @@ ENV JAVA_VERSION=11
 # Setup HOME environment variable
 ENV HOME=/rdfminer/
 
-# copy all project in HOME folder in image to build
-COPY . $HOME
-
 # Install all dependencies
 # RUN echo "\n********** START: download dependencies \n" && \
 
@@ -41,6 +38,9 @@ RUN echo "\n"$(gcc --version)"\n" && \
 
 # define JAVA_HOME
 ENV JAVA_HOME=/usr/lib/jvm/java-$JAVA_VERSION-openjdk-amd64/
+
+# copy all project in HOME folder in image to build
+COPY . $HOME
 
 # Compile c code by running "compile_c_code" shell code
 RUN echo -n "Compile rdfminer_axiom_Axiom.so ... " && sh $HOME/scripts/compile_c_code.sh && echo "Done."

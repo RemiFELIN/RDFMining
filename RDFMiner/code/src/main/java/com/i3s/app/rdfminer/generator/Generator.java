@@ -33,6 +33,10 @@ public abstract class Generator {
         return grammar;
     }
 
+    public boolean generateShapes = false;
+
+    public boolean generateAxioms = false;
+
     /**
      * Load a given file path as a grammar to follow for our future rules
      *
@@ -95,6 +99,11 @@ public abstract class Generator {
         individual.setUsedCodons(chromosome.getUsedGenes());
         individual.setUsedWraps(grammar.getUsedWraps() - 1);
         individual.setAge(generation);
+        // set a random mutation point
+        int value = (int) Math.round(Math.random() * individual.getGenotype().get(0).getLength());
+        int[] arr = new int[]{value};
+        individual.setMutationPoints(arr);
+        // set mapped as true
         if (valid) individual.setMapped(true);
 
         return individual;

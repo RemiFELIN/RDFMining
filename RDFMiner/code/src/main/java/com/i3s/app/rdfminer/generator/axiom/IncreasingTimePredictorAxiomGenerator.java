@@ -13,8 +13,6 @@ import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
-import com.i3s.app.rdfminer.sparql.corese.Format;
-import com.i3s.app.rdfminer.sparql.corese.ResultParser;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -170,7 +168,7 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 	 */
 	protected Set<String> getNodes(String sparql) throws URISyntaxException, IOException {
 		logger.warn("Querying DBpedia with query " + sparql);
-		CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.SPARQL_ENDPOINT, Global.PREFIXES);
+		CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
 		List<String> results = endpoint.selectFederatedQuery("class", sparql);
 		return new TreeSet<>(results);
 	}

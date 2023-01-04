@@ -1,6 +1,5 @@
 package com.i3s.app.rdfminer.output;
 
-import com.i3s.app.rdfminer.shacl.ValidationReport;
 import org.json.JSONObject;
 
 import java.util.List;

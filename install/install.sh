@@ -59,3 +59,4 @@ else
 fi
 ./install/services/build_rdfminer.sh
 ./install/services/build_virtuoso.sh
+./install/services/build_corese.sh
