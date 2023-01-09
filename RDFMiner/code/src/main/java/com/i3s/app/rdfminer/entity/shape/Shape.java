@@ -2,6 +2,7 @@ package com.i3s.app.rdfminer.entity.shape;
 
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.entity.Entity;
+import com.i3s.app.rdfminer.entity.shape.vocabulary.ProbabilisticShacl;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.entity.shape.vocabulary.Shacl;
 import com.i3s.app.rdfminer.sparql.RequestBuilder;
@@ -83,32 +84,33 @@ public class Shape extends Entity {
     /**
      *
      */
-//    public Shape(GEIndividual individual, int i) {
-//        this.individual = individual;
-////        this.id = generateIDFromIndividual(individual);
-////        this.shape = this.id + individual.getPhenotype().toString();
-////        this.uri = getUriFromID();
-//        // init model
-//        try {
-//            this.model = Rio.parse(new StringReader(Global.PREFIXES + "<" + i + "> " + individual.getGenotype()), "", RDFFormat.TURTLE);
-//        } catch(Exception e) {
-//            logger.warn("Error during the parsing of Individual: " + e.getMessage());
-//            System.exit(1);
-//        }
-//        // Create a new Repository. Here, we choose a database implementation
-//        // that simply stores everything in main memory.
-//        this.db = new SailRepository(new MemoryStore());
-//        // get the targetted class(es) if it provides
-//        this.targetClasses = getValuesFromProperty(ShaclKW.TARGETCLASS);
-//        // get the targetSubjectsOf if it provides
-//        this.targetSubjectsOf = getValuesFromProperty(ShaclKW.TARGETSUBJECTSOF);
-//        // get the targetObjectsOf if it provides
-//        this.targetObjectsOf = getValuesFromProperty(ShaclKW.TARGETOBJECTSOF);
-//        // search if it provide a sh:property values
-//        this.properties = getProperties();
+    public Shape(GEIndividual individual) {
+        this.individual = individual;
+        // init model
+        try {
+            this.model = Rio.parse(
+                    new StringReader(Global.PREFIXES + "<" + generateIDFromIndividual(individual) + "> " +
+                            individual.getPhenotype()), "", RDFFormat.TURTLE);
+        } catch(Exception e) {
+            logger.warn("Error during the parsing of Individual: " + e.getMessage());
+            System.exit(1);
+        }
+        // Create a new Repository. Here, we choose a database implementation
+        // that simply stores everything in main memory.
+        this.db = new SailRepository(new MemoryStore());
+        // get shape uri subject
+        this.uri = getShapeUri();
+        // get the targetted class(es) if it provides
+        this.targetClasses = getValuesFromProperty(Shacl.TARGETCLASS);
+        // get the targetSubjectsOf if it provides
+        this.targetSubjectsOf = getValuesFromProperty(Shacl.TARGETSUBJECTSOF);
+        // get the targetObjectsOf if it provides
+        this.targetObjectsOf = getValuesFromProperty(Shacl.TARGETOBJECTSOF);
+        // search if it provide a sh:property values
+        this.properties = getProperties();
 //        System.out.println(this.properties);
-//        // @TODO : sh:targetNode ; sh:targetObjectsOf ; sh:message ; sh:severity
-//    }
+        // @TODO : sh:targetNode ; sh:targetObjectsOf ; sh:message ; sh:severity
+    }
 
     public Shape(String content) {
         this.content = content;

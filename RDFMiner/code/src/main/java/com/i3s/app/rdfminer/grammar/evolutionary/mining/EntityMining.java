@@ -2,14 +2,12 @@ package com.i3s.app.rdfminer.grammar.evolutionary.mining;
 
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
-import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.grammar.evolutionary.EATools;
-import com.i3s.app.rdfminer.grammar.evolutionary.fitness.AxiomFitnessEvaluation;
-import com.i3s.app.rdfminer.grammar.evolutionary.fitness.ShapeFitnessEvaluation;
+import com.i3s.app.rdfminer.grammar.evolutionary.fitness.Fitness;
+import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.grammar.evolutionary.selection.EliteSelection;
 import com.i3s.app.rdfminer.output.axiom.GenerationJSON;
-import com.i3s.app.rdfminer.parameters.CmdLineParameters;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -21,27 +19,18 @@ public class EntityMining {
 
     private static final Logger logger = Logger.getLogger(EntityMining.class.getName());
 
-    public static ArrayList<Entity> run(CmdLineParameters parameters, Generator generator, ArrayList<Entity> entities,
+    public static ArrayList<Entity> run(Generator generator, ArrayList<Entity> entities,
                                         int curGeneration, int curCheckpoint)
             throws URISyntaxException, IOException, ExecutionException, InterruptedException {
         // set size selection
-        int sizeSelection = (int) (parameters.sizeSelection * parameters.populationSize);
-        int sizeElite = parameters.sizeElite * parameters.populationSize < 1 ?
-                1 : (int) (parameters.sizeElite * parameters.populationSize);
+        int sizeSelection = (int) (RDFMiner.parameters.sizeSelection * RDFMiner.parameters.populationSize);
+        int sizeElite = RDFMiner.parameters.sizeElite * RDFMiner.parameters.populationSize < 1 ?
+                1 : (int) (RDFMiner.parameters.sizeElite * RDFMiner.parameters.populationSize);
         // Checkpoint reached, this is a code to evaluate and save axioms in output file
         if (RDFMiner.parameters.populationSize * curGeneration == RDFMiner.parameters.kBase * curCheckpoint) {
             logger.info("Checkpoint n°" + curCheckpoint + " reached !");
-            if(generator.generateAxioms) {
-                AxiomFitnessEvaluation fit = new AxiomFitnessEvaluation();
-                entities = fit.updatePopulation(entities);
-                logger.info("Done ! fill " + fit.getEvaluatedAxioms().size() + " axioms in the results file ...");
-                RDFMiner.content.addAll(fit.getEvaluatedAxioms());
-            } else if(generator.generateShapes) {
-                ShapeFitnessEvaluation fit = new ShapeFitnessEvaluation();
-                entities = fit.updatePopulation(entities);
-            }
             // curCheckpoint++;
-            return entities;
+            return Fitness.computePopulation(entities, generator);
         }
 
         ArrayList<Entity> distinctEntities = EATools.getDistinctGenotypePopulation(entities);
@@ -55,56 +44,51 @@ public class EntityMining {
         RDFMiner.stats.generations.add(generation.toJSON());
 
         // STEP 3 - SELECTION OPERATION - Reproduce Selection - Parent Selection
-        ArrayList<Entity> entitiesIndividual = new ArrayList<>();
-        ArrayList<GEIndividual> distinctAxiomsIndividual = new ArrayList<>();
+        ArrayList<GEIndividual> entitiesAsIndividuals = new ArrayList<>();
+        ArrayList<GEIndividual> distinctEntitiesAsIndividuals = new ArrayList<>();
         ArrayList<GEIndividual> crossoverIndividuals, selectedIndividuals, elitismIndividuals = new ArrayList<>();
 
-        // Use list of individuals instead of list of Axioms
+        // Use list of individuals instead of list of entities
         // i.e. apply GE process directly on individuals
-        for(Axiom axiom : axioms) {
-            axiomsIndividual.add(axiom.individual);
+        for(Entity entity : entities) {
+            entitiesAsIndividuals.add(entity.individual);
         }
-        for(Axiom axiom : distinctAxioms) {
-            distinctAxiomsIndividual.add(axiom.individual);
+        for(Entity entity : distinctEntities) {
+            distinctEntitiesAsIndividuals.add(entity.individual);
         }
 
-        if (parameters.elitism == 1) {
+        if (RDFMiner.parameters.elitism == 1) {
             // Elitism method, which copies the best chromosome( or a few best
             // chromosome) to new population. The rest done classical way. it
             // prevents losing the best found solution
             logger.info("Selecting elite individuals...");
-            logger.info("Selecting + " + (int) (parameters.sizeElite * 100)
+            logger.info("Selecting " + (int) (RDFMiner.parameters.sizeElite * 100)
                     + "% elite individuals for the new population");
             EliteSelection elite = new EliteSelection(sizeElite);
-            elite.setParentsSelectionElitism(distinctAxiomsIndividual);
-            selectedIndividuals = elite.setupSelectedPopulation(distinctAxiomsIndividual);
+            elite.setParentsSelectionElitism(distinctEntitiesAsIndividuals);
+            selectedIndividuals = elite.setupSelectedPopulation(distinctEntitiesAsIndividuals);
             logger.info("Size of the selected population: " + selectedIndividuals.size());
             elitismIndividuals = elite.getElitedPopulation();
             logger.info("Size of the elitism population: " + elitismIndividuals.size());
         } else {
-            selectedIndividuals = distinctAxiomsIndividual;
+            selectedIndividuals = distinctEntitiesAsIndividuals;
             sizeElite = 0;
         }
         // set the type selection
-        crossoverIndividuals = EATools.getTypeSelection(parameters.typeSelect, selectedIndividuals, sizeElite, sizeSelection);
+        crossoverIndividuals = EATools.getTypeSelection(RDFMiner.parameters.typeSelect, selectedIndividuals, sizeElite, sizeSelection);
         if(crossoverIndividuals == null) {
-            crossoverIndividuals = axiomsIndividual;
+            crossoverIndividuals = entitiesAsIndividuals;
         }
-
         /* STEP 4 - CROSSOVER & MUTATION OPERATION */
         // Crossover single point between 2 individuals of the selected population
-//        ArrayList<GEIndividual> crossoverList = new ArrayList<>(crossoverIndividuals);
-        ArrayList<Axiom> crossoverAxioms = EATools.bindIndividualsWithAxioms(crossoverIndividuals, distinctAxioms);
-        ArrayList<Axiom> elitismAxioms = EATools.bindIndividualsWithAxioms(elitismIndividuals, distinctAxioms);
+        ArrayList<Entity> crossoverEntities = EATools.bindIndividualsWithEntities(crossoverIndividuals, distinctEntities);
+        ArrayList<Entity> elitismEntities = EATools.bindIndividualsWithEntities(elitismIndividuals, distinctEntities);
         // shuffle populations before crossover & mutation
-        java.util.Collections.shuffle(crossoverAxioms);
-
-        // Add new population on a new list of individuals
-        ArrayList<Axiom> newPopulation = EATools.computeAxiomsGeneration(crossoverAxioms,
-                parameters.proCrossover, parameters.proMutation, curGeneration, generator,
-                parameters.diversity);
-
-        return EATools.renewAxioms(curGeneration, newPopulation, elitismAxioms);
+        java.util.Collections.shuffle(crossoverEntities);
+        // Compute GE and add new population on a new list of individuals
+        ArrayList<Entity> newPopulation = EATools.computeGeneration(crossoverEntities, curGeneration, generator);
+        // renew population
+        return EATools.renew(curGeneration, newPopulation, elitismEntities);
     }
 
 }

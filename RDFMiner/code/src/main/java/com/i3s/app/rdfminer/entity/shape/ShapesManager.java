@@ -65,19 +65,19 @@ public class ShapesManager {
         logger.info(population.size() + " SHACL Shapes ready to be evaluated !");
     }
 
-//    /**
-//     * Take a list of GEIndividuals and build a list of well-formed SHACL Shapes
-//     *
-//     * @param individuals individuals generated
-//     */
-//    public ShapesManager(ArrayList<Entity> population) throws IOException {
-//        this.population = population;
-////        for (GEIndividual individual : individuals) {
-////            population.add(new Shape(individual));
-////        }
-//        // set the file content to evaluate this SHACL Shapes on server
-//        this.file = getFile();
-//    }
+    /**
+     * Take a list of GEIndividuals and build a list of well-formed SHACL Shapes
+     *
+     * @param individuals individuals generated
+     */
+    public ShapesManager(ArrayList<GEIndividual> individuals) throws IOException {
+        for (GEIndividual individual : individuals) {
+            population.add(new Shape(individual));
+        }
+        // set the file content to evaluate this SHACL Shapes on server
+        this.file = getFile();
+        logger.info(population.size() + " SHACL Shapes ready to be evaluated !");
+    }
 
 //    public ShapesManager(Shape shape) {
 //        this.shape = shape;

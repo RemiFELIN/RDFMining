@@ -36,11 +36,17 @@ public class CmdLineParameters {
 	@Option(name = "-cs", aliases = { "--classic-shacl" }, usage = "use classic SHACL validation", metaVar = "CLASSIC_SHACL")
 	public boolean useClassicShaclMode = false;
 
+	@Option(name = "-psh", aliases = { "--probabilistic-shacl" }, usage = "use classic SHACL validation", metaVar = "CLASSIC_SHACL")
+	public boolean useProbabilisticShaclMode = false;
+
 	@Option(name = "-target", aliases = { "--target-endpoint" }, usage = "specify the SPARQL endpoint to be used for sending requests", metaVar = "TARGET")
 	public String targetSparqlEndpoint = null;
 
 	@Option(name = "-train", aliases = { "--train-endpoint" }, usage = "specify the SPARQL endpoint to be used as a training dataset", metaVar = "TRAIN")
 	public String trainSparqlEndpoint = null;
+
+	@Option(name = "-ns", aliases = { "--novelty-search" }, usage = "use Novelty Search approach", metaVar = "NOVELTY_SEARCH")
+	public boolean useNoveltySearch = false;
 
 	/**
 	 * The angular coefficient to be used for dynamic time capping of axiom test.
@@ -91,7 +97,7 @@ public class CmdLineParameters {
 	// **************************************************//
 
 	@Option(name = "-ge", aliases = {
-			"--grammatical-evolution" }, usage = "activate the grammatical evolution for the axiom's extraction", metaVar = "GRAMMATICAL_EVOLUTION")
+			"--grammatical-evolution" }, usage = "activate the grammatical evolution for the entities extraction", metaVar = "GRAMMATICAL_EVOLUTION")
 	public boolean grammaticalEvolution;
 
 	@Option(name = "-ps", aliases = {

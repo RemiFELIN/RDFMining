@@ -70,7 +70,7 @@ public class SubClassOfAxiom extends Axiom {
 		long t0 = getProcessCPUTime();
 		subClass = ExpressionFactory.createClass(subClassExpression);
 		superClass = ExpressionFactory.createClass(superClassExpression);
-		logger.info("subClass: " + subClass + " | superClass: " + superClass);
+		logger.info(subClass + " ~ " + superClass);
 		// define if the current axiom is complex
 		if(subClassExpression.size() > 1 || superClassExpression.size() > 1) {
 			complex = true;
@@ -208,7 +208,7 @@ public class SubClassOfAxiom extends Axiom {
 		logger.info("Reference cardinality = " + referenceCardinality);
 		// The number of instances linked with the subClass of the given axiom
 		numIntersectingClasses = endpoint.count(subClass.graphPattern + " ?x a ?D . ");
-		logger.info("No. of Intersecting Classes = " + numIntersectingClasses);
+//		logger.info("No. of Intersecting Classes = " + numIntersectingClasses);
 //		timePredictor = (long) referenceCardinality * numIntersectingClasses;
 		numConfirmations = endpoint.count(subClass.graphPattern + "\n" + superClass.graphPattern);
 		if (numConfirmations > 0) {
@@ -230,14 +230,24 @@ public class SubClassOfAxiom extends Axiom {
 			return;
 			
 		} else if (RDFMiner.parameters.timeOut > 0 || RDFMiner.parameters.dynTimeOut != 0.0) {
-			logger.info("compute the number of exceptions with a timeout ...");
+//			logger.info("compute the number of exceptions with a timeout ...");
 			// Since the query to count exception is complex and may take very long to
 			// execute, we execute it with the user-supplied time out.
 			// we need to instanciate a new endpoint which will consider the desired timeout
-			CoreseEndpoint endpointWithTimeout = new CoreseEndpoint(endpoint.url, endpoint.service, endpoint.prefixes, RDFMiner.parameters.timeOut);
-			numExceptions = endpointWithTimeout.count(subClass.graphPattern + "\n" + superClassComplement.graphPattern);
-			if ( numExceptions == -1 ) {
-				logger.warn("we take the reference cardinality minus the number of confirmations as the conventional number of exceptions");
+			endpoint.setTimeout(RDFMiner.parameters.timeOut);
+			boolean finish = false;
+			if (RDFMiner.parameters.loop) {
+				try {
+					finish = getExceptionsUsingCoreseLoop(endpoint);
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.exit(1);
+				}
+			} else {
+				finish = getExceptions(endpoint);
+			}
+			if ( !finish ) {
+//				logger.warn("we take the reference cardinality minus the number of confirmations as the conventional number of exceptions");
 				// If the query times out, it is very likely that it would end up
 				// having a large number of exceptions. Therefore, we take the reference
 				// cardinality minus the number of confirmations as the conventional
@@ -253,7 +263,7 @@ public class SubClassOfAxiom extends Axiom {
 //					subClass.graphPattern + "\n" + superClassComplement.graphPattern, 0);
 			if (RDFMiner.parameters.loop) {
 				try {
-					getExceptionsUsingCoreseLoop();
+					getExceptionsUsingCoreseLoop(endpoint);
 				} catch (Exception e) {
 					e.printStackTrace();
 					System.exit(1);
@@ -273,9 +283,8 @@ public class SubClassOfAxiom extends Axiom {
 		ari = ARI();
 	}
 
-	public void getExceptionsUsingCoreseLoop() throws URISyntaxException, IOException {
-		logger.info("Compute the number of exceptions with a proposal optimization and loop operator from Corese ...");
-		CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.TARGET_SPARQL_ENDPOINT, null);
+	public boolean getExceptionsUsingCoreseLoop(CoreseEndpoint endpoint) throws URISyntaxException, IOException {
+//		logger.info("Compute the number of exceptions with a proposal optimization and loop operator from Corese ...");
 		// Writing the query using loop operator, we will ask our Virtuoso server from the Corese server as a SERVICE
 		String getTypesQuery = endpoint.buildSelectAllQuery(
 				endpoint.addFederatedQueryWithLoop("SELECT distinct ?t WHERE { " + subClass.graphPattern + " ?x a ?t }", 1000) + "\n" +
@@ -283,8 +292,11 @@ public class SubClassOfAxiom extends Axiom {
 		);
 		String typesAsJson = endpoint.query(Format.JSON, getTypesQuery);
 		List<String> types = ResultParser.getResultsFromVariable("t", typesAsJson);
-		if(types.size() != 0)
-			logger.info(types.size() + " type(s) where we don't observe a link with the superClass ...");
+		// Timeout reached !
+		if (types == null)
+			return false;
+//		if(types.size() != 0)
+//			logger.info(types.size() + " type(s) where we don't observe a link with the superClass ...");
 		// truncate list of types and execute the last request
 		List<String> excpt = new ArrayList<>();
 		// define variables used for truncation
@@ -305,7 +317,11 @@ public class SubClassOfAxiom extends Axiom {
 					endpoint.addFederatedQueryWithLoop("SELECT distinct ?x WHERE { " + body + " }", limit)
 			);
 			String instancesAsJson = endpoint.query(Format.JSON, getInstancesQuery);
+//			System.out.println("[DEBUG]\n" + instancesAsJson);
 			List<String> instances = ResultParser.getResultsFromVariable("x", instancesAsJson);
+			// Timeout reached !
+			if (instances == null)
+				return false;
 			for(String instance : instances) {
 				// to remove duplicated ?x (cause of truncation)
 				// if a given ?x is not on a list , we add it
@@ -314,41 +330,44 @@ public class SubClassOfAxiom extends Axiom {
 			}
 			i += Math.min(types.size() - i, k);
 		}
-		logger.info(excpt.size() + " exception(s) found ...");
+//		logger.info(excpt.size() + " exception(s) found ...");
 		numExceptions = excpt.size();
 		// retrieve the exceptions
 		if (numExceptions > 0 && numExceptions < 100) exceptions = excpt;
+		return true;
 	}
 
-	public void getExceptions(CoreseEndpoint endpoint) throws URISyntaxException, IOException {
-		logger.info("Compute the number of exceptions with a proposal optimization ...");
+	public boolean getExceptions(CoreseEndpoint endpoint) throws URISyntaxException, IOException {
+//		logger.info("Compute the number of exceptions with a proposal optimization ...");
 		int offset = 0;
 		List<String> types = new ArrayList<>();
 		// get all types related to the subClassExpression for which it does not exists any ?z of this type and superClassExpression
 		while (offset != numIntersectingClasses) {
 			String getTypesQuery = endpoint.buildSelectAllQuery(
 					endpoint.addFederatedQuery("SELECT * WHERE { " +
-					"{ " +
-						"SELECT * WHERE { " +
 							"{ " +
-								"SELECT distinct ?t WHERE { " +
-									subClass.graphPattern + " ?x a ?t " +
-								"} ORDER BY ?t " +
+							"SELECT * WHERE { " +
+							"{ " +
+							"SELECT distinct ?t WHERE { " +
+							subClass.graphPattern + " ?x a ?t " +
+							"} ORDER BY ?t " +
 							"} " +
-						"} LIMIT 1000 OFFSET " + offset + " " +
-					"} " +
-					"FILTER NOT EXISTS { " +
-						superClass.graphPattern + " ?x a ?t" +
-					"} } ")
+							"} LIMIT 1000 OFFSET " + offset + " " +
+							"} " +
+							"FILTER NOT EXISTS { " +
+							superClass.graphPattern + " ?x a ?t" +
+							"} } ")
 			);
+//			System.out.println(getTypesQuery);
 			String resultsAsJson = endpoint.query(Format.JSON, getTypesQuery);
 			List<String> results = ResultParser.getResultsFromVariable("t", resultsAsJson);
 			if (results != null)
 				types.addAll(results);
+			else return false;
 			offset += Math.min(numIntersectingClasses - offset, 1000);
 		}
-		if (types.size() != 0)
-			logger.info(types.size() + " type(s) where we don't observe a link with the superClass ...");
+//		if (types.size() != 0)
+//			logger.info(types.size() + " type(s) where we don't observe a link with the superClass ...");
 		// truncate query
 		// for each types in the list, we will search any instances such as :
 		int i = 0;
@@ -373,7 +392,8 @@ public class SubClassOfAxiom extends Axiom {
 				List<String> results = ResultParser.getResultsFromVariable("x", resultsAsJson);
 				// to remove duplicated ?x (cause of truncation)
 				// if a given ?x is not on a list , we add it
-				assert results != null;
+				if (results == null)
+					return false;
 				for (String result : results) {
 					if (!instances.contains(result)) {
 						instances.add(result);
@@ -387,9 +407,10 @@ public class SubClassOfAxiom extends Axiom {
 			}
 			i += Math.min(types.size() - i, k);
 		}
-		logger.info(instances.size() + " exception(s) found ...");
+//		logger.info(instances.size() + " exception(s) found ...");
 		numExceptions = instances.size();
 		if (numExceptions > 0 && numExceptions < 100) exceptions = instances;
+		return true;
 	}
 
 	/**

@@ -15,8 +15,8 @@ echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Installing RDFMining 
 ./generate_yml.sh
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Done !"
 # Generate package from Corese 4.1.1 source code
-echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Packaging Corese             v$CORESE_VERSION"
-cd ./../Corese/src/corese/ && mvn -Dmaven.test.skip=true package
+echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Clean and packaging Corese             v$CORESE_VERSION"
+cd ./../Corese/src/corese/ && mvn clean && mvn -Dmaven.test.skip=true package
 # Import Corese-core JAR in RDFMiner project
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Extract Corese-core          v$CORESE_VERSION"
 mkdir -p ../../../RDFMiner/dep/corese-jar/corese-core/$CORESE_VERSION/

@@ -1,6 +1,7 @@
 package com.i3s.app.rdfminer.grammar.evolutionary.fitness;
 
 import com.i3s.app.rdfminer.entity.Entity;
+import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import org.json.JSONObject;
 
@@ -16,6 +17,13 @@ import java.util.List;
 public interface FitnessEvaluation {
 
     /**
+     * initialize a given population by using evaluation of each individual
+     * @param individuals	a given list of individuals
+     * @return 				a list of assessed entities
+     */
+    public ArrayList<Entity> initializePopulation(ArrayList<GEIndividual> individuals);
+
+    /**
      * Update a given population by using evaluation of each entity
      * @param population       a given population
      */
@@ -23,9 +31,9 @@ public interface FitnessEvaluation {
 
     /**
      * Update a given entity by using evaluation (possibility, fitness, ...)
-     * @param entity a given entity
+     * @param individual a given individual
      * @return the evaluated entity
      */
-    public Entity updateIndividual(Entity entity) throws URISyntaxException, IOException;
+    public Entity updateIndividual(GEIndividual individual) throws URISyntaxException, IOException;
 
 }

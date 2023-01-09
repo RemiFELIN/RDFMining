@@ -7,6 +7,7 @@ import com.i3s.app.rdfminer.grammar.evolutionary.CostGP;
 import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
 import com.i3s.app.rdfminer.launcher.Evaluator;
 import com.i3s.app.rdfminer.output.Results;
+import com.i3s.app.rdfminer.output.axiom.AxiomsResultsJSON;
 import com.i3s.app.rdfminer.output.axiom.StatJSON;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
 import org.apache.log4j.Logger;
@@ -57,8 +58,6 @@ public class RDFMiner {
 	public static StatJSON stats;
 	public static List<JSONObject> content;
 	public static int type;
-	// v1.4 Mode
-//	public static Mode mode;
 
 	/**
 	 * A table of predicates, used in {@link CostGP}
@@ -120,7 +119,7 @@ public class RDFMiner {
 				logger.info("Cache folder successfully created");
 		}
 		
-		if (parameters.singleAxiom == null) {
+		if(parameters.singleAxiom == null) {
 			logger.info("Output folder: " + Global.OUTPUT_PATH + parameters.resultFolder);
 			if(!(new File(Global.OUTPUT_PATH + parameters.resultFolder)).exists()) {
 				boolean created = (new File(Global.OUTPUT_PATH + parameters.resultFolder)).mkdirs();
@@ -136,12 +135,13 @@ public class RDFMiner {
 ////			results = new ShapesResultsJSON();
 //		} else {
 //			mode = new Mode(TypeMode.AXIOMS);
-//			results = new AxiomsResultsJSON();
+//		results = new AxiomsResultsJSON();
 //		}
+		stats = new StatJSON();
 
 		// define a SPARQL Endpoint to use if provided
-		if (parameters.targetSparqlEndpoint != null) {
-			logger.info("(--endpoint) a target SPARQL Endpoint is specified !");
+		if(parameters.targetSparqlEndpoint != null) {
+			logger.info("(--target-endpoint) a target SPARQL Endpoint is specified !");
 			try {
 				// Test if the given url is a valid URL or not
 				new URL(parameters.targetSparqlEndpoint);
@@ -156,6 +156,23 @@ public class RDFMiner {
 			logger.warn("No target database specified !");
 			logger.warn("RDFMiner will query the following link in SERVICE clause: " + Global.TARGET_SPARQL_ENDPOINT);
 			logger.warn("This database contains a dump of DBPedia 2015-04 ...");
+		}
+		// define a training dataset if it's provided
+		if(parameters.trainSparqlEndpoint != null) {
+			logger.info("(--train-endpoint) a training SPARQL Endpoint is specified !");
+			try {
+				// Test if the given url is a valid URL or not
+				new URL(parameters.trainSparqlEndpoint);
+			} catch (MalformedURLException e) {
+				logger.error("The given SPARQL Endpoint is not a valid URL ...");
+				System.exit(1);
+			}
+			Global.TRAINING_SPARQL_ENDPOINT = parameters.trainSparqlEndpoint;
+			logger.info("RDFMiner will query the following link in SERVICE clause: " + Global.TRAINING_SPARQL_ENDPOINT);
+		} else if(parameters.grammaticalEvolution) {
+			logger.warn("Grammatical evolution activated without training dataset specified !");
+			logger.warn("RDFMiner will query the following link in SERVICE clause: " + Global.TRAINING_SPARQL_ENDPOINT);
+			logger.warn("This database contains a subset (1%) of a dump of DBPedia 2015-04 ...");
 		}
 
 		// define a set of prefixes provided by user (with -prefix option), else use the default prefixes
@@ -183,8 +200,7 @@ public class RDFMiner {
 		// Grammar-based genetic programming
 		if(parameters.grammaticalEvolution) {
 			try {
-				GrammaticalEvolution miner = new GrammaticalEvolution();
-				miner.run();
+				GrammaticalEvolution.run(parameters);
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.exit(0);

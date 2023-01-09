@@ -48,6 +48,7 @@ import java.util.Properties;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
+import org.apache.log4j.Logger;
 
 /**
  * IntFlipMutation does integer mutation
@@ -56,9 +57,10 @@ import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
  */
 public class IntFlipMutation extends MutationOperation {
 
+	private static final Logger logger = Logger.getLogger(IntFlipMutation.class.getName());
+
 	/**
 	 * Creates a new instance of IntFlipMutation
-	 * 
 	 * @param prob mutation probability
 	 * @param rng  random number generator
 	 */
@@ -68,7 +70,6 @@ public class IntFlipMutation extends MutationOperation {
 
 	/**
 	 * New instance
-	 * 
 	 * @param rng random number generator
 	 * @param p   properties
 	 */
@@ -78,16 +79,16 @@ public class IntFlipMutation extends MutationOperation {
 
 	/**
 	 * Calls doMutation(GEIndividual c) and then calls Individual.invalidate()
-	 * 
 	 * @param operand operand to operate on
-	 * @throws InterruptedException
-	 * @throws IOException
 	 */
-	public GEIndividual doOperation(GEIndividual operand, Generator generator, int curGeneration, int[] pos)
-			throws IOException, InterruptedException {
-		GEChromosome chr = new GEChromosome((GEChromosome) operand.getGenotype().get(0));
-		GEChromosome chr2 = new GEChromosome(doMutation(chr, pos));
-		((GEIndividual) operand).invalidate();
+	public GEIndividual doOperation(GEIndividual operand, Generator generator, int curGeneration, int[] pos) {
+		GEChromosome chr2 = new GEChromosome(
+				doMutation(
+						new GEChromosome((GEChromosome) operand.getGenotype().get(0)),
+						pos
+				)
+		);
+		operand.invalidate();
 		operand = generator.getIndividualFromChromosome(chr2, curGeneration);
 		return operand;
 	}
@@ -95,34 +96,22 @@ public class IntFlipMutation extends MutationOperation {
 	/**
 	 * According to this.probability a codon in the chromosome is replaced with a
 	 * new randomly chosen integer
-	 * 
+	 *
 	 * @param c input to mutate
 	 */
 	private GEChromosome doMutation(GEChromosome c, int[] pos) {
-		double probability_mut = this.probability;
-		if (pos[0] != 0)
-			probability_mut = 1.0;
-		// System.out.println("pro_mut: " +probability_mut);
-
 		for (int i = pos[0]; i < c.getLength(); i++) {
-
-			if (this.rng.nextBoolean(probability_mut)) {
+			if (this.rng.nextBoolean(this.probability)) {
+				logger.info("Mutation observed !");
 				final int nextInt = Math.abs(rng.nextInt());
 				c.set(i, nextInt);
-				/*
-				 * System.out.println("Mutation position: " + i);
-				 * System.out.println("Value mutation: " + nextInt);
-				 * System.out.println("First Mutation position: " + pos[0]);
-				 */
 			}
 		}
-
 		return c;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * Operator.Operations.MutationOperation#doOperation(Individuals.Individual)
 	 */
@@ -132,7 +121,6 @@ public class IntFlipMutation extends MutationOperation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see Operator.Operations.MutationOperation#doOperation(java.util.List)
 	 */
 	@Override

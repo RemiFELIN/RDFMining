@@ -1,30 +1,32 @@
 package com.i3s.app.rdfminer.grammar.evolutionary;
 
-import com.i3s.app.rdfminer.grammar.evolutionary.fitness.AxiomFitnessEvaluation;
+import com.i3s.app.rdfminer.entity.Entity;
+import com.i3s.app.rdfminer.generator.Generator;
+import com.i3s.app.rdfminer.grammar.evolutionary.fitness.Fitness;
+import com.i3s.app.rdfminer.grammar.evolutionary.fitness.entity.AxiomFitnessEvaluation;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
-import com.i3s.app.rdfminer.mode.Mode;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 public class Crowding {
 
-//	private static final Logger logger = Logger.getLogger(Crowding.class.getName());
+	private static final Logger logger = Logger.getLogger(Crowding.class.getName());
 
-//	protected int size;
 	protected int distanceP1ToC1;
 	protected int distanceP1ToC2;
 	protected int distanceP2ToC1;
 	protected int distanceP2ToC2;
-	protected GEIndividual parent1;
-	protected GEIndividual parent2;
+	protected Entity parent1;
+	protected Entity parent2;
 	protected GEIndividual child1;
 	protected GEIndividual child2;
-	protected Mode mode;
+	protected Generator generator;
 
-	public Crowding(GEIndividual parent1, GEIndividual parent2, GEIndividual child1, GEIndividual child2, Mode mode) {
-//		this.size = size;
-		this.mode = mode;
+	public Crowding(Entity parent1, Entity parent2, GEIndividual child1, GEIndividual child2, Generator generator) {
+		this.generator = generator;
 		this.parent1 = parent1;
 		this.parent2 = parent2;
 		this.child1 = child1;
@@ -35,42 +37,20 @@ public class Crowding {
 		this.distanceP2ToC1 = this.distance(this.parent2, this.child1);
 	}
 
-	GEIndividual[] getSurvivalSelection() throws URISyntaxException, IOException {
-		int d1, d2;
-		GEIndividual[] survivals = new GEIndividual[2];
-		d1 = distanceP1ToC1 + distanceP2ToC2;
-		d2 = distanceP1ToC2 + distanceP2ToC1;
-		if (d1 >= d2) {
-			survivals[0] = compare(parent1, child1, mode);
-			survivals[1] = compare(parent2, child2, mode);
+	ArrayList<Entity> getSurvivalSelection() throws URISyntaxException, IOException {
+		ArrayList<Entity> survivals = new ArrayList<>();
+		if (distanceP1ToC1 + distanceP2ToC2 >= distanceP1ToC2 + distanceP2ToC1) {
+			survivals.add(compare(parent1, child1));
+			survivals.add(compare(parent2, child2));
 		} else {
-			survivals[0] = compare(parent1, child2, mode);
-			survivals[1] = compare(parent2, child1, mode);
+			survivals.add(compare(parent1, child2));
+			survivals.add(compare(parent2, child1));
 		}
 		return survivals;
 	}
 
-//	public static ArrayList<GEIndividual> getSurvivalSelectionFromList(ArrayList<HashMap<GEIndividual, GEIndividual>> hashMapArrayList) {
-//		ArrayList<GEIndividual> evaluatedIndividuals = new ArrayList<>();
-//		// for each couple of parents and their child
-//		for(HashMap<GEIndividual, GEIndividual> parChild : hashMapArrayList) {
-//			// define individuals
-//			GEIndividual parent1 = (GEIndividual) parChild.keySet().toArray()[0];
-//			GEIndividual parent2 = (GEIndividual) parChild.keySet().toArray()[1];
-//			GEIndividual child1 = parChild.get(parent1);
-//			GEIndividual child2 = parChild.get(parent2);
-//			int distanceP1ToC1 = distance(parent1, child1);
-//			this.distanceP2ToC2 = this.distance(this.parent2, this.child2);
-//			this.distanceP1ToC2 = this.distance(this.parent1, this.child2);
-//			this.distanceP2ToC1 = this.distance(this.parent2, this.child1);
-//			// apply get survival selection
-//			if()
-//		}
-//		return evaluatedIndividuals;
-//	}
-
-	public int distance(GEIndividual a, GEIndividual b) {
-		String word1 = a.getPhenotype().toString();
+	public int distance(Entity a, GEIndividual b) {
+		String word1 = a.individual.getPhenotype().toString();
 		String word2 = b.getPhenotype().toString();
 		int len1 = word1.length();
 		int len2 = word2.length();
@@ -104,18 +84,17 @@ public class Crowding {
 		return dp[len1][len2];
 	}
 
-	public static GEIndividual compare(GEIndividual parent, GEIndividual child, Mode mode) throws URISyntaxException, IOException {
-		if(mode.isAxiomMode()) {
-			AxiomFitnessEvaluation fit = new AxiomFitnessEvaluation();
-			// if parent don't have any value for fitness, we need to compute its value
-			if (parent.getFitness() == null) {
-				parent = fit.updateIndividual(parent);
-			}
-			child = fit.updateIndividual(child);
+	public Entity compare(Entity parent, GEIndividual child) throws URISyntaxException, IOException {
+		// if the parent is not evaluated
+		if (parent.individual.getFitness() == null) {
+			logger.warn("Compute parent fitness !");
+			parent = Fitness.computeEntity(parent.individual, this.generator);
 		}
+		// compute fitness for the current child
+		Entity childAsEntity = Fitness.computeEntity(child, this.generator);
 		// we can compare parent and child
-		if (parent.getFitness().getDouble() <= child.getFitness().getDouble()) {
-			return child;
+		if (parent.individual.getFitness().getDouble() <= child.getFitness().getDouble()) {
+			return childAsEntity;
 		} else {
 			return parent;
 		}

@@ -12,6 +12,7 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -101,6 +102,7 @@ public class CoreseEndpoint {
 
     public List<String> selectFederatedQuery(String var, String sparql) throws URISyntaxException, IOException {
         String request = buildSelectAllQuery(addFederatedQuery(sparql));
+//        System.out.println(request);
         String resultAsJSON = query(Format.JSON, request);
         return ResultParser.getResultsFromVariable(var, resultAsJSON);
     }
@@ -226,5 +228,21 @@ public class CoreseEndpoint {
         in.close();
         return sb.toString();
     }
+
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
+    }
+
+//    public static void main(String[] args) throws URISyntaxException, IOException {
+//        // Configure the log4j loggers:
+//        PropertyConfigurator.configure("/user/rfelin/home/projects/RDFMining/RDFMiner/code/resources/log4j.properties");
+//        CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES);
+//        String query = "SELECT distinct ?Class WHERE {" +
+//                "?Class a owl:Class . " +
+//                "FILTER(contains(str(?Class), \"http://\")). " +
+//                "FILTER( strStarts(MD5(str(?Class)), \"0\") ) }";
+//        List<String> results = endpoint.selectFederatedQuery("Class", query);
+//        System.out.println(results);
+//    }
 
 }
