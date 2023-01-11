@@ -20,12 +20,10 @@ public class CmdLineParameters {
 	@Option(name = "-h", aliases = { "--help" }, metaVar = "HELP")
 	public boolean help;
 
-	@Option(name = "-a", aliases = { "--axioms" }, usage = "test axioms contained in this file", metaVar = "AXIOM_FILE")
-	public String axiomFile = null;
-
 	@Option(name = "-sa", aliases = { "--single-axiom" }, usage = "test a single axiom given", metaVar = "AXIOM")
 	public String singleAxiom = null;
 
+	// FILES (evaluator part)
 	@Option(name = "-sf", aliases = { "--shapes-file" }, usage = "test shapes contained in this file", metaVar = "SHAPES_FILE")
 	public String shapeFile = null;
 
@@ -42,12 +40,24 @@ public class CmdLineParameters {
 
 	@Option(name = "-e", aliases = { "--endpoint" }, usage = "specify the SPARQL endpoint to be used for sending requests", metaVar = "ENDPOINT")
 	public String sparqlEndpoint = null;
+	
+	@Option(name = "-af", aliases = { "--axioms-file" }, usage = "test axioms contained in this file", metaVar = "AXIOM_FILE")
+	public String axiomFile = null;
 
 	@Option(name = "-p", aliases = { "--prefixes" }, usage = "use this file as the prefixes to be used in SPARQL queries", metaVar = "PREFIXES")
 	public String prefixesFile = null;
 
 	@Option(name = "-cs", aliases = { "--classic-shacl" }, usage = "use classic SHACL validation", metaVar = "CLASSIC_SHACL")
 	public boolean useClassicShaclMode = false;
+
+	@Option(name = "-psh", aliases = { "--probabilistic-shacl" }, usage = "use classic SHACL validation", metaVar = "CLASSIC_SHACL")
+	public boolean useProbabilisticShaclMode = false;
+
+	@Option(name = "-target", aliases = { "--target-endpoint" }, usage = "specify the SPARQL endpoint to be used for sending requests", metaVar = "TARGET")
+	public String targetSparqlEndpoint = null;
+
+	@Option(name = "-train", aliases = { "--train-endpoint" }, usage = "specify the SPARQL endpoint to be used as a training dataset", metaVar = "TRAIN")
+	public String trainSparqlEndpoint = null;
 
 	@Option(name = "-ns", aliases = { "--novelty-search" }, usage = "use Novelty Search approach", metaVar = "NOVELTY_SEARCH")
 	public boolean useNoveltySearch = false;
@@ -77,8 +87,12 @@ public class CmdLineParameters {
 	@Option(name = "-dir", aliases = { "--directory" }, usage = "path of output folder", metaVar = "RESULTFOLDER")
 	public String resultFolder = "results";
 
-	@Option(name = "-r", aliases = { "--random" }, usage = "test randomly generated axioms")
+	// GENERATOR
+	@Option(name = "-ra", aliases = { "--random-axiom" }, usage = "use the random axiom generator")
 	public boolean useRandomAxiomGenerator = false;
+
+	@Option(name = "-rs", aliases = { "--random-shapes" }, usage = "enable SHACL Shapes mining", metaVar = "SHAPES")
+	public boolean useRandomShaclShapeGenerator = false;
 
 	@Option(name = "-s", aliases = {
 			"--subclassof-list" }, usage = "test subClassOf axioms generated from the list of subclasses in the given file", metaVar = "FILE")
@@ -97,7 +111,7 @@ public class CmdLineParameters {
 	// **************************************************//
 
 	@Option(name = "-ge", aliases = {
-			"--grammatical-evolution" }, usage = "activate the grammatical evolution for the axiom's extraction", metaVar = "GRAMMATICAL_EVOLUTION")
+			"--grammatical-evolution" }, usage = "activate the grammatical evolution for the entities extraction", metaVar = "GRAMMATICAL_EVOLUTION")
 	public boolean grammaticalEvolution;
 
 	@Option(name = "-ps", aliases = {
@@ -174,24 +188,11 @@ public class CmdLineParameters {
 			"--gold-standard" }, usage = "use as this value as the input Goldstandard file", metaVar = "GOLD_STANDARD")
 	public String goldStandard = "GoldStandard.xlsx";
 
-	// Results
-//	@Option(name = "-bf", aliases = {
-//			"--buffer-file" }, usage = "use as this value as the name of buffer file of chromosome for next generation", metaVar = "BUFFER FILE")
-//	public String bufferFile = "buffer";
-
-//	@Option(name = "-sre", aliases = {
-//			"--StatisticsResult" }, usage = "use as this value as the name of output statistics result file", metaVar = "STATISTICS_RESULT")
-//	public String StatisticsResult = "StatisticsResult.json";
-
-//	@Option(name = "-fax", aliases = {
-//			"--FileAxioms" }, usage = "use as this value as the name of output statistics axioms", metaVar = "STATISTICS_AXIOMS")
-//	public String FileAxioms = "AxiomsStatistics";
-
-	@Option(name = "-gen", aliases = { "--max-generation" }, usage = "the maximum number of generation", metaVar = "MAX_GENERATION")
-	public int maxGeneration = 50;
+	@Option(name = "-kb", aliases = { "--K_Base" }, usage = "KBase", metaVar = "K_BASE")
+	public int kBase = 5000;
 
 	@Option(name = "-ckp", aliases = { "--Checkpoint" }, usage = "Checkpoint", metaVar = "CHECK_POINT")
-	public int checkpoint = 3;
+	public int checkpoint = 1;
 
 	// receives other command line parameters than options
 	@Argument

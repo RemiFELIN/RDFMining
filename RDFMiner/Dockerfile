@@ -42,6 +42,9 @@ ENV JAVA_HOME=/usr/lib/jvm/java-$JAVA_VERSION-openjdk-amd64/
 # copy all project in HOME folder in image to build
 COPY . $HOME
 
+# Compile c code by running "compile_c_code" shell code
+RUN echo -n "Compile rdfminer_entity_Entity.so ... " && sh $HOME/scripts/compile_c_code.sh && echo "Done."
+
 #
 # Install manually on .m2 folder 
 # Allow us to import customized JAR locally

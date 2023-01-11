@@ -71,7 +71,7 @@ public class SubClassOfAxiom extends Axiom {
 		long t0 = getProcessCPUTime();
 		subClass = ExpressionFactory.createClass(subClassExpression);
 		superClass = ExpressionFactory.createClass(superClassExpression);
-//		logger.info("subClass: " + subClass + " | superClass: " + superClass);
+		logger.info(subClass + " ~ " + superClass);
 		// define if the current axiom is complex
 		if(subClassExpression.size() > 1 || superClassExpression.size() > 1) {
 			complex = true;
@@ -95,7 +95,9 @@ public class SubClassOfAxiom extends Axiom {
 		// set elapsedTime as a CPU usage time
 		logger.info("ARI = " + ari);
 		elapsedTime = getProcessCPUTime() - t0;
-//		logger.info("elapsed time = " + elapsedTime + " ms.");
+		// set fitness
+		computeFitness();
+		logger.info("elapsed time = " + elapsedTime + " ms.");
 	}
 
 	/**
@@ -233,7 +235,7 @@ public class SubClassOfAxiom extends Axiom {
 			// Since the query to count exception is complex and may take very long to
 			// execute, we execute it with the user-supplied time out.
 			// we need to instanciate a new endpoint which will consider the desired timeout
-			endpoint.setTimeout(RDFMiner.parameters.timeOut);
+//			endpoint.setTimeout(RDFMiner.parameters.timeOut);
 			boolean finish = false;
 			if (RDFMiner.parameters.loop) {
 				try {
@@ -315,6 +317,7 @@ public class SubClassOfAxiom extends Axiom {
 					endpoint.addFederatedQueryWithLoop("SELECT distinct ?x WHERE { " + body + " }", limit)
 			);
 			String instancesAsJson = endpoint.query(Format.JSON, getInstancesQuery);
+//			System.out.println("[DEBUG]\n" + instancesAsJson);
 			List<String> instances = ResultParser.getResultsFromVariable("x", instancesAsJson);
 			// Timeout reached !
 			if (instances == null)
@@ -342,18 +345,18 @@ public class SubClassOfAxiom extends Axiom {
 		while (offset != numIntersectingClasses) {
 			String getTypesQuery = endpoint.buildSelectAllQuery(
 					endpoint.addFederatedQuery("SELECT * WHERE { " +
-					"{ " +
-						"SELECT * WHERE { " +
 							"{ " +
-								"SELECT distinct ?t WHERE { " +
-									subClass.graphPattern + " ?x a ?t " +
-								"} ORDER BY ?t " +
+							"SELECT * WHERE { " +
+							"{ " +
+							"SELECT distinct ?t WHERE { " +
+							subClass.graphPattern + " ?x a ?t " +
+							"} ORDER BY ?t " +
 							"} " +
-						"} LIMIT 1000 OFFSET " + offset + " " +
-					"} " +
-					"FILTER NOT EXISTS { " +
-						superClass.graphPattern + " ?x a ?t" +
-					"} } ")
+							"} LIMIT 1000 OFFSET " + offset + " " +
+							"} " +
+							"FILTER NOT EXISTS { " +
+							superClass.graphPattern + " ?x a ?t" +
+							"} } ")
 			);
 //			System.out.println(getTypesQuery);
 			String resultsAsJson = endpoint.query(Format.JSON, getTypesQuery);

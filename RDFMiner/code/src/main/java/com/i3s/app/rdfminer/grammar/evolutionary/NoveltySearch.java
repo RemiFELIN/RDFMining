@@ -4,19 +4,14 @@ import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.entity.axiom.AxiomFactory;
-import com.i3s.app.rdfminer.grammar.evolutionary.fitness.novelty.NoveltyFitness;
 import com.i3s.app.rdfminer.grammar.evolutionary.fitness.novelty.Similarity;
-import com.i3s.app.rdfminer.grammar.evolutionary.fitness.objectives.ObjectivesFitness;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
-import org.apache.jena.vocabulary.RDF;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -45,7 +40,7 @@ public class NoveltySearch {
         ArrayList<Axiom> updatedAxioms = new ArrayList<>();
         for(Axiom phi1 : axioms) {
             for(Axiom phi2 : axioms) {
-                if(!Objects.equals(phi1.axiomId, phi2.axiomId)) {
+                if(!Objects.equals(phi1.entityAsString, phi2.entityAsString)) {
                     phi1.similarities.add(Similarity.getJaccardSimilarity(endpoint, phi1, phi2));
                 }
             }
@@ -62,9 +57,9 @@ public class NoveltySearch {
     }
 
     public static Axiom updateSimilarity(CoreseEndpoint endpoint, Axiom axiom, ArrayList<Axiom> axioms) throws URISyntaxException, IOException {
-        logger.info("Update the similarity of axiom '" + axiom.axiomId + "' among its population to consider novelty approach");
+        logger.info("Update the similarity of axiom '" + axiom.entityAsString + "' among its population to consider novelty approach");
         for(Axiom phi : axioms) {
-            if(!Objects.equals(phi.axiomId, axiom.axiomId)) {
+            if(!Objects.equals(phi.entityAsString, axiom.entityAsString)) {
                 axiom.similarities.add(Similarity.getJaccardSimilarity(endpoint, axiom, phi));
             }
         }

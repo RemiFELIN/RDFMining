@@ -41,7 +41,7 @@ public class ExtensionalDatatypeExpression extends ExtensionalExpression {
 		super();
 		rootSymbol = "DataOneOf (";
 		extension = new TreeSet<RDFNodePair>();
-		VirtuosoEndpoint endpoint = new VirtuosoEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES);
+		VirtuosoEndpoint endpoint = new VirtuosoEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
 		Model m = endpoint.tdb;
 		Iterator<List<Symbol>> i = syntax.iterator();
 		

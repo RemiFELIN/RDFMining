@@ -48,6 +48,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
+import com.i3s.app.rdfminer.generator.Generator;
+import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
+import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
+import org.apache.log4j.Logger;
+
 /**
  * IntFlipMutation does integer mutation
  * 
@@ -59,7 +64,6 @@ public class IntFlipMutation extends MutationOperation {
 
 	/**
 	 * Creates a new instance of IntFlipMutation
-	 * 
 	 * @param prob mutation probability
 	 * @param rng  random number generator
 	 */
@@ -69,7 +73,6 @@ public class IntFlipMutation extends MutationOperation {
 
 	/**
 	 * New instance
-	 * 
 	 * @param rng random number generator
 	 * @param p   properties
 	 */
@@ -79,7 +82,6 @@ public class IntFlipMutation extends MutationOperation {
 
 	/**
 	 * Calls doMutation(GEIndividual c) and then calls Individual.invalidate()
-	 * 
 	 * @param operand operand to operate on
 	 */
 	public GEIndividual doOperation(GEIndividual operand, Generator generator, int curGeneration, int[] pos) {
@@ -97,34 +99,22 @@ public class IntFlipMutation extends MutationOperation {
 	/**
 	 * According to this.probability a codon in the chromosome is replaced with a
 	 * new randomly chosen integer
-	 * 
+	 *
 	 * @param c input to mutate
 	 */
 	private GEChromosome doMutation(GEChromosome c, int[] pos) {
-//		double probability_mut = this.probability;
-//		if (pos[0] != 0) probability_mut = 1.0;
-//	 	logger.info("pro_mut: " + probability_mut);
-
 		for (int i = pos[0]; i < c.getLength(); i++) {
-
 			if (this.rng.nextBoolean(this.probability)) {
 				logger.info("Mutation observed !");
 				final int nextInt = Math.abs(rng.nextInt());
 				c.set(i, nextInt);
-				/*
-				 * System.out.println("Mutation position: " + i);
-				 * System.out.println("Value mutation: " + nextInt);
-				 * System.out.println("First Mutation position: " + pos[0]);
-				 */
 			}
 		}
-
 		return c;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * Operator.Operations.MutationOperation#doOperation(Individuals.Individual)
 	 */
@@ -134,7 +124,6 @@ public class IntFlipMutation extends MutationOperation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see Operator.Operations.MutationOperation#doOperation(java.util.List)
 	 */
 	@Override

@@ -1,7 +1,7 @@
 package com.i3s.app.rdfminer.entity.shacl;
 
-import com.i3s.app.rdfminer.entity.shacl.vocabulary.ProbabilisticShaclKW;
-import com.i3s.app.rdfminer.entity.shacl.vocabulary.ShaclKW;
+import com.i3s.app.rdfminer.entity.shacl.vocabulary.ProbabilisticShacl;
+import com.i3s.app.rdfminer.entity.shacl.vocabulary.Shacl;
 import com.i3s.app.rdfminer.sparql.RequestBuilder;
 import org.apache.log4j.Logger;
 import org.eclipse.rdf4j.model.Model;
@@ -66,12 +66,11 @@ public class ValidationReport {
         // set a Map< str , List<str> > which contains a list of exceptions by Shape
         this.exceptionsByShape = getExceptionsByShape();
         // set a Map< str , number > which contains the numerical values by Shape
-        this.numExceptionsByShape = getNumericalInValSummaryByShape(ProbabilisticShaclKW.NUM_EXCEPTION);
-        this.numConfirmationsByShape = getNumericalInValSummaryByShape(ProbabilisticShaclKW.NUM_CONFIRMATION);
-        this.referenceCardinalityByShape = getNumericalInValSummaryByShape(ProbabilisticShaclKW.REFERENCE_CARDINALITY);
-        this.likelihoodByShape = getNumericalInValSummaryByShape(ProbabilisticShaclKW.LIKELIHOOD);
-//        this.fitnessByShape = getNumericalInValSummaryByShape(RDFMinerKW.FITNESS);
-        this.generalityByShape = getNumericalInValSummaryByShape(ProbabilisticShaclKW.GENERALITY);
+        this.numExceptionsByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.NUM_EXCEPTION);
+        this.numConfirmationsByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.NUM_CONFIRMATION);
+        this.referenceCardinalityByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.REFERENCE_CARDINALITY);
+        this.likelihoodByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.LIKELIHOOD);
+        this.generalityByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.GENERALITY);
     }
 
     public HashMap<String, Number> getNumericalInValSummaryByShape(String parameter) {
@@ -82,7 +81,8 @@ public class ValidationReport {
             con.add(this.model);
             // init query
             String request = RequestBuilder.select("?shape ?value",
-                    "?v " + ProbabilisticShaclKW.SUMMARY + " ?bn . ?bn " + ProbabilisticShaclKW.FOCUS_SHAPE + " ?shape ; " + parameter + " ?value", true);
+                    "?v " + ProbabilisticShacl.SUMMARY + " ?bn . ?bn " + ProbabilisticShacl.FOCUS_SHAPE + " ?shape ; " + parameter + " ?value", true);
+
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
             try (TupleQueryResult result = query.evaluate()) {
@@ -110,8 +110,8 @@ public class ValidationReport {
             // add the model
             con.add(this.model);
             String request = RequestBuilder.select("?shape ?node",
-                    "?a " + ProbabilisticShaclKW.SUMMARY + " ?bn . ?bn " + ProbabilisticShaclKW.FOCUS_SHAPE + " ?shape . " +
-                            "?x a " + ShaclKW.VALIDATION_RESULT + "; " + ShaclKW.SOURCE_SHAPE + " ?shape; " + ShaclKW.FOCUS_NODE + " ?node", true);
+                    "?a " + ProbabilisticShacl.SUMMARY + " ?bn . ?bn " + ProbabilisticShacl.FOCUS_SHAPE + " ?shape . " +
+                            "?x a " + Shacl.VALIDATION_RESULT + "; " + Shacl.SOURCE_SHAPE + " ?shape; " + Shacl.FOCUS_NODE + " ?node", true);
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
             try (TupleQueryResult result = query.evaluate()) {
@@ -146,16 +146,15 @@ public class ValidationReport {
             // add the model
             con.add(this.model);
             // init query
-            String request = RequestBuilder.select("distinct ?shape", "?y a " + ProbabilisticShaclKW.VALIDATION_SUMMARY + "; " +
-                    ProbabilisticShaclKW.FOCUS_SHAPE + " ?shape", true);
-//            logger.info("request: " + request);
+            String request = RequestBuilder.select("?shapes", "?y a " + Shacl.VALIDATION_REPORT + " . " +
+                    "?y " + ProbabilisticShacl.SUMMARY + " ?x . ?x " + Shacl.SOURCE_SHAPE + " ?shapes .", true);
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
             try (TupleQueryResult result = query.evaluate()) {
                 // we just iterate over all solutions in the result...
                 for (BindingSet solution : result) {
                     // add each result on the final list
-                    results.add(String.valueOf(solution.getValue("shape")));
+                    results.add(String.valueOf(solution.getValue("shapes")));
                 }
             }
         } finally {
@@ -170,7 +169,8 @@ public class ValidationReport {
             // add the model
             con.add(this.model);
             // init request
-            String request = RequestBuilder.select("(count(distinct ?x) as ?n)", "?y " + ProbabilisticShaclKW.SUMMARY + " ?x .", true);
+            String request = RequestBuilder.select("(count(distinct ?x) as ?n)", "?y a " + Shacl.VALIDATION_REPORT + " ; " +
+                    ProbabilisticShacl.SUMMARY + " ?x .", true);
             // init query
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
@@ -196,7 +196,6 @@ public class ValidationReport {
                 this.numConfirmationsByShape + " |\n" +
                 this.referenceCardinalityByShape + " |\n" +
                 this.likelihoodByShape + " |\n" +
-//                this.fitnessByShape + " |\n" +
                 this.generalityByShape;
     }
 

@@ -3,7 +3,6 @@ package com.i3s.app.rdfminer.grammar.evolutionary.crossover;
 import Individuals.GEChromosome;
 import Operator.Operations.SinglePointCrossover;
 import Util.Random.RandomNumberGenerator;
-import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import org.apache.log4j.Logger;
@@ -32,15 +31,12 @@ public class SinglePointCrossoverAxiom extends SinglePointCrossover {
 	}
 
 	public GEIndividual[] doOperation(GEIndividual p1, GEIndividual p2) {
-//		int p1maxXOPoint = false;
-//		int p2maxXOPoint = false;
 		if (this.rand.nextDouble() < this.probability) {
 			logger.info("Crossover observed !");
 			GEChromosome chrom1 = (GEChromosome)p1.getGenotype().get(0);
 			GEChromosome chrom2 = (GEChromosome)p2.getGenotype().get(0);
 			int p1maxXOPoint = this.getMaxXOPoint(p1);
 			int p2maxXOPoint = this.getMaxXOPoint(p2);
-//			logger.info("indiv1: " + p1.getPhenotype() + " / indiv2: " + p2.getPhenotype());
 			return this.performCrossover(chrom1, chrom2, p1maxXOPoint, p2maxXOPoint);
 		} else {
 			GEIndividual[] individuals = new GEIndividual[2];
@@ -51,21 +47,9 @@ public class SinglePointCrossoverAxiom extends SinglePointCrossover {
 	}
 
 	public GEIndividual[] performCrossover(GEChromosome chrome1, GEChromosome chrome2, int chrome1MaxXOPoint, int chrome2MaxXOPoint) {
-//		logger.info("chrome1MaxXOPoint = " + chrome1MaxXOPoint + " / chrome2MaxXOPoint = " + chrome2MaxXOPoint);
-//		logger.info("BEFORE : chrome1 = " + chrome1 + " / chrome2 = " + chrome2);
 		int[] xoPoints = this.makeNewChromosome(chrome1, chrome2, chrome1MaxXOPoint, chrome2MaxXOPoint);
-//		logger.info("AFTER  : chrome1 = " + chrome1 + " / chrome2 = " + chrome2);
-		// to fix the final length of final childs in case of crossover
-//		boolean valid = chrome1.size() >= RDFMiner.parameters.initLenChromosome && chrome2.size() >= RDFMiner.parameters.initLenChromosome;
-//		logger.info("valid? " + valid);
-//		while(!valid) {
-//			int[] xoPoints = this.makeNewChromosome(chrome1, chrome2, chrome1MaxXOPoint, chrome2MaxXOPoint);
-//			logger.info("c1.size= " + c1.size() + " / c2.size= " + c2.size());
-//			valid = c1.size() >= RDFMiner.parameters.initLenChromosome && c2.size() >= RDFMiner.parameters.initLenChromosome;
-//		}
 		GEIndividual indiv1 = generator.getIndividualFromChromosome(chrome1, curGeneration);
 		GEIndividual indiv2 = generator.getIndividualFromChromosome(chrome2, curGeneration);
-//		logger.info("indiv1: " + indiv1.getPhenotype() + " / indiv2: " + indiv2.getPhenotype());
 		indiv1.getParentUIDs().clear();
 		indiv2.getParentUIDs().clear();
 		if (xoPoints[0] == 0) {
@@ -86,24 +70,6 @@ public class SinglePointCrossoverAxiom extends SinglePointCrossover {
 		individuals[1] = indiv2;
 		return individuals;
 	}
-
-//	public GEChromosome[] crossover(GEChromosome c1, GEChromosome c2) {
-////		logger.info("c1: " + c1 + " / c2: " + c2 + " / c1.size= " + c1.size() + " / c2.size= " + c2.size());
-//		// to fix the final length of final childs in case of crossover
-//		makeNewChromosome(c1, c2, c1.size(), c2.size());
-////		logger.info("c1.size= " + c1.size() + " / c2.size= " + c2.size());
-////		boolean valid = c1.size() >= RDFMiner.parameters.initLenChromosome && c2.size() >= RDFMiner.parameters.initLenChromosome;
-////		logger.info("valid? " + valid);
-////		while(!valid) {
-////			makeNewChromosome(c1, c2, c1.size(), c2.size());
-////			logger.info("c1.size= " + c1.size() + " / c2.size= " + c2.size());
-////			valid = c1.size() >= RDFMiner.parameters.initLenChromosome && c2.size() >= RDFMiner.parameters.initLenChromosome;
-////		}
-//		GEChromosome[] chromosomes = new GEChromosome[2];
-//		chromosomes[0] = c1;
-//		chromosomes[1] = c2;
-//		return chromosomes;
-//	}
 
 //	public static void main(String[] args) {
 //		// Configure the log4j loggers:

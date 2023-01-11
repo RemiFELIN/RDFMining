@@ -1,1 +1,1 @@
-gcc -I "/usr/lib/jvm/java-"$JAVA_VERSION"-openjdk-amd64/include" -I "/usr/lib/jvm/java-"$JAVA_VERSION"-openjdk-amd64/include/linux" -o $HOME/code/resources/librdfminer_entity_axiom_Axiom.so -shared $HOME/code/src/main/rdfminer_entity_axiom_Axiom.c
+gcc -I "/usr/lib/jvm/java-"$JAVA_VERSION"-openjdk-amd64/include" -I "/usr/lib/jvm/java-"$JAVA_VERSION"-openjdk-amd64/include/linux" -o $HOME/code/resources/librdfminer_entity_Entity.so -shared $HOME/code/src/main/rdfminer_entity_Entity.c

@@ -1,7 +1,9 @@
 package com.i3s.app.rdfminer.grammar.evolutionary;
 
-import com.i3s.app.rdfminer.entity.axiom.Axiom;
-import com.i3s.app.rdfminer.grammar.evolutionary.fitness.AxiomFitnessEvaluation;
+import com.i3s.app.rdfminer.entity.Entity;
+import com.i3s.app.rdfminer.generator.Generator;
+import com.i3s.app.rdfminer.grammar.evolutionary.fitness.Fitness;
+import com.i3s.app.rdfminer.grammar.evolutionary.fitness.entity.AxiomFitnessEvaluation;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import org.apache.log4j.Logger;
 
@@ -13,94 +15,42 @@ public class Crowding {
 
 	private static final Logger logger = Logger.getLogger(Crowding.class.getName());
 
-//	protected int size;
 	protected int distanceP1ToC1;
 	protected int distanceP1ToC2;
 	protected int distanceP2ToC1;
 	protected int distanceP2ToC2;
-	protected Axiom axiomParent1;
-	protected Axiom axiomParent2;
-	protected Axiom axiomChild1;
-	protected Axiom axiomChild2;
-	protected ArrayList<Axiom> axioms;
-	protected GEIndividual shapeParent1;
-	protected GEIndividual shapeParent2;
-	protected GEIndividual shapeChild1;
-	protected GEIndividual shapeChild2;
+	protected Entity parent1;
+	protected Entity parent2;
+	protected GEIndividual child1;
+	protected GEIndividual child2;
+	protected Generator generator;
 
-	public Crowding(ArrayList<Axiom> axioms, Axiom axiomParent1, Axiom axiomParent2, Axiom axiomChild1, Axiom axiomChild2) {
-//		this.size = size;
-		this.axioms = axioms;
-		this.axiomParent1 = axiomParent1;
-		this.axiomParent2 = axiomParent2;
-		this.axiomChild1 = axiomChild1;
-		this.axiomChild2 = axiomChild2;
-		this.distanceP1ToC1 = this.distance(this.axiomParent1.individual, this.axiomChild1.individual);
-		this.distanceP2ToC2 = this.distance(this.axiomParent2.individual, this.axiomChild2.individual);
-		this.distanceP1ToC2 = this.distance(this.axiomParent1.individual, this.axiomChild2.individual);
-		this.distanceP2ToC1 = this.distance(this.axiomParent2.individual, this.axiomChild1.individual);
+	public Crowding(Entity parent1, Entity parent2, GEIndividual child1, GEIndividual child2, Generator generator) {
+		this.generator = generator;
+		this.parent1 = parent1;
+		this.parent2 = parent2;
+		this.child1 = child1;
+		this.child2 = child2;
+		this.distanceP1ToC1 = this.distance(this.parent1, this.child1);
+		this.distanceP2ToC2 = this.distance(this.parent2, this.child2);
+		this.distanceP1ToC2 = this.distance(this.parent1, this.child2);
+		this.distanceP2ToC1 = this.distance(this.parent2, this.child1);
 	}
 
-	public Crowding(GEIndividual shapeParent1, GEIndividual shapeParent2, GEIndividual shapeChild1, GEIndividual shapeChild2) {
-		this.shapeParent1 = shapeParent1;
-		this.shapeParent2 = shapeParent2;
-		this.shapeChild1 = shapeChild1;
-		this.shapeChild2 = shapeChild2;
-		this.distanceP1ToC1 = this.distance(this.shapeParent1, this.shapeChild1);
-		this.distanceP2ToC2 = this.distance(this.shapeParent2, this.shapeChild2);
-		this.distanceP1ToC2 = this.distance(this.shapeParent1, this.shapeChild2);
-		this.distanceP2ToC1 = this.distance(this.shapeParent2, this.shapeChild1);
-	}
-
-	public GEIndividual[] getShapesSurvivalSelection() {
-		GEIndividual[] survivals = new GEIndividual[2];
+	ArrayList<Entity> getSurvivalSelection() throws URISyntaxException, IOException {
+		ArrayList<Entity> survivals = new ArrayList<>();
 		if (distanceP1ToC1 + distanceP2ToC2 >= distanceP1ToC2 + distanceP2ToC1) {
-			survivals[0] = compareShapes(shapeParent1, shapeChild1);
-			survivals[1] = compareShapes(shapeParent2, shapeChild2);
+			survivals.add(compare(parent1, child1));
+			survivals.add(compare(parent2, child2));
 		} else {
-			survivals[0] = compareShapes(shapeParent1, shapeChild2);
-			survivals[1] = compareShapes(shapeParent2, shapeChild1);
+			survivals.add(compare(parent1, child2));
+			survivals.add(compare(parent2, child1));
 		}
 		return survivals;
 	}
 
-	public Axiom[] getAxiomsSurvivalSelection() throws URISyntaxException, IOException {
-		Axiom[] survivals = new Axiom[2];
-		if (distanceP1ToC1 + distanceP2ToC2 >= distanceP1ToC2 + distanceP2ToC1) {
-			survivals[0] = compareAxioms(axiomParent1, axiomChild1, axioms);
-			survivals[1] = compareAxioms(axiomParent2, axiomChild2, axioms);
-		} else {
-			survivals[0] = compareAxioms(axiomParent1, axiomChild2, axioms);
-			survivals[1] = compareAxioms(axiomParent2, axiomChild1, axioms);
-		}
-		return survivals;
-	}
-
-	public static Axiom compareAxioms(Axiom parent, Axiom child, ArrayList<Axiom> axioms) throws URISyntaxException, IOException {
-		// if parent don't have any value for fitness, we need to compute its value
-		if (parent.individual.getFitness() == null) {
-			logger.info("parent fitness is null, assess it !");
-			parent = AxiomFitnessEvaluation.updateIndividual(parent, axioms);
-		}
-		child = AxiomFitnessEvaluation.updateIndividual(child, axioms);
-//		logger.info("Parent: " + parent.individual.getFitness().getDouble() + " <= child: " + child.individual.getFitness().getDouble() + " ?");
-		if (parent.individual.getFitness().getDouble() < child.individual.getFitness().getDouble()) {
-			logger.info("child is choosen !");
-			return child;
-		} else {
-			logger.info("keep the parent !");
-			return parent;
-		}
-	}
-
-	public static GEIndividual compareShapes(GEIndividual parent, GEIndividual child) {
-		if (parent.getFitness().getDouble() <= child.getFitness().getDouble())
-			return child;
-		return parent;
-	}
-
-	public int distance(GEIndividual a, GEIndividual b) {
-		String word1 = a.getPhenotype().toString();
+	public int distance(Entity a, GEIndividual b) {
+		String word1 = a.individual.getPhenotype().toString();
 		String word2 = b.getPhenotype().toString();
 		int len1 = word1.length();
 		int len2 = word2.length();
@@ -132,6 +82,22 @@ public class Crowding {
 			}
 		}
 		return dp[len1][len2];
+	}
+
+	public Entity compare(Entity parent, GEIndividual child) throws URISyntaxException, IOException {
+		// if the parent is not evaluated
+		if (parent.individual.getFitness() == null) {
+			logger.warn("Compute parent fitness !");
+			parent = Fitness.computeEntity(parent.individual, this.generator);
+		}
+		// compute fitness for the current child
+		Entity childAsEntity = Fitness.computeEntity(child, this.generator);
+		// we can compare parent and child
+		if (parent.individual.getFitness().getDouble() <= child.getFitness().getDouble()) {
+			return childAsEntity;
+		} else {
+			return parent;
+		}
 	}
 
 }

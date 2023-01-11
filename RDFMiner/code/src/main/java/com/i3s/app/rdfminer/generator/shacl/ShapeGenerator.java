@@ -34,6 +34,8 @@ public abstract class ShapeGenerator extends Generator {
      */
     ShapeGenerator(String fileName) throws URISyntaxException, IOException {
         super(fileName);
+        // set shapes generator status to true
+        generateShapes = true;
         logger.info("Grammar loaded. Adding dynamic productions...");
         // get '?class' productions
         for(int hexDigit = 0; hexDigit<0x10; hexDigit++) {

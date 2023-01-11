@@ -1,6 +1,6 @@
 package com.i3s.app.rdfminer.entity.shacl.vocabulary;
 
-public class ProbabilisticShaclKW {
+public class ProbabilisticShacl {
 
     public static final String PROBABILISTIC_SHACL = "psh:";
 

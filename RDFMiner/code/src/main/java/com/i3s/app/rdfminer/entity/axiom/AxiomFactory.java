@@ -7,10 +7,12 @@ import Mapper.Symbol;
 import Util.Enums;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.axiom.type.DisjointClassesAxiom;
+import com.i3s.app.rdfminer.entity.axiom.type.OWLAxiom;
 import com.i3s.app.rdfminer.entity.axiom.type.SubClassOfAxiom;
 import com.i3s.app.rdfminer.grammar.DLFactory;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -25,7 +27,9 @@ import java.util.List;
  *
  */
 public class AxiomFactory extends DLFactory {
-	
+
+	private static final Logger logger = Logger.getLogger(AxiomFactory.class.getName());
+
 	/**
 	 * This class should not be instantiated. Any attempt at calling this
 	 * constructor will result in an exception being thrown.
@@ -100,100 +104,107 @@ public class AxiomFactory extends DLFactory {
 	 */
 	public static Axiom create(GEIndividual individual, List<Symbol> syntax, CoreseEndpoint endpoint) throws URISyntaxException, IOException {
 
+//		logger.info("Individual: " + individual.getPhenotype());
 		Axiom axiom = null;
 		List<List<Symbol>> arguments = parseArguments(syntax);
+		// set timeout
+		if(RDFMiner.parameters.timeOut != 0)
+			endpoint.setTimeout(RDFMiner.parameters.timeOut);
 		
-		if (syntax.get(0).equals("SubClassOf")) {
+		if (syntax.get(0).equals(OWLAxiom.SUBCLASSOF)) {
 			require(arguments.size() == 2);
-			RDFMiner.type = Type.SUBCLASSOF;
+//			RDFMiner.type = Type.SUBCLASSOF;
 			axiom = new SubClassOfAxiom(arguments.get(0), arguments.get(1), endpoint);
 			
-		} else if (syntax.get(0).equals("EquivalentClasses")) {
+		} else if (syntax.get(0).equals(OWLAxiom.EQUIVALENTCLASSES)) {
 			// TO DO
-			RDFMiner.type = Type.EQUIVALENT_CLASSES;
+//			RDFMiner.type = Type.EQUIVALENT_CLASSES;
 
-		} else if (syntax.get(0).equals("DisjointClasses")) {
+		} else if (syntax.get(0).equals(OWLAxiom.DISJOINTCLASSES)) {
 			require(arguments.size() > 1);
-			RDFMiner.type = Type.DISJOINT_CLASSES;
+//			RDFMiner.type = Type.DISJOINT_CLASSES;
 			axiom = new DisjointClassesAxiom(arguments, endpoint);
 			
-		} else if (syntax.get(0).equals("DisjointUnion")) {
+		} else if (syntax.get(0).equals(OWLAxiom.DISJOINTUNION)) {
 			// TO DO
 		}
 		// object property expression axioms:
-		else if (syntax.get(0).equals("SubObjectPropertyOf")) {
+		else if (syntax.get(0).equals(OWLAxiom.SUBOBJECTPROPERTYOF)) {
 			// TO DO
-		} else if (syntax.get(0).equals("EquivalentObjectProperties")) {
+		} else if (syntax.get(0).equals(OWLAxiom.EQUIVALENTOBJECTPROPERTIES)) {
 			// TO DO
-		} else if (syntax.get(0).equals("DisjointObjectProperties")) {
+		} else if (syntax.get(0).equals(OWLAxiom.DISJOINTOBJECTPROPERTIES)) {
 			// TO DO
-		} else if (syntax.get(0).equals("ObjectPropertyDomain")) {
+		} else if (syntax.get(0).equals(OWLAxiom.OBJECTPROPERTYDOMAIN)) {
 			// TO DO
-		} else if (syntax.get(0).equals("ObjectPropertyRange")) {
+		} else if (syntax.get(0).equals(OWLAxiom.OBJECTPROPERTYRANGE)) {
 			// TO DO
-		} else if (syntax.get(0).equals("InverseObjectProperties")) {
+		} else if (syntax.get(0).equals(OWLAxiom.INVERSEOBJECTPROPERTIES)) {
 			// TO DO
-		} else if (syntax.get(0).equals("FunctionalObjectProperty")) {
+		} else if (syntax.get(0).equals(OWLAxiom.FUNCTIONALOBJECTPROPERTY)) {
 			// TO DO
-		} else if (syntax.get(0).equals("InverseFunctionalObjectProperty")) {
+		} else if (syntax.get(0).equals(OWLAxiom.INVERSEFUNCTIONALOBJECTPROPERTY)) {
 			// TO DO
-		} else if (syntax.get(0).equals("ReflexiveObjectProperty")) {
+		} else if (syntax.get(0).equals(OWLAxiom.REFLEXIVEOBJECTPROPERTY)) {
 			// TO DO
-		} else if (syntax.get(0).equals("IrreflexiveObjectProperty")) {
+		} else if (syntax.get(0).equals(OWLAxiom.IRREFLEXIVEOBJECTPROPERTY)) {
 			// TO DO
-		} else if (syntax.get(0).equals("SymmetricObjectProperty")) {
+		} else if (syntax.get(0).equals(OWLAxiom.SYMMETRICOBJECTPROPERTY)) {
 			// TO DO
-		} else if (syntax.get(0).equals("AsymmetricObjectProperty")) {
+		} else if (syntax.get(0).equals(OWLAxiom.ASYMMETRICOBJECTPROPERTY)) {
 			// TO DO
-		} else if (syntax.get(0).equals("TransitiveObjectProperty")) {
+		} else if (syntax.get(0).equals(OWLAxiom.TRANSITIVEOBJECTPROPERTY)) {
 			// TO DO
 		}
 		// data property expression axioms:
-		else if (syntax.get(0).equals("SubDataPropertyOf")) {
+		else if (syntax.get(0).equals(OWLAxiom.SUBDATAPROPERTYOF)) {
 			// TO DO
-		} else if (syntax.get(0).equals("EquivalentDataProperties")) {
+		} else if (syntax.get(0).equals(OWLAxiom.EQUIVALENTDATAPROPERTIES)) {
 			// TO DO
-		} else if (syntax.get(0).equals("DisjointDataProperties")) {
+		} else if (syntax.get(0).equals(OWLAxiom.DISJOINTDATAPROPERTIES)) {
 			// TO DO
-		} else if (syntax.get(0).equals("DataPropertyDomain")) {
+		} else if (syntax.get(0).equals(OWLAxiom.DATAPROPERTYDOMAIN)) {
 			// TO DO
-		} else if (syntax.get(0).equals("DataPropertyRange")) {
+		} else if (syntax.get(0).equals(OWLAxiom.DATAPROPERTYRANGE)) {
 			// TO DO
-		} else if (syntax.get(0).equals("FunctionalDataProperty")) {
+		} else if (syntax.get(0).equals(OWLAxiom.FUNCTIONALDATAPROPERTY)) {
 			// TO DO
 		}
 		// datatype definition:
-		else if (syntax.get(0).equals("DatatypeDefinition")) {
+		else if (syntax.get(0).equals(OWLAxiom.DATATYPEDEFINITION)) {
 			// TO DO
 		}
 		// keys axioms:
-		else if (syntax.get(0).equals("HasKey")) {
+		else if (syntax.get(0).equals(OWLAxiom.HASKEY)) {
 			// TO DO
 		}
 		// assertions:
-		else if (syntax.get(0).equals("SameIndividual")) {
+		else if (syntax.get(0).equals(OWLAxiom.SAMEINDIVIDUAL)) {
 			// TO DO
-		} else if (syntax.get(0).equals("DifferentIndividuals")) {
+		} else if (syntax.get(0).equals(OWLAxiom.DIFFERENTINDIVIDUALS)) {
 			// TO DO
-		} else if (syntax.get(0).equals("ClassAssertion")) {
+		} else if (syntax.get(0).equals(OWLAxiom.CLASSASSERTION)) {
 			// TO DO
-		} else if (syntax.get(0).equals("ObjectPropertyAssertion")) {
+		} else if (syntax.get(0).equals(OWLAxiom.OBJECTPROPERTYASSERTION)) {
 			// TO DO
-		} else if (syntax.get(0).equals("NegativeObjectPropertyAssertion")) {
+		} else if (syntax.get(0).equals(OWLAxiom.NEGATIVEOBJECTPROPERTYASSERTION)) {
 			// TO DO
-		} else if (syntax.get(0).equals("DataPropertyAssertion")) {
+		} else if (syntax.get(0).equals(OWLAxiom.DATAPROPERTYASSERTION)) {
 			// TO DO
-		} else if (syntax.get(0).equals("NegativeDataPropertyAssertion")) {
+		} else if (syntax.get(0).equals(OWLAxiom.NEGATIVEDATAPROPERTYASSERTION)) {
 			// TO DO
+		} else {
+			// log error syntax
+			logger.warn(syntax.get(0));
+			logger.warn("This entity is not conform, it didn't match any type of OWL Axioms !");
+			return null;
 		}
 		// if the given individual is not null, we can set the name of the axiom using its individual
-		if(individual != null) {
-			// set the individual of axiom
-			axiom.individual = individual;
-			// set the title of axiom
-			axiom.axiomId = individual.getPhenotype().getStringNoSpace();
-		}
-		// set this arguments 
+		// set the individual of axiom
+		axiom.individual = individual;
+		// set the title of axiom
+//			axiom.setEntityAsString(individual.getPhenotype().getString());
+		// set this arguments
 		axiom.argumentClasses = arguments;
 		return axiom;
 	}

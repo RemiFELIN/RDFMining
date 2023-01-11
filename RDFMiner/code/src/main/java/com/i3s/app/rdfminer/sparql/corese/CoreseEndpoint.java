@@ -18,7 +18,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
-import org.apache.logging.log4j.core.Core;
+import org.apache.log4j.PropertyConfigurator;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -106,6 +106,7 @@ public class CoreseEndpoint {
 
     public List<String> selectFederatedQuery(String var, String sparql) throws URISyntaxException, IOException {
         String request = buildSelectAllQuery(addFederatedQuery(sparql));
+//        System.out.println(request);
         String resultAsJSON = query(Format.JSON, request);
         return ResultParser.getResultsFromVariable(var, resultAsJSON);
     }
@@ -183,7 +184,7 @@ public class CoreseEndpoint {
         // fill params
         HashMap<String, String> params = new HashMap<>();
         params.put("mode", mode);
-        params.put("uri", Global.SPARQL_ENDPOINT + CoreseService.CORESE_GET_SHACL_SHAPES_ENDPOINT + "?name=" + Global.SHACL_SHAPES_FILENAME);
+        params.put("uri", Global.TARGET_SPARQL_ENDPOINT + CoreseService.CORESE_GET_SHACL_SHAPES_ENDPOINT + "?name=" + Global.SHACL_SHAPES_FILENAME);
         params.put("query", "construct where {?s ?p ?o}");
         params.put("format", Format.TURTLE);
         // v2 : binomial distribution

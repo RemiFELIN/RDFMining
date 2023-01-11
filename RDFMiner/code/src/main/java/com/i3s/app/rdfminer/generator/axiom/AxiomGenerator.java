@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.i3s.app.rdfminer.generator.axiom;
 
 import Individuals.Phenotype;
@@ -9,20 +6,12 @@ import Mapper.Rule;
 import Mapper.Symbol;
 import Util.Enums;
 import com.i3s.app.rdfminer.Global;
-import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
-import com.i3s.app.rdfminer.sparql.corese.Format;
-import com.i3s.app.rdfminer.sparql.corese.ResultParser;
-import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
-import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.net.URISyntaxException;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -56,6 +45,8 @@ public abstract class AxiomGenerator extends Generator {
 	 */
 	public AxiomGenerator(String fileName, boolean v2) throws URISyntaxException, IOException {
 		super(fileName);
+		// set axioms generator status to true
+		generateAxioms = true;
 		logger.info("Grammar loaded. Adding dynamic productions...");
 		if(v2) {
 			logger.info("AxiomGenerator v2.0 used ...");
