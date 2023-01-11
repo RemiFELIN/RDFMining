@@ -191,7 +191,7 @@ public class CmdLineParameters {
 	public int kBase = 5000;
 
 	@Option(name = "-ckp", aliases = { "--Checkpoint" }, usage = "Checkpoint", metaVar = "CHECK_POINT")
-	public int checkpoint = 3;
+	public int checkpoint = 1;
 
 	// receives other command line parameters than options
 	@Argument

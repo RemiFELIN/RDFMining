@@ -14,8 +14,10 @@ public class Statistics {
 
 	public double computeAverageFitness(ArrayList<Entity> entities) {
 		double sumFitness = 0;
-		for (Entity individual : entities) {
-			sumFitness += individual.individual.getFitness().getDouble();
+		for (Entity entity : entities) {
+//			System.out.println("Individual: " + entity.individual.getPhenotype());
+//			System.out.println("Fitness: " + entity.fitness);
+			sumFitness += entity.fitness;
 		}
 		if (entities.size() != 0) {
 			return sumFitness / entities.size();

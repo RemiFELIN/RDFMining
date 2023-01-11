@@ -37,14 +37,15 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 	public ArrayList<Entity> initializePopulation(ArrayList<GEIndividual> individuals) {
 		Set<Callable<Axiom>> callables = new HashSet<>();
 		ArrayList<Axiom> axiomList = new ArrayList<>();
-		logger.info("The axioms will be intialized using the following SPARQL Endpoint : " + Global.TRAINING_SPARQL_ENDPOINT);
+		logger.info("The axioms will be intialized using the target SPARQL Endpoint : " + Global.TARGET_SPARQL_ENDPOINT);
 		logger.info("Begin updating population ...");
 		for(GEIndividual individual : individuals) {
+			System.out.println(individual.getPhenotype());
 			if (individual.getPhenotype() == null)
 				break;
 			if (individual.isMapped()) {
 				callables.add(() -> AxiomFactory.create(individual, individual.getPhenotype(),
-						new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES)));
+						new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES)));
 			} else {
 				BasicFitness fit = new BasicFitness(0, individual);
 				fit.setIndividual(individual);
@@ -101,7 +102,7 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 
 	@Override
 	public ArrayList<Entity> updatePopulation(ArrayList<Entity> population) {
-		logger.info("Update the current population ...");
+		logger.info("Update the current population using the target SPARQL Endpoint : " + Global.TARGET_SPARQL_ENDPOINT);
 		Set<Callable<Entity>> callables = new HashSet<>();
 		List<Entity> entities = new ArrayList<>();
 //		logger.info("The axioms will be evaluated using the following SPARQL Endpoint : " + url);
@@ -110,28 +111,26 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 		while (i < population.size()) {
 //			if (population.get(0).individual.getPhenotype() == null)
 //				break;
-			if (population.get(i).individual.isMapped()) {
-				final int idx = i;
-				callables.add(() -> {
-					Axiom axiom = AxiomFactory.create(population.get(idx).individual,
-							population.get(idx).individual.getPhenotype(),
-							new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT,
-									Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
-					assert axiom != null;
-					evaluatedAxioms.add(axiom.toJSON());
-					return axiom;
-				});
-				callables.add(() -> AxiomFactory.create(
-						population.get(idx).individual,
+//			if (population.get(i).individual.isMapped()) {
+			final int idx = i;
+			callables.add(() -> {
+				Axiom axiom = AxiomFactory.create(population.get(idx).individual,
 						population.get(idx).individual.getPhenotype(),
 						new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT,
-								Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES)));
-			} else {
-				BasicFitness fit = new BasicFitness(0, population.get(i).individual);
-				fit.setIndividual(population.get(i).individual);
-				fit.getIndividual().setValid(true);
-				population.get(i).individual.setFitness(fit);
-			}
+								Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
+				// the generation in which this axiom was discovered
+				axiom.generation = population.get(idx).generation;
+//				assert axiom != null;
+//				evaluatedAxioms.add(axiom.toJSON());
+				return axiom;
+			});
+//			} else {
+//				logger.warn(population.get(i).individual.getPhenotype() + " is not correctly mapped !");
+//				BasicFitness fit = new BasicFitness(0, population.get(i).individual);
+//				fit.setIndividual(population.get(i).individual);
+//				fit.getIndividual().setValid(true);
+//				population.get(i).individual.setFitness(fit);
+//			}
 			i++;
 		}
 		// We have a set of threads to compute each axioms
@@ -139,7 +138,7 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 		// Submit tasks
 		List<Future<Entity>> futureEntities = null;
 
-//		logger.info(callables.size() + " axioms are ready to be evaluate ...");
+		logger.info(callables.size() + " axioms are ready to be evaluate ...");
 		try {
 			futureEntities = executor.invokeAll(callables);
 		} catch (InterruptedException e) {
@@ -163,7 +162,7 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 		}
 
 		ArrayList<Entity> newPopulation = new ArrayList<>();
-		// Update fitness of population
+		// Update fitness of individuals from a population
 		for (Entity entity : entities) {
 			BasicFitness fit = new BasicFitness(entity.fitness, entity.individual);
 			fit.getIndividual().setValid(true);
@@ -185,17 +184,21 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 			assert axiom != null;
 			f = axiom.fitness;
 		} else {
+			logger.warn(individual.getPhenotype() + " is not mapped !");
 			f = 0;
 		}
 		BasicFitness fit = new BasicFitness(f, individual);
 		fit.setIndividual(individual);
 		fit.getIndividual().setValid(true);
 		individual.setFitness(fit);
+//		// set axiom individual as mapped !
+//		assert axiom != null;
+//		axiom.individual.setMapped(true);
 		return axiom;
 	}
 
-	public List<JSONObject> getEvaluatedAxioms() {
-		return evaluatedAxioms;
-	}
+//	public List<JSONObject> getEvaluatedAxioms() {
+//		return evaluatedAxioms;
+//	}
 
 }

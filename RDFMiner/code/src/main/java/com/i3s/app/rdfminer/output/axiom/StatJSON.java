@@ -15,7 +15,7 @@ import org.json.JSONObject;
  * @author Rémi FELIN
  *
  */
-public class StatJSON extends Results {
+public class StatJSON {
 
 	public int populationSize;
 	public int maxLengthChromosome;
@@ -29,7 +29,6 @@ public class StatJSON extends Results {
 	public double selectionSize;
 	public List<JSONObject> generations = new ArrayList<>();
 
-	@Override
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		json.put("populationSize", populationSize);

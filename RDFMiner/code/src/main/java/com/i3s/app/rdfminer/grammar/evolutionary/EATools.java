@@ -134,13 +134,13 @@ public class EATools {
 	 * @return a new population
 	 */
 	public static ArrayList<Entity> computeGeneration(ArrayList<Entity> canEntities, int curGeneration, Generator generator)
-			throws InterruptedException, ExecutionException, IOException, URISyntaxException {
+			throws InterruptedException, ExecutionException {
 
 		ArrayList<Entity> evaluatedIndividuals = new ArrayList<>();
 		// We have a set of threads to compute each tasks
 		ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
 		Set<Callable<ArrayList<Entity>>> entitiesCallables = new HashSet<>();
-		logger.info("The entities will be evaluated using the following SPARQL Endpoint : " + Global.TARGET_SPARQL_ENDPOINT);
+		logger.info("The entities will be evaluated using the following SPARQL Endpoint : " + Global.TRAINING_SPARQL_ENDPOINT);
 		logger.info("Performing crossover and mutation ...");
 //		List<Crowding> shapesToEvaluate = new ArrayList<>();
 		int m = 0;
@@ -196,7 +196,7 @@ public class EATools {
 			if (RDFMiner.parameters.diversity == 1) {
 				// if crowding is chosen, we need to compute and return the individuals chosen
 				// (between parents and childs) in function of their fitness
-				logger.info("CROWDING diversity method used ...");
+//				logger.info("CROWDING diversity method used ...");
 				// fill callables of crowding to compute
 				final int idx = m;
 				entitiesCallables.add(() -> new Crowding(canEntities.get(idx), canEntities.get(idx + 1), newChild1, newChild2, generator)
@@ -231,13 +231,21 @@ public class EATools {
 		ArrayList<Entity> newEntities = new ArrayList<>();
 		// add elitism entities
 		if (elitismEntities != null) {
-			for (Entity etilismAxiom : elitismEntities) {
-				etilismAxiom.individual.setAge(curGeneration);
-				newEntities.add(etilismAxiom);
+			for (Entity etilism : elitismEntities) {
+				// set generation
+				if (etilism.generation == null) {
+					etilism.generation = curGeneration;
+				}
+				etilism.individual.setAge(curGeneration);
+				newEntities.add(etilism);
 			}
 		}
 		// add others entities
 		for (Entity entity : entities) {
+			// set generation
+			if (entity.generation == null) {
+				entity.generation = curGeneration;
+			}
 			entity.individual.setAge(curGeneration);
 			newEntities.add(entity);
 		}

@@ -16,9 +16,9 @@ import java.util.ArrayList;
  * @author Rémi FELIN
  *
  */
-public class GenerationJSON extends Results {
+public class GenerationJSON {
 
-	public int idGeneration;
+	public int generation;
 	public double numSuccessMapping;
 	public double diversityCoefficient;
 	public double genotypeDiversityCoefficient;
@@ -27,7 +27,7 @@ public class GenerationJSON extends Results {
 
 	public void setGenerationJSON(ArrayList<Entity> entities, ArrayList<Entity> distinctEntities, int curGeneration) {
 		Statistics stat = new Statistics();
-		this.idGeneration = curGeneration;
+		this.generation = curGeneration;
 		this.numSuccessMapping = stat.getCountSuccessMapping(distinctEntities);
 		this.diversityCoefficient = (double) distinctEntities.size() / entities.size();
 		this.genotypeDiversityCoefficient = (double) EATools.getDistinctGenotypePopulation(entities).size()
@@ -36,10 +36,9 @@ public class GenerationJSON extends Results {
 		this.numIndividualsWithNonNullFitness = stat.getEntitiesWithNonNullFitness(distinctEntities);
 	}
 
-	@Override
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
-		json.put("idGeneration", idGeneration);
+		json.put("generation", generation);
 		json.put("numSuccessMapping", numSuccessMapping);
 		json.put("diversityCoefficient", diversityCoefficient);
 		json.put("genotypeDiversityCoefficient", genotypeDiversityCoefficient);

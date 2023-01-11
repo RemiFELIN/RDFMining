@@ -134,7 +134,7 @@ public class Evaluator {
 					try {
 						logger.info("Testing axiom: " + finalAxiomName);
 						Axiom a = AxiomFactory.create(null, axiom, new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
-						a.axiomId = finalAxiomName;
+						a.setEntityAsString(finalAxiomName);
 						return a;
 					} catch (QueryExceptionHTTP httpError) {
 						logger.error("HTTP Error " + httpError.getMessage() + " making a SPARQL query.");
@@ -164,7 +164,7 @@ public class Evaluator {
 					callables.add(() -> {
 						logger.info("Testing axiom: " + finalAxiomName);
 						Axiom a = AxiomFactory.create(null, finalAxiomName, new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
-						a.axiomId = finalAxiomName;
+						a.setEntityAsString(finalAxiomName);
 						if (RDFMiner.parameters.singleAxiom != null) {
 							logger.info("Axiom evaluated !");
 							logger.info("Result (using JSON format) :\n" + a.toJSON().toString(2));

@@ -10,8 +10,6 @@ import com.i3s.app.rdfminer.grammar.evolutionary.selection.EliteSelection;
 import com.i3s.app.rdfminer.output.axiom.GenerationJSON;
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -21,38 +19,49 @@ public class EntityMining {
 
     public static ArrayList<Entity> run(Generator generator, ArrayList<Entity> entities,
                                         int curGeneration, int curCheckpoint)
-            throws URISyntaxException, IOException, ExecutionException, InterruptedException {
+            throws ExecutionException, InterruptedException {
         // set size selection
         int sizeSelection = (int) (RDFMiner.parameters.sizeSelection * RDFMiner.parameters.populationSize);
         int sizeElite = RDFMiner.parameters.sizeElite * RDFMiner.parameters.populationSize < 1 ?
                 1 : (int) (RDFMiner.parameters.sizeElite * RDFMiner.parameters.populationSize);
+
         // Checkpoint reached, this is a code to evaluate and save axioms in output file
-        if (RDFMiner.parameters.populationSize * curGeneration == RDFMiner.parameters.kBase * curCheckpoint) {
+        if (RDFMiner.parameters.checkpoint != 1 && RDFMiner.parameters.populationSize * curGeneration == RDFMiner.parameters.kBase * curCheckpoint) {
             logger.info("Checkpoint n°" + curCheckpoint + " reached !");
-            // curCheckpoint++;
-            return Fitness.computePopulation(entities, generator);
+            ArrayList<Entity> newPopulation = Fitness.computePopulation(entities, generator);
+            // stats
+            setStats(newPopulation, curGeneration);
+            // fill content in json output file
+            for(Entity entity : newPopulation) {
+                entity.setEntityAsString();
+                RDFMiner.content.add(entity.toJSON());
+            }
+            // return final pop
+            return newPopulation;
+        } else if (RDFMiner.parameters.populationSize * curGeneration == RDFMiner.parameters.kBase) {
+            ArrayList<Entity> newPopulation = Fitness.computePopulation(entities, generator);
+            // stats
+            setStats(newPopulation, curGeneration);
+            // fill content in json output file
+            for(Entity entity : newPopulation) {
+                entity.setEntityAsString();
+                RDFMiner.content.add(entity.toJSON());
+            }
+            // return final pop
+            return newPopulation;
         }
 
         ArrayList<Entity> distinctEntities = EATools.getDistinctGenotypePopulation(entities);
-        GenerationJSON generation = new GenerationJSON();
-        generation.setGenerationJSON(entities, distinctEntities, curGeneration);
-        // Log usefull stats concerning the algorithm evolution
-        logger.info("Average fitness: " + generation.averageFitness);
-        logger.info("Diversity coefficient: " + generation.diversityCoefficient);
-        logger.info("Genotype diversity coefficient: " + generation.genotypeDiversityCoefficient);
-        logger.info("Number of individual(s) with a non-null fitness: " + generation.numIndividualsWithNonNullFitness);
-        RDFMiner.stats.generations.add(generation.toJSON());
-
         // STEP 3 - SELECTION OPERATION - Reproduce Selection - Parent Selection
-        ArrayList<GEIndividual> entitiesAsIndividuals = new ArrayList<>();
+//        ArrayList<GEIndividual> entitiesAsIndividuals = new ArrayList<>();
         ArrayList<GEIndividual> distinctEntitiesAsIndividuals = new ArrayList<>();
         ArrayList<GEIndividual> crossoverIndividuals, selectedIndividuals, elitismIndividuals = new ArrayList<>();
 
         // Use list of individuals instead of list of entities
         // i.e. apply GE process directly on individuals
-        for(Entity entity : entities) {
-            entitiesAsIndividuals.add(entity.individual);
-        }
+//        for(Entity entity : entities) {
+//            entitiesAsIndividuals.add(entity.individual);
+//        }
         for(Entity entity : distinctEntities) {
             distinctEntitiesAsIndividuals.add(entity.individual);
         }
@@ -77,7 +86,9 @@ public class EntityMining {
         // set the type selection
         crossoverIndividuals = EATools.getTypeSelection(RDFMiner.parameters.typeSelect, selectedIndividuals, sizeElite, sizeSelection);
         if(crossoverIndividuals == null) {
-            crossoverIndividuals = entitiesAsIndividuals;
+            // set distinct entities instead of all entities
+            // i.e. remove duplicates
+            crossoverIndividuals = distinctEntitiesAsIndividuals;
         }
         /* STEP 4 - CROSSOVER & MUTATION OPERATION */
         // Crossover single point between 2 individuals of the selected population
@@ -87,8 +98,22 @@ public class EntityMining {
         java.util.Collections.shuffle(crossoverEntities);
         // Compute GE and add new population on a new list of individuals
         ArrayList<Entity> newPopulation = EATools.computeGeneration(crossoverEntities, curGeneration, generator);
+        // stats
+        setStats(newPopulation, curGeneration);
         // renew population
         return EATools.renew(curGeneration, newPopulation, elitismEntities);
+    }
+
+    public static void setStats(ArrayList<Entity> entities, int curGeneration) {
+        // set stats
+        GenerationJSON generation = new GenerationJSON();
+        generation.setGenerationJSON(entities, EATools.getDistinctGenotypePopulation(entities), curGeneration);
+        // Log usefull stats concerning the algorithm evolution
+        logger.info("Average fitness: " + generation.averageFitness);
+        logger.info("Diversity coefficient: " + generation.diversityCoefficient);
+        logger.info("Genotype diversity coefficient: " + generation.genotypeDiversityCoefficient);
+        logger.info("Number of individual(s) with a non-null fitness: " + generation.numIndividualsWithNonNullFitness);
+        RDFMiner.stats.generations.add(generation.toJSON());
     }
 
 }

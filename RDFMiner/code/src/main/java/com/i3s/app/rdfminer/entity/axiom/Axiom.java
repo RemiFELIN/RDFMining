@@ -34,7 +34,7 @@ public abstract class Axiom extends Entity {
 	/**
 	 * Title of the axiom
 	 */
-	public String axiomId;
+//	public String axiomId;
 
 	/**
 	 * The cardinality of the universe of discourse for this axiom.
@@ -56,44 +56,6 @@ public abstract class Axiom extends Entity {
 	 * <code>subClassOf</code>; <code>DisjointClasses</code>; ...
 	 */
 	public int numIntersectingClasses = 0;
-
-	/**
-	 * Specify if the exception query reached the timeout given by "-t" parameter
-	 */
-	public boolean isTimeout = false;
-
-	/**
-	 * The ARI "Acceptance/Rejection Index" of an axiom is computed as follow :
-	 * ARI = {@link Axiom#possibility() possibility} + {@link Axiom#necessity() necessity} - 1
-	 */
-	public double ari = 0.0;
-
-	/**
-	 * Computes the possibility degree of the axiom, based on the known facts.
-	 * 
-	 * @return the possibility degree of the axiom.
-	 */
-	public TruthDegree possibility() {
-		double y = 1.0;
-		if (referenceCardinality > 0) {
-			double x = ((double) referenceCardinality - (double) numExceptions) / ((double) referenceCardinality);
-			y = 1.0 - Math.sqrt(1.0 - x * x);
-		}
-		return new TruthDegree(y);
-	}
-
-	/**
-	 * Computes the necessity degree of the axiom, based on the known facts.
-	 */
-	public TruthDegree necessity() {
-		double y = 0.0;
-
-		if (referenceCardinality > 0 && numExceptions == 0) {
-			double x = ((double) referenceCardinality - (double) numConfirmations) / ((double) referenceCardinality);
-			y = Math.sqrt(1.0 - x * x);
-		}
-		return new TruthDegree(y);
-	}
 
 	/**
 	 * Define an ARI of the current axiom
@@ -155,29 +117,6 @@ public abstract class Axiom extends Entity {
 	 * </p>
 	 */
 	public void update(CoreseEndpoint endpoint) throws URISyntaxException, IOException {
-	}
-
-	public JSONObject toJSON() {
-		JSONObject json = new JSONObject();
-		json.put("axiom", axiomId);
-		json.put("referenceCardinality", referenceCardinality);
-		json.put("numConfirmations", numConfirmations);
-		json.put("numExceptions", numExceptions);
-		json.put("possibility", possibility().doubleValue());
-		json.put("necessity", necessity().doubleValue());
-		json.put("elapsedTime", elapsedTime);
-		json.put("isTimeOut", isTimeout);
-		json.put("exceptions", new JSONArray(exceptions));
-		json.put("confirmations", new JSONArray(confirmations));
-		json.put("generation", generation);
-		json.put("fitness", fitness);
-		json.put("generality", generality);
-		json.put("ari", ari);
-		if(individual != null)
-			json.put("isMapped", individual.isMapped());
-		else
-			json.put("isMapped", JSONObject.NULL);
-		return json;
 	}
 
 }

@@ -5,6 +5,7 @@ package com.i3s.app.rdfminer.entity.axiom;
 
 import Mapper.Symbol;
 import Util.Enums;
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.axiom.type.DisjointClassesAxiom;
 import com.i3s.app.rdfminer.entity.axiom.type.OWLAxiom;
 import com.i3s.app.rdfminer.entity.axiom.type.SubClassOfAxiom;
@@ -103,8 +104,12 @@ public class AxiomFactory extends DLFactory {
 	 */
 	public static Axiom create(GEIndividual individual, List<Symbol> syntax, CoreseEndpoint endpoint) throws URISyntaxException, IOException {
 
+//		logger.info("Individual: " + individual.getPhenotype());
 		Axiom axiom = null;
 		List<List<Symbol>> arguments = parseArguments(syntax);
+		// set timeout
+		if(RDFMiner.parameters.timeOut != 0)
+			endpoint.setTimeout(RDFMiner.parameters.timeOut);
 		
 		if (syntax.get(0).equals(OWLAxiom.SUBCLASSOF)) {
 			require(arguments.size() == 2);
@@ -195,13 +200,11 @@ public class AxiomFactory extends DLFactory {
 			return null;
 		}
 		// if the given individual is not null, we can set the name of the axiom using its individual
-		if(individual != null) {
-			// set the individual of axiom
-			axiom.individual = individual;
-			// set the title of axiom
-			axiom.axiomId = individual.getPhenotype().getStringNoSpace();
-		}
-		// set this arguments 
+		// set the individual of axiom
+		axiom.individual = individual;
+		// set the title of axiom
+//			axiom.setEntityAsString(individual.getPhenotype().getString());
+		// set this arguments
 		axiom.argumentClasses = arguments;
 		return axiom;
 	}

@@ -2,7 +2,10 @@ package com.i3s.app.rdfminer.entity;
 
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.entity.axiom.type.DisjointClassesAxiom;
+import com.i3s.app.rdfminer.fuzzy.TruthDegree;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +16,8 @@ import java.util.List;
  * @author Rémi FELIN
  */
 public abstract class Entity {
+
+    public String entityAsString;
 
     /**
      * A service native method to query for CPU usage.
@@ -96,8 +101,78 @@ public abstract class Entity {
     public int numExceptions = 0;
 
     /**
+     * Computes the possibility degree of the entity, based on the known facts.
+     *
+     * @return the possibility degree of the entity.
+     */
+    public TruthDegree possibility() {
+        double y = 1.0;
+        if (referenceCardinality > 0) {
+            double x = ((double) referenceCardinality - (double) numExceptions) / ((double) referenceCardinality);
+            y = 1.0 - Math.sqrt(1.0 - x * x);
+        }
+        return new TruthDegree(y);
+    }
+
+    /**
+     * Computes the necessity degree of the entity, based on the known facts.
+     */
+    public TruthDegree necessity() {
+        double y = 0.0;
+
+        if (referenceCardinality > 0 && numExceptions == 0) {
+            double x = ((double) referenceCardinality - (double) numConfirmations) / ((double) referenceCardinality);
+            y = Math.sqrt(1.0 - x * x);
+        }
+        return new TruthDegree(y);
+    }
+
+    /**
+     * Specify if the exception query reached the timeout given by "-t" parameter
+     */
+    public boolean isTimeout = false;
+
+
+    /**
+     * The ARI "Acceptance/Rejection Index" of an entity is computed as follow :
+     * ARI = {@link Entity#possibility() possibility} + {@link Entity#necessity() necessity} - 1
+     */
+    public double ari = 0.0;
+
+    /**
      * The current ID of generation where this axiom has been found
      */
-    public int generation;
+    public Integer generation = null;
+
+    public void setEntityAsString(String entityAsString) {
+        this.entityAsString = entityAsString;
+    }
+
+    public void setEntityAsString() {
+        this.entityAsString = individual.getPhenotype().getStringNoSpace();
+    }
+
+    public JSONObject toJSON() {
+        JSONObject json = new JSONObject();
+        json.put("entity", entityAsString);
+        json.put("referenceCardinality", referenceCardinality);
+        json.put("numConfirmations", numConfirmations);
+        json.put("numExceptions", numExceptions);
+        json.put("possibility", possibility().doubleValue());
+        json.put("necessity", necessity().doubleValue());
+        json.put("elapsedTime", elapsedTime);
+        json.put("isTimeOut", isTimeout);
+        json.put("exceptions", new JSONArray(exceptions));
+        json.put("confirmations", new JSONArray(confirmations));
+        json.put("generation", generation);
+        json.put("fitness", fitness);
+        json.put("generality", generality);
+        json.put("ari", ari);
+//        if(individual != null)
+//            json.put("isMapped", individual.isMapped());
+//        else
+//            json.put("isMapped", JSONObject.NULL);
+        return json;
+    }
 
 }

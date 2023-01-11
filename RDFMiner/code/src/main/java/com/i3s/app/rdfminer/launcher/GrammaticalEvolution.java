@@ -11,7 +11,7 @@ import com.i3s.app.rdfminer.grammar.evolutionary.fitness.Fitness;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.CandidatePopulation;
 import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.grammar.evolutionary.mining.EntityMining;
-import com.i3s.app.rdfminer.output.axiom.AxiomsResultsJSON;
+import com.i3s.app.rdfminer.output.Results;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
 import org.apache.log4j.Logger;
 
@@ -36,7 +36,8 @@ public class GrammaticalEvolution {
             writeAndFinish();
         }));
 
-        RDFMiner.results = new AxiomsResultsJSON();
+        // set results content as JSON object
+        RDFMiner.results = new Results();
 
         Generator generator = null;
         if (parameters.axiomFile == null) {
@@ -79,6 +80,8 @@ public class GrammaticalEvolution {
                 1 : (int) (parameters.sizeElite * parameters.populationSize);
         logger.info("SIZE ELITE: " + sizeElite);
         logger.info("TOTAL EFFORT : " + parameters.kBase);
+        if(parameters.checkpoint != 1)
+            logger.info("# CHECKPOINT: " + parameters.checkpoint);
         logger.info("INITIALIZED LENGTH CHROMOSOME: " + parameters.initLenChromosome);
         logger.info("MAXIMUM WRAPPING: " + parameters.maxWrapp);
         logger.info("CROSSOVER PROBABILITY: " + parameters.proCrossover);
@@ -160,7 +163,7 @@ public class GrammaticalEvolution {
         try {
             RDFMiner.results.stats = RDFMiner.stats.toJSON();
             RDFMiner.results.content = RDFMiner.content;
-            RDFMiner.output.write(RDFMiner.results.toJSON().toString());
+            RDFMiner.output.write(RDFMiner.results.toJSON().toString(2));
             RDFMiner.output.close();
         } catch (IOException e) {
             logger.error("I/O error while closing JSON writer: " + e.getMessage());

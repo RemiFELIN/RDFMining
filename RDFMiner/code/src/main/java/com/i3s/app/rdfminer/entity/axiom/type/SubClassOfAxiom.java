@@ -234,7 +234,7 @@ public class SubClassOfAxiom extends Axiom {
 			// Since the query to count exception is complex and may take very long to
 			// execute, we execute it with the user-supplied time out.
 			// we need to instanciate a new endpoint which will consider the desired timeout
-			endpoint.setTimeout(RDFMiner.parameters.timeOut);
+//			endpoint.setTimeout(RDFMiner.parameters.timeOut);
 			boolean finish = false;
 			if (RDFMiner.parameters.loop) {
 				try {
