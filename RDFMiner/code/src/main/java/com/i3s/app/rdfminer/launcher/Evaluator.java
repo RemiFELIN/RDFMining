@@ -247,17 +247,15 @@ public class Evaluator {
 		String report;
 		if(RDFMiner.parameters.useClassicShaclMode) {
 			report = endpoint.getValidationReportFromServer(shapesManager.file, CoreseService.SHACL_EVALUATION);
-			ValidationReport validationReport = new ValidationReport(report);
-			RDFMiner.output.write(validationReport.prettifyPrint());
-		} else {
+		} else if(RDFMiner.parameters.useProbabilisticShaclMode) {
 			report = endpoint.getValidationReportFromServer(shapesManager.file, CoreseService.PROBABILISTIC_SHACL_EVALUATION);
-			ValidationReport validationReport = new ValidationReport(report);
-			for(Shape shape : shapesManager.getPopulation()) {
-				shape.fillParamFromReport(validationReport);
-				// Save a JSON report of the test
-//				RDFMiner.axiomsList.put(shape.toJSON());
-			}
+		} else {
+			logger.warn("No validation mode specified !");
+			logger.warn("By default, the standard SHACL validation will be used");
+			report = endpoint.getValidationReportFromServer(shapesManager.file, CoreseService.SHACL_EVALUATION);
 		}
+		ValidationReport validationReport = new ValidationReport(report);
+		RDFMiner.output.write(validationReport.prettifyPrint());
 
 		logger.info("Done testing shape. Exiting.");
 		System.exit(0);
