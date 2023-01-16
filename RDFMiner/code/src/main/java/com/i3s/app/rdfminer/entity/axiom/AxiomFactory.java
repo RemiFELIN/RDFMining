@@ -10,7 +10,7 @@ import com.i3s.app.rdfminer.entity.axiom.type.DisjointClassesAxiom;
 import com.i3s.app.rdfminer.entity.axiom.type.OWLAxiom;
 import com.i3s.app.rdfminer.entity.axiom.type.SubClassOfAxiom;
 import com.i3s.app.rdfminer.grammar.DLFactory;
-import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
 

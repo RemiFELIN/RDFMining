@@ -336,7 +336,8 @@ public class TripleStore implements URLParam {
     }
     
     boolean isShacl(Context c) {
-        return c.hasValue(SHACL) && hasValueList(c, URI);
+        if(c.hasValue(SHACL) && c.hasValue(CONTENT)) return true;
+        else return c.hasValue(SHACL) && hasValueList(c, URI);
     }
 
     boolean isProbabilisticShacl(Context c) {
@@ -376,22 +377,31 @@ public class TripleStore implements URLParam {
      * Execute query on shacl validation report
      */ 
     Mappings shacl(String query, Dataset ds) throws EngineException {
+        logger.info("SHACL eval...");
         Graph shacl = Graph.create();
         Load ld = Load.create(shacl);
         try {
-            for (IDatatype dt : ds.getContext().get(URI)) {
-                ld.parse(dt.getLabel());
+            if(ds.getContext().get(URLParam.CONTENT) != null) {
+                InputStream stream = new ByteArrayInputStream(ds.getContext().get(URLParam.CONTENT).stringValue().getBytes(StandardCharsets.UTF_8));
+                ld.parse(stream, "", Load.TURTLE_FORMAT);
+                stream.close();
+            } else {
+                for (IDatatype dt : ds.getContext().get(URLParam.URI)) {
+                    ld.parse(dt.getLabel());
+                }
             }
         } catch (LoadException ex) {
             logger.error(ex.getMessage());
             throw new EngineException(ex) ;
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            e.printStackTrace();
         }
         Shacl sh = new Shacl(getGraph());
         Graph res = sh.eval(shacl);
         QueryProcess exec = QueryProcess.create(res);
         exec.setDebug(ds.getContext().isDebug());
-        Mappings map = exec.query(query);
-        return map;
+        return exec.query(query);
     }
 
     /**
@@ -404,13 +414,12 @@ public class TripleStore implements URLParam {
     Mappings probabilisticShacl(String query, Dataset ds) throws EngineException, IOException {
         Graph shacl = Graph.create();
         Load ld = Load.create(shacl);
-        InputStream stream = null;
-        // Default values for 'n' and 'k' parameters
         double p = 0.2;
         try {
             if(ds.getContext().get(URLParam.CONTENT) != null) {
-                stream = new ByteArrayInputStream(ds.getContext().get(URLParam.CONTENT).stringValue().getBytes(StandardCharsets.UTF_8));
+                InputStream stream = new ByteArrayInputStream(ds.getContext().get(URLParam.CONTENT).stringValue().getBytes(StandardCharsets.UTF_8));
                 ld.parse(stream, "", Load.TURTLE_FORMAT);
+                stream.close();
             } else {
                 for (IDatatype dt : ds.getContext().get(URLParam.URI)) {
                     ld.parse(dt.getLabel());
@@ -433,8 +442,6 @@ public class TripleStore implements URLParam {
         QueryProcess exec = QueryProcess.create(res);
         exec.setDebug(ds.getContext().isDebug());
         Mappings map = exec.query(query);
-        if(stream != null)
-            stream.close();
         return map;
     }
     

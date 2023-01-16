@@ -303,7 +303,7 @@ public class SPARQLRestAPI implements ResultFormatDef, URLParam {
             @QueryParam("transform")        List<String> transform,
             @QueryParam("param")  List<String> param,
             @QueryParam("mode")   List<String> mode,
-            @QueryParam("content") String content,
+            @FormDataParam("content") String content,
             @QueryParam("p") String p,
             @QueryParam("uri")    List<String> uri) {
 

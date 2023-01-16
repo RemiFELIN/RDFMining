@@ -3,10 +3,9 @@ package com.i3s.app.rdfminer.sparql.corese;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.sparql.RequestBuilder;
+import io.searchbox.client.http.apache.HttpGetWithEntity;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
@@ -16,15 +15,11 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -178,30 +173,61 @@ public class CoreseEndpoint {
             logger.error("Error " + response.getStatusLine().getStatusCode() + " while sending SHACL Shapes on server ...");
     }
 
-    public String getValidationReportFromServer(File file, String mode) throws URISyntaxException, IOException {
-        // build the final URL
-        final String service = this.url + CoreseService.CORESE_SPARQL_ENDPOINT;
+    public String getValidationReportFromServer(String content, String mode) throws URISyntaxException, IOException {
         // fill params
         HashMap<String, String> params = new HashMap<>();
         params.put("mode", mode);
-        params.put("uri", Global.TARGET_SPARQL_ENDPOINT + CoreseService.CORESE_GET_SHACL_SHAPES_ENDPOINT + "?name=" + Global.SHACL_SHAPES_FILENAME);
+//        params.put("uri", this.url + CoreseService.CORESE_GET_SHACL_SHAPES_ENDPOINT + "?name=" + Global.SHACL_SHAPES_FILENAME);
         params.put("query", "construct where {?s ?p ?o}");
         params.put("format", Format.TURTLE);
-        // v2 : binomial distribution
-        params.put("p", RDFMiner.parameters.probShaclP);
-        // send the given file to the server
-        sendFileToServer(file, Global.SHACL_SHAPES_FILENAME);
+        if(Objects.equals(mode, CoreseService.PROBABILISTIC_SHACL_EVALUATION)) {
+            // v2 : binomial distribution
+            params.put("p", RDFMiner.parameters.probShaclP);
+        }
         // send GET request
-        return get(service, params);
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+        URIBuilder builder = new URIBuilder(this.url + CoreseService.CORESE_SPARQL_ENDPOINT);
+        // take the first elem of params parameter to get all keys and values
+        for(String param : params.keySet()) {
+            builder.setParameter(param, params.get(param));
+        }
+        // GET request
+        HttpGetWithEntity get = new HttpGetWithEntity(builder.build());
+        // set entity
+        HttpEntity entity = MultipartEntityBuilder.create().addTextBody("content", content).build();//addPart("file", new FileBody(file)).build();
+        get.setEntity(entity);
+        // Accept header
+        get.setHeader("Accept", "*/*");
+        // exec
+//        System.out.println(get.getRequestLine());
+        HttpResponse response = httpClient.execute(get);
+        // catch status code of the request
+        if(response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_OK) {
+            // the request has a 200 OK response from the server
+            // read the content of the response
+            BufferedReader in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+            String inputLine;
+            StringBuilder sb = new StringBuilder();
+            while ((inputLine = in.readLine()) != null) {
+                sb.append(inputLine);
+            }
+            in.close();
+            return sb.toString();
+        } else {
+            // this section handle the error from the request
+            logger.error("request: " + get.getRequestLine());
+            logger.error("Request fail (code " + response.getStatusLine().getStatusCode() + ")");
+            return null;
+        }
     }
 
-    public String getFileFromServer(String nameAndExtension) throws URISyntaxException, IOException {
-        final String service = this.url + CoreseService.CORESE_GET_SHACL_SHAPES_ENDPOINT;
-        // fill params
-        HashMap<String, String> params = new HashMap<>();
-        params.put("name", nameAndExtension);
-        return get(service, params);
-    }
+//    public String getFileFromServer(String nameAndExtension) throws URISyntaxException, IOException {
+//        final String service = this.url + CoreseService.CORESE_GET_SHACL_SHAPES_ENDPOINT;
+//        // fill params
+//        HashMap<String, String> params = new HashMap<>();
+//        params.put("name", nameAndExtension);
+//        return get(service, params);
+//    }
 
     public String getFilePathFromServer(String nameAndExtension) {
         return this.url + CoreseService.CORESE_GET_SHACL_SHAPES_ENDPOINT + "?name=" + nameAndExtension;
@@ -214,7 +240,7 @@ public class CoreseEndpoint {
     public int sendRDFDataToDB(String datapath) throws URISyntaxException, IOException {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         // build the final URL
-        final String service = Global.CORESE_SPARQL_ENDPOINT + CoreseService.CORESE_LOAD_RDF;
+        final String service = Global.CORESE_IP + CoreseService.CORESE_LOAD_RDF;
         URIBuilder builder = new URIBuilder(service);
         // POST request
         HttpPost post = new HttpPost(builder.build());
@@ -236,7 +262,7 @@ public class CoreseEndpoint {
 
     public String getHTMLResultFromSTTLTransformation(String sttl) throws URISyntaxException, IOException {
         // build the final URL
-        final String service = url + CoreseService.CORESE_SPARQL_ENDPOINT;
+        final String service = this.url + CoreseService.CORESE_SPARQL_ENDPOINT;
         // specify all the query params needed to launch a request on Corese server
         HashMap<String, String> params = new HashMap<>();
         // specify sttl template
@@ -265,9 +291,10 @@ public class CoreseEndpoint {
             }
         }
         // GET request
-        HttpGet get = new HttpGet(builder.build());
+        HttpGetWithEntity get = new HttpGetWithEntity(builder.build());
         // Accept header
         get.setHeader("Accept", "*/*");
+        get.setEntity(MultipartEntityBuilder.create().addTextBody("content", "").build());
 //        logger.info("HTTP Request: " + get);
         // exec
         HttpResponse response = httpClient.execute(get);

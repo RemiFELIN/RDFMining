@@ -16,7 +16,7 @@ public class Statistics {
 		double sumFitness = 0;
 		for (Entity entity : entities) {
 //			System.out.println("Individual: " + entity.individual.getPhenotype());
-//			System.out.println("Fitness: " + entity.fitness);
+			System.out.println("Fitness: " + entity.fitness);
 			sumFitness += entity.fitness;
 		}
 		if (entities.size() != 0) {

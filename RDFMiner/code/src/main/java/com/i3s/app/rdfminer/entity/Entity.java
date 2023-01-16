@@ -3,7 +3,7 @@ package com.i3s.app.rdfminer.entity;
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.entity.axiom.type.DisjointClassesAxiom;
 import com.i3s.app.rdfminer.fuzzy.TruthDegree;
-import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

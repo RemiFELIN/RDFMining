@@ -1,12 +1,13 @@
 package com.i3s.app.rdfminer.launcher;
 
 import Individuals.Phenotype;
+import com.github.jsonldjava.shaded.com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.entity.axiom.AxiomFactory;
 import com.i3s.app.rdfminer.entity.shacl.ShapesManager;
-import com.i3s.app.rdfminer.entity.shacl.Shape;
 import com.i3s.app.rdfminer.entity.shacl.ValidationReport;
 import com.i3s.app.rdfminer.generator.axiom.AxiomGenerator;
 import com.i3s.app.rdfminer.generator.axiom.CandidateAxiomGenerator;
@@ -18,14 +19,11 @@ import com.i3s.app.rdfminer.sparql.corese.CoreseService;
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.engine.http.QueryExceptionHTTP;
-import org.apache.jena.vocabulary.RDF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 
 import java.io.*;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -135,7 +133,7 @@ public class Evaluator {
 				callables.add(() -> {
 					try {
 						logger.info("Testing axiom: " + finalAxiomName);
-						Axiom a = AxiomFactory.create(null, axiom, new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
+						Axiom a = AxiomFactory.create(null, axiom, new CoreseEndpoint(Global.CORESE_IP, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
 						a.setEntityAsString(finalAxiomName);
 						return a;
 					} catch (QueryExceptionHTTP httpError) {
@@ -165,7 +163,7 @@ public class Evaluator {
 					String finalAxiomName = axiomName;
 					callables.add(() -> {
 						logger.info("Testing axiom: " + finalAxiomName);
-						Axiom a = AxiomFactory.create(null, finalAxiomName, new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
+						Axiom a = AxiomFactory.create(null, finalAxiomName, new CoreseEndpoint(Global.CORESE_IP, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
 						a.setEntityAsString(finalAxiomName);
 						if (RDFMiner.parameters.singleAxiom != null) {
 							logger.info("Axiom evaluated !");
@@ -211,7 +209,8 @@ public class Evaluator {
 	 */
 	public void runShapeEvaluation() throws URISyntaxException, IOException {
 
-		BufferedReader shapeFile = null;
+//		BufferedReader shapeFile = null;
+		String shapesContent = null;
 
 		// Create an empty JSON object which will be fill with our results
 		RDFMiner.evaluatedEntities = new JSONArray();
@@ -220,7 +219,7 @@ public class Evaluator {
 			logger.info("Reading SHACL Shapes from file " + RDFMiner.parameters.shapeFile + "...");
 			try {
 				// Try to read the status file:
-				shapeFile = new BufferedReader(new FileReader(RDFMiner.parameters.shapeFile));
+				shapesContent = Files.asCharSource(new File(RDFMiner.parameters.shapeFile), Charsets.UTF_8).read();
 			} catch (IOException e) {
 				logger.error("Could not open file " + RDFMiner.parameters.shapeFile);
 				return;
@@ -245,8 +244,8 @@ public class Evaluator {
 			System.exit(1);
 		}
 
-		ShapesManager shapesManager = new ShapesManager(Path.of(RDFMiner.parameters.shapeFile));
-		CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
+		ShapesManager shapesManager = new ShapesManager(shapesContent, true);
+		CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, Global.PREFIXES);
 		String report;
 
 		if (RDFMiner.parameters.useProbabilisticShaclMode) {
@@ -257,7 +256,8 @@ public class Evaluator {
 				logger.warn("No validation mode specified !");
 				logger.warn("By default, the standard SHACL validation will be used");
 			}
-			report = endpoint.getValidationReportFromServer(shapesManager.getFile(), CoreseService.SHACL_EVALUATION);
+			report = endpoint.getValidationReportFromServer(shapesManager.content, CoreseService.SHACL_EVALUATION);
+//			System.out.println(report);
 			ValidationReport validationReport = new ValidationReport(report);
 			RDFMiner.output.write(validationReport.prettifyPrint());
 		}

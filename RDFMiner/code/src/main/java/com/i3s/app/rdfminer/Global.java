@@ -20,15 +20,17 @@ public class Global {
             + "                                                          \n" + "\033[0;1m" + " VERSION "
             + System.getenv("RDFMINER_VERSION") + "\033[0m" + "\n";
 
+    public static final String HOME = System.getenv("HOME");
+
     /**
      * Path to log4j.properties file
      */
-    public static final String LOG4J_PROPERTIES = System.getenv("HOME") + "/code/resources/log4j.properties";
+    public static final String LOG4J_PROPERTIES = HOME + "/code/resources/log4j.properties";
 
     /**
      * path to DBPEDIA TDB (not used in this version)
      */
-    public static final String DBPEDIA_TDB_PATH = System.getenv("HOME") + "/tdb/";
+    public static final String DBPEDIA_TDB_PATH = HOME + "/tdb/";
 
     /**
      * The SPARQL Endpoint targetted (to query it)
@@ -49,7 +51,7 @@ public class Global {
     /**
      * Corese IP Address
      */
-    public static final String CORESE_SPARQL_ENDPOINT = "http://172.19.0.4:9100/";
+    public static final String CORESE_IP = "http://172.19.0.4:9100/";
 
     /**
      * default prefixes used to perform queries with the remote {@link Global#TARGET_SPARQL_ENDPOINT
@@ -82,7 +84,7 @@ public class Global {
     /**
      * Output path of results, it corresponding to '/rdfminer/io/' in container
      */
-    public static final String OUTPUT_PATH = System.getenv("HOME") + "io/";
+    public static final String OUTPUT_PATH = HOME + "io/";
 
     /**
      * Name of output results file in JSON
@@ -111,7 +113,7 @@ public class Global {
     /**
      * .cache files folder path
      */
-    public static final String CACHE_PATH = System.getenv("HOME") + "/caches/";
+    public static final String CACHE_PATH = HOME + "/caches/";
 
     /**
      * Number of threads used to perform evaluation of axioms, its value depends of

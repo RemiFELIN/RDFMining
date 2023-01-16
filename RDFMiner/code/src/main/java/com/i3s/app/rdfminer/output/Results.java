@@ -1,7 +1,6 @@
 package com.i3s.app.rdfminer.output;
 
 import com.i3s.app.rdfminer.RDFMiner;
-import com.i3s.app.rdfminer.output.axiom.StatJSON;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

@@ -27,19 +27,12 @@ public class CmdLineParameters {
 	@Option(name = "-sf", aliases = { "--shapes-file" }, usage = "test shapes contained in this file", metaVar = "SHAPES_FILE")
 	public String shapeFile = null;
 
-	// SHACL
-	@Option(name = "-shacl", aliases = { "--shacl-shapes" }, usage = "enable SHACL Shapes mining", metaVar = "SHAPES")
-	public boolean useShaclMode = false;
-
 	// Probabilistic SHACL
 	@Option(name = "-shacl-p", aliases = { "--shacl-probability" }, usage = "set the value of p for SHACL probabilistic mode", metaVar = "SHACL_PROB_P")
 	public String probShaclP = String.valueOf(0.05);
 
 	@Option(name = "-shacl-a", aliases = { "--shacl-alpha" }, usage = "set the value of alpha for SHACL probabilistic mode (Hypothesis testing)", metaVar = "SHACL_PROB_A")
 	public double alpha = 0.05;
-
-	@Option(name = "-e", aliases = { "--endpoint" }, usage = "specify the SPARQL endpoint to be used for sending requests", metaVar = "ENDPOINT")
-	public String sparqlEndpoint = null;
 	
 	@Option(name = "-af", aliases = { "--axioms-file" }, usage = "test axioms contained in this file", metaVar = "AXIOM_FILE")
 	public String axiomFile = null;

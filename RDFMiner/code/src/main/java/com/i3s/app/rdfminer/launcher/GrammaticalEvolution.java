@@ -7,10 +7,10 @@ import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.generator.shacl.RandomShapeGenerator;
-import com.i3s.app.rdfminer.grammar.evolutionary.fitness.Fitness;
-import com.i3s.app.rdfminer.grammar.evolutionary.individual.CandidatePopulation;
-import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
-import com.i3s.app.rdfminer.grammar.evolutionary.mining.EntityMining;
+import com.i3s.app.rdfminer.evolutionary.fitness.Fitness;
+import com.i3s.app.rdfminer.evolutionary.individual.CandidatePopulation;
+import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.mining.EntityMining;
 import com.i3s.app.rdfminer.output.Results;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
 import org.apache.log4j.Logger;
@@ -52,7 +52,7 @@ public class GrammaticalEvolution {
                 generator = new RandomShapeGenerator(parameters.grammarFile);
             } else {
                 logger.error("Generator is not defined ! Cannot generate any individuals ...");
-                logger.warn("use (-ra) to generate OWL Axioms OR (-rs) to generate SHACL Shapes");
+                logger.warn("You can use: (-ra) to generate OWL Axioms; (-rs) to generate SHACL Shapes");
                 System.exit(1);
             }
         }

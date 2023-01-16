@@ -14,6 +14,8 @@ import fr.inria.corese.sparql.triple.parser.Context;
 import fr.inria.corese.sparql.triple.parser.URLParam;
 import fr.inria.corese.sparql.triple.parser.Access.Level;
 import fr.inria.corese.sparql.triple.parser.Access;
+
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -82,11 +84,11 @@ public class SPARQLResult implements ResultFormatDef, URLParam    {
      * @param content is list of the content given by parameter
      * @param p is the maximal rate of violations for a given shape (used as 'p' param for binomial distribution)
      */
-    public Response getResultFormat(String name, String oper, 
-            List<String> uri, List<String> param, List<String> mode,
-            String query, String access, 
-            List<String> defaut, List<String> named,
-            String format, int type, List<String> transform, String content, String p) {
+    public Response getResultFormat(String name, String oper,
+                                    List<String> uri, List<String> param, List<String> mode,
+                                    String query, String access,
+                                    List<String> defaut, List<String> named,
+                                    String format, int type, List<String> transform, String content, String p) {
            
         try {  
             logger.info("Endpoint URL: " + getRequest().getRequestURL());

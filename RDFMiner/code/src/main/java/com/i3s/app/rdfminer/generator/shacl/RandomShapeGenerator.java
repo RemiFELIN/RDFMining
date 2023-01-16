@@ -1,13 +1,7 @@
 package com.i3s.app.rdfminer.generator.shacl;
 
-import Individuals.GEChromosome;
-import Individuals.Genotype;
-import Individuals.Phenotype;
-import Mapper.ContextFreeGrammar;
 import Util.Random.MersenneTwisterFast;
 import Util.Random.RandomNumberGenerator;
-import com.i3s.app.rdfminer.generator.Generator;
-import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

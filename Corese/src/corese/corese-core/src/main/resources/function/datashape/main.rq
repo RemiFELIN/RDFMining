@@ -66,6 +66,7 @@ function dt:graph sh:shacljava() {
 }
 
 function dt:graph sh:shacl(dt:graph shape) {
+   sh:log("main.rq", "sh:shacl", "start a standard SHACL eval ...");
    if (sh:trace(), xt:print("shacl:"), true);
    sh:java(false);
    set(extended = false);

@@ -123,7 +123,7 @@ public abstract class AxiomGenerator extends Generator {
 		} catch (IOException ioe) {
 			logger.info("Cache for " + symbol + " not found. Querying training SPARQL endpoint: " + Global.TRAINING_SPARQL_ENDPOINT);
 			logger.info("Querying SPARQL endpoint for symbol <" + symbol + "> ...");
-			CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES);
+			CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES);
 			PrintStream cache = null;
 			try {
 				cache = new PrintStream(cacheName(symbol, sparql));

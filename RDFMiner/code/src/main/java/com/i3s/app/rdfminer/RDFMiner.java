@@ -3,11 +3,11 @@
  */
 package com.i3s.app.rdfminer;
 
-import com.i3s.app.rdfminer.grammar.evolutionary.CostGP;
+import com.i3s.app.rdfminer.evolutionary.tools.CostGP;
 import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
 import com.i3s.app.rdfminer.launcher.Evaluator;
 import com.i3s.app.rdfminer.output.Results;
-import com.i3s.app.rdfminer.output.axiom.StatJSON;
+import com.i3s.app.rdfminer.output.StatJSON;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -138,7 +138,13 @@ public class RDFMiner {
 //		}
 
 		// define a SPARQL Endpoint to use if provided
-		if(parameters.targetSparqlEndpoint != null) {
+		if (parameters.grammaticalEvolution && (parameters.useClassicShaclMode || parameters.useProbabilisticShaclMode)) {
+			// SHACL Shapes mining !
+			logger.warn("Grammatical evolution activated for SHACL Shapes !");
+			logger.warn("RDFMiner will query the Corese semantic factory: " + Global.TARGET_SPARQL_ENDPOINT);
+			logger.warn("This version of Corese contains an implementation of SHACL (standard and probabilistic) ...");
+			Global.TARGET_SPARQL_ENDPOINT = Global.CORESE_IP;
+		} else if(parameters.targetSparqlEndpoint != null) {
 			logger.info("(--target-endpoint) a target SPARQL Endpoint is specified !");
 			try {
 				// Test if the given url is a valid URL or not

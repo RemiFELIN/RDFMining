@@ -25,9 +25,10 @@ public class ExtendedShacl {
     public static void run(ShapesManager shapesManager) throws URISyntaxException, IOException {
 
         // launch evaluation
-        CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
+        CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, Global.PREFIXES);
         // Launch SHACL evaluation from the Corese server and get the result in turtle
-        String report = endpoint.getValidationReportFromServer(shapesManager.getFile(), CoreseService.PROBABILISTIC_SHACL_EVALUATION);
+        String report = endpoint.getValidationReportFromServer(shapesManager.content, CoreseService.PROBABILISTIC_SHACL_EVALUATION);
+        endpoint.sendFileToServer(new File(RDFMiner.parameters.shapeFile), Global.SHACL_SHAPES_FILENAME);
 //		ValidationReport validationReport = new ValidationReport(report);
         String pretiffyReport = report.replace(".@", ".\n@")
                 .replace(".<", ".\n\n<")
@@ -53,6 +54,7 @@ public class ExtendedShacl {
             if(validationReport.reportedShapes.contains(shape.uri.replace("<", "").replace(">", ""))) {
                 // get shapes with metrics
                 shape.fillParamFromReport(validationReport);
+                logger.info(shape.toString());
                 // X^2 computation
                 double nExcTheo = shape.referenceCardinality * Double.parseDouble(RDFMiner.parameters.probShaclP);
                 double nConfTheo = shape.referenceCardinality - nExcTheo;

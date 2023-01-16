@@ -147,7 +147,7 @@ public class ValidationReport {
             con.add(this.model);
             // init query
             String request = RequestBuilder.select("?shapes", "?y a " + Shacl.VALIDATION_REPORT + " . " +
-                    "?y " + ProbabilisticShacl.SUMMARY + " ?x . ?x " + Shacl.SOURCE_SHAPE + " ?shapes .", true);
+                    "?y " + ProbabilisticShacl.SUMMARY + " ?x . ?x " + ProbabilisticShacl.FOCUS_SHAPE + " ?shapes .", true);
             TupleQuery query = con.prepareTupleQuery(request);
             // launch and get result
             try (TupleQueryResult result = query.evaluate()) {

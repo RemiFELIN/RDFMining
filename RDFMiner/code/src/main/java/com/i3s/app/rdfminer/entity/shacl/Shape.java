@@ -1,9 +1,10 @@
 package com.i3s.app.rdfminer.entity.shacl;
 
+import Individuals.Phenotype;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.entity.shacl.vocabulary.Shacl;
-import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.sparql.RequestBuilder;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.log4j.Logger;
@@ -87,10 +88,10 @@ public class Shape extends Entity {
         this.individual = individual;
         // init model
         try {
-            this.model = Rio.parse(
-                    new StringReader(Global.PREFIXES + "<" + generateIDFromIndividual(individual) + "> " +
-                            individual.getPhenotype()), "", RDFFormat.TURTLE);
+            this.content = individual.getPhenotype().getStringNoSpace();
+            this.model = Rio.parse(new StringReader(Global.PREFIXES + this.content), "", RDFFormat.TURTLE);
         } catch(Exception e) {
+            logger.error("Individual as RDF turtle:\n" + individual.getPhenotype().getStringNoSpace());
             logger.warn("Error during the parsing of Individual: " + e.getMessage());
             System.exit(1);
         }
@@ -118,6 +119,34 @@ public class Shape extends Entity {
         } catch(Exception e) {
             logger.warn("Error during the parsing of proposal SHACL shape: " + e.getMessage());
         }
+        // Create a new Repository. Here, we choose a database implementation
+        // that simply stores everything in main memory.
+        this.db = new SailRepository(new MemoryStore());
+        // get shape uri subject
+        this.uri = getShapeUri();
+//        System.out.println("uri: " + this.uri);
+        // get the targetted class(es) if it provides
+        this.targetClasses = getValuesFromProperty(Shacl.TARGETCLASS);
+//        System.out.println("targetClasses: " + this.targetClasses);
+        // get the targetSubjectsOf if it provides
+        this.targetSubjectsOf = getValuesFromProperty(Shacl.TARGETSUBJECTSOF);
+        // get the targetObjectsOf if it provides
+        this.targetObjectsOf = getValuesFromProperty(Shacl.TARGETOBJECTSOF);
+        // search if it provide a sh:property values
+        this.properties = getProperties();
+//        System.out.println("properties: " + this.properties);
+//        System.out.println(this);
+    }
+
+    public Shape(String content, GEIndividual individual) {
+        this.content = content;
+        try {
+            this.model = Rio.parse(new StringReader(Global.PREFIXES + content), "", RDFFormat.TURTLE);
+        } catch(Exception e) {
+            logger.warn("Error during the parsing of proposal SHACL shape: " + e.getMessage());
+        }
+        // set instance of GEIndividual
+        this.individual = individual;
         // Create a new Repository. Here, we choose a database implementation
         // that simply stores everything in main memory.
         this.db = new SailRepository(new MemoryStore());
@@ -193,23 +222,23 @@ public class Shape extends Entity {
         return results;
     }
 
-    /**
-     * Generate randomly an unique ID for a given individual.
-     * @param individual a GEIndividual from population
-     * @return a unique ID for a given individual. Example: <code>< shape#[random integer] ></code>
-     */
-    private String generateIDFromIndividual(GEIndividual individual) {
-        // the length of the substring depends of the SHACL Shapes ID size such as :
-        return "<" + String.format("%." + Global.SIZE_ID_SHACL_SHAPES + "s",
-                Math.abs(individual.getPhenotype().toString().hashCode())) +
-                RandomStringUtils.randomAlphabetic(4) +  "> ";
-    }
+//    /**
+//     * Generate randomly an unique ID for a given individual.
+//     * @param individual a GEIndividual from population
+//     * @return a unique ID for a given individual. Example: <code>< shape#[random integer] ></code>
+//     */
+//    private String generateIDFromIndividual(GEIndividual individual) {
+//        // the length of the substring depends of the SHACL Shapes ID size such as :
+//        return "<" + String.format("%." + Global.SIZE_ID_SHACL_SHAPES + "s",
+//                Math.abs(individual.getPhenotype().toString().hashCode())) +
+//                RandomStringUtils.randomAlphabetic(4) +  "> ";
+//    }
 
     public void fillParamFromReport(ValidationReport report) {
         String parsedUri = this.uri.replace("<", "").replace(">", "");
-//        this.referenceCardinality = report.referenceCardinalityByShape.get(parsedUri);
-//        this.numConfirmation = report.numConfirmationsByShape.get(parsedUri);
-//        this.numException = report.numExceptionsByShape.get(parsedUri);
+        this.referenceCardinality = report.referenceCardinalityByShape.get(parsedUri).intValue();
+        this.numConfirmations = report.numConfirmationsByShape.get(parsedUri).intValue();
+        this.numExceptions = report.numExceptionsByShape.get(parsedUri).intValue();
         this.likelihood = report.likelihoodByShape.get(parsedUri);
 //        this.generality = report.generalityByShape.get(parsedUri);
 //        this.fitness = report.fitnessByShape.get(parsedUri);

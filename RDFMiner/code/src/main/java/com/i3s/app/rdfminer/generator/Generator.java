@@ -8,7 +8,7 @@ import Mapper.DerivationTree;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.grammar.DLGEGrammar;
-import com.i3s.app.rdfminer.grammar.evolutionary.individual.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
