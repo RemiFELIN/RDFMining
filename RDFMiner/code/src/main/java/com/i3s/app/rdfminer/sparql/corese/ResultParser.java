@@ -89,4 +89,12 @@ public class ResultParser {
         }
         return results;
     }
+
+    public static int getSizeBindings(String json) {
+        // using org.json, get results (String) into a JSON Object
+        JSONTokener tokener = new JSONTokener(json);
+        JSONObject resultAsJson = new JSONObject(tokener);
+        return resultAsJson.getJSONObject("results").getJSONArray("bindings").length();
+    }
+
 }
