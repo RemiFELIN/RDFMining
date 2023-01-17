@@ -111,10 +111,6 @@ public class CmdLineParameters {
 			"--population-size" }, usage = "use as this value as the initial size of population", metaVar = "POPULATION_SIZE")
 	public int populationSize = 200;
 
-//	@Option(name = "-ngen", aliases = {
-//			"--n-generation" }, usage = "use as this value as the number of generation", metaVar = "GENERATION_NUMBER")
-//	public int numGeneration = 5;
-
 	@Option(name = "-init", aliases = {
 			"--init-len" }, usage = "use as this value as the initial length of chromosome", metaVar = "INITLEN_CHROMOSOME")
 	public int initLenChromosome = 20;
@@ -138,15 +134,6 @@ public class CmdLineParameters {
 	@Option(name = "-pm", aliases = {
 			"--prob-mut" }, usage = "use as this value as the probability of mutation operation", metaVar = "PROB_MUTATION")
 	public double proMutation = 0.01;
-
-	@Option(name = "-twi", aliases = {
-			"--twin" }, usage = "use as this value as the chose of twin acception", metaVar = "TWIN_SELECTION")
-	public int twin = 1; // 0 - the twin individuals are not accepted; 1 - accepted
-
-	@Option(name = "-shf", aliases = {
-			"--shuffle" }, usage = "use as this value as the chose of shuffle list", metaVar = "SHUFFLE_SELECTION")
-	public int shuffle = 1; // 1- shuffle list of chromosomes; other numbers -needn't to shuffle list of
-							// chromosomes;
 
 	@Option(name = "-se", aliases = {
 			"--type-select" }, usage = "use as this value as the type of parent selection operation", metaVar = "TYPE_SELECTION")
@@ -175,11 +162,6 @@ public class CmdLineParameters {
 	@Option(name = "-div", aliases = {
 			"--diversity" }, usage = "use as this value as the chose of diversity method", metaVar = "DIVER_METHOD")
 	public int diversity = 1; // 0- not use; 1- crowding method
-
-	// Matrix Gold Standard
-	@Option(name = "-gsd", aliases = {
-			"--gold-standard" }, usage = "use as this value as the input Goldstandard file", metaVar = "GOLD_STANDARD")
-	public String goldStandard = "GoldStandard.xlsx";
 
 	@Option(name = "-kb", aliases = { "--K_Base" }, usage = "KBase", metaVar = "K_BASE")
 	public int kBase = 5000;
