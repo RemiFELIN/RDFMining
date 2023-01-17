@@ -174,7 +174,7 @@ SubClassOf(<cn> <ck>)
 # <c1>; <c2>; <c3>; <cn> and <ck> are OWL Classes
 ```
 
-### SHACL Shapes evaluation:
+### SHACL Shapes evaluation
 
 #### Standard SHACL Validation
 
