@@ -113,6 +113,8 @@ public abstract class Generator {
      * different name.
      */
     public static String cacheName(String symbol, String sparql) {
+//        return String.format("/home/rfelin/projects/RDFMining/RDFMiner/caches/%s%08x.cache", symbol, sparql.hashCode());
+
         return String.format(Global.CACHE_PATH + "%s%08x.cache", symbol, sparql.hashCode());
     }
 

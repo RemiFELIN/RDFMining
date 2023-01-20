@@ -86,12 +86,12 @@ public class GrammaticalEvolution {
         logger.info("MAXIMUM WRAPPING: " + parameters.maxWrapp);
         logger.info("CROSSOVER PROBABILITY: " + parameters.proCrossover);
         logger.info("MUTATION PROBABILITY: " + parameters.proMutation);
-        logger.info("TIME-CAP: " + (parameters.timeOut == 0 ? "Not used" : parameters.timeOut + " secondes"));
+        logger.info("TIME-CAP: " + (parameters.timeOut == 0 ? "Not used" : parameters.timeOut + " ms."));
         logger.info("========================================================");
         logger.info("NUMBER OF THREAD(S) USED: " + Global.NB_THREADS);
         logger.info("========================================================");
 
-        GEChromosome[] chromosomes = new GEChromosome[parameters.populationSize];
+//        GEChromosome[] chromosomes = new GEChromosome[parameters.populationSize];
         ArrayList<GEIndividual> candidatePopulation;
 
         int curCheckpoint;
@@ -122,9 +122,7 @@ public class GrammaticalEvolution {
         }
         logger.info("Initializing candidate population in generation " + curGeneration + "...");
         // Generate candidate population
-        CandidatePopulation canPop = new CandidatePopulation(parameters.populationSize, generator,
-                parameters.typeInitialization, chromosomes, parameters.initLenChromosome,
-                parameters.maxValCodon, parameters.maxWrapp);
+        CandidatePopulation canPop = new CandidatePopulation(generator);
         candidatePopulation = canPop.initialize(buffer, curGeneration);
         // Initialize population as Axioms or SHACL Shapes
         ArrayList<Entity> entities = Fitness.initializePopulation(candidatePopulation, generator);

@@ -50,9 +50,9 @@ public class CoreseEndpoint {
      */
     public long timeout = Integer.MAX_VALUE;
 
-    /**
-     * HTTP client
-     */
+//    /**
+//     * HTTP client
+//     */
 //    private final CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 
     /**

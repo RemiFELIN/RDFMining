@@ -29,26 +29,6 @@ import java.util.List;
 public abstract class Axiom extends Entity {
 
 	/**
-	 * Title of the axiom
-	 */
-//	public String axiomId;
-
-	/**
-	 * The cardinality of the universe of discourse for this axiom.
-	 * <p>
-	 * The <em><a href="http://en.wikipedia.org/wiki/Domain_of_discourse">domain of
-	 * discourse</a></em>, also called the <em>universe of discourse</em> (or simply
-	 * <em>universe</em>), is the set of entities over which certain variables of
-	 * interest in some formal treatment may range.
-	 * </p>
-	 * <p>
-	 * Here, the universe of discourse is the set of all objects or properties which
-	 * are relevant for testing whether this axiom is possible or necessary or not.
-	 * <p>
-	 */
-	public List<List<Symbol>> argumentClasses;
-
-	/**
 	 * The number of instances linked between both part of a OWL 2 Axioms if it involve two parts such as :
 	 * <code>subClassOf</code>; <code>DisjointClasses</code>; ...
 	 */

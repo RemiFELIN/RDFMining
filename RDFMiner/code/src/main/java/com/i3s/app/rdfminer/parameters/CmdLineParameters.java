@@ -92,7 +92,7 @@ public class CmdLineParameters {
 	public String subClassList = null;
 
 	@Option(name = "-t", aliases = {
-			"--timeout" }, usage = "use this time-out (in seconds) for axiom testing", metaVar = "SECONDS")
+			"--timeout" }, usage = "use this time-out (in ms) for axiom testing", metaVar = "TIMEOUT")
 	public long timeOut = 0;
 
 	@Option(name = "-l", aliases = {
@@ -141,7 +141,7 @@ public class CmdLineParameters {
 
 	@Option(name = "-cr", aliases = {
 			"--type-crossover" }, usage = "use as this value as the type of parent selection operation", metaVar = "TYPE_CROSSOVER")
-	public int typeCrossover = 2; // 1- Single-point Crossover; 2- Subtree Crossover
+	public int typeCrossover = 0; // 0-; 1- Single-point Crossover; 2- Subtree Crossover
 
 	@Option(name = "-sez", aliases = {
 			"--size-select" }, usage = "use as this value as the size of parent selection operation", metaVar = "SIZE_SELECTION")
@@ -153,7 +153,7 @@ public class CmdLineParameters {
 
 	@Option(name = "-el", aliases = {
 			"--elitism" }, usage = "use as this value as the choose of elitism selection", metaVar = "ELITISM_SELECTION")
-	public int elitism = 1; // 0- not applying etilism method; 1- applying etilism method
+	public int elitism = 1; // 0- not applying elitism method; 1- applying elitism method
 
 	@Option(name = "-seez", aliases = {
 			"--size-elite" }, usage = "use as this value as the size of elitism selection", metaVar = "SIZE_ELITE")

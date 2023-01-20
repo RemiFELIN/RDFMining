@@ -2,9 +2,11 @@ package com.i3s.app.rdfminer.evolutionary.fitness.entity;
 
 import Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.entity.axiom.AxiomFactory;
+import com.i3s.app.rdfminer.evolutionary.fitness.novelty.NoveltySearch;
 import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
@@ -33,7 +35,7 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 	@Override
 	public ArrayList<Entity> initializePopulation(ArrayList<GEIndividual> individuals) {
 		Set<Callable<Axiom>> callables = new HashSet<>();
-		ArrayList<Axiom> axiomList = new ArrayList<>();
+		ArrayList<Entity> entities = new ArrayList<>();
 		logger.info("The axioms will be intialized using the target SPARQL Endpoint : " + Global.TARGET_SPARQL_ENDPOINT);
 		logger.info("Begin updating population ...");
 		for(GEIndividual individual : individuals) {
@@ -64,7 +66,7 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 		assert futureAxioms != null;
 		for (Future<Axiom> axiom : futureAxioms) {
 			try {
-				axiomList.add(axiom.get());
+				entities.add(axiom.get());
 			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 			}
@@ -77,22 +79,27 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 			e.printStackTrace();
 		}
 		// Check if Novelty Search is enabled
-//		if(RDFMiner.parameters.useNoveltySearch) {
-			// Compute the similarities of each axiom between them, and update the population
-//			NoveltySearch noveltySearch = new NoveltySearch(new CoreseEndpoint(Global.CORESE_SPARQL_ENDPOINT, Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES));
-//			axiomList = noveltySearch.updateSimilarities(axiomList);
-//		}
+		if(RDFMiner.parameters.useNoveltySearch) {
+		 	// Compute the similarities of each axiom between them, and update the population
+			NoveltySearch noveltySearch = new NoveltySearch(new CoreseEndpoint(Global.CORESE_IP, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
+			try {
+				entities = noveltySearch.update(entities);
+			} catch (URISyntaxException | IOException e) {
+				logger.error("Error during the computation of similarities ...");
+				e.printStackTrace();
+			}
+		}
 
 		ArrayList<Entity> newPopulation = new ArrayList<>();
 		// Update fitness of population
-		for (Axiom axiom : axiomList) {
+		for (Entity entity : entities) {
 //			ObjectivesFitness.setFitness(axiom);
 //			if(RDFMiner.parameters.useNoveltySearch)
 //				NoveltyFitness.updateFitness(axiom);
-			BasicFitness fit = new BasicFitness(axiom.fitness, axiom.individual);
+			BasicFitness fit = new BasicFitness(entity.fitness, entity.individual);
 			fit.getIndividual().setValid(true);
-			axiom.individual.setFitness(fit);
-			newPopulation.add(axiom);
+			entity.individual.setFitness(fit);
+			newPopulation.add(entity);
 		}
 		return newPopulation;
 	}
@@ -102,13 +109,8 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 		logger.info("Update the current population using the target SPARQL Endpoint : " + Global.TARGET_SPARQL_ENDPOINT);
 		Set<Callable<Entity>> callables = new HashSet<>();
 		List<Entity> entities = new ArrayList<>();
-//		logger.info("The axioms will be evaluated using the following SPARQL Endpoint : " + url);
-//		logger.info("Begin updating population ...");
 		int i = 0;
 		while (i < population.size()) {
-//			if (population.get(0).individual.getPhenotype() == null)
-//				break;
-//			if (population.get(i).individual.isMapped()) {
 			final int idx = i;
 			callables.add(() -> {
 				Axiom axiom = AxiomFactory.create(population.get(idx).individual,
@@ -117,17 +119,8 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 								Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
 				// the generation in which this axiom was discovered
 				axiom.generation = population.get(idx).generation;
-//				assert axiom != null;
-//				evaluatedAxioms.add(axiom.toJSON());
 				return axiom;
 			});
-//			} else {
-//				logger.warn(population.get(i).individual.getPhenotype() + " is not correctly mapped !");
-//				BasicFitness fit = new BasicFitness(0, population.get(i).individual);
-//				fit.setIndividual(population.get(i).individual);
-//				fit.getIndividual().setValid(true);
-//				population.get(i).individual.setFitness(fit);
-//			}
 			i++;
 		}
 		// We have a set of threads to compute each axioms
@@ -150,6 +143,19 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 				e.printStackTrace();
 			}
 		}
+
+		// Check if Novelty Search is enabled
+		if(RDFMiner.parameters.useNoveltySearch) {
+			// Compute the similarities of each axiom between them, and update the population
+			NoveltySearch noveltySearch = new NoveltySearch(new CoreseEndpoint(Global.CORESE_IP, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
+			try {
+				entities = noveltySearch.update(entities);
+			} catch (URISyntaxException | IOException e) {
+				logger.error("Error during the computation of similarities ...");
+				e.printStackTrace();
+			}
+		}
+
 		// Shut down the executor
 		executor.shutdown();
 		try {
@@ -188,14 +194,7 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 		fit.setIndividual(individual);
 		fit.getIndividual().setValid(true);
 		individual.setFitness(fit);
-//		// set axiom individual as mapped !
-//		assert axiom != null;
-//		axiom.individual.setMapped(true);
 		return axiom;
 	}
-
-//	public List<JSONObject> getEvaluatedAxioms() {
-//		return evaluatedAxioms;
-//	}
 
 }

@@ -4,6 +4,7 @@ import Individuals.GEChromosome;
 import Individuals.Phenotype;
 import Util.Random.MersenneTwisterFast;
 import Util.Random.RandomNumberGenerator;
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.generator.Generator;
 import org.apache.log4j.Logger;
 
@@ -20,25 +21,24 @@ public class CandidatePopulation {
 
 	private static final Logger logger = Logger.getLogger(CandidatePopulation.class.getName());
 
-	protected int size;
+//	protected int size;
 	protected int generation;
 	protected Generator generator;
 	protected GEChromosome[] chromosomes;
-	protected int maxWrapp;
-	protected int maxvalCodon;
-	protected int typeInitialization;
-	protected int initlenChromosome;
+//	protected int maxWrapp;
+//	protected int maxvalCodon;
+//	protected int typeInitialization;
+//	protected int initlenChromosome;
 
-	public CandidatePopulation(int size, Generator generator, int typeInitialization,
-							   GEChromosome[] chromosomes, int initlenChromosome, int maxvalCodon, int maxWrapp) {
+	public CandidatePopulation(Generator generator) {
 		// size of the population
-		this.size = size;
+//		this.size = size;
 		this.generator = generator;
-		this.chromosomes = chromosomes;
-		this.maxvalCodon = maxvalCodon;
-		this.maxWrapp = maxWrapp;
-		this.typeInitialization = typeInitialization;
-		this.initlenChromosome = initlenChromosome;
+		this.chromosomes = new GEChromosome[RDFMiner.parameters.populationSize];
+//		this.maxvalCodon = maxvalCodon;
+//		this.maxWrapp = maxWrapp;
+//		this.typeInitialization = typeInitialization;
+//		this.initlenChromosome = initlenChromosome;
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class CandidatePopulation {
 					}
 				} else {
 					chromosome = new GEChromosome(chr.size());
-					chromosome.setMaxCodonValue(maxvalCodon);
+					chromosome.setMaxCodonValue(RDFMiner.parameters.maxValCodon);
 					chromosome.setMaxChromosomeLength(1000);
 					for (Integer integer : chr) chromosome.add(integer);
 					chromosomes[m] = chromosome;
@@ -86,12 +86,16 @@ public class CandidatePopulation {
 			this.chromosomes = initializeChromosomes();
 		}
 		logger.info("Number of chromosomes created: " + chromosomes.length);
-		ArrayList<GEIndividual> population = new ArrayList<>(size);
+//		for(GEChromosome chrom: this.chromosomes) {
+//			System.out.println(chrom);
+//		}
+		ArrayList<GEIndividual> population = new ArrayList<>(RDFMiner.parameters.populationSize);
 
 		int j = 0;
-		while (j < size) {
+		while (j < RDFMiner.parameters.populationSize) {
 			if (generator != null) {
 				individual = generator.getIndividualFromChromosome(chromosomes[j], curGeneration);
+//				System.out.println(individual.getPhenotype().getStringNoSpace() + " created !");
 				population.add(individual);
 				Phenotype axiom = population.get(j).getPhenotype();
 				if (axiom == null)
@@ -124,13 +128,13 @@ public class CandidatePopulation {
 		GEChromosome chromosome;
 		int maxLenChromosome = 1000;
 		int n = 0;
-		while (n < size) {
-			chromosome = new GEChromosome(initlenChromosome);
-			chromosome.setMaxCodonValue(maxvalCodon);
+		while (n < RDFMiner.parameters.populationSize) {
+			chromosome = new GEChromosome(RDFMiner.parameters.initLenChromosome);
+			chromosome.setMaxCodonValue(RDFMiner.parameters.maxValCodon);
 			chromosome.setMaxChromosomeLength(maxLenChromosome);
-			for (int i = 0; i < initlenChromosome; i++) {
+			for (int i = 0; i < RDFMiner.parameters.initLenChromosome; i++) {
 				// typeInitialization = 1
-				chromosome.add(Math.abs(random.nextInt(maxvalCodon)));
+				chromosome.add(Math.abs(random.nextInt(RDFMiner.parameters.maxValCodon)));
 			}
 			chromosomes[n] = chromosome;
 			n++;
@@ -148,12 +152,12 @@ public class CandidatePopulation {
 		RandomNumberGenerator random;
 		random = new MersenneTwisterFast(System.currentTimeMillis());
 		int maxLenChromosome = 1000;
-		chromosome = new GEChromosome(initlenChromosome);
-		chromosome.setMaxCodonValue(maxvalCodon);
+		chromosome = new GEChromosome(RDFMiner.parameters.initLenChromosome);
+		chromosome.setMaxCodonValue(RDFMiner.parameters.maxValCodon);
 		chromosome.setMaxChromosomeLength(maxLenChromosome);
-		for (int i = 0; i < initlenChromosome; i++) {
+		for (int i = 0; i < RDFMiner.parameters.initLenChromosome; i++) {
 			// typeInitialization = 1
-			chromosome.add(Math.abs(random.nextInt(maxvalCodon)));
+			chromosome.add(Math.abs(random.nextInt(RDFMiner.parameters.maxValCodon)));
 		}
 		if (generator != null) {
 			individual = generator.getIndividualFromChromosome(chromosome, generation);
@@ -170,12 +174,12 @@ public class CandidatePopulation {
 		random = new MersenneTwisterFast(System.currentTimeMillis());
 		int maxLenChromosome = 1000;
 		GEChromosome chromosome;
-		chromosome = new GEChromosome(initlenChromosome);
-		chromosome.setMaxCodonValue(maxvalCodon);
+		chromosome = new GEChromosome(RDFMiner.parameters.initLenChromosome);
+		chromosome.setMaxCodonValue(RDFMiner.parameters.maxValCodon);
 		chromosome.setMaxChromosomeLength(maxLenChromosome);
-		for (int i = 0; i < initlenChromosome; i++) {
+		for (int i = 0; i < RDFMiner.parameters.initLenChromosome; i++) {
 			// typeInitialization = 1
-			chromosome.add(Math.abs(random.nextInt(maxvalCodon)));
+			chromosome.add(Math.abs(random.nextInt(RDFMiner.parameters.maxValCodon)));
 		}
 		return chromosome;
 	}

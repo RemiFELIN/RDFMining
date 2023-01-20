@@ -1,5 +1,6 @@
 package com.i3s.app.rdfminer.entity;
 
+import Mapper.Symbol;
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.entity.axiom.type.DisjointClassesAxiom;
 import com.i3s.app.rdfminer.fuzzy.TruthDegree;
@@ -30,6 +31,21 @@ public abstract class Entity {
      * @return the number of milliseconds of CPU time used by the current process so far
      */
     public static native long getProcessCPUTime();
+
+    /**
+     * The cardinality of the universe of discourse for this entity.
+     * <p>
+     * The <em><a href="http://en.wikipedia.org/wiki/Domain_of_discourse">domain of
+     * discourse</a></em>, also called the <em>universe of discourse</em> (or simply
+     * <em>universe</em>), is the set of entities over which certain variables of
+     * interest in some formal treatment may range.
+     * </p>
+     * <p>
+     * Here, the universe of discourse is the set of all objects or properties which
+     * are relevant for testing whether this entity is possible or necessary or not.
+     * <p>
+     */
+    public List<List<Symbol>> argumentClasses;
 
     /**
      * The individual build with GEVA, corresponding to the current axiom

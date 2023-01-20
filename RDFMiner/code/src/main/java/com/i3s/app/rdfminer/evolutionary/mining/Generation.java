@@ -6,6 +6,7 @@ import Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
+import com.i3s.app.rdfminer.evolutionary.fitness.novelty.NoveltySearch;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.evolutionary.crossover.SinglePointCrossoverAxiom;
 import com.i3s.app.rdfminer.evolutionary.crossover.SubtreeCrossoverAxioms;
@@ -14,8 +15,11 @@ import com.i3s.app.rdfminer.evolutionary.crossover.TypeCrossover;
 import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.mutation.IntFlipMutation;
 import com.i3s.app.rdfminer.evolutionary.tools.Crowding;
+import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -48,7 +52,6 @@ public class Generation {
         int m = 0;
 
         while (m <= canEntities.size() - 2) {
-            RandomNumberGenerator rand = new MersenneTwisterFast();
             // get the two individuals which are neighbours
             GEIndividual parent1 = canEntities.get(m).individual;
             GEIndividual parent2 = canEntities.get(m + 1).individual;
@@ -59,25 +62,27 @@ public class Generation {
                 case TypeCrossover.SINGLE_POINT_CROSSOVER:
                     // Single-point crossover
                     SinglePointCrossoverAxiom spc = new SinglePointCrossoverAxiom(RDFMiner.parameters.proCrossover,
-                            rand, generator, curGeneration);
+                            new MersenneTwisterFast(), generator, curGeneration);
                     spc.setFixedCrossoverPoint(true);
-                    child1 = parent1;
-                    child2 = parent2;
-                    GEIndividual[] childs = spc.doOperation(child1, child2);
+//                    child1 = parent1;
+//                    child2 = parent2;
+                    GEIndividual[] childs = spc.doOperation(parent1, parent2);
                     child1 = childs[0];
                     child2 = childs[1];
                     logger.info("---");
                     break;
                 case TypeCrossover.SUBTREE_CROSSOVER:
                     // subtree crossover
-                    SubtreeCrossoverAxioms sca = new SubtreeCrossoverAxioms(RDFMiner.parameters.proCrossover, rand);
+                    SubtreeCrossoverAxioms sca = new SubtreeCrossoverAxioms(RDFMiner.parameters.proCrossover,
+                            new MersenneTwisterFast());
                     GEIndividual[] inds = sca.crossoverTree(parent1, parent2);
                     child1 = inds[0];
                     child2 = inds[1];
                     break;
                 default:
                     // Two point crossover
-                    TwoPointCrossover tpc = new TwoPointCrossover(RDFMiner.parameters.proCrossover, rand);
+                    TwoPointCrossover tpc = new TwoPointCrossover(RDFMiner.parameters.proCrossover,
+                            new MersenneTwisterFast());
                     tpc.setFixedCrossoverPoint(true);
                     chromosomes = tpc.crossover(
                             new GEChromosome((GEChromosome) parent1.getGenotype().get(0)),
@@ -114,6 +119,19 @@ public class Generation {
         for (Future<ArrayList<Entity>> future : futures) {
             evaluatedIndividuals.addAll(future.get());
         }
+
+        // Check if Novelty Search is enabled
+        if(RDFMiner.parameters.useNoveltySearch) {
+            // Compute the similarities of each axiom between them, and update the population
+            NoveltySearch noveltySearch = new NoveltySearch(new CoreseEndpoint(Global.CORESE_IP, Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES));
+            try {
+                evaluatedIndividuals = noveltySearch.update(evaluatedIndividuals);
+            } catch (URISyntaxException | IOException e) {
+                logger.error("Error during the computation of similarities ...");
+                e.printStackTrace();
+            }
+        }
+
         // Shutdown the service
         executor.shutdown();
         executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
