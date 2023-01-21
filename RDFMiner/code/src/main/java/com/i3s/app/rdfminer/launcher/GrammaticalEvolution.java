@@ -1,16 +1,16 @@
 package com.i3s.app.rdfminer.launcher;
 
-import Individuals.GEChromosome;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
-import com.i3s.app.rdfminer.generator.Generator;
-import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
-import com.i3s.app.rdfminer.generator.shacl.RandomShapeGenerator;
 import com.i3s.app.rdfminer.evolutionary.fitness.Fitness;
 import com.i3s.app.rdfminer.evolutionary.individual.CandidatePopulation;
 import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.mining.EntityMining;
+import com.i3s.app.rdfminer.generator.Generator;
+import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
+import com.i3s.app.rdfminer.generator.shacl.RandomShapeGenerator;
+import com.i3s.app.rdfminer.output.Cache;
 import com.i3s.app.rdfminer.output.Results;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
 import org.apache.log4j.Logger;
@@ -94,36 +94,24 @@ public class GrammaticalEvolution {
 //        GEChromosome[] chromosomes = new GEChromosome[parameters.populationSize];
         ArrayList<GEIndividual> candidatePopulation;
 
-        int curCheckpoint;
-        int curGeneration;
-        Reader buffer = null;
+        int curCheckpoint = 1;
+        int curGeneration = 1;
 
-        final String CACHE_PATH = RDFMiner.outputFolder + "buffer_size" + RDFMiner.parameters.populationSize + ".txt";
+        Cache cache = null;
+        final String CACHE_PATH = RDFMiner.outputFolder + "buffer_size" + RDFMiner.parameters.populationSize + ".json";
         File bufferFile = new File(CACHE_PATH);
         // check if the buffer file exists and if it is not empty
         if (bufferFile.exists() && (new BufferedReader(new FileReader(CACHE_PATH))).readLine() != null) {
-            FileInputStream reader = new FileInputStream(CACHE_PATH);
-            buffer = new InputStreamReader(reader, StandardCharsets.UTF_8);
-            int intch;
-            StringBuilder st = new StringBuilder();
-            while ((intch = reader.read()) != '\n') {
-                st.append((char) intch);
-            }
-            curGeneration = Integer.parseInt(st.toString());
-            st = new StringBuilder();
-            while ((intch = reader.read()) != '\n') {
-                st.append((char) intch);
-            }
-            curCheckpoint = Integer.parseInt(st.toString());
-            logger.info("Buffer file founded ! starting from gen." + curGeneration + " ...");
-        } else {
-            // the file does not exists or it's empty file,
-            curCheckpoint = curGeneration = 1;
+            // instanciate cache
+            cache = new Cache(bufferFile);
+            curGeneration = cache.curGeneration;
+            curCheckpoint = cache.curCheckpoint;
+            logger.info("Buffer file founded ! starting from gen." + cache.curGeneration + " ...");
         }
-        logger.info("Initializing candidate population in generation " + curGeneration + "...");
+        logger.info("Initializing candidate population ...");
         // Generate candidate population
         CandidatePopulation canPop = new CandidatePopulation(generator);
-        candidatePopulation = canPop.initialize(buffer, curGeneration);
+        candidatePopulation = canPop.initialize(cache, curGeneration);
         // Initialize population as Axioms or SHACL Shapes
         ArrayList<Entity> entities = Fitness.initializePopulation(candidatePopulation, generator);
         // start GE
@@ -147,18 +135,19 @@ public class GrammaticalEvolution {
 
     public static void editCache(String cachePath, ArrayList<Entity> entities, int curGeneration, int curCheckpoint) throws IOException {
         PrintWriter writer = new PrintWriter(cachePath, StandardCharsets.UTF_8);
-        writer.println(curGeneration);
-        writer.println(curCheckpoint);
-        for (Entity entity : entities) {
-//            logger.info("individual as genotype: " + entity.individual.getGenotype());
-            writer.println(entity.individual.getGenotype().toString().substring(22,
+        ArrayList<String> genotypes = new ArrayList<>();
+        for(Entity entity : entities) {
+            genotypes.add(entity.individual.getGenotype().toString().substring(22,
                     entity.individual.getGenotype().toString().length() - 1));
         }
+        Cache cache = new Cache(curGeneration, curCheckpoint, RDFMiner.parameters.initLenChromosome, genotypes);
+        writer.println(cache.toJSON().toString(2));
         writer.close();
     }
 
     public static void writeAndFinish() {
         try {
+            logger.info("Edit JSON file results ...");
             RDFMiner.results.stats = RDFMiner.stats.toJSON();
             RDFMiner.results.content = RDFMiner.content;
             RDFMiner.output.write(RDFMiner.results.toJSON().toString(2));

@@ -97,8 +97,6 @@ public class SinglePointCrossoverAxiom extends SinglePointCrossover {
 		PropertyConfigurator.configure("/home/rfelin/projects/RDFMining/RDFMiner/code/resources/log4j.properties");
 		RDFMiner.parameters.initLenChromosome = 2;
 		RDFMiner.parameters.populationSize = 2;
-//		RandomNumberGenerator rand = new MersenneTwisterFast();
-//		logger.info("rand= " + rand.nextInt());
 		SinglePointCrossoverAxiom test = null;
 		Generator generator = null;
 		try {
@@ -109,7 +107,7 @@ public class SinglePointCrossoverAxiom extends SinglePointCrossover {
 			e.printStackTrace();
 		};
 		CandidatePopulation canPop = new CandidatePopulation(generator);
-		GEChromosome[] chroms = canPop.initializeChromosomes();
+		ArrayList<GEChromosome> chroms = canPop.initializeChromosomes();
 		ArrayList<GEIndividual> population = new ArrayList<>();
 		for(GEChromosome chrom : chroms) {
 			System.out.println(chrom);
@@ -122,17 +120,6 @@ public class SinglePointCrossoverAxiom extends SinglePointCrossover {
 		for(GEIndividual n : newInd) {
 			System.out.println("This individual: " + n.getGenotype() + "\nas " + n.getPhenotype().getStringNoSpace() + "\n");
 		}
-//		GEChromosome c1 = new GEChromosome(2);
-//		GEChromosome c2 = new GEChromosome(2);
-//		c1.add(1);
-//		c1.add(2);
-//		c2.add(3);
-//		c2.add(4);
-//		GEIndividual ge1 = new GEIndividual();
-//		GEIndividual ge2 = new GEIndividual();
-//		test.doOperation(List.of(ge1, ge2));
-//		test.crossover(c1, c2);
-//		logger.info("c1: " + c1 + " / c2: " + c2);
 	}
 
 }

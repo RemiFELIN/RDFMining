@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * @author Rémi FELIN
  *
  */
-public class GenerationJSON {
+public class Generation {
 
 	public int generation;
 	public double numSuccessMapping;

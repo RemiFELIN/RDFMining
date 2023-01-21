@@ -7,7 +7,7 @@ import com.i3s.app.rdfminer.evolutionary.tools.CostGP;
 import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
 import com.i3s.app.rdfminer.launcher.Evaluator;
 import com.i3s.app.rdfminer.output.Results;
-import com.i3s.app.rdfminer.output.StatJSON;
+import com.i3s.app.rdfminer.output.Stat;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -54,7 +54,7 @@ public class RDFMiner {
 	public static JSONArray evaluatedEntities;
 	// v1.2 miner data
 	public static Results results;
-	public static StatJSON stats;
+	public static Stat stats;
 	public static List<JSONObject> content;
 	public static int type;
 

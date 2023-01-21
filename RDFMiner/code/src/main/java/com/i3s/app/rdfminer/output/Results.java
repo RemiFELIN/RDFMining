@@ -22,7 +22,7 @@ public class Results {
         RDFMiner.content = new ArrayList<>();
         // set statistics
         // i.e. parameters used; statistics over generations; ...
-        RDFMiner.stats = new StatJSON();
+        RDFMiner.stats = new Stat();
     }
 
     /**

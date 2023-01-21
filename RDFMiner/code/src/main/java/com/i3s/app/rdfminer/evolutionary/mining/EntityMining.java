@@ -7,7 +7,7 @@ import com.i3s.app.rdfminer.evolutionary.tools.EATools;
 import com.i3s.app.rdfminer.evolutionary.fitness.Fitness;
 import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.selection.EliteSelection;
-import com.i3s.app.rdfminer.output.GenerationJSON;
+import com.i3s.app.rdfminer.output.Generation;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -97,7 +97,7 @@ public class EntityMining {
         // shuffle populations before crossover & mutation
         java.util.Collections.shuffle(crossoverEntities);
         // Compute GE and add new population on a new list of individuals
-        ArrayList<Entity> newPopulation = Generation.compute(crossoverEntities, curGeneration, generator);
+        ArrayList<Entity> newPopulation = com.i3s.app.rdfminer.evolutionary.mining.Generation.compute(crossoverEntities, curGeneration, generator);
         // stats
         setStats(newPopulation, curGeneration);
         // renew population
@@ -106,7 +106,7 @@ public class EntityMining {
 
     public static void setStats(ArrayList<Entity> entities, int curGeneration) {
         // set stats
-        GenerationJSON generation = new GenerationJSON();
+        Generation generation = new Generation();
         generation.setGenerationJSON(entities, EATools.getDistinctGenotypePopulation(entities), curGeneration);
         // Log usefull stats concerning the algorithm evolution
         logger.info("Average fitness: " + generation.averageFitness);

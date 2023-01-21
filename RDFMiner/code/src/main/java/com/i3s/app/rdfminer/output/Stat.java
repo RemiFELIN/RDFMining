@@ -3,7 +3,6 @@ package com.i3s.app.rdfminer.output;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.i3s.app.rdfminer.output.Results;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -15,7 +14,7 @@ import org.json.JSONObject;
  * @author Rémi FELIN
  *
  */
-public class StatJSON {
+public class Stat {
 
 	public int populationSize;
 	public int maxLengthChromosome;
