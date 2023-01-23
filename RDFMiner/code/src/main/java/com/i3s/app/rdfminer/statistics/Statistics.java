@@ -16,7 +16,7 @@ public class Statistics {
 		double sumFitness = 0;
 		for (Entity entity : entities) {
 //			System.out.println("Individual: " + entity.individual.getPhenotype());
-			System.out.println("Fitness: " + entity.fitness);
+//			System.out.println("Fitness: " + entity.fitness);
 			sumFitness += entity.fitness;
 		}
 		if (entities.size() != 0) {
@@ -37,6 +37,18 @@ public class Statistics {
 
 	public long getEntitiesWithNonNullFitness(ArrayList<Entity> entities) {
 		return entities.stream().filter(entity -> entity.individual.getFitness().getDouble() != 0).count();
+	}
+
+	public double getAverageSumDistance(ArrayList<Entity> entities) {
+		double sumDistances = 0.0;
+		for(Entity entity : entities) {
+			double distance = 0.0;
+			for(double similarity : entity.similarities) {
+				distance += similarity;
+			}
+			sumDistances += distance;
+		}
+		return sumDistances / entities.size();
 	}
 
 	public double getCountComplexAxiom(ArrayList<Entity> entities) {

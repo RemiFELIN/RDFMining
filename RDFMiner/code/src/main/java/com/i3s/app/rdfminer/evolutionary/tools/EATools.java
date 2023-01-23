@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -48,24 +49,6 @@ public class EATools {
 	}
 
 	/**
-	 * Remove the duplicate(s) phenotype(s) from a given list and returns the
-	 * filtered list
-	 * 
-	 * @param canPop a given list to be filtered
-	 * @return the filtered list
-	 */
-	public static ArrayList<GEIndividual> getDistinctPhenotypePopulationFromAxioms(ArrayList<GEIndividual> canPop) {
-		ArrayList<GEIndividual> individuals = new ArrayList<>();
-		Set<Phenotype> phenotypes = new HashSet<>();
-		for (GEIndividual item : canPop) {
-			if (phenotypes.add(item.getPhenotype())) {
-				individuals.add(item);
-			}
-		}
-		return individuals;
-	}
-
-	/**
 	 * Remove the duplicate(s) genotype(s) from a given list and returns the
 	 * filtered list
 	 * @param canPop a given list to be filtered
@@ -73,26 +56,15 @@ public class EATools {
 	 */
 	public static ArrayList<Entity> getDistinctGenotypePopulation(ArrayList<Entity> canPop) {
 		ArrayList<Entity> entities = new ArrayList<>();
-		Set<Genotype> genotypes = new HashSet<>();
+		Set<String> genotypes = new HashSet<>();
 		for (Entity entity : canPop) {
-			if (genotypes.add(entity.individual.getGenotype())) {
+//			System.out.println("genotype: " + entity.individual.getGenotype());
+			if (genotypes.add(entity.individual.getGenotype().toString())) {
 				entities.add(entity);
 			}
 		}
 		return entities;
 	}
-
-	public static ArrayList<Shape> getDistinctGenotypePopulationFromShapes(ArrayList<Shape> shapes) {
-		ArrayList<Shape> distinctShapes = new ArrayList<>();
-		Set<Genotype> genotypes = new HashSet<>();
-		for (Shape shape : shapes) {
-			if (genotypes.add(shape.individual.getGenotype())) {
-				distinctShapes.add(shape);
-			}
-		}
-		return distinctShapes;
-	}
-
 
 	public static ArrayList<GEIndividual> getTypeSelection(int type, ArrayList<GEIndividual> selectedPopulation, int sizeElite, int sizeSelection) {
 		switch (type) {

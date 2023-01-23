@@ -39,7 +39,7 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 		logger.info("The axioms will be intialized using the target SPARQL Endpoint : " + Global.TARGET_SPARQL_ENDPOINT);
 		logger.info("Begin updating population ...");
 		for(GEIndividual individual : individuals) {
-			System.out.println(individual.getPhenotype());
+//			System.out.println(individual.getPhenotype());
 			if (individual.getPhenotype() == null)
 				break;
 			if (individual.isMapped()) {

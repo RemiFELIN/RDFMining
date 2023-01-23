@@ -41,8 +41,8 @@ public class ResultParser {
         } catch (JSONException e) {
             // Read time out
             // i.e. SocketTimeoutException from Corese server
-            if(json.contains("Read timed out")) {
-                logger.info("Timeout reached !");
+            if(json.contains("Read timed out") || json.contains("connect timed out")) {
+                logger.warn("Timeout reached !");
             }
             return null;
         }

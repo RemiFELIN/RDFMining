@@ -7,7 +7,7 @@ import com.i3s.app.rdfminer.evolutionary.tools.EATools;
 import com.i3s.app.rdfminer.evolutionary.fitness.Fitness;
 import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.selection.EliteSelection;
-import com.i3s.app.rdfminer.output.Generation;
+import com.i3s.app.rdfminer.output.GenerationJSON;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -28,7 +28,8 @@ public class EntityMining {
         // Checkpoint reached, this is a code to evaluate and save axioms in output file
         if (RDFMiner.parameters.checkpoint != 1 && RDFMiner.parameters.populationSize * curGeneration == RDFMiner.parameters.kBase * curCheckpoint) {
             logger.info("Checkpoint n°" + curCheckpoint + " reached !");
-            ArrayList<Entity> newPopulation = Fitness.computePopulation(entities, generator);
+            // evaluate distinct genotype and avoid additional useless computation
+            ArrayList<Entity> newPopulation = Fitness.computePopulation(EATools.getDistinctGenotypePopulation(entities), generator);
             // stats
             setStats(newPopulation, curGeneration);
             // fill content in json output file
@@ -39,7 +40,8 @@ public class EntityMining {
             // return final pop
             return newPopulation;
         } else if (RDFMiner.parameters.populationSize * curGeneration == RDFMiner.parameters.kBase) {
-            ArrayList<Entity> newPopulation = Fitness.computePopulation(entities, generator);
+            // evaluate distinct genotype and avoid additional useless computation
+            ArrayList<Entity> newPopulation = Fitness.computePopulation(EATools.getDistinctGenotypePopulation(entities), generator);
             // stats
             setStats(newPopulation, curGeneration);
             // fill content in json output file
@@ -55,7 +57,8 @@ public class EntityMining {
         // STEP 3 - SELECTION OPERATION - Reproduce Selection - Parent Selection
 //        ArrayList<GEIndividual> entitiesAsIndividuals = new ArrayList<>();
         ArrayList<GEIndividual> distinctEntitiesAsIndividuals = new ArrayList<>();
-        ArrayList<GEIndividual> crossoverIndividuals, selectedIndividuals, elitismIndividuals = new ArrayList<>();
+        ArrayList<GEIndividual> selectedIndividuals;
+        ArrayList<GEIndividual> elitismIndividuals = new ArrayList<>();
 
         // Use list of individuals instead of list of entities
         // i.e. apply GE process directly on individuals
@@ -84,7 +87,8 @@ public class EntityMining {
             sizeElite = 0;
         }
         // set the type selection
-        crossoverIndividuals = EATools.getTypeSelection(RDFMiner.parameters.typeSelect, selectedIndividuals, sizeElite, sizeSelection);
+        ArrayList<GEIndividual> crossoverIndividuals = EATools.getTypeSelection(RDFMiner.parameters.typeSelect,
+                selectedIndividuals, sizeElite, sizeSelection);
         if(crossoverIndividuals == null) {
             // set distinct entities instead of all entities
             // i.e. remove duplicates
@@ -94,24 +98,23 @@ public class EntityMining {
         // Crossover single point between 2 individuals of the selected population
         ArrayList<Entity> crossoverEntities = EATools.bindIndividualsWithEntities(crossoverIndividuals, distinctEntities);
         ArrayList<Entity> elitismEntities = EATools.bindIndividualsWithEntities(elitismIndividuals, distinctEntities);
-        // shuffle populations before crossover & mutation
-        java.util.Collections.shuffle(crossoverEntities);
         // Compute GE and add new population on a new list of individuals
-        ArrayList<Entity> newPopulation = com.i3s.app.rdfminer.evolutionary.mining.Generation.compute(crossoverEntities, curGeneration, generator);
+        ArrayList<Entity> computedPopulation = Generation.compute(crossoverEntities, curGeneration, generator);
+        // set new population
+        ArrayList<Entity> newPopulation = EATools.renew(curGeneration, computedPopulation, elitismEntities);
         // stats
         setStats(newPopulation, curGeneration);
         // renew population
-        return EATools.renew(curGeneration, newPopulation, elitismEntities);
+        return newPopulation;
     }
 
     public static void setStats(ArrayList<Entity> entities, int curGeneration) {
         // set stats
-        Generation generation = new Generation();
+        GenerationJSON generation = new GenerationJSON();
         generation.setGenerationJSON(entities, EATools.getDistinctGenotypePopulation(entities), curGeneration);
         // Log usefull stats concerning the algorithm evolution
         logger.info("Average fitness: " + generation.averageFitness);
         logger.info("Diversity coefficient: " + generation.diversityCoefficient);
-        logger.info("Genotype diversity coefficient: " + generation.genotypeDiversityCoefficient);
         logger.info("Number of individual(s) with a non-null fitness: " + generation.numIndividualsWithNonNullFitness);
         RDFMiner.stats.generations.add(generation.toJSON());
     }

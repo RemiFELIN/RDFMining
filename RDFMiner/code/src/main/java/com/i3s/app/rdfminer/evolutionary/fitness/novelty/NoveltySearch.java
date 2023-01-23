@@ -41,7 +41,7 @@ public class NoveltySearch {
         ArrayList<Entity> simEntities = new ArrayList<>();
         for(Entity phi1 : entities) {
             for(Entity phi2 : entities) {
-                if(!Objects.equals(phi1.entityAsString, phi2.entityAsString)) {
+                if(!Objects.equals(phi1.individual.getGenotype().toString(), phi2.individual.getGenotype().toString())) {
                     phi1.similarities.add(Similarity.getJaccardSimilarity(endpoint, phi1, phi2));
                 }
             }

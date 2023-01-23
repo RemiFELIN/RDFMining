@@ -28,6 +28,16 @@ public class Crowding {
 		this.generator = generator;
 		this.parent1 = parent1;
 		this.parent2 = parent2;
+//		logger.info("parent1->\n   fitness: "+parent1.fitness+"\n   ind.getPheno: "+
+//				parent1.individual.getPhenotype().getStringNoSpace()+"\n   ind.getGeno: "+
+//				parent1.individual.getGenotype()+"\n   ind.getFitness: "+parent1.individual.getFitness().getDouble());
+//		logger.info("parent2->\n   fitness: "+parent2.fitness+"\n   ind.getPheno: "+
+//				parent2.individual.getPhenotype().getStringNoSpace()+"\n   ind.getGeno: "+
+//				parent2.individual.getGenotype());
+		logger.info("parent1: " + parent1.individual.getPhenotype().getStringNoSpace());
+		logger.info("parent2: " + parent2.individual.getPhenotype().getStringNoSpace());
+		logger.info("child1: " + child1.getPhenotype().getStringNoSpace());
+		logger.info("child2: " + child2.getPhenotype().getStringNoSpace());
 		this.child1 = child1;
 		this.child2 = child2;
 		this.distanceP1ToC1 = this.distance(this.parent1, this.child1);
@@ -86,7 +96,7 @@ public class Crowding {
 	public Entity compare(Entity parent, GEIndividual child) throws URISyntaxException, IOException {
 		// if the parent is not evaluated
 		if (parent.individual.getFitness() == null) {
-			logger.warn("Compute parent fitness !");
+			logger.info("Compute parent fitness !");
 			parent = Fitness.computeEntity(parent.individual, this.generator);
 		}
 		// compute fitness for the current child

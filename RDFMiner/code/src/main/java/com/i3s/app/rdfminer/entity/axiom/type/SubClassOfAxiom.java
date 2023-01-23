@@ -71,7 +71,7 @@ public class SubClassOfAxiom extends Axiom {
 		long t0 = getProcessCPUTime();
 		subClass = ExpressionFactory.createClass(subClassExpression);
 		superClass = ExpressionFactory.createClass(superClassExpression);
-		logger.info(subClass + " ~ " + superClass);
+//		logger.info(subClass + " ~ " + superClass);
 		// define if the current axiom is complex
 		if(subClassExpression.size() > 1 || superClassExpression.size() > 1) {
 			complex = true;
@@ -194,7 +194,7 @@ public class SubClassOfAxiom extends Axiom {
 		// TODO: in the future, we will consider all existing axioms as knowledge to improve OWL 2 Axioms mining (in GE, ...)
 		if(!complex && endpoint.askFederatedQuery(subClass + " rdfs:subClassOf " + superClass)) {
 			// in this case, we set pos = nec = 1.0 as consequence to its existance in ontology
-//			logger.info("This axiom is defined in the ontology ...");
+			logger.info("This candidate is already a valid OWL SubClassOf axiom !");
 			referenceCardinality = numConfirmations = endpoint.count(subClass.graphPattern);
 			numExceptions = 0;
 			ari = ARI();
@@ -206,20 +206,36 @@ public class SubClassOfAxiom extends Axiom {
 		long timeSpent;
 		// The reference cardinality will count all the instances involved by the current axiom
 		referenceCardinality = endpoint.count(subClass.graphPattern);
+		if(referenceCardinality == -1) {
+			logger.warn("Timeout reached during the computation of the number of reference cardinality !");
+			referenceCardinality = 0;
+			isTimeout = true;
+			return;
+		}
 //		logger.info("Reference cardinality = " + referenceCardinality);
 		// The number of instances linked with the subClass of the given axiom
 		numIntersectingClasses = endpoint.count(subClass.graphPattern + " ?x a ?D . ");
-//		logger.info("No. of Intersecting Classes = " + numIntersectingClasses);
-//		timePredictor = (long) referenceCardinality * numIntersectingClasses;
+		if(numIntersectingClasses == -1) {
+			logger.warn("Timeout reached during the computation of the number of intersecting classes !");
+			isTimeout = true;
+			numIntersectingClasses = 0;
+		}
 		numConfirmations = endpoint.count(subClass.graphPattern + "\n" + superClass.graphPattern);
-		if (numConfirmations > 0) {
+		if (numConfirmations == -1) {
+			logger.warn("Timeout reached during the computation of the number of confirmations !");
+			numConfirmations = 0;
+		} else if (numConfirmations > 0) {
 //			logger.info(numConfirmations + " confirmation(s) found ...");
 			if(numConfirmations < 100) {
 //				logger.info("retrieving in collection ...");
 				// query the confirmations and add it in the confirmations list
-				confirmations.addAll(
-						endpoint.selectFederatedQuery("x", "SELECT DISTINCT ?x WHERE { " + subClass.graphPattern + "\n" + superClass.graphPattern + " }")
-				);
+				List<String> conf = endpoint.selectFederatedQuery("x", "SELECT DISTINCT ?x WHERE { " + subClass.graphPattern + "\n" + superClass.graphPattern + " }");
+				if(conf != null) {
+					confirmations.addAll(conf);
+				} else {
+					logger.warn("Timeout reached during the computation of confirmations !");
+					isTimeout = true;
+				}
 			}
 		}
 		// Now, let's compute the exceptions for this axiom 
@@ -272,14 +288,6 @@ public class SubClassOfAxiom extends Axiom {
 				getExceptions(endpoint);
 			}
 		}
-		// We don't need to compute exceptions if we get a timeout from exceptions SPARQL request
-//		if (numExceptions > 0 && numExceptions < 100 && !isTimeout && RDFMiner.parameters.timeOut > 0) {
-////			logger.info("retrieving in collection ...");
-//			// retrieve the exceptions
-//			exceptions.addAll(
-//					endpoint.selectFederatedQuery("x", "SELECT distinct ?x WHERE { " + subClass.graphPattern + "\n" + superClassComplement.graphPattern + " }")
-//			);
-//		}
 		ari = ARI();
 	}
 
@@ -363,7 +371,9 @@ public class SubClassOfAxiom extends Axiom {
 			List<String> results = ResultParser.getResultsFromVariable("t", resultsAsJson);
 			if (results != null)
 				types.addAll(results);
-			else return false;
+			else {
+				return false;
+			}
 			offset += Math.min(numIntersectingClasses - offset, 1000);
 		}
 //		if (types.size() != 0)

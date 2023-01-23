@@ -2,7 +2,6 @@ package com.i3s.app.rdfminer.evolutionary.mining;
 
 import Individuals.GEChromosome;
 import Util.Random.MersenneTwisterFast;
-import Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
@@ -20,10 +19,7 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.*;
 
 public class Generation {
@@ -50,7 +46,9 @@ public class Generation {
         logger.info("Performing crossover and mutation ...");
 //		List<Crowding> shapesToEvaluate = new ArrayList<>();
         int m = 0;
-
+        // shuffle populations before crossover & mutation
+        Collections.shuffle(canEntities);
+        // process crossover and mutation 2 by 2
         while (m <= canEntities.size() - 2) {
             // get the two individuals which are neighbours
             GEIndividual parent1 = canEntities.get(m).individual;
@@ -119,6 +117,7 @@ public class Generation {
         for (Future<ArrayList<Entity>> future : futures) {
             evaluatedIndividuals.addAll(future.get());
         }
+        logger.info(evaluatedIndividuals.size() + " entities has been evaluated and selected !");
 
         // Check if Novelty Search is enabled
         if(RDFMiner.parameters.useNoveltySearch) {

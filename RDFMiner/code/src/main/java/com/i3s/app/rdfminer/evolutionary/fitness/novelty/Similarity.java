@@ -49,8 +49,21 @@ public class Similarity {
         double similarityNumerator = endpoint.count(simNumSparql);
         double similarityDenominator = endpoint.count(simDenSparql);
 //        System.out.println(simNumSparql + "\nGives: " + similarityNumerator);
-//        System.out.println(simDenSparql + "\nGives: " + similarityDenominator);
+//        logger.info("Sim. between " + phi1.individual.getPhenotype().getStringNoSpace() + " and " +
+//                phi2.individual.getPhenotype().getStringNoSpace() + " is: " + similarityNumerator/similarityDenominator);
         return similarityNumerator / similarityDenominator;
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
