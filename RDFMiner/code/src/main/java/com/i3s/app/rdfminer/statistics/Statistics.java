@@ -1,7 +1,7 @@
 package com.i3s.app.rdfminer.statistics;
 
-import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 
@@ -12,9 +12,13 @@ import java.util.ArrayList;
  */
 public class Statistics {
 
+	private static final Logger logger = Logger.getLogger(Statistics.class.getName());
+
 	public double computeAverageFitness(ArrayList<Entity> entities) {
+		logger.debug("entities.size = " + entities.size());
 		double sumFitness = 0;
 		for (Entity entity : entities) {
+			logger.debug("# entity.fitness = " + entity.fitness);
 //			System.out.println("Individual: " + entity.individual.getPhenotype());
 //			System.out.println("Fitness: " + entity.fitness);
 			sumFitness += entity.fitness;

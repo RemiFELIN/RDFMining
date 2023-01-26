@@ -86,7 +86,8 @@ public class GrammaticalEvolution {
         logger.info("MAXIMUM WRAPPING: " + parameters.maxWrapp);
         logger.info("CROSSOVER PROBABILITY: " + parameters.proCrossover);
         logger.info("MUTATION PROBABILITY: " + parameters.proMutation);
-        logger.info("TIME-CAP: " + (parameters.timeOut == 0 ? "Not used" : parameters.timeOut + " ms."));
+        logger.info("SPARQL TIMEOUT: " + (parameters.sparqlTimeOut == 0 ? "Not used" : parameters.sparqlTimeOut + " ms."));
+        logger.info("TIME-CAP: " + (parameters.timeCap == 0 ? "Not used" : parameters.timeCap + " min."));
         logger.info("========================================================");
         logger.info("NUMBER OF THREAD(S) USED: " + Global.NB_THREADS);
         logger.info("========================================================");
@@ -94,7 +95,7 @@ public class GrammaticalEvolution {
 //        GEChromosome[] chromosomes = new GEChromosome[parameters.populationSize];
         ArrayList<GEIndividual> candidatePopulation;
 
-        int curCheckpoint = 1;
+        int curCheckpoint = 0;
         int curGeneration = 1;
 
         Cache cache = null;
@@ -115,7 +116,7 @@ public class GrammaticalEvolution {
         // Initialize population as Axioms or SHACL Shapes
         ArrayList<Entity> entities = Fitness.initializePopulation(candidatePopulation, generator);
         // start GE
-        while (curCheckpoint <= parameters.checkpoint) {
+        while (curCheckpoint < parameters.checkpoint) {
             System.out.println("\n--------------------------------------------------------\n");
             logger.info("Generation: " + curGeneration);
             // Grammatical evolution of OWL Axioms
@@ -123,7 +124,7 @@ public class GrammaticalEvolution {
             entities = EntityMining.run(generator, entities, curGeneration, curCheckpoint);
             editCache(CACHE_PATH, entities, curGeneration, curCheckpoint);
             // update checkpoint
-            if (parameters.populationSize * curGeneration == parameters.kBase * curCheckpoint) {
+            if (parameters.populationSize * curGeneration == parameters.kBase * (curCheckpoint + 1)) {
                 curCheckpoint++;
             }
             // Turn to the next generation
@@ -165,7 +166,7 @@ public class GrammaticalEvolution {
         RDFMiner.stats.maxWrapping = parameters.maxWrapp;
         RDFMiner.stats.crossoverProbability = parameters.proCrossover;
         RDFMiner.stats.mutationProbability = parameters.proMutation;
-        RDFMiner.stats.timeOut = (int) parameters.timeOut;
+        RDFMiner.stats.timeOut = (int) parameters.sparqlTimeOut;
         // Elitism
         if (parameters.elitism == 1) {
             RDFMiner.stats.elitismSelection = true;

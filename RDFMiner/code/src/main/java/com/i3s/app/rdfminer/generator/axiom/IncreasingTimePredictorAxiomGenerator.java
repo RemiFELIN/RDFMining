@@ -85,7 +85,7 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 	 * </p>
 	 */
 	protected final String statusFileName = "IncreasingTPAxiomGenerator-"
-			+ (RDFMiner.parameters.timeOut > 0 ? "-" + RDFMiner.parameters.timeOut : "") + ".status";
+			+ (RDFMiner.parameters.sparqlTimeOut > 0 ? "-" + RDFMiner.parameters.sparqlTimeOut : "") + ".status";
 
 	/**
 	 * Constructs a new axiom generator from a list of subclasses.

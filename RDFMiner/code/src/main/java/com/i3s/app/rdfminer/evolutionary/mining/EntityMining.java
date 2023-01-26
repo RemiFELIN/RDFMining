@@ -26,17 +26,17 @@ public class EntityMining {
                 1 : (int) (RDFMiner.parameters.sizeElite * RDFMiner.parameters.populationSize);
 
         // Checkpoint reached, this is a code to evaluate and save axioms in output file
-        if (RDFMiner.parameters.checkpoint != 1 && RDFMiner.parameters.populationSize * curGeneration == RDFMiner.parameters.kBase * curCheckpoint) {
-            logger.info("Checkpoint n°" + curCheckpoint + " reached !");
+        if ((RDFMiner.parameters.checkpoint != 0 || RDFMiner.parameters.checkpoint != curCheckpoint) && RDFMiner.parameters.populationSize * curGeneration == RDFMiner.parameters.kBase * curCheckpoint) {
+            logger.info("Checkpoint n°" + (curCheckpoint + 1) + " reached !");
             // evaluate distinct genotype and avoid additional useless computation
             ArrayList<Entity> newPopulation = Fitness.computePopulation(EATools.getDistinctGenotypePopulation(entities), generator);
             // stats
             setStats(newPopulation, curGeneration);
             // fill content in json output file
-            for(Entity entity : newPopulation) {
-                entity.setEntityAsString();
-                RDFMiner.content.add(entity.toJSON());
-            }
+//            for(Entity entity : newPopulation) {
+//                entity.setEntityAsString();
+//                RDFMiner.content.add(entity.toJSON());
+//            }
             // return final pop
             return newPopulation;
         } else if (RDFMiner.parameters.populationSize * curGeneration == RDFMiner.parameters.kBase) {

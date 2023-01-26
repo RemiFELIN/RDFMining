@@ -21,8 +21,14 @@ public class ResultParser {
     public static boolean getResultFromAskQuery(String json) {
         // using org.json, get results (String) into a JSON Object
         JSONTokener tokener = new JSONTokener(json);
-        JSONObject resultAsJson = new JSONObject(tokener);
-        return resultAsJson.getBoolean("boolean");
+        try {
+            JSONObject resultAsJson = new JSONObject(tokener);
+            return resultAsJson.getBoolean("boolean");
+        } catch (JSONException e) {
+            logger.error("Error during the ASK SPARQL Query");
+            logger.warn("Received JSON: " + json);
+        }
+        return false;
     }
 
     public static List<String> getResultsFromVariable(String var, String json) {
@@ -41,9 +47,9 @@ public class ResultParser {
         } catch (JSONException e) {
             // Read time out
             // i.e. SocketTimeoutException from Corese server
-            if(json.contains("Read timed out") || json.contains("connect timed out")) {
-                logger.warn("Timeout reached !");
-            }
+//            if(json.contains("Read timed out") || json.contains("connect timed out")) {
+//                logger.warn("Timeout reached !");
+//            }
             return null;
         }
 

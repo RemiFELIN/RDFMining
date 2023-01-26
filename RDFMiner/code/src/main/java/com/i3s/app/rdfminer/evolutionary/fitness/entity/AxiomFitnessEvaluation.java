@@ -10,7 +10,6 @@ import com.i3s.app.rdfminer.evolutionary.fitness.novelty.NoveltySearch;
 import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -30,11 +29,11 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 
 	private static final Logger logger = Logger.getLogger(AxiomFitnessEvaluation.class.getName());
 
-	public List<JSONObject> evaluatedAxioms = new ArrayList<>();
+//	public List<JSONObject> evaluatedAxioms = new ArrayList<>();
 
 	@Override
 	public ArrayList<Entity> initializePopulation(ArrayList<GEIndividual> individuals) {
-		Set<Callable<Axiom>> callables = new HashSet<>();
+		Set<Callable<Entity>> callables = new HashSet<>();
 		ArrayList<Entity> entities = new ArrayList<>();
 		logger.info("The axioms will be intialized using the target SPARQL Endpoint : " + Global.TARGET_SPARQL_ENDPOINT);
 		logger.info("Begin updating population ...");
@@ -55,28 +54,35 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 		// We have a set of threads to compute each axioms
 		ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
 		// Submit tasks
-		List<Future<Axiom>> futureAxioms = null;
+		List<Future<Entity>> futureEntities = new ArrayList<>();
 		logger.info(callables.size() + " axioms are ready to be evaluate ...");
-		try {
-			futureAxioms = executor.invokeAll(callables);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		// submit callables in order to assess them
+		for(Callable<Entity> call : callables) {
+			futureEntities.add(executor.submit(call));
 		}
 		// We recover our axioms
-		assert futureAxioms != null;
-		for (Future<Axiom> axiom : futureAxioms) {
+		for (Future<Entity> entity : futureEntities) {
 			try {
-				entities.add(axiom.get());
+				if(RDFMiner.parameters.timeCap != 0)
+					entities.add(entity.get(RDFMiner.parameters.timeCap, TimeUnit.MINUTES));
+				else
+					entities.add(entity.get());
 			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
+			} catch (TimeoutException e) {
+				logger.warn("Time-cap reached !");
 			}
 		}
-		// Shut down the executor
+		// Log how many axioms has been evaluated
+		logger.info(entities.size() + " entities has been evaluated !");
 		executor.shutdown();
 		try {
-			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+			if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+				logger.debug("force the shutdown of executor ...");
+				executor.shutdownNow();
+			}
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			executor.shutdownNow();
 		}
 		// Check if Novelty Search is enabled
 		if(RDFMiner.parameters.useNoveltySearch) {
@@ -126,24 +132,37 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 		// We have a set of threads to compute each axioms
 		ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
 		// Submit tasks
-		List<Future<Entity>> futureEntities = null;
+		List<Future<Entity>> futureEntities = new ArrayList<>();
 
 		logger.info(callables.size() + " axioms are ready to be evaluate ...");
-		try {
-			futureEntities = executor.invokeAll(callables);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		// submit callables in order to assess them
+		for(Callable<Entity> call : callables) {
+			futureEntities.add(executor.submit(call));
 		}
 		// We recover our axioms
-		assert futureEntities != null;
-		for (Future<Entity> entityFuture : futureEntities) {
+		for (Future<Entity> entity : futureEntities) {
 			try {
-				entities.add(entityFuture.get());
+				if(RDFMiner.parameters.timeCap != 0)
+					entities.add(entity.get(RDFMiner.parameters.timeCap, TimeUnit.MINUTES));
+				else
+					entities.add(entity.get());
 			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
+			} catch (TimeoutException e) {
+				logger.warn("Assessment Timeout reached for the current entity ...");
 			}
 		}
-
+		// Log how many axioms has been evaluated
+		logger.info(entities.size() + " entities has been evaluated !");
+		executor.shutdown();
+		try {
+			if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+				logger.debug("force the shutdown of executor ...");
+				executor.shutdownNow();
+			}
+		} catch (InterruptedException e) {
+			executor.shutdownNow();
+		}
 		// Check if Novelty Search is enabled
 		if(RDFMiner.parameters.useNoveltySearch) {
 			// Compute the similarities of each axiom between them, and update the population

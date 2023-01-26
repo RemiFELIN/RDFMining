@@ -40,7 +40,7 @@ public class Similarity {
         // if the two axioms are equivalent, we set sim(phi1, phi2) = 1
         if(Objects.equals(phi1SubClass.graphPattern, phi2SubClass.graphPattern) &&
                 Objects.equals(phi1SuperClass.graphPattern, phi2SuperClass.graphPattern)) {
-            logger.info("The axioms are equivalent !");
+            logger.debug("The same axioms are compared, it will return sim(a,a) = 1 !");
             return 1;
         }
         String simNumSparql = "{ " + phi1SubClass.graphPattern + phi1SuperClass.graphPattern + " } UNION { " +

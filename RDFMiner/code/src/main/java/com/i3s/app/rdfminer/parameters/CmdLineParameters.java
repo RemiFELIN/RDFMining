@@ -59,13 +59,13 @@ public class CmdLineParameters {
 	 * The angular coefficient to be used for dynamic time capping of axiom test.
 	 * <p>
 	 * If this parameter is zero, time capping is performed using the value of the
-	 * {@link #timeOut} parameter.
+	 * {@link #sparqlTimeOut} parameter.
 	 * </p>
 	 * <p>
 	 * If this parameter is different from zero, its value is taken to mean the
 	 * angular coefficient <var>b</var> of the linear equation <var>T</var> =
 	 * <var>a</var> + <var>b</var>TP, where <var>a</var> is the value of the
-	 * {@link #timeOut} parameter and TP is the <em>time predictor</em>, computed,
+	 * {@link #sparqlTimeOut} parameter and TP is the <em>time predictor</em>, computed,
 	 * for subsumption axioms, as the product of the reference cardinality of the
 	 * subclass and of the number of classes sharing at least one instance with it.
 	 * </p>
@@ -91,9 +91,13 @@ public class CmdLineParameters {
 			"--subclassof-list" }, usage = "test subClassOf axioms generated from the list of subclasses in the given file", metaVar = "FILE")
 	public String subClassList = null;
 
-	@Option(name = "-t", aliases = {
-			"--timeout" }, usage = "use this time-out (in ms) for axiom testing", metaVar = "TIMEOUT")
-	public long timeOut = 0;
+	@Option(name = "-st", aliases = {
+				"--sparql-timeout" }, usage = "time-out (in ms.) for SPARQL Query", metaVar = "TIMEOUT")
+	public long sparqlTimeOut = 0;
+
+	@Option(name = "-tc", aliases = {
+			"--time-cap" }, usage = "time-cap (in min.) for axiom mining assessment", metaVar = "TIMECAP")
+	public long timeCap = 0;
 
 	@Option(name = "-l", aliases = {
 			"--loop" }, usage = "Launch SubClassOf assessment with loop operator from Corese", metaVar = "LOOP_CORESE")
@@ -167,7 +171,7 @@ public class CmdLineParameters {
 	public int kBase = 5000;
 
 	@Option(name = "-ckp", aliases = { "--Checkpoint" }, usage = "Checkpoint", metaVar = "CHECK_POINT")
-	public int checkpoint = 1;
+	public int checkpoint = 0;
 
 	// receives other command line parameters than options
 	@Argument

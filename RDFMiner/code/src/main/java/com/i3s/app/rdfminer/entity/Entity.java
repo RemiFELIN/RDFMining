@@ -91,7 +91,7 @@ public abstract class Entity {
      * a SPARQL query result.
      * </p>
      */
-    public List<String> confirmations = null;
+    public List<String> confirmations = new ArrayList<>();
 
     /**
      * A list of facts in the RDF store that explicitly contradict the axiom.
@@ -103,7 +103,7 @@ public abstract class Entity {
      * a SPARQL query result.
      * </p>
      */
-    public List<String> exceptions = null;
+    public List<String> exceptions = new ArrayList<>();
 
     /**
      * The number of facts in the RDF store that explicitly support/confirm the
@@ -158,7 +158,7 @@ public abstract class Entity {
     /**
      * The current ID of generation where this axiom has been found
      */
-    public Integer generation = null;
+    public Integer generation = 0;
 
     public void setEntityAsString(String entityAsString) {
         this.entityAsString = entityAsString;
@@ -184,10 +184,6 @@ public abstract class Entity {
         json.put("fitness", fitness);
         json.put("generality", generality);
         json.put("ari", ari);
-//        if(individual != null)
-//            json.put("isMapped", individual.isMapped());
-//        else
-//            json.put("isMapped", JSONObject.NULL);
         return json;
     }
 

@@ -79,7 +79,7 @@ public class CandidateAxiomGenerator extends AxiomGenerator {
 	 * </p>
 	 */
 	protected final String statusFileName = "AxiomGenerator-"
-			+ (RDFMiner.parameters.timeOut > 0 ? "-" + RDFMiner.parameters.timeOut : "") + ".status";
+			+ (RDFMiner.parameters.sparqlTimeOut > 0 ? "-" + RDFMiner.parameters.sparqlTimeOut : "") + ".status";
 
 	/**
 	 * Constructs a new axiom generator for the language described by the given

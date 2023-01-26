@@ -105,8 +105,8 @@ public class RDFMiner {
 		
 		logger.info("Number of processors avalaibles: " + Global.NB_THREADS);
 		
-		if(parameters.timeOut != 0)
-			logger.info("Time cap initialized at " + parameters.timeOut + " ms.");
+		if(parameters.sparqlTimeOut != 0)
+			logger.info("Time cap initialized at " + parameters.sparqlTimeOut + " ms.");
 
 		System.loadLibrary(Global.SO_LIBRARY);
 

@@ -101,23 +101,48 @@ public class Generation {
             if (RDFMiner.parameters.diversity == 1) {
                 // if crowding is chosen, we need to compute and return the individuals chosen
                 // (between parents and childs) in function of their fitness
-//				logger.info("CROWDING diversity method used ...");
-                // fill callables of crowding to compute
                 final int idx = m;
-                entitiesCallables.add(() -> new Crowding(canEntities.get(idx), canEntities.get(idx + 1), newChild1, newChild2, generator)
-                        .getSurvivalSelection());
+                entitiesCallables.add(() -> new Crowding(canEntities.get(idx), canEntities.get(idx + 1), newChild1,
+                        newChild2, canEntities, generator).getSurvivalSelection());
             }
             m = m + 2;
         }
         logger.info("Crossover & Mutation done");
         logger.info(entitiesCallables.size() + " tasks ready to be launched !");
         // Submit tasks
-        List<Future<ArrayList<Entity>>> futures = executor.invokeAll(entitiesCallables);
-        // fill the evaluated individuals
-        for (Future<ArrayList<Entity>> future : futures) {
-            evaluatedIndividuals.addAll(future.get());
+        List<Future<ArrayList<Entity>>> futureEntities = new ArrayList<>();
+//        List<Future<ArrayList<Entity>>> futures = executor.invokeAll(entitiesCallables);
+        // submit callables in order to assess them
+        for(Callable<ArrayList<Entity>> call : entitiesCallables) {
+            futureEntities.add(executor.submit(call));
         }
-        logger.info(evaluatedIndividuals.size() + " entities has been evaluated and selected !");
+        // fill the evaluated individuals
+        for (Future<ArrayList<Entity>> future : futureEntities) {
+            try {
+                if(RDFMiner.parameters.timeCap != 0) {
+                    // we multiply the timecap by 2 to consider the maximum
+                    // time-cap assessment for 2 childs
+                    evaluatedIndividuals.addAll(future.get(2 * RDFMiner.parameters.timeCap, TimeUnit.MINUTES));
+                } else {
+                    evaluatedIndividuals.addAll(future.get());
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            } catch (TimeoutException e) {
+                logger.warn("Time-cap reached !");
+            }
+        }
+        // Log how many axioms has been evaluated
+        logger.info(evaluatedIndividuals.size() + " entities has been evaluated !");
+        executor.shutdown();
+        try {
+            if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                logger.debug("force the shutdown of executor ...");
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+        }
 
         // Check if Novelty Search is enabled
         if(RDFMiner.parameters.useNoveltySearch) {

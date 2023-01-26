@@ -16,10 +16,7 @@ import com.i3s.app.rdfminer.evolutionary.selection.TruncationSelection;
 import com.i3s.app.rdfminer.evolutionary.selection.TypeSelection;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class is used to deployed all EA tools like crossover, mutation, ...
@@ -131,7 +128,7 @@ public class EATools {
 		ArrayList<Entity> newEntities = new ArrayList<>();
 		for(GEIndividual individual : individuals) {
 			for(Entity entity : entities) {
-				if(individual.getGenotype() == entity.individual.getGenotype()) {
+				if(Objects.equals(individual.getGenotype().toString(), entity.individual.getGenotype().toString())) {
 					newEntities.add(entity);
 				}
 			}

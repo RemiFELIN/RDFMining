@@ -4,7 +4,6 @@
 package com.i3s.app.rdfminer.entity.axiom.type;
 
 import Mapper.Symbol;
-import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.expression.Expression;
@@ -14,7 +13,6 @@ import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import com.i3s.app.rdfminer.sparql.corese.Format;
 import com.i3s.app.rdfminer.sparql.corese.ResultParser;
 import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
-import org.apache.jena.base.Sys;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -200,6 +198,14 @@ public class SubClassOfAxiom extends Axiom {
 			ari = ARI();
 			return;
 		}
+		// eliminate duplicate sub and super classes
+		if (subClass == superClass) {
+			// in this case, we set pos = nec = 1.0 as consequence to its existance in ontology
+			logger.info("This candidate contains the same ressource for its subClass and superClass !");
+			ari = ARI();
+			// its fitness will be 0
+			return;
+		}
 		// If it does not exists, we need to evaluate it
 		confirmations = new ArrayList<>();
 		exceptions = new ArrayList<>();
@@ -246,7 +252,7 @@ public class SubClassOfAxiom extends Axiom {
 			ari = ARI();
 			return;
 			
-		} else if (RDFMiner.parameters.timeOut > 0 || RDFMiner.parameters.dynTimeOut != 0.0) {
+		} else if (RDFMiner.parameters.sparqlTimeOut > 0 || RDFMiner.parameters.dynTimeOut != 0.0) {
 //			logger.info("compute the number of exceptions with a timeout ...");
 			// Since the query to count exception is complex and may take very long to
 			// execute, we execute it with the user-supplied time out.
@@ -264,7 +270,7 @@ public class SubClassOfAxiom extends Axiom {
 				finish = getExceptions(endpoint);
 			}
 			if ( !finish ) {
-//				logger.warn("we take the reference cardinality minus the number of confirmations as the conventional number of exceptions");
+				logger.warn("Timeout reached during the computation of exceptions !");
 				// If the query times out, it is very likely that it would end up
 				// having a large number of exceptions. Therefore, we take the reference
 				// cardinality minus the number of confirmations as the conventional
