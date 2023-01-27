@@ -27,7 +27,7 @@ public class EntityMining {
 
         // Checkpoint reached, this is a code to evaluate and save axioms in output file
         if(RDFMiner.parameters.populationSize * curGeneration == RDFMiner.parameters.kBase * (curCheckpoint + 1)) {
-            if(RDFMiner.parameters.checkpoint != 1 || RDFMiner.parameters.checkpoint != curCheckpoint) {
+            if(RDFMiner.parameters.checkpoint != 1 && curCheckpoint != RDFMiner.parameters.checkpoint - 1) {
                 // INTERMEDIATE step (i.e. checkpoint)
                 logger.info("Checkpoint n°" + (curCheckpoint + 1) + " reached !");
                 // evaluate distinct genotype and avoid additional useless computation
