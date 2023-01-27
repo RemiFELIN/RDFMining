@@ -26,7 +26,9 @@ public class EntityMining {
                 1 : (int) (RDFMiner.parameters.sizeElite * RDFMiner.parameters.populationSize);
 
         // Checkpoint reached, this is a code to evaluate and save axioms in output file
-        if ((RDFMiner.parameters.checkpoint != 0 || RDFMiner.parameters.checkpoint != curCheckpoint) && RDFMiner.parameters.populationSize * curGeneration == RDFMiner.parameters.kBase * curCheckpoint) {
+        if ((RDFMiner.parameters.checkpoint != 1 || RDFMiner.parameters.checkpoint != curCheckpoint) &&
+                RDFMiner.parameters.populationSize * curGeneration == RDFMiner.parameters.kBase * curCheckpoint) {
+            // INTERMEDIATE step (i.e. checkpoint)
             logger.info("Checkpoint n°" + (curCheckpoint + 1) + " reached !");
             // evaluate distinct genotype and avoid additional useless computation
             ArrayList<Entity> newPopulation = Fitness.computePopulation(EATools.getDistinctGenotypePopulation(entities), generator);
@@ -40,6 +42,7 @@ public class EntityMining {
             // return final pop
             return newPopulation;
         } else if (RDFMiner.parameters.populationSize * curGeneration == RDFMiner.parameters.kBase) {
+            // FINAL step
             // evaluate distinct genotype and avoid additional useless computation
             ArrayList<Entity> newPopulation = Fitness.computePopulation(EATools.getDistinctGenotypePopulation(entities), generator);
             // stats
@@ -62,9 +65,6 @@ public class EntityMining {
 
         // Use list of individuals instead of list of entities
         // i.e. apply GE process directly on individuals
-//        for(Entity entity : entities) {
-//            entitiesAsIndividuals.add(entity.individual);
-//        }
         for(Entity entity : distinctEntities) {
             distinctEntitiesAsIndividuals.add(entity.individual);
         }
