@@ -26,38 +26,34 @@ public class EntityMining {
                 1 : (int) (RDFMiner.parameters.sizeElite * RDFMiner.parameters.populationSize);
 
         // Checkpoint reached, this is a code to evaluate and save axioms in output file
-        if ((RDFMiner.parameters.checkpoint != 1 || RDFMiner.parameters.checkpoint != curCheckpoint) &&
-                RDFMiner.parameters.populationSize * curGeneration == RDFMiner.parameters.kBase * curCheckpoint) {
-            // INTERMEDIATE step (i.e. checkpoint)
-            logger.info("Checkpoint n°" + (curCheckpoint + 1) + " reached !");
-            // evaluate distinct genotype and avoid additional useless computation
-            ArrayList<Entity> newPopulation = Fitness.computePopulation(EATools.getDistinctGenotypePopulation(entities), generator);
-            // stats
-            setStats(newPopulation, curGeneration);
-            // fill content in json output file
-//            for(Entity entity : newPopulation) {
-//                entity.setEntityAsString();
-//                RDFMiner.content.add(entity.toJSON());
-//            }
-            // return final pop
-            return newPopulation;
-        } else if (RDFMiner.parameters.populationSize * curGeneration == RDFMiner.parameters.kBase) {
-            // FINAL step
-            // evaluate distinct genotype and avoid additional useless computation
-            ArrayList<Entity> newPopulation = Fitness.computePopulation(EATools.getDistinctGenotypePopulation(entities), generator);
-            // stats
-            setStats(newPopulation, curGeneration);
-            // fill content in json output file
-            for(Entity entity : newPopulation) {
-                // add this entity is its fitness is not equal to 0
-                if(entity.fitness != 0) {
-                    entity.setEntityAsString();
-                    RDFMiner.content.add(entity.toJSON());
+        if(RDFMiner.parameters.populationSize * curGeneration == RDFMiner.parameters.kBase * (curCheckpoint + 1)) {
+            if(RDFMiner.parameters.checkpoint != 1 || RDFMiner.parameters.checkpoint != curCheckpoint) {
+                // INTERMEDIATE step (i.e. checkpoint)
+                logger.info("Checkpoint n°" + (curCheckpoint + 1) + " reached !");
+                // evaluate distinct genotype and avoid additional useless computation
+                ArrayList<Entity> newPopulation = Fitness.computePopulation(EATools.getDistinctGenotypePopulation(entities), generator);
+                // stats
+                setStats(newPopulation, curGeneration);
+                // return final pop
+                return newPopulation;
+            } else {
+                // FINAL step
+                // evaluate distinct genotype and avoid additional useless computation
+                ArrayList<Entity> newPopulation = Fitness.computePopulation(EATools.getDistinctGenotypePopulation(entities), generator);
+                // stats
+                setStats(newPopulation, curGeneration);
+                // fill content in json output file
+                for(Entity entity : newPopulation) {
+                    // add this entity is its fitness is not equal to 0
+                    if(entity.fitness != 0) {
+                        entity.setEntityAsString();
+                        RDFMiner.content.add(entity.toJSON());
+                    }
                 }
+                logger.info(RDFMiner.content.size() + " entities has been added in final report !");
+                // return final pop
+                return newPopulation;
             }
-            logger.info(RDFMiner.content.size() + " entities has been added in final report !");
-            // return final pop
-            return newPopulation;
         }
 
         ArrayList<Entity> distinctEntities = EATools.getDistinctGenotypePopulation(entities);
@@ -117,7 +113,6 @@ public class EntityMining {
         GenerationJSON generation = new GenerationJSON();
         generation.setGenerationJSON(entities, EATools.getDistinctGenotypePopulation(entities), curGeneration);
         // Log usefull stats concerning the algorithm evolution
-        logger.info("Size of the population: " + entities.size());
         logger.info("Average fitness: " + generation.averageFitness);
         logger.info("Diversity coefficient: " + generation.diversityCoefficient);
         logger.info("Number of individual(s) with a non-null fitness: " + generation.numIndividualsWithNonNullFitness);
