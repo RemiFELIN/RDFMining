@@ -49,9 +49,13 @@ public class EntityMining {
             setStats(newPopulation, curGeneration);
             // fill content in json output file
             for(Entity entity : newPopulation) {
-                entity.setEntityAsString();
-                RDFMiner.content.add(entity.toJSON());
+                // add this entity is its fitness is not equal to 0
+                if(entity.fitness != 0) {
+                    entity.setEntityAsString();
+                    RDFMiner.content.add(entity.toJSON());
+                }
             }
+            logger.info(RDFMiner.content.size() + " entities has been added in final report !");
             // return final pop
             return newPopulation;
         }
@@ -113,6 +117,7 @@ public class EntityMining {
         GenerationJSON generation = new GenerationJSON();
         generation.setGenerationJSON(entities, EATools.getDistinctGenotypePopulation(entities), curGeneration);
         // Log usefull stats concerning the algorithm evolution
+        logger.info("Size of the population: " + entities.size());
         logger.info("Average fitness: " + generation.averageFitness);
         logger.info("Diversity coefficient: " + generation.diversityCoefficient);
         logger.info("Number of individual(s) with a non-null fitness: " + generation.numIndividualsWithNonNullFitness);
