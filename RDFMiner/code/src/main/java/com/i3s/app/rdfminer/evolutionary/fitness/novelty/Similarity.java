@@ -1,7 +1,6 @@
 package com.i3s.app.rdfminer.evolutionary.fitness.novelty;
 
 import com.i3s.app.rdfminer.entity.Entity;
-import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
@@ -48,9 +47,9 @@ public class Similarity {
         String simDenSparql = "{ " + phi1SubClass.graphPattern + " } UNION { " + phi2SubClass.graphPattern + " }";
         double similarityNumerator = endpoint.count(simNumSparql);
         double similarityDenominator = endpoint.count(simDenSparql);
-//        System.out.println(simNumSparql + "\nGives: " + similarityNumerator);
-//        logger.info("Sim. between " + phi1.individual.getPhenotype().getStringNoSpace() + " and " +
-//                phi2.individual.getPhenotype().getStringNoSpace() + " is: " + similarityNumerator/similarityDenominator);
+        // avoid NaN value returned by a zero-denominator
+        if(similarityDenominator == 0)  return 0;
+        // else return value
         return similarityNumerator / similarityDenominator;
     }
 

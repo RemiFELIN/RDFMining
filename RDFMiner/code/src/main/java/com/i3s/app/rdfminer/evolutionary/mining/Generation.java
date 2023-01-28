@@ -133,7 +133,7 @@ public class Generation {
             }
         }
         // Log how many axioms has been evaluated
-        logger.info(evaluatedIndividuals.size() + " entities has been evaluated !");
+        logger.info(evaluatedIndividuals.size() + " entities has been selected !");
         executor.shutdown();
         try {
             if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {

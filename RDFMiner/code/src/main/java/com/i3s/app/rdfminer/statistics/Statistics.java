@@ -18,7 +18,7 @@ public class Statistics {
 		logger.debug("entities.size = " + entities.size());
 		double sumFitness = 0;
 		for (Entity entity : entities) {
-			logger.debug("# entity.fitness = " + entity.fitness);
+			logger.debug(entity.individual.getPhenotype().getStringNoSpace() + " #fitness = " + entity.fitness);
 //			System.out.println("Individual: " + entity.individual.getPhenotype());
 //			System.out.println("Fitness: " + entity.fitness);
 			sumFitness += entity.fitness;
