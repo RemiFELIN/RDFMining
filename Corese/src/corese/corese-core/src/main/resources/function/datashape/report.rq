@@ -31,6 +31,10 @@ function xsd:boolean sh:report(report, name, sh, cst, s, p, o, suc, vis){
 function xsd:boolean sh:report(report, subReport, name, sh, cst, s, p, o, suc, vis){
     # sh:log("report.rq", "sh:report", "start...");
     sh:record(name,  sh, cst, sh:shaclGraph(), s, p, o, suc, vis);
+    # increase reference cardinality 
+    if(extended == true) {
+        set(referenceCardinality = referenceCardinality + 1);
+    } ;
     if (vis && ! suc) { 
         sh:visit(name, s, suc) ;
         # sh:log("report.rq", "sh:report", "fill the report ...");
@@ -121,7 +125,7 @@ function xsd:boolean sh:result(report, subReport, name, sh, cst, dt:graph shape,
         } ;
         
         sh:resultFunction(report, subReport, res, sh, name, foc, path, node);
-
+        # return result of report
         return (res)
 
     } ;
@@ -144,6 +148,10 @@ function sh:addExtendedShaclReport(report, exceptions) {
     sh:store(report, summary, psh:numException, numException);
     # numConfirmation is defined by referenceCardinality and the size of exceptions list such as : 
     set(numConfirmation = (referenceCardinality - numException));
+    # fix negative values for the number of confirmations
+    if(numConfirmation < 0) {
+        set(numConfirmation = 0);
+    };
     sh:store(report, summary, psh:numConfirmation, numConfirmation);
     # sh:log("core.rq", "sh:binomial", "start binomiale !");
     set(likelihood = sh:binomial(referenceCardinality, prob, numException));
