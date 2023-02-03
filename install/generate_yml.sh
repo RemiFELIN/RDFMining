@@ -28,7 +28,7 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     touch $YML_FILE
     # Define version of each services
     RDFMINER_VERSION=1.4
-    VIRTUOSO_VERSION=7.2.5
+    # VIRTUOSO_VERSION=7.2.5
     CORESE_VERSION=4.3.1
     # 
     #   EDIT docker-compose.yml
@@ -46,7 +46,7 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     addLineToYML 6 "       build:"
     addLineToYML 9 "          context: ./RDFMiner/."
     addLineToYML 6 "       depends_on:"
-    addLineToYML 9 "          - virtuoso"
+    # addLineToYML 9 "          - virtuoso"
     addLineToYML 9 "          - corese"
     addLineToYML 6 "       command: launch"
     addLineToYML 6 "       volumes:"
@@ -58,23 +58,23 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     addLineToYML 12 "               ipv4_address: 172.19.0.3"
     #
     #   Virtuoso service
-    #
-    addLineToYML 3 "   # OpenLink Virtuoso v"$VIRTUOSO_VERSION
-    addLineToYML 3 "   # Used by RDFMiner to load and query a training dataset"
-    addLineToYML 3 "   virtuoso:"
-    addLineToYML 6 "       restart: always"
-    addLineToYML 6 "       image: virtuoso:"$VIRTUOSO_VERSION
-    addLineToYML 6 "       build:"
-    addLineToYML 9 "          context: ./Virtuoso/."
-    addLineToYML 6 "       ports:"
-    addLineToYML 9 "          - '9000:9000'"
-    addLineToYML 6 "       volumes:"
-    addLineToYML 9 "          - type: bind"
-    addLineToYML 11 "            source: "$WORKSPACE_ABSOLUTE_PATH"Virtuoso/data"
-    addLineToYML 11 "            target: /data"
-    addLineToYML 6 "       networks:"
-    addLineToYML 9 "          rdfmining_network:"
-    addLineToYML 12 "               ipv4_address: 172.19.0.2"
+    # 
+    # addLineToYML 3 "   # OpenLink Virtuoso v"$VIRTUOSO_VERSION
+    # addLineToYML 3 "   # Used by RDFMiner to load and query a training dataset"
+    # addLineToYML 3 "   virtuoso:"
+    # addLineToYML 6 "       restart: always"
+    # addLineToYML 6 "       image: virtuoso:"$VIRTUOSO_VERSION
+    # addLineToYML 6 "       build:"
+    # addLineToYML 9 "          context: ./Virtuoso/."
+    # addLineToYML 6 "       ports:"
+    # addLineToYML 9 "          - '9000:9000'"
+    # addLineToYML 6 "       volumes:"
+    # addLineToYML 9 "          - type: bind"
+    # addLineToYML 11 "            source: "$WORKSPACE_ABSOLUTE_PATH"Virtuoso/data"
+    # addLineToYML 11 "            target: /data"
+    # addLineToYML 6 "       networks:"
+    # addLineToYML 9 "          rdfmining_network:"
+    # addLineToYML 12 "               ipv4_address: 172.19.0.2"
     #
     #   Corese service
     #
