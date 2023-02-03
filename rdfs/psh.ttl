@@ -1,0 +1,83 @@
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+# WARNING:
+#
+#    we will update the namespace associated with psh
+#    with a dereferenceable uri before publishing the article
+#
+@prefix psh:  <http://www.w3.org/ns/probabilistic-shacl#> .
+
+################################################################################################
+
+psh:
+	a owl:Ontology ;
+	rdfs:label "Probabilistic SHACL Validation"@en ;
+	rdfs:comment "This vocabulary defines terms used to include and exploit probabilistic information in SHACL validation reports"@en .
+
+
+psh:ValidationSummary 
+    a rdfs:Class ;
+    rdfs:label "Validation summary"@en ;
+	rdfs:comment "The class of probabilistic validation summary"@en ;
+	rdfs:subClassOf rdfs:Resource ;
+	rdfs:isDefinedBy psh: .
+
+
+psh:summary
+    a rdf:Property ;
+    rdfs:label "summary"@en ;
+    rdfs:comment "The probabilistic validation results contained in a validation report."@en ;
+    rdfs:domain sh:ValidationReport ;
+    rdfs:range psh:ValidationSummary ;
+    rdfs:isDefinedBy psh: .
+
+psh:focusShape
+    a rdf:Property ;
+	rdfs:label "focus shape"@en ;
+	rdfs:comment "The shape concerned by the results of the probabilistic validation"@en ;
+	rdfs:domain sh:ValidationSummary ;
+	rdfs:range sh:Shape ;
+	rdfs:isDefinedBy psh: .
+
+psh:numConfirmation
+    a rdf:Property ;
+    rdfs:label "number of confirmation"@en ;
+    rdfs:comment "Specifies the number of nodes that confirm the current shape"@en ;
+    rdfs:domain sh:ValidationSummary ;
+    rdfs:range xsd:integer ;
+    rdfs:isDefinedBy psh: .
+
+psh:numException
+    a rdf:Property ;
+    rdfs:label "number of exception"@en ;
+    rdfs:comment "Specifies the number of nodes that contradict the current shape"@en ;
+    rdfs:domain sh:ValidationSummary ;
+    rdfs:range xsd:integer ;
+    rdfs:isDefinedBy psh: .
+
+psh:referenceCardinality
+    a rdf:Property ;
+    rdfs:label "reference cardinality"@en ;
+    rdfs:comment "Specifies the number of RDF triples tested during the validation of the current shape"@en ;
+    rdfs:domain sh:ValidationSummary ;
+    rdfs:range xsd:integer ;
+    rdfs:isDefinedBy psh: .
+
+psh:likelihood
+    a rdf:Property ;
+    rdfs:label "likelihood"@en ;
+    rdfs:comment "Specifies the likelihood to observe the number of exceptions among the RDF triples tested (i.e. referenceCardinality)"@en ;
+    rdfs:domain sh:ValidationSummary ;
+    rdfs:range xsd:double ;
+    rdfs:isDefinedBy psh: .
+
+psh:generality
+    a rdf:Property ;
+    rdfs:label "likelihood"@en ;
+    rdfs:comment "Specifies the representativeness of the current shape"@en ;
+    rdfs:domain sh:ValidationSummary ;
+    rdfs:range xsd:double ;
+    rdfs:isDefinedBy psh: .

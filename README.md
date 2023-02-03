@@ -59,3 +59,7 @@ PREFIX sh:       <http://www.w3.org/ns/shacl#>
         sh:hasValue <http://www.wikidata.org/entity/Q16023751> ;
     ] .  
 ```
+
+## RDFS Schema
+
+The RDF Schema is provided in **rdfs/** folder.
