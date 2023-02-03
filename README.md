@@ -1,13 +1,3 @@
-<!--![](RDFMiner/docs/banner.png)-->
-     _____  _____  ______ __  __ _                 
-    |  __ \|  __ \|  ____|  \/  (_)                
-    | |__) | |  | | |__  | \  / |_ _ __   ___ _ __ 
-    |  _  /| |  | |  __| | |\/| | | '_ \ / _ \ '__|
-    | | \ \| |__| | |    | |  | | | | | |  __/ |   
-    |_|  \_\_____/|_|    |_|  |_|_|_| |_|\___|_|   
-                                                
-**VERSION 1.4**                               
-
 # ESWC Conference : A Framework to Include and Exploit Probabilistic Information in SHACL Validation Reports
 
 ## Requirements
@@ -24,19 +14,18 @@
 - [Maven](https://maven.apache.org/download.cgi)
 - [Java](https://www.java.com/fr/download/)
 
-## How to install RDFMiner
+## How to install
 
 1. Clone this repository
 2. Execute the *install* shell file such as: ```cd install && ./install.sh```
 > It will take some time !
-3. Once the build phase is completed, we need to create and start RDFMiner service : ```sudo docker-compose up -d rdfminer```
+3. Once the build phase is completed, we need to create and start **rdfminer** service : ```sudo docker-compose up -d rdfminer```
 > You can check if it's correctly launched with the following command : ```sudo docker-compose ps```
 
 ## How to launch experiments (on Linux/MAC)
 
-1. Install RDFMiner
-2. Put all the files you need (containing SHACL Shapes) in the **/IO** folder.
-3. Launch the following script : ```cd experiments & sudo ./run.sh```
+4. Put all the files you need (containing SHACL Shapes) in the **/IO** folder.
+5. Launch the following script : ```cd experiments & sudo ./run.sh```
 
 ## Association rules to SHACL shapes
 
