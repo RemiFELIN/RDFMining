@@ -56,7 +56,7 @@ The dataset used in the experiments is stored in **Corese/data/**: covidontheweb
 
 > **COMMAND LINE** docker-compose exec -T rdfminer ./rdfminer/scripts/run.sh -psh -shacl-p 0.5 -sf /rdfminer/io/*[YourShapesFile.ttl]* -dir *[YourResultsFolder/]* 
 
-> **INFO** For both mode used, the content of *YourShapesFile.ttl* MUST contains well-formed SHACL Shapes (e.g. using Turtle format) like:
+> **INFO** For both modes used, the content of *YourShapesFile.ttl* MUST contains well-formed SHACL Shapes (e.g. using Turtle format) like:
 ```
 # You must define prefixes used in this file
 BASE             <http://example.com/shapes/>
