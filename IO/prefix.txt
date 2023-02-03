@@ -1,8 +1,0 @@
-base    	<http://rdfminer.com/shapes/>
-prefix sh:	<http://www.w3.org/ns/shacl#>
-prefix psh: 	<http://www.w3.org/ns/probabilistic-shacl#>
-prefix inria:	<http://ns.inria.fr/covid19/>
-prefix source:	<http://ns.inria.fr/covid19/source#>
-prefix dct:	<http://purl.org/dc/terms/>
-prefix rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-prefix dbo:	<http://dbpedia.org/ontology/>

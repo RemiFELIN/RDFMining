@@ -8,6 +8,8 @@
                                                 
 **VERSION 1.4**                               
 
+# ESWC Conference : A Framework to Include and Exploit Probabilistic Information in SHACL Validation Reports
+
 ## Requirements
 
 ### For users 
@@ -27,115 +29,18 @@
 1. Clone this repository
 2. Execute the *install* shell file such as: ```cd install && ./install.sh```
 > It will take some time !
-3. Once the build phase is completed, we need to create and start all the services : ```sudo docker-compose up -d```
-
+3. Once the build phase is completed, we need to create and start RDFMiner service : ```sudo docker-compose up -d rdfminer```
 > You can check if it's correctly launched with the following command : ```sudo docker-compose ps```
-```
-        Name                      Command               State                Ports             
------------------------------------------------------------------------------------------------
-rdfmining_corese_1     /bin/sh -c $LAUNCH               Up      0.0.0.0:9100->9100/tcp,
-                                                                :::9100->9100/tcp                      
-rdfmining_rdfminer_1   ./rdfminer/scripts/run.sh  ...   Up                                     
-rdfmining_virtuoso_1   /bin/bash /virtuoso/script ...   Up      1111/tcp, 8890/tcp, 
-                                                                0.0.0.0:9000->9000/tcp,
-                                                                :::9000->9000/tcp
-```
 
-## How to use RDFMiner
+## How to launch experiments (on Linux/MAC)
 
-1. Put all the files you need (e.g. your .bnf grammar, axioms to assess in *.txt* file, ...) in the **/IO** folder.
-2. Once this phase is complete, you can launch the *RDFMiner* container in order to launch the software : ```sudo docker-compose exec rdfminer ./rdfminer/scripts/run.sh [PARAMETERS]```
+1. Install RDFMiner
+2. Put all the files you need (containing SHACL Shapes) in the **/IO** folder.
+3. Launch the following script : ```cd experiments & sudo ./run.sh```
 
-## Parameters
+## CovidOnTheWeb dataset
 
-```
- -af (--axioms-file) AXIOM_FILE         : test axioms contained in this file
- -ckp (--Checkpoint) CHECK_POINT        : Checkpoint (default: 1)
- -cr (--type-crossover) TYPE_CROSSOVER  : use as this value as the type of
-                                          parent selection operation (default:
-                                          2)
- -cs (--classic-shacl) CLASSIC_SHACL    : use classic SHACL validation
-                                          (default: false)
- -d (--dynamic-timeout) ANGULAR_COEFF   : use a dynamic time-out for axiom
-                                          testing (default: 0.0)
- -dir (--directory) RESULTFOLDER        : path of output folder (default:
-                                          results)
- -div (--diversity) DIVER_METHOD        : use as this value as the chose of
-                                          diversity method (default: 1)
- -el (--elitism) ELITISM_SELECTION      : use as this value as the choose of
-                                          elitism selection (default: 1)
- -g (--grammar) GRAMMAR                 : use this file as the axiom grammar
-                                          (default: /rdfminer/code/resources/OWL
-                                          2Axiom-test.bnf)
- -ge (--grammatical-evolution)          : activate the grammatical evolution
- GRAMMATICAL_EVOLUTION                    for the entities extraction (default:
-                                          false)
- -init (--init-len) INITLEN_CHROMOSOME  : use as this value as the initial
-                                          length of chromosome (default: 20)
- -kb (--K_Base) K_BASE                  : KBase (default: 5000)
- -l (--loop) LOOP_CORESE                : Launch SubClassOf assessment with
-                                          loop operator from Corese (default:
-                                          false)
- -mxc (--max-codon) MAX_CODON           : use as this value as the max value of
-                                          codon (default: 2147483647)
- -mxw (--max-wrapp) MAX_WRAPP           : use as this value as the max number
-                                          of wrapping (default: 1)
- -ns (--novelty-search) NOVELTY_SEARCH  : use Novelty Search approach (default:
-                                          false)
- -p (--prefixes) PREFIXES               : use this file as the prefixes to be
-                                          used in SPARQL queries
- -pc (--prob-cross) PROB_CROSSOVER      : use as this value as the probability
-                                          of crossover operation (default: 0.8)
- -pm (--prob-mut) PROB_MUTATION         : use as this value as the probability
-                                          of mutation operation (default: 0.01)
- -ps (--population-size)                : use as this value as the initial size
- POPULATION_SIZE                          of population (default: 200)
- -psh (--probabilistic-shacl)           : use classic SHACL validation
- CLASSIC_SHACL                            (default: false)
- -ra (--random-axiom)                   : use the random axiom generator
-                                          (default: false)
- -rs (--random-shapes) SHAPES           : enable SHACL Shapes mining (default:
-                                          false)
- -s (--subclassof-list) FILE            : test subClassOf axioms generated from
-                                          the list of subclasses in the given
-                                          file
- -sa (--single-axiom) AXIOM             : test a single axiom given
- -se (--type-select) TYPE_SELECTION     : use as this value as the type of
-                                          parent selection operation (default:
-                                          2)
- -seez (--size-elite) SIZE_ELITE        : use as this value as the size of
-                                          elitism selection (default: 0.02)
- -sez (--size-select) SIZE_SELECTION    : use as this value as the size of
-                                          parent selection operation (default:
-                                          0.7)
- -sf (--shapes-file) SHAPES_FILE        : test shapes contained in this file
- -shacl-a (--shacl-alpha) SHACL_PROB_A  : set the value of alpha for SHACL
-                                          probabilistic mode (Hypothesis
-                                          testing) (default: 0.05)
- -shacl-p (--shacl-probability)         : set the value of p for SHACL
- SHACL_PROB_P                             probabilistic mode (default: 0.05)
- -t (--timeout) SECONDS                 : use this time-out (in seconds) for
-                                          axiom testing (default: 0)
- -target (--target-endpoint) TARGET     : specify the SPARQL endpoint to be
-                                          used for sending requests
- -tinit (--type-init) TYPE_INITIALIZATI : use as this value as the type of
- ON                                       initialization (default: 1)
- -train (--train-endpoint) TRAIN        : specify the SPARQL endpoint to be
-                                          used as a training dataset
-```
-> **INFO**      The container takes the same parameters as RDFMiner jar file
 
-## Datasets 
-
-*RDFMiner* provides two distincts RDF graphs:
-
-- A mirror of *DBPedia 2015.04* (english version), which is available from the following endpoint: http://134.59.130.136:8890/sparql
-
-> **WARNING**   by default, RDFMiner uses this endpoint as default value of **-target** parameter when it's not provide by user.
-
-- 1% of full instance of *DBPedia 2015.04* (english version), which is available from the following endpoint: http://172.19.0.2:9000/sparql
-
-> **WARNING**   by default, RDFMiner uses the value of **-target** as default value of **-train** parameter when it's not provide by user. It's not optimal in the evolutionary discovery context because you will consider all the instances for each OWL Axioms or SHACL Shapes assessment (if the dataset of the **-target** value contains a very large set of triples).
 
 ## Use cases 
 

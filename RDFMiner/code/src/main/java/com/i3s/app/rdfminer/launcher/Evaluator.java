@@ -262,7 +262,7 @@ public class Evaluator {
 			RDFMiner.output.write(validationReport.prettifyPrint());
 		}
 
-		logger.info("Done testing shape. Exiting.");
+		logger.info("Done testing SHACL shapes. Exiting.");
 		System.exit(0);
 	}
 	

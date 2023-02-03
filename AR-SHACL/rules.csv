@@ -1,0 +1,440 @@
+antecedents-list;consequents-list;confidence;interestingness;support;isSymmetric;cluster
+["ace2"];["ace"];1.00;1.00;0.0123762;True;clust1
+["ace"];["ace2"];1.00;1.00;0.0123762;True;clust1
+["respirator"];["aerosol"];1.00;0.75;0.0148515;True;clust1
+["aerosol"];["respirator"];0.75;0.75;0.0148515;True;clust1
+["dehydration"];["porcine epidemic diarrhea virus"];0.86;0.57;0.0148515;False;clust1
+["ribosome"];["messenger rna"];1.00;0.42;0.0123762;False;clust1
+["cattle"];["bovinae"];0.70;0.54;0.0173267;True;clust1
+["viral hepatitis"];["murinae"];0.75;0.45;0.0148515;False;clust1
+["proofreading"];["exon"];1.00;1.00;0.0163399;True;clust2
+["exon"];["proofreading"];1.00;1.00;0.0163399;True;clust2
+["exoribonuclease"];["exon"];0.83;0.83;0.0163399;True;clust2
+["exoribonuclease"];["proofreading"];0.83;0.83;0.0163399;True;clust2
+["exon"];["exoribonuclease"];1.00;0.83;0.0163399;True;clust2
+["inflammasome"];["nlrp3"];0.83;0.83;0.0163399;True;clust2
+["nlrp3"];["inflammasome"];1.00;0.83;0.0163399;True;clust2
+["proofreading"];["exoribonuclease"];1.00;0.83;0.0163399;True;clust2
+["autophagy"];["endoplasmic reticulum"];0.71;0.51;0.0163399;True;clust2
+["endoplasmic reticulum"];["autophagy"];0.71;0.51;0.0163399;True;clust2
+["lectin"];["carbohydrate"];1.00;0.60;0.0196078;False;clust2
+["proofreading"];["viral nonstructural proteins"];1.00;0.42;0.0163399;False;clust2
+["exon"];["viral nonstructural proteins"];1.00;0.42;0.0163399;False;clust2
+["bocavirus"];["human metapneumovirus"];1.00;0.46;0.0196078;False;clust2
+["bocavirus"];["rhinovirus"];1.00;0.46;0.0196078;False;clust2
+["ccl5"];["chemokine"];1.00;0.38;0.0163399;False;clust2
+["viral hepatitis"];["viral nonstructural proteins"];0.83;0.35;0.0163399;False;clust2
+["exoribonuclease"];["viral nonstructural proteins"];0.83;0.35;0.0163399;False;clust2
+["bocavirus"];["human parainfluenza"];0.83;0.32;0.0163399;False;clust2
+["two-hybrid screening"];["protein–protein interaction"];1.00;0.31;0.0163399;False;clust2
+["hemagglutinin"];["influenza a virus"];0.89;0.47;0.0261438;False;clust2
+["human respiratory syncytial virus"];["human parainfluenza"];0.72;0.72;0.0424837;True;clust2
+["human parainfluenza"];["human respiratory syncytial virus"];1.00;0.72;0.0424837;True;clust2
+["bocavirus"];["human respiratory syncytial virus"];1.00;0.33;0.0196078;False;clust2
+["human parainfluenza"];["adenoviridae"];0.92;0.62;0.0392157;False;clust2
+["rhinovirus"];["common cold"];0.85;0.44;0.0359477;False;clust2
+["human parainfluenza"];["common cold"];0.85;0.44;0.0359477;False;clust2
+["meleagris"];["turkey coronavirus"];1.00;0.86;0.0142180;True;clust3
+["turkey coronavirus"];["meleagris"];0.86;0.86;0.0142180;True;clust3
+["tcov"];["turkey coronavirus"];1.00;0.86;0.0142180;True;clust3
+["turkey coronavirus"];["tcov"];0.86;0.86;0.0142180;True;clust3
+["meleagris"];["tcov"];0.83;0.69;0.0118483;True;clust3
+["tcov"];["meleagris"];0.83;0.69;0.0118483;True;clust3
+["cáncer anal"];["cardiovascular disease"];1.00;1.00;0.0189573;True;clust3
+["cardiovascular disease"];["cáncer anal"];1.00;1.00;0.0189573;True;clust3
+["fever"];["cough"];0.83;0.60;0.0118483;True;clust3
+["canada"];["ontario"];0.89;0.79;0.0189573;True;clust3
+["ontario"];["canada"];0.89;0.79;0.0189573;True;clust3
+["rna interference"];["small interfering rna"];0.83;0.46;0.0118483;False;clust3
+["hypocholesterolemia"];["membrane raft"];1.00;0.82;0.0213270;True;clust3
+["membrane raft"];["hypocholesterolemia"];0.82;0.82;0.0213270;True;clust3
+["cyclodextrin"];["methyl"];0.89;0.71;0.0189573;True;clust3
+["methyl"];["cyclodextrin"];0.80;0.71;0.0189573;True;clust3
+["cyclodextrin"];["hypocholesterolemia"];0.78;0.60;0.0165877;True;clust3
+["hypocholesterolemia"];["cyclodextrin"];0.78;0.60;0.0165877;True;clust3
+["cyclodextrin"];["membrane raft"];0.89;0.65;0.0189573;True;clust3
+["membrane raft"];["cyclodextrin"];0.73;0.65;0.0189573;True;clust3
+["hypocholesterolemia"];["methyl"];0.78;0.54;0.0165877;True;clust3
+["methyl"];["hypocholesterolemia"];0.70;0.54;0.0165877;True;clust3
+["methyl"];["membrane raft"];0.80;0.58;0.0189573;True;clust3
+["membrane raft"];["methyl"];0.73;0.58;0.0189573;True;clust3
+["cyclodextrin"];["cholesterol"];1.00;0.64;0.0213270;False;clust3
+["hypocholesterolemia"];["cholesterol"];1.00;0.64;0.0213270;False;clust3
+["membrane raft"];["cholesterol"];1.00;0.79;0.0260664;True;clust3
+["cholesterol"];["membrane raft"];0.79;0.79;0.0260664;True;clust3
+["methyl"];["cholesterol"];0.90;0.58;0.0213270;False;clust3
+["membrane raft"];["cell membrane"];1.00;0.69;0.0260664;False;clust3
+["cilium"];["epithelium"];1.00;0.31;0.0118483;False;clust3
+["hypocholesterolemia"];["cell membrane"];1.00;0.56;0.0213270;False;clust3
+["cyclodextrin"];["cell membrane"];1.00;0.56;0.0213270;False;clust3
+["systematic review"];["meta-analysis"];0.79;0.66;0.0260664;True;clust3
+["methyl"];["cell membrane"];0.90;0.51;0.0213270;False;clust3
+["cholesterol"];["cell membrane"];0.86;0.64;0.0284360;True;clust3
+["cell membrane"];["cholesterol"];0.75;0.64;0.0284360;True;clust3
+["emerging infectious disease"];["zoonosis"];0.71;0.31;0.0236967;False;clust3
+["chicken"];["avian infectious bronchitis virus"];0.70;0.38;0.0663507;False;clust3
+["esterases"];["hemagglutinin"];1.00;0.45;0.0127877;False;clust4
+["prokaryotes"];["eukaryote"];0.86;0.47;0.0153453;False;clust4
+["prokaryotes"];["transfer rna"];0.86;0.47;0.0153453;False;clust4
+["porcine epidemic diarrhea virus"];["virulence"];0.83;0.38;0.0127877;False;clust4
+["aptamer"];["ligand"];0.83;0.38;0.0127877;False;clust4
+["biomolecular structure"];["frameshift mutation"];0.86;0.40;0.0153453;False;clust4
+["prokaryotes"];["escherichia coli"];1.00;0.41;0.0179028;False;clust4
+["polymerase"];["rna-dependent rna polymerase"];0.75;0.35;0.0153453;False;clust4
+["frameshift mutation"];["translational frameshift"];0.77;0.48;0.0255754;False;clust4
+["translational frameshift"];["ribosome"];0.94;0.67;0.0383632;True;clust4
+["ribosome"];["translational frameshift"];0.71;0.67;0.0383632;True;clust4
+["frameshift mutation"];["ribosome"];0.92;0.53;0.0306905;False;clust4
+["eukaryote"];["ribosome"];0.82;0.35;0.0230179;False;clust4
+["dengue forever"];["dengue virus"];0.83;0.60;0.0118483;True;clust5
+["community-acquired pneumonia"];["streptococcus pneumoniae"];0.83;0.42;0.0118483;False;clust5
+["mitogen-activated protein kinase"];["cell signaling"];1.00;0.31;0.0118483;False;clust5
+["arthralgia"];["chikungunya"];1.00;0.62;0.0081169;False;clust6
+["wheeze"];["asthma"];0.88;0.31;0.0113636;False;clust6
+["serine endopeptidase"];["trypsin"];0.71;0.45;0.0052687;False;clust7
+["human coronavirus hku1"];["human coronavirus oc43"];0.71;0.45;0.0052687;False;clust7
+["human parainfluenza"];["human metapneumovirus"];0.81;0.32;0.0136986;False;clust7
+["intensive care medicine"];["intensive care unit"];0.70;0.30;0.0200211;False;clust7
+["human metapneumovirus"];["rhinovirus"];0.76;0.32;0.0263435;False;clust7
+["human respiratory syncytial virus"];["rhinovirus"];0.72;0.42;0.0358272;False;clust7
+["croatian radiotelevision"];["helix bundle"];0.83;0.83;0.0084459;True;clust8
+["helix bundle"];["croatian radiotelevision"];1.00;0.83;0.0084459;True;clust8
+["new international version"];["henipavirus"];1.00;0.62;0.0084459;False;clust8
+["new international version"];["paramyxovirus"];1.00;0.62;0.0084459;False;clust8
+["oligodendrocyte"];["myelin"];1.00;0.60;0.0101351;False;clust8
+["feline infectious peritonitis"];["international federation of basque pelota"];0.91;0.91;0.0168919;True;clust8
+["international federation of basque pelota"];["feline infectious peritonitis"];1.00;0.91;0.0168919;True;clust8
+["multiple sclerosis"];["myelin"];0.86;0.51;0.0101351;False;clust8
+["central nervous system"];["myelin"];0.71;0.36;0.0084459;False;clust8
+["enterovirus 71"];["enterovirus"];1.00;0.38;0.0185811;False;clust8
+["dna vaccination"];["immunization"];0.83;0.33;0.0168919;False;clust8
+["guinea"];["west africa"];1.00;0.83;0.0129199;True;clust9
+["west africa"];["guinea"];0.83;0.83;0.0129199;True;clust9
+["north america"];["europe"];1.00;0.50;0.0129199;False;clust9
+["guinea"];["ebola virus disease"];1.00;0.42;0.0129199;False;clust9
+["west africa"];["ebola virus disease"];1.00;0.50;0.0155039;False;clust9
+["liberia"];["ebola virus disease"];1.00;0.50;0.0155039;False;clust9
+["exponential growth"];["basic reproduction number"];1.00;0.36;0.0129199;False;clust9
+["africa"];["asia"];0.78;0.49;0.0180879;False;clust9
+["avian influenza"];["influenza a virus subtype h5n1"];0.88;0.66;0.0542636;True;clust9
+["paris"];["france"];1.00;0.55;0.0089955;False;clust10
+["intensive care medicine"];["acute respiratory distress syndrome"];0.70;0.54;0.0104948;True;clust10
+["acute respiratory distress syndrome"];["intensive care medicine"];0.78;0.54;0.0104948;True;clust10
+["camelus"];["dromedary"];0.86;0.43;0.0089955;False;clust10
+["influenza a virus subtype h5n1"];["avian influenza"];1.00;0.43;0.0089955;False;clust10
+["proteolysis"];["peptidase"];0.75;0.35;0.0089955;False;clust10
+["saudi arabia"];["middle east respiratory syndrome coronavirus"];0.88;0.45;0.0344828;False;clust10
+["masson"];["special air service"];0.85;0.85;0.0250000;True;clust11
+["special air service"];["masson"];1.00;0.85;0.0250000;True;clust11
+["nidovirales"];["proteolysis"];0.75;0.45;0.0136364;False;clust11
+["antibiotic resistance"];["antibiotic"];1.00;0.56;0.0204545;False;clust11
+["antimicrobial drug"];["antibiotic"];0.78;0.34;0.0159091;False;clust11
+["rhinolophidae"];["bat"];0.92;0.33;0.0272727;False;clust11
+["placebo"];["blind experiment"];0.86;0.86;0.0108893;True;clust12
+["blind experiment"];["placebo"];1.00;0.86;0.0108893;True;clust12
+["preterm birth"];["neonatal intensive care unit"];1.00;0.62;0.0090744;False;clust12
+["gut flora"];["microbiome"];1.00;0.45;0.0090744;False;clust12
+["cis-regulatory element"];["stem-loop"];1.00;0.55;0.0108893;False;clust12
+["neonatal intensive care unit"];["baby"];0.75;0.37;0.0108893;False;clust12
+["equine viral arteritis"];["arteriviridae"];1.00;0.71;0.0064267;True;clust14
+["arteriviridae"];["equine viral arteritis"];0.71;0.71;0.0064267;True;clust14
+["confidence interval"];["odds ratio"];0.83;0.60;0.0064267;True;clust14
+["cathepsins"];["endosome"];0.83;0.46;0.0064267;False;clust14
+["mycoplasma bovis"];["bovine coronavirus"];1.00;0.45;0.0064267;False;clust14
+["murinae"];["mouse hepatitis virus"];0.71;0.45;0.0064267;False;clust14
+["dipeptide"];["dalton"];1.00;0.38;0.0064267;False;clust14
+["spray drying"];["blood plasma"];0.89;0.31;0.0102828;False;clust14
+["immunoglobulin a"];["immunoglobulin g"];0.93;0.37;0.0167095;False;clust14
+["porcine epidemic diarrhea virus"];["pig"];0.85;0.47;0.1555270;False;clust14
+["diarrhea"];["pig"];0.75;0.34;0.1298201;False;clust14
+["middle east"];["north africa"];0.75;0.75;0.0112570;True;clust15
+["north africa"];["middle east"];1.00;0.75;0.0112570;True;clust15
+["west nile virus"];["dengue virus"];0.75;0.41;0.0112570;False;clust15
+["middle east"];["europe"];0.75;0.35;0.0112570;False;clust15
+["gastroenteritis"];["diarrhea"];1.00;0.35;0.0168856;False;clust15
+["hepatocellular carcinoma"];["liver cirrhosis"];0.83;0.60;0.0095420;True;clust16
+["monocyte"];["macrophage"];0.83;0.32;0.0095420;False;clust16
+["suidae"];["pig"];0.71;0.38;0.0190840;False;clust16
+["enterovirus 71"];["hand foot and mouth disease"];1.00;0.83;0.0076220;True;clust17
+["hand foot and mouth disease"];["enterovirus 71"];0.83;0.83;0.0076220;True;clust17
+["chloroquine"];["hydroxychloroquine"];0.71;0.71;0.0076220;True;clust17
+["hydroxychloroquine"];["chloroquine"];1.00;0.71;0.0076220;True;clust17
+["monomer"];["oligomer"];1.00;0.45;0.0076220;False;clust17
+["bax"];["cytochromes"];0.70;0.61;0.0106707;True;clust17
+["cytochromes"];["bax"];0.88;0.61;0.0106707;True;clust17
+["hand foot and mouth disease"];["enterovirus"];1.00;0.43;0.0091463;False;clust17
+["rotavirus"];["baby"];0.83;0.35;0.0076220;False;clust17
+["bax"];["caspase"];0.90;0.62;0.0137195;False;clust17
+["cytochromes"];["caspase"];0.88;0.47;0.0106707;False;clust17
+["cytochromes"];["mitochondrion"];0.88;0.38;0.0106707;False;clust17
+["haplotype"];["single-nucleotide polymorphism"];1.00;0.37;0.0106707;False;clust17
+["rbd"];["middle east respiratory syndrome coronavirus"];1.00;0.32;0.0091463;False;clust17
+["bax"];["mitochondrion"];0.80;0.40;0.0121951;False;clust17
+["middle east respiratory syndrome"];["middle east respiratory syndrome coronavirus"];0.88;0.32;0.0106707;False;clust17
+["caspase"];["apoptotic process"];0.92;0.46;0.0182927;False;clust17
+["bax"];["apoptotic process"];0.90;0.34;0.0137195;False;clust17
+["influenza pandemic"];["influenza a virus subtype h1n1"];0.83;0.49;0.0670732;False;clust17
+["pandemic"];["influenza a virus subtype h1n1"];0.79;0.39;0.0564024;False;clust17
+["lassa fever"];["lassa virus"];0.83;0.69;0.0101010;True;clust18
+["lassa virus"];["lassa fever"];0.83;0.69;0.0101010;True;clust18
+["egg yolk"];["immunoglobulin y"];0.88;0.77;0.0141414;True;clust18
+["immunoglobulin y"];["egg yolk"];0.88;0.77;0.0141414;True;clust18
+["passive immunity"];["immunoglobulin y"];0.83;0.52;0.0101010;False;clust18
+["passive immunity"];["egg yolk"];0.83;0.52;0.0101010;False;clust18
+["lassa fever"];["west africa"];1.00;0.46;0.0121212;False;clust18
+["deubiquitinating enzymes"];["ubiquitin"];1.00;0.33;0.0101010;False;clust18
+["lassa virus"];["west africa"];0.83;0.32;0.0101010;False;clust18
+["national institutes of health"];["public access"];0.86;0.64;0.0242424;True;clust18
+["marmoset"];["common marmoset"];1.00;0.86;0.0090634;True;clust19
+["common marmoset"];["marmoset"];0.86;0.86;0.0090634;True;clust19
+["marmoset"];["primates"];0.83;0.46;0.0075529;False;clust19
+["common marmoset"];["primates"];0.71;0.40;0.0075529;False;clust19
+["influenza a virus subtype h1n1"];["pandemic"];0.73;0.40;0.0438066;False;clust19
+["human leukocyte antigen"];["allele"];0.83;0.69;0.0062814;True;clust20
+["allele"];["human leukocyte antigen"];0.83;0.69;0.0062814;True;clust20
+["cryptosporidium"];["giardia"];1.00;0.62;0.0062814;False;clust20
+["meta-analysis"];["systematic review"];1.00;0.57;0.0100503;False;clust20
+["nucleic acid"];["nucleic acid test"];1.00;0.36;0.0062814;False;clust20
+["cough"];["fever"];1.00;0.31;0.0138191;False;clust20
+["wuhan"];["people's republic of china"];0.84;0.34;0.1042714;False;clust20
+["monoclonal antibody"];["western blot"];0.83;0.52;0.0191571;False;clust21
+["gene expression"];["messenger rna"];0.71;0.40;0.0191571;False;clust21
+["nervous system"];["mouse hepatitis virus"];1.00;0.75;0.0165289;True;clust22
+["mouse hepatitis virus"];["nervous system"];0.75;0.75;0.0165289;True;clust22
+["crystallography"];["space group"];1.00;0.50;0.0137741;False;clust22
+["diffraction"];["structural biology"];0.89;0.79;0.0220386;True;clust22
+["structural biology"];["diffraction"];0.89;0.79;0.0220386;True;clust22
+["crystallography"];["crystallization"];1.00;0.45;0.0137741;False;clust22
+["solvent"];["crystallization"];1.00;0.45;0.0137741;False;clust22
+["diffraction"];["crystallization"];1.00;0.82;0.0247934;True;clust22
+["crystallization"];["space group"];0.91;0.91;0.0275482;True;clust22
+["space group"];["crystallization"];1.00;0.91;0.0275482;True;clust22
+["crystallization"];["diffraction"];0.82;0.82;0.0247934;True;clust22
+["crystallization"];["structural biology"];0.82;0.82;0.0247934;True;clust22
+["structural biology"];["crystallization"];1.00;0.82;0.0247934;True;clust22
+["myelin"];["mouse hepatitis virus"];0.71;0.45;0.0137741;False;clust22
+["space group"];["diffraction"];0.80;0.71;0.0220386;True;clust22
+["diffraction"];["space group"];0.89;0.71;0.0220386;True;clust22
+["space group"];["structural biology"];0.80;0.71;0.0220386;True;clust22
+["structural biology"];["space group"];0.89;0.71;0.0220386;True;clust22
+["crystallography"];["crystal structure"];1.00;0.42;0.0137741;False;clust22
+["solvent"];["crystal structure"];1.00;0.42;0.0137741;False;clust22
+["nervous system"];["central nervous system"];0.83;0.42;0.0137741;False;clust22
+["x-ray crystallography"];["structural biology"];0.73;0.65;0.0220386;True;clust22
+["structural biology"];["x-ray crystallography"];0.89;0.65;0.0220386;True;clust22
+["europe"];["north america"];0.71;0.40;0.0137741;False;clust22
+["crystallization"];["x-ray crystallography"];0.82;0.67;0.0247934;True;clust22
+["x-ray crystallography"];["crystallization"];0.82;0.67;0.0247934;True;clust22
+["space group"];["x-ray crystallography"];0.80;0.58;0.0220386;True;clust22
+["x-ray crystallography"];["space group"];0.73;0.58;0.0220386;True;clust22
+["diffraction"];["escherichia coli"];0.78;0.49;0.0192837;False;clust22
+["diffraction"];["x-ray crystallography"];0.78;0.49;0.0192837;False;clust22
+["crystallization"];["crystal structure"];0.82;0.61;0.0247934;True;clust22
+["crystal structure"];["crystallization"];0.75;0.61;0.0247934;True;clust22
+["space group"];["crystal structure"];0.80;0.53;0.0220386;False;clust22
+["structural biology"];["crystal structure"];0.78;0.45;0.0192837;False;clust22
+["diffraction"];["crystal structure"];0.78;0.45;0.0192837;False;clust22
+["diffraction"];["molecular cloning"];0.89;0.44;0.0220386;False;clust22
+["dengue virus"];["dengue forever"];0.71;0.55;0.0275482;True;clust22
+["structural biology"];["molecular cloning"];0.78;0.34;0.0192837;False;clust22
+["crystallization"];["molecular cloning"];0.73;0.36;0.0220386;False;clust22
+["escherichia coli"];["molecular cloning"];0.73;0.36;0.0220386;False;clust22
+["space group"];["molecular cloning"];0.70;0.31;0.0192837;False;clust22
+["nitric oxide (radical)"];["nitric oxide synthase"];0.71;0.51;0.0066313;True;clust23
+["nitric oxide synthase"];["nitric oxide (radical)"];0.71;0.51;0.0066313;True;clust23
+["human parainfluenza"];["rhinovirus"];0.88;0.41;0.0092838;False;clust23
+["human metapneumovirus"];["human respiratory syncytial virus"];0.88;0.34;0.0092838;False;clust23
+["il6"];["il10"];0.73;0.39;0.0106101;False;clust23
+["il6"];["tnf"];0.82;0.33;0.0119363;False;clust23
+["mouse hepatitis virus"];["mus"];0.80;0.31;0.0265252;False;clust23
+["myelin"];["central nervous system"];0.84;0.36;0.0344828;False;clust23
+["multiple sclerosis"];["central nervous system"];0.78;0.37;0.0384615;False;clust23
+["immunoglobulin m"];["immunoglobulin g"];1.00;0.45;0.0159744;False;clust25
+["respiratory epithelium"];["cell membrane"];0.71;0.36;0.0159744;False;clust25
+["respiratory epithelium"];["respiratory tract"];1.00;0.44;0.0223642;False;clust25
+["allele"];["major histocompatibility complex"];0.83;0.52;0.0148810;False;clust26
+["macaque"];["crab-eating macaque"];1.00;0.80;0.0238095;True;clust26
+["rhesus macaque"];["crab-eating macaque"];1.00;0.50;0.0148810;False;clust26
+["crab-eating macaque"];["macaque"];0.80;0.80;0.0238095;True;clust26
+["allele"];["crab-eating macaque"];0.83;0.42;0.0148810;False;clust26
+["pathogenic bacteria"];["bacteria"];0.71;0.40;0.0148810;False;clust26
+["primates"];["crab-eating macaque"];0.75;0.45;0.0178571;False;clust26
+["pig"];["diarrhea"];0.75;0.35;0.0178571;False;clust26
+["canada"];["hong kong"];0.82;0.32;0.0267857;False;clust26
+["canada"];["singapore"];0.82;0.32;0.0267857;False;clust26
+["regulatory t cell"];["foxp3"];0.75;0.75;0.0096618;True;clust27
+["foxp3"];["regulatory t cell"];1.00;0.75;0.0096618;True;clust27
+["western african ebola virus epidemic"];["west africa"];0.86;0.57;0.0096618;False;clust27
+["suidae"];["transmissible gastroenteritis virus"];0.83;0.46;0.0080515;False;clust27
+["western african ebola virus epidemic"];["world health organization"];0.71;0.45;0.0080515;False;clust27
+["nervous system"];["demyelinating disease"];1.00;0.36;0.0080515;False;clust27
+["bocavirus"];["human bocavirus"];0.86;0.37;0.0096618;False;clust27
+["endomembrane system"];["organelle"];0.86;0.34;0.0096618;False;clust27
+["oligodendrocyte"];["demyelinating disease"];0.70;0.35;0.0112721;False;clust27
+["demyelinating disease"];["myelin"];0.79;0.33;0.0177134;False;clust27
+["protein kinase"];["eif2ak3"];0.71;0.71;0.0069156;True;clust28
+["eif2ak3"];["protein kinase"];1.00;0.71;0.0069156;True;clust28
+["eif2ak3"];["unfolded protein response"];1.00;0.56;0.0069156;False;clust28
+["eif2ak3"];["kinase"];1.00;0.56;0.0069156;False;clust28
+["lectin"];["cd209"];0.71;0.45;0.0069156;False;clust28
+["protein kinase"];["kinase"];0.71;0.40;0.0069156;False;clust28
+["protein kinase"];["unfolded protein response"];0.71;0.40;0.0069156;False;clust28
+["half-life"];["organelle"];0.83;0.38;0.0069156;False;clust28
+["ren"];["human circulatory system"];0.71;0.36;0.0069156;False;clust28
+["isg15"];["ubiquitin"];1.00;0.47;0.0110650;False;clust28
+["drug design"];["active site"];0.91;0.48;0.0138313;False;clust28
+["personal protective equipment"];["health care"];0.89;0.36;0.0110650;False;clust28
+["hypertension"];["agt"];0.92;0.42;0.0152144;False;clust28
+["human circulatory system"];["agt"];0.90;0.34;0.0124481;False;clust28
+["renin–angiotensin system"];["agt"];0.89;0.59;0.0221300;False;clust28
+["agt"];["ace"];0.83;0.43;0.0276625;False;clust28
+["renin–angiotensin system"];["ace2"];0.89;0.34;0.0221300;False;clust28
+["agt"];["ace2"];0.83;0.40;0.0276625;False;clust28
+["ace2"];["biochemical receptor"];0.76;0.36;0.0442600;False;clust28
+["ace"];["biochemical receptor"];0.74;0.32;0.0401107;False;clust28
+["niemann-pick disease"];["npc1"];0.71;0.71;0.0056243;True;clust29
+["npc1"];["niemann-pick disease"];1.00;0.71;0.0056243;True;clust29
+["ace"];["agt"];0.86;0.57;0.0067492;False;clust29
+["niemann-pick disease"];["filoviridae"];0.71;0.45;0.0056243;False;clust29
+["niemann-pick disease"];["endosome"];0.71;0.45;0.0056243;False;clust29
+["bovine respiratory disease"];["cattle"];0.71;0.36;0.0056243;False;clust29
+["cinahl"];["medline"];1.00;0.33;0.0056243;False;clust29
+["meta-analysis"];["embase"];0.80;0.46;0.0089989;False;clust29
+["embase"];["medline"];0.79;0.58;0.0123735;True;clust29
+["medline"];["embase"];0.73;0.58;0.0123735;True;clust29
+["human metapneumovirus"];["human parainfluenza"];0.85;0.49;0.0123735;False;clust29
+["embase"];["systematic review"];0.86;0.47;0.0134983;False;clust29
+["pz cussons"];["code reuse"];0.90;0.89;0.1248594;True;clust29
+["code reuse"];["pz cussons"];0.99;0.89;0.1248594;True;clust29
+["pz cussons"];["elsevier"];1.00;0.85;0.1383577;True;clust29
+["code reuse"];["elsevier"];1.00;0.77;0.1259843;True;clust29
+["elsevier"];["pz cussons"];0.85;0.85;0.1383577;True;clust29
+["elsevier"];["code reuse"];0.77;0.77;0.1259843;True;clust29
+["code reuse"];["database"];1.00;0.71;0.1259843;True;clust29
+["database"];["code reuse"];0.71;0.71;0.1259843;True;clust29
+["database"];["pz cussons"];0.77;0.77;0.1372328;True;clust29
+["pz cussons"];["database"];0.99;0.77;0.1372328;True;clust29
+["database"];["elsevier"];0.90;0.88;0.1597300;True;clust29
+["elsevier"];["database"];0.98;0.88;0.1597300;True;clust29
+["ifitm1"];["ifitm3"];1.00;0.56;0.0088339;False;clust30
+["isotherm"];["sensitivity and specificity"];0.83;0.52;0.0088339;False;clust30
+["ifitm1"];["transmembrane protein"];1.00;0.42;0.0088339;False;clust30
+["ifitm3"];["transmembrane protein"];0.89;0.59;0.0141343;False;clust30
+["konkoly observatory"];["avian infectious bronchitis virus"];1.00;0.38;0.0141343;False;clust30
+["interleukin"];["cytokine"];0.79;0.35;0.0265018;False;clust30
+["osteonecrosis"];["head of femur"];1.00;1.00;0.0084439;True;clust31
+["head of femur"];["osteonecrosis"];1.00;1.00;0.0084439;True;clust31
+["lipid bilayer"];["ion channels"];0.71;0.60;0.0060314;True;clust31
+["ion channels"];["lipid bilayer"];0.83;0.60;0.0060314;True;clust31
+["head of femur"];["steroid"];0.71;0.40;0.0060314;False;clust31
+["osteonecrosis"];["steroid"];0.71;0.40;0.0060314;False;clust31
+["influenza a virus subtype h7n9"];["avian influenza"];0.83;0.35;0.0060314;False;clust31
+["radiology"];["computed tomography"];1.00;0.33;0.0060314;False;clust31
+["mucus membrane"];["nasal administration"];0.71;0.32;0.0060314;False;clust31
+["transfer rna"];["ribosome"];0.73;0.48;0.0096502;False;clust31
+["chest radiograph"];["computed tomography"];0.80;0.43;0.0096502;False;clust31
+["loop-mediated isothermal amplification"];["reverse transcriptase"];0.80;0.40;0.0096502;False;clust31
+["transfer rna"];["standard genetic code"];0.91;0.41;0.0120627;False;clust31
+["ribosome"];["standard genetic code"];0.75;0.31;0.0108565;False;clust31
+["frameshift mutation"];["standard genetic code"];0.71;0.32;0.0120627;False;clust31
+["interleukin-1 family"];["tnf"];1.00;0.58;0.0178117;False;clust32
+["oligosaccharide"];["d-mannose"];0.75;0.50;0.0152672;False;clust32
+["liver cirrhosis"];["hepatocellular carcinoma"];1.00;0.38;0.0127226;False;clust32
+["regulatory t cell"];["il10"];0.83;0.38;0.0127226;False;clust32
+["hepatitis b virus"];["hepatitis"];0.83;0.35;0.0127226;False;clust32
+["interleukin-1 family"];["il6"];0.86;0.37;0.0152672;False;clust32
+["membrane proteins"];["golgi apparatus"];0.70;0.41;0.0178117;False;clust32
+["hepatitis c virus"];["hepatocellular carcinoma"];0.73;0.45;0.0203562;False;clust32
+["porcine reproductive and respiratory syndrome virus"];["pig"];0.75;0.32;0.0229008;False;clust32
+["a59 road"];["mouse hepatitis virus"];0.71;0.40;0.0088183;False;clust33
+["carbohydrate"];["lectin"];0.88;0.44;0.0123457;False;clust33
+["viral entry"];["viral envelope"];0.75;0.35;0.0105820;False;clust33
+["gene silencing"];["small interfering rna"];0.83;0.38;0.0077042;False;clust34
+["neutrophil"];["monocyte"];0.83;0.32;0.0077042;False;clust34
+["codon usage bias"];["natural selection"];0.70;0.35;0.0107858;False;clust34
+["foot-and-mouth disease"];["foot-and-mouth disease virus"];1.00;0.75;0.0069045;True;clust35
+["foot-and-mouth disease virus"];["foot-and-mouth disease"];0.75;0.75;0.0069045;True;clust35
+["marburg marburgvirus"];["filoviridae"];1.00;0.67;0.0069045;False;clust35
+["unfolded protein response"];["endoplasmic reticulum"];0.83;0.42;0.0057537;False;clust35
+["codon usage bias"];["standard genetic code"];1.00;0.36;0.0057537;False;clust35
+["salmonella"];["feces"];0.83;0.35;0.0057537;False;clust35
+["salmonella"];["rotavirus"];0.83;0.35;0.0057537;False;clust35
+["microrna"];["regulation of gene expression"];0.71;0.32;0.0057537;False;clust35
+["flavivirus"];["dengue virus"];0.70;0.35;0.0080552;False;clust35
+["agt"];["cardiovascular disease"];1.00;0.71;0.0076570;True;clust36
+["cáncer anal"];["agt"];0.71;0.71;0.0076570;True;clust36
+["cardiovascular disease"];["agt"];0.71;0.71;0.0076570;True;clust36
+["agt"];["cáncer anal"];1.00;0.71;0.0076570;True;clust36
+["ace2"];["cáncer anal"];0.83;0.60;0.0076570;True;clust36
+["cáncer anal"];["ace2"];0.71;0.60;0.0076570;True;clust36
+["cardiovascular disease"];["ace2"];0.71;0.60;0.0076570;True;clust36
+["ace2"];["cardiovascular disease"];0.83;0.60;0.0076570;True;clust36
+["anxiety"];["mental depression"];0.75;0.56;0.0091884;True;clust36
+["mental depression"];["anxiety"];0.75;0.56;0.0091884;True;clust36
+["vaccinia virus"];["smallpox"];1.00;0.56;0.0075643;False;clust37
+["tuberculosis"];["mycobacterium tuberculosis"];0.78;0.68;0.0105900;True;clust37
+["mycobacterium tuberculosis"];["tuberculosis"];0.88;0.68;0.0105900;True;clust37
+["astrocyte"];["central nervous system"];1.00;0.38;0.0075643;False;clust37
+["public access"];["national institutes of health"];1.00;0.50;0.0105900;False;clust37
+["multiple sclerosis"];["epstein–barr virus"];0.71;0.36;0.0075643;False;clust37
+["fine-needle aspiration"];["pharynx"];1.00;0.32;0.0090772;False;clust37
+["riyadh"];["saudi arabia"];0.78;0.36;0.0105900;False;clust37
+["ebola virus"];["ebola virus disease"];0.79;0.36;0.0166415;False;clust37
+["serotonin"];["cocaine"];1.00;1.00;0.0115473;True;clust38
+["cocaine"];["serotonin"];1.00;1.00;0.0115473;True;clust38
+["dopamine"];["cocaine"];0.83;0.83;0.0115473;True;clust38
+["cocaine"];["dopamine"];1.00;0.83;0.0115473;True;clust38
+["dopamine"];["serotonin"];0.83;0.83;0.0115473;True;clust38
+["serotonin"];["dopamine"];1.00;0.83;0.0115473;True;clust38
+["spleen"];["liver"];1.00;0.60;0.0138568;False;clust38
+["translational frameshift"];["messenger rna"];1.00;0.42;0.0115473;False;clust38
+["bovine coronavirus"];["cattle"];1.00;0.38;0.0115473;False;clust38
+["bovinae"];["cattle"];1.00;0.38;0.0115473;False;clust38
+["spleen"];["kidney"];0.83;0.38;0.0115473;False;clust38
+["liver"];["kidney"];0.70;0.45;0.0161663;False;clust38
+["transmissible gastroenteritis virus"];["pig"];0.80;0.46;0.0184758;False;clust38
+["liver"];["lung"];1.00;0.53;0.0230947;False;clust38
+["spleen"];["lung"];1.00;0.32;0.0138568;False;clust38
+["adenoviridae"];["human parainfluenza"];0.70;0.63;0.0646651;True;clust38
+["rhinovirus"];["adenoviridae"];0.73;0.44;0.0554273;False;clust38
+["rhinovirus"];["human respiratory syncytial virus"];0.91;0.41;0.0692841;False;clust38
+["adenoviridae"];["human respiratory syncytial virus"];0.90;0.49;0.0831409;False;clust38
+["influenza virus"];["human respiratory syncytial virus"];0.87;0.34;0.0600462;False;clust38
+["plasmid"];["transfection"];0.71;0.45;0.0078740;False;clust39
+["avian infectious bronchitis"];["avian infectious bronchitis virus"];1.00;0.36;0.0078740;False;clust39
+["encephalitis"];["central nervous system"];1.00;0.37;0.0110236;False;clust39
+["reverse transcriptase"];["polymerase chain reaction"];1.00;0.43;0.0519685;False;clust39
+["corynebacterium bovis"];["emd gp60"];0.83;0.69;0.0064851;True;clust40
+["emd gp60"];["corynebacterium bovis"];0.83;0.69;0.0064851;True;clust40
+["ribosomal rna"];["emd gp60"];0.71;0.60;0.0064851;True;clust40
+["feline immunodeficiency virus"];["feline leukemia virus"];0.71;0.60;0.0064851;True;clust40
+["feline leukemia virus"];["feline immunodeficiency virus"];0.83;0.60;0.0064851;True;clust40
+["emd gp60"];["ribosomal rna"];0.83;0.60;0.0064851;True;clust40
+["jeddah"];["saudi arabia"];0.83;0.46;0.0064851;False;clust40
+["feline leukemia virus"];["house cat"];1.00;0.50;0.0077821;False;clust40
+["felidae"];["house cat"];1.00;0.42;0.0064851;False;clust40
+["halofuginone"];["cryptosporidiosis"];1.00;0.36;0.0064851;False;clust40
+["emd gp60"];["cryptosporidium"];1.00;0.43;0.0077821;False;clust40
+["corynebacterium bovis"];["cryptosporidium"];1.00;0.43;0.0077821;False;clust40
+["human betaherpesvirus 5"];["cytomegalovirus"];1.00;0.33;0.0064851;False;clust40
+["apicomplexan life cycle"];["cryptosporidiosis"];0.92;0.72;0.0142672;True;clust40
+["cryptosporidiosis"];["apicomplexan life cycle"];0.79;0.72;0.0142672;True;clust40
+["pams"];["pulmonary alveolus"];0.83;0.32;0.0064851;False;clust40
+["emd gp60"];["cryptosporidium parvum"];1.00;0.37;0.0077821;False;clust40
+["corynebacterium bovis"];["cryptosporidium parvum"];1.00;0.37;0.0077821;False;clust40
+["apicomplexan life cycle"];["cryptosporidium parvum"];0.83;0.52;0.0129702;False;clust40
+["cryptosporidiosis"];["cryptosporidium parvum"];0.79;0.54;0.0142672;False;clust40
+["retinoic acid"];["ddx58"];0.90;0.40;0.0116732;False;clust40
+["cryptosporidium"];["cryptosporidium parvum"];0.71;0.45;0.0129702;False;clust40
+["primer"];["loop-mediated isothermal amplification"];0.74;0.41;0.0181582;False;clust40
+["pulmonary alveolus"];["macrophage"];0.85;0.32;0.0142672;False;clust40
+["cryptosporidiosis"];["diarrhea"];0.86;0.30;0.0155642;False;clust40
+["glycan"];["glycosylation"];1.00;0.62;0.0070922;False;clust41
+["aedes aegypti"];["culicidae"];1.00;0.38;0.0070922;False;clust41
+["endosome"];["endocytosis"];0.71;0.36;0.0070922;False;clust41
+["antibiotic resistance"];["antimicrobial drug"];0.83;0.32;0.0070922;False;clust41
+["small interfering rna"];["rna interference"];0.78;0.42;0.0099291;False;clust41
+["odds ratio"];["confidence interval"];0.92;0.53;0.0156028;False;clust41
+["feline infectious peritonitis"];["feline coronavirus"];0.79;0.69;0.0595745;True;clust41
+["feline coronavirus"];["feline infectious peritonitis"];0.88;0.69;0.0595745;True;clust41
+["house cat"];["feline infectious peritonitis"];0.77;0.44;0.0425532;False;clust41

@@ -137,12 +137,11 @@ public class RDFMiner {
 //		}
 
 		// define a SPARQL Endpoint to use if provided
-		if (parameters.grammaticalEvolution && (parameters.useClassicShaclMode || parameters.useProbabilisticShaclMode)) {
-			// SHACL Shapes mining !
-			logger.warn("Grammatical evolution activated for SHACL Shapes !");
+		if (parameters.useClassicShaclMode || parameters.useProbabilisticShaclMode) {
+			// SHACL Shapes mode
+			Global.TARGET_SPARQL_ENDPOINT = Global.CORESE_IP;
 			logger.warn("RDFMiner will query the Corese semantic factory: " + Global.TARGET_SPARQL_ENDPOINT);
 			logger.warn("This version of Corese contains an implementation of SHACL (standard and probabilistic) ...");
-			Global.TARGET_SPARQL_ENDPOINT = Global.CORESE_IP;
 		} else if(parameters.targetSparqlEndpoint != null) {
 			logger.info("(--target-endpoint) a target SPARQL Endpoint is specified !");
 			try {

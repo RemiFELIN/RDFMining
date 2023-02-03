@@ -1,0 +1,2644 @@
+BASE             <http://rdfminer.com/shapes/>
+PREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX sh:       <http://www.w3.org/ns/shacl#> 
+
+<1> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q271779> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q104541>;
+] .
+
+<2> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q104541> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q271779>;
+] .
+
+<3> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q194290> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q16023751>;
+] .
+
+<4> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q42244> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q188928>;
+] .
+
+<5> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q830> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q4979192>;
+] .
+
+<6> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1983841> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q30266>;
+] .
+
+<7> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q834191> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q373027>;
+] .
+
+<8> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q373027> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q834191>;
+] .
+
+<9> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q3062052> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q373027>;
+] .
+
+<10> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q3062052> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q834191>;
+] .
+
+<11> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q373027> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q3062052>;
+] .
+
+<12> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q412405> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q14905618>;
+] .
+
+<13> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q14905618> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q412405>;
+] .
+
+<14> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q834191> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q3062052>;
+] .
+
+<15> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q288322> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q79927>;
+] .
+
+<16> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q79927> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q288322>;
+] .
+
+<17> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q408693> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q11358>;
+] .
+
+<18> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q834191> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q4354558>;
+] .
+
+<19> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q373027> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q4354558>;
+] .
+
+<20> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4936153> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q743338>;
+] .
+
+<21> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4936153> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1351647>;
+] .
+
+<22> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1983841> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q4354558>;
+] .
+
+<23> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q3062052> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q4354558>;
+] .
+
+<24> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4936153> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q2051533>;
+] .
+
+<25> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1337844> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q896177>;
+] .
+
+<26> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q19161> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q834390>;
+] .
+
+<27> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1052913> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q2051533>;
+] .
+
+<28> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q2051533> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1052913>;
+] .
+
+<29> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4936153> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1052913>;
+] .
+
+<30> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q2051533> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q193447>;
+] .
+
+<31> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1351647> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q12125>;
+] .
+
+<32> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q2051533> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q12125>;
+] .
+
+<33> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q43794> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q7690698>;
+] .
+
+<34> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q7690698> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q43794>;
+] .
+
+<35> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q38933> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q35805>;
+] .
+
+<36> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q16> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1904>;
+] .
+
+<37> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1904> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q16>;
+] .
+
+<38> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q201993> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q203221>;
+] .
+
+<39> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q10295810> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q424178>;
+] .
+
+<40> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q424178> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q10295810>;
+] .
+
+<41> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q40417805> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q4407>;
+] .
+
+<42> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4407> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q40417805>;
+] .
+
+<43> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q40417805> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q10295810>;
+] .
+
+<44> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q10295810> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q40417805>;
+] .
+
+<45> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q40417805> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q424178>;
+] .
+
+<46> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q424178> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q40417805>;
+] .
+
+<47> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q10295810> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q4407>;
+] .
+
+<48> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4407> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q10295810>;
+] .
+
+<49> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4407> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q424178>;
+] .
+
+<50> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q424178> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q4407>;
+] .
+
+<51> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q40417805> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q43656>;
+] .
+
+<52> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q10295810> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q43656>;
+] .
+
+<53> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q424178> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q43656>;
+] .
+
+<54> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q43656> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q424178>;
+] .
+
+<55> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4407> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q43656>;
+] .
+
+<56> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q424178> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q29548>;
+] .
+
+<57> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q180436> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q41301>;
+] .
+
+<58> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q10295810> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q29548>;
+] .
+
+<59> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q40417805> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q29548>;
+] .
+
+<60> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1504425> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q815382>;
+] .
+
+<61> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4407> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q29548>;
+] .
+
+<62> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q43656> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q29548>;
+] .
+
+<63> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q29548> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q43656>;
+] .
+
+<64> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q609748> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q182672>;
+] .
+
+<65> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q418750> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q19161>;
+] .
+
+<66> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q19081> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q19088>;
+] .
+
+<67> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q19081> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q201448>;
+] .
+
+<68> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q16023751> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1460232>;
+] .
+
+<69> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q418722> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q899107>;
+] .
+
+<70> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q15712714> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1440688>;
+] .
+
+<71> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q19081> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q25419>;
+] .
+
+<72> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q416878> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q2919111>;
+] .
+
+<73> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1440688> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q42244>;
+] .
+
+<74> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q19088> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q42244>;
+] .
+
+<75> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q30953> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q476209>;
+] .
+
+<76> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q460030> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q221179>;
+] .
+
+<77> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q899651> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q210973>;
+] .
+
+<78> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q683498> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q243257>;
+] .
+
+<79> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q517104> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q35869>;
+] .
+
+<80> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q16983360> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q16991954>;
+] .
+
+<81> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q2051533> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q743338>;
+] .
+
+<82> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q679690> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q5094647>;
+] .
+
+<83> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q743338> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1351647>;
+] .
+
+<84> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1052913> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1351647>;
+] .
+
+<85> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q912735> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q372229>;
+] .
+
+<86> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q372229> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q912735>;
+] .
+
+<87> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1200072> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1481398>;
+] .
+
+<88> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1200072> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q911129>;
+] .
+
+<89> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q916698> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q187388>;
+] .
+
+<90> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q9692> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q3040552>;
+] .
+
+<91> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q3040552> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q9692>;
+] .
+
+<92> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q8277> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q187388>;
+] .
+
+<93> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q47273> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q187388>;
+] .
+
+<94> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1636618> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q519796>;
+] .
+
+<95> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q578537> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1415366>;
+] .
+
+<96> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1006> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q4412>;
+] .
+
+<97> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4412> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1006>;
+] .
+
+<98> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q49> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q46>;
+] .
+
+<99> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1006> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q51993>;
+] .
+
+<100> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4412> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q51993>;
+] .
+
+<101> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1014> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q51993>;
+] .
+
+<102> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q582659> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q901464>;
+] .
+
+<103> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q15> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q48>;
+] .
+
+<104> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q43987> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q160122>;
+] .
+
+<105> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q90> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q142>;
+] .
+
+<106> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q679690> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q344873>;
+] .
+
+<107> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q344873> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q679690>;
+] .
+
+<108> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q7375> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q71516>;
+] .
+
+<109> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q160122> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q43987>;
+] .
+
+<110> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q33123> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q212410>;
+] .
+
+<111> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q851> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q4902157>;
+] .
+
+<112> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q3579423> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q222883>;
+] .
+
+<113> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q222883> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q3579423>;
+] .
+
+<114> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q963408> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q33123>;
+] .
+
+<115> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q380775> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q12187>;
+] .
+
+<116> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q830900> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q28425>;
+] .
+
+<117> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q269829> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q608510>;
+] .
+
+<118> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q608510> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q269829>;
+] .
+
+<119> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q625506> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q9008292>;
+] .
+
+<120> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q739734> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1330402>;
+] .
+
+<121> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1093165> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q418900>;
+] .
+
+<122> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q9008292> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q998>;
+] .
+
+<123> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q552059> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q707854>;
+] .
+
+<124> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q707854> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q552059>;
+] .
+
+<125> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q208498> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1862216>;
+] .
+
+<126> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q426245> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q824237>;
+] .
+
+<127> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q3868968> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q4950554>;
+] .
+
+<128> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q418602> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q483261>;
+] .
+
+<129> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1066303> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q79749>;
+] .
+
+<130> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q79453> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q79448>;
+] .
+
+<131> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q16023751> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q10798>;
+] .
+
+<132> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q40878> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q10798>;
+] .
+
+<133> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q7204> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q27381>;
+] .
+
+<134> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q27381> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q7204>;
+] .
+
+<135> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q158856> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q476209>;
+] .
+
+<136> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q7204> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q46>;
+] .
+
+<137> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q156103> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q40878>;
+] .
+
+<138> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1148337> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q147778>;
+] .
+
+<139> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q107244> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q184204>;
+] .
+
+<140> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q166898> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q10798>;
+] .
+
+<141> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1636618> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q652744>;
+] .
+
+<142> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q652744> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1636618>;
+] .
+
+<143> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q422438> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q421094>;
+] .
+
+<144> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q421094> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q422438>;
+] .
+
+<145> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q178827> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q726004>;
+] .
+
+<146> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q652744> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q519796>;
+] .
+
+<147> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q164778> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q998>;
+] .
+
+<148> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q408068> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q25805>;
+] .
+
+<149> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q408068> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q39572>;
+] .
+
+<150> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q80711> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q501128>;
+] .
+
+<151> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q211528> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q4902157>;
+] .
+
+<152> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q16654806> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q4902157>;
+] .
+
+<153> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q25805> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q14599311>;
+] .
+
+<154> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q2723958> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q161393>;
+] .
+
+<155> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q12184> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q161393>;
+] .
+
+<156> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q181409> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q410990>;
+] .
+
+<157> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q410990> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q181409>;
+] .
+
+<158> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q382646> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q410990>;
+] .
+
+<159> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q382646> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q181409>;
+] .
+
+<160> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q706845> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q4412>;
+] .
+
+<161> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q5266092> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q407111>;
+] .
+
+<162> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q390551> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1141177>;
+] .
+
+<163> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q19829485> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q838947>;
+] .
+
+<164> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q838947> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q19829485>;
+] .
+
+<165> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q19829485> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q7380>;
+] .
+
+<166> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q838947> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q7380>;
+] .
+
+<167> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q161393> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q12184>;
+] .
+
+<168> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q911125> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q80726>;
+] .
+
+<169> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q80726> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q911125>;
+] .
+
+<170> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q133078> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1469628>;
+] .
+
+<171> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q815382> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1504425>;
+] .
+
+<172> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q123619> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q348667>;
+] .
+
+<173> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q35805> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q38933>;
+] .
+
+<174> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q11746> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q148>;
+] .
+
+<175> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q422248> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q48743>;
+] .
+
+<176> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q26972> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q188928>;
+] .
+
+<177> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q160398> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q899033>;
+] .
+
+<178> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q133900> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q908902>;
+] .
+
+<179> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q908902> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q133900>;
+] .
+
+<180> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q160398> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q284256>;
+] .
+
+<181> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q146505> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q284256>;
+] .
+
+<182> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q133900> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q284256>;
+] .
+
+<183> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q284256> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q899033>;
+] .
+
+<184> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q899033> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q284256>;
+] .
+
+<185> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q284256> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q133900>;
+] .
+
+<186> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q284256> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q908902>;
+] .
+
+<187> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q908902> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q284256>;
+] .
+
+<188> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q899033> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q133900>;
+] .
+
+<189> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q133900> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q899033>;
+] .
+
+<190> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q899033> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q908902>;
+] .
+
+<191> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q908902> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q899033>;
+] .
+
+<192> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q160398> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q895901>;
+] .
+
+<193> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q146505> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q895901>;
+] .
+
+<194> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q9404> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q47273>;
+] .
+
+<195> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q826582> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q908902>;
+] .
+
+<196> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q908902> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q826582>;
+] .
+
+<197> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q46> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q49>;
+] .
+
+<198> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q284256> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q826582>;
+] .
+
+<199> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q826582> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q284256>;
+] .
+
+<200> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q899033> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q826582>;
+] .
+
+<201> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q826582> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q899033>;
+] .
+
+<202> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q133900> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q25419>;
+] .
+
+<203> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q133900> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q826582>;
+] .
+
+<204> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q284256> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q895901>;
+] .
+
+<205> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q895901> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q284256>;
+] .
+
+<206> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q899033> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q895901>;
+] .
+
+<207> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q908902> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q895901>;
+] .
+
+<208> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q133900> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q895901>;
+] .
+
+<209> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q133900> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q408351>;
+] .
+
+<210> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q476209> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q30953>;
+] .
+
+<211> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q908902> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q408351>;
+] .
+
+<212> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q284256> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q408351>;
+] .
+
+<213> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q25419> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q408351>;
+] .
+
+<214> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q899033> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q408351>;
+] .
+
+<215> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q207843> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q417619>;
+] .
+
+<216> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q417619> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q207843>;
+] .
+
+<217> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q2051533> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1351647>;
+] .
+
+<218> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q743338> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1052913>;
+] .
+
+<219> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q187388> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q47273>;
+] .
+
+<220> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q8277> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q47273>;
+] .
+
+<221> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q79451> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q79448>;
+] .
+
+<222> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1428754> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q29548>;
+] .
+
+<223> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1428754> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q13400765>;
+] .
+
+<224> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q80726> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q423163>;
+] .
+
+<225> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q177601> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q301676>;
+] .
+
+<226> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q156606> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q301676>;
+] .
+
+<227> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q301676> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q177601>;
+] .
+
+<228> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q80726> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q301676>;
+] .
+
+<229> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q804517> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q10876>;
+] .
+
+<230> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q7380> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q301676>;
+] .
+
+<231> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q10798> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q40878>;
+] .
+
+<232> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q16> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q8646>;
+] .
+
+<233> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q16> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q334>;
+] .
+
+<234> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q15989108> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q4412>;
+] .
+
+<235> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q166898> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q7834605>;
+] .
+
+<236> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q15989108> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q7817>;
+] .
+
+<237> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q9404> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1186703>;
+] .
+
+<238> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4936153> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q667756>;
+] .
+
+<239> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q899827> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q45948>;
+] .
+
+<240> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q916698> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1186703>;
+] .
+
+<241> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1186703> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q187388>;
+] .
+
+<242> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q58321> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q18034214>;
+] .
+
+<243> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q18034214> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q58321>;
+] .
+
+<244> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q18034214> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q2601436>;
+] .
+
+<245> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q18034214> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q421851>;
+] .
+
+<246> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q408693> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q14876123>;
+] .
+
+<247> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q58321> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q421851>;
+] .
+
+<248> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q58321> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q2601436>;
+] .
+
+<249> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q47270> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q45948>;
+] .
+
+<250> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q18034520> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q407111>;
+] .
+
+<251> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q2991682> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q423026>;
+] .
+
+<252> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1333024> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q31207>;
+] .
+
+<253> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q898218> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q14875321>;
+] .
+
+<254> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q14875321> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q208467>;
+] .
+
+<255> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1419931> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q14914279>;
+] .
+
+<256> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q14914279> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1419931>;
+] .
+
+<257> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1419931> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q46305>;
+] .
+
+<258> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1419931> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q824237>;
+] .
+
+<259> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q17115892> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q830>;
+] .
+
+<260> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q5011772> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1540899>;
+] .
+
+<261> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q815382> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q5323355>;
+] .
+
+<262> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q5323355> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1540899>;
+] .
+
+<263> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1540899> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q5323355>;
+] .
+
+<264> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q743338> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q2051533>;
+] .
+
+<265> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q5323355> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1504425>;
+] .
+
+<266> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q7121247> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q746413>;
+] .
+
+<267> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q746413> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q7121247>;
+] .
+
+<268> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q8513> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q7121247>;
+] .
+
+<269> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q7121247> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q8513>;
+] .
+
+<270> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q8513> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q746413>;
+] .
+
+<271> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q746413> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q8513>;
+] .
+
+<272> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q18033066> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q18035362>;
+] .
+
+<273> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q486921> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q3808900>;
+] .
+
+<274> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q18033066> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q424204>;
+] .
+
+<275> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q18035362> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q424204>;
+] .
+
+<276> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q194908> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q212354>;
+] .
+
+<277> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q503629> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q582849>;
+] .
+
+<278> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q582849> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q503629>;
+] .
+
+<279> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q423279> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q62536>;
+] .
+
+<280> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q62536> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q423279>;
+] .
+
+<281> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q582849> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q177911>;
+] .
+
+<282> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q503629> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q177911>;
+] .
+
+<283> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q9087616> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q43987>;
+] .
+
+<284> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q77604> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q32566>;
+] .
+
+<285> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1219805> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q6966562>;
+] .
+
+<286> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q201448> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q42244>;
+] .
+
+<287> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1283318> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q32566>;
+] .
+
+<288> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q6675780> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q28774>;
+] .
+
+<289> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q201448> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q180618>;
+] .
+
+<290> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q42244> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q180618>;
+] .
+
+<291> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1440688> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q180618>;
+] .
+
+<292> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q320607> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q335208>;
+] .
+
+<293> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q147778> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1148337>;
+] .
+
+<294> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q6844> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q131742>;
+] .
+
+<295> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q423042> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q83181>;
+] .
+
+<296> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q708693> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1148337>;
+] .
+
+<297> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1760147> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q10798>;
+] .
+
+<298> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q11358> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q408693>;
+] .
+
+<299> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4118894> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q994215>;
+] .
+
+<300> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1431332> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q203221>;
+] .
+
+<301> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q188417> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q107244>;
+] .
+
+<302> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1106472> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q43478>;
+] .
+
+<303> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q152401> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1911079>;
+] .
+
+<304> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1911079> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q152401>;
+] .
+
+<305> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q6755280> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q46305>;
+] .
+
+<306> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q2601436> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q79927>;
+] .
+
+<307> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1106472> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q180618>;
+] .
+
+<308> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q150839> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q496>;
+] .
+
+<309> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q150839> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q164778>;
+] .
+
+<310> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q310899> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q411391>;
+] .
+
+<311> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1165479> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q476209>;
+] .
+
+<312> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q389735> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q14875321>;
+] .
+
+<313> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q14875321> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q389735>;
+] .
+
+<314> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q154430> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q4340209>;
+] .
+
+<315> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4340209> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q154430>;
+] .
+
+<316> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1986297> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q12214>;
+] .
+
+<317> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q12204> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q130971>;
+] .
+
+<318> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q130971> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q12204>;
+] .
+
+<319> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q502961> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q47273>;
+] .
+
+<320> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1141177> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q390551>;
+] .
+
+<321> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q8277> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q6900>;
+] .
+
+<322> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q180071> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q174778>;
+] .
+
+<323> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q3692> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q851>;
+] .
+
+<324> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q167934> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q41576>;
+] .
+
+<325> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q41576> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q167934>;
+] .
+
+<326> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q170304> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q41576>;
+] .
+
+<327> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q41576> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q170304>;
+] .
+
+<328> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q170304> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q167934>;
+] .
+
+<329> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q167934> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q170304>;
+] .
+
+<330> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q9371> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q9368>;
+] .
+
+<331> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4950554> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q830>;
+] .
+
+<332> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4979192> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q830>;
+] .
+
+<333> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q9371> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q9377>;
+] .
+
+<334> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q9368> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q9377>;
+] .
+
+<335> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q7834605> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q10798>;
+] .
+
+<336> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q9368> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q7886>;
+] .
+
+<337> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q9371> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q7886>;
+] .
+
+<338> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q193447> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q2051533>;
+] .
+
+<339> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1351647> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q193447>;
+] .
+
+<340> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1351647> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1052913>;
+] .
+
+<341> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q193447> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1052913>;
+] .
+
+<342> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q287246> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1052913>;
+] .
+
+<343> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q172778> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1429031>;
+] .
+
+<344> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q199615> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q47273>;
+] .
+
+<345> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q28774> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q176996>;
+] .
+
+<346> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q5173756> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q4037797>;
+] .
+
+<347> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4037797> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q5173756>;
+] .
+
+<348> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q215980> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q4037797>;
+] .
+
+<349> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1129598> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q769471>;
+] .
+
+<350> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q769471> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1129598>;
+] .
+
+<351> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4037797> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q215980>;
+] .
+
+<352> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q374365> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q851>;
+] .
+
+<353> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q769471> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q146>;
+] .
+
+<354> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q25265> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q146>;
+] .
+
+<355> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4132745> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1359898>;
+] .
+
+<356> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4037797> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q133078>;
+] .
+
+<357> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q5173756> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q133078>;
+] .
+
+<358> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q6929> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q6946>;
+] .
+
+<359> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q19702543> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q1359898>;
+] .
+
+<360> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1359898> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q19702543>;
+] .
+
+<361> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q7118146> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q191341>;
+] .
+
+<362> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q4037797> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q134734>;
+] .
+
+<363> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q5173756> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q134734>;
+] .
+
+<364> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q19702543> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q134734>;
+] .
+
+<365> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1359898> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q134734>;
+] .
+
+<366> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q133078> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q134734>;
+] .
+
+<367> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q334828> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q6675780>;
+] .
+
+<368> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q191341> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q184204>;
+] .
+
+<369> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1359898> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q40878>;
+] .
+
+<370> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q2553138> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q898365>;
+] .
+
+<371> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1148004> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q7367>;
+] .
+
+<372> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q824237> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q189814>;
+] .
+
+<373> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q203221> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q201993>;
+] .
+
+<374> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q1862216> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q208498>;
+] .
+
+<375> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q9692> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q454829>;
+] .
+
+<376> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q454829> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q9692>;
+] .
+
+<377> a sh:NodeShape ;
+    sh:targetClass <http://www.wikidata.org/entity/Q146> ;
+    sh:property [  
+        sh:path rdf:type ;  
+        sh:hasValue <http://www.wikidata.org/entity/Q9692>;
+] .
+
