@@ -21,7 +21,7 @@ template {
             <th>antecedent</th>
             <th>consequent</th>
             <th>referenceCardinality</th>
-            <th>#exceptions</th>
+            <th>#violation</th>
             <th>likelihood</th>
             <th>generality</th>
             <th>X<sup>2</sup><sub>S</sub></th>
