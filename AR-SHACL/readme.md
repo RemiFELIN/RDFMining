@@ -7,10 +7,10 @@ The script *rulesToSHACL.py* read the CSV file *rules.csv* which contains the as
 the following structure:
 
 ```
-@base       <http://example.com/shapes/> .
+@prefix :  <http://www.example.com/myDataGraph#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 
-<int> a sh:NodeShape ;
+:[integer] a sh:NodeShape ;
     sh:targetClass ~ANTECEDENT~ ;
     sh:property [  
         sh:path rdf:type ;  

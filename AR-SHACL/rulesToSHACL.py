@@ -14,7 +14,7 @@ RULES = WORKSPACE + "rules.csv"
 service = "http://172.19.0.4:9100/sparql"
 sparql = SPARQLWrapper(service)
 # prefix base
-prefix = """BASE             <http://rdfminer.com/shapes/>
+prefix = """PREFIX :             <http://www.example.com/myDataGraph#> 
 PREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX sh:       <http://www.w3.org/ns/shacl#> 
@@ -91,7 +91,7 @@ if __name__ == '__main__':
         # iterate on tuples
         id_shape = 1
         for rule in tuples:
-            shape = """<{x}> a sh:NodeShape ;
+            shape = """:{x} a sh:NodeShape ;
     sh:targetClass <{a}> ;
     sh:property [  
         sh:path rdf:type ;  

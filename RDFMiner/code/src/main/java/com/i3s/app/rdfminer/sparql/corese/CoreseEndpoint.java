@@ -135,6 +135,28 @@ public class CoreseEndpoint {
     }
 
     /**
+     * <i>SELECT (count(*) as ?n) WHERE { ?s ?p ?o }</i> in Corese graph
+     */
+    public int countAll() throws URISyntaxException, IOException {
+        // "SELECT (count(distinct ?x) as ?n) WHERE { " + sparql + " }"));
+        String request = RequestBuilder.select("(count(*) as ?n)", "?s ?p ?o", this.timeout, true);
+        String resultAsJSON = query(Format.JSON, request);
+        if(resultAsJSON.contains("Read timed out") || resultAsJSON.contains("connect timed out")) {
+            // time out
+            // i.e. SocketTimeoutException from Corese server
+            return -1;
+        }
+        try {
+            return Integer.parseInt(Objects.requireNonNull(ResultParser.getResultsFromVariable("n", resultAsJSON)).get(0));
+        } catch (NullPointerException e) {
+            logger.error("Error during the counting ...");
+            logger.error("Result as JSON: " + resultAsJSON);
+        }
+        // return an error
+        return -1;
+    }
+
+    /**
      * Build a HTTP Request on Corese server : SELECT query
      * @param format the expected format
      * @param sparql the SPARQL Request

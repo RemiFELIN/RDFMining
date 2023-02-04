@@ -38,6 +38,8 @@ public class ExtendedShacl {
         RDFMiner.output.close();
         // Hypothesis test
         ValidationReport validationReport = new ValidationReport(report);
+        // print number of RDF triples in the Corese datastore
+        logger.info("Total Number of RDF Triples: " + endpoint.countAll());
         // perform hypothesis testing
         performHypothesisTesting(validationReport, shapesManager);
         // send hypothesis result to Corese graph
@@ -53,6 +55,8 @@ public class ExtendedShacl {
         STTL.perform(endpoint, Global.PROBABILISTIC_STTL_TEMPLATE, Global.PROBABILISTIC_STTL_RESULT_AS_HTML);
         // remove imported data
         removeImportedData(endpoint);
+        // print number of RDF triples in the Corese datastore (to check if imported data have been correctly removed)
+        logger.info("Total Number of RDF Triples: " + endpoint.countAll());
     }
 
     public static void performHypothesisTesting(ValidationReport validationReport, ShapesManager shapesManager) throws IOException {
@@ -67,32 +71,31 @@ public class ExtendedShacl {
             if(validationReport.reportedShapes.contains(shape.uri.replace("<", "").replace(">", ""))) {
                 // get shapes with metrics
                 shape.fillParamFromReport(validationReport);
-//                logger.info(shape.toString());
                 // X^2 computation
                 double nExcTheo = shape.referenceCardinality * Double.parseDouble(RDFMiner.parameters.probShaclP);
                 double nConfTheo = shape.referenceCardinality - nExcTheo;
                 // if observed error is lower, accept the shape
                 if(shape.numExceptions <= nExcTheo) {
-                    hypothesisTestFw.write(shape.uri + " ex:acceptance \"true\"^^xsd:boolean .\n");
+                    hypothesisTestFw.write(getRDFtripleForAcceptedShape(shape.uri));
                 }  else if (nExcTheo >= 5 && nConfTheo >= 5) {
                     // apply statistic test X2
-                    Double X2 = (Math.pow(shape.numExceptions - nExcTheo, 2) / nExcTheo) +
+                    double X2 = (Math.pow(shape.numExceptions - nExcTheo, 2) / nExcTheo) +
                             (Math.pow(shape.numConfirmations - nConfTheo, 2) / nConfTheo);
-                    hypothesisTestFw.write(shape.uri + " ex:pvalue \"" + X2 + "\"^^xsd:double .\n");
+                    hypothesisTestFw.write(getRDFtripleHTForShape(shape.uri, X2));
                     double critical = new ChiSquaredDistribution(1).inverseCumulativeProbability(1 - RDFMiner.parameters.alpha);
                     if (X2 <= critical) {
                         // Accepted !
-                        hypothesisTestFw.write(shape.uri + " ex:acceptance \"true\"^^xsd:boolean .\n");
+                        hypothesisTestFw.write(getRDFtripleForAcceptedShape(shape.uri));
                     } else {
                         // rejected !
-                        hypothesisTestFw.write(shape.uri + " ex:acceptance \"false\"^^xsd:boolean .\n");
+                        hypothesisTestFw.write(getRDFtripleForRejectedShape(shape.uri));
                     }
                 } else {
                     // rejected !
-                    hypothesisTestFw.write(shape.uri + " ex:acceptance \"false\"^^xsd:boolean .\n");
+                    hypothesisTestFw.write(getRDFtripleForRejectedShape(shape.uri));
                 }
             } else {
-                logger.warn("Shape to remove: " + shape.uri);
+                logger.warn("This shape " + shape.uri + " is not mentionned in the current validation report !");
             }
         }
         hypothesisTestFw.close();
@@ -113,10 +116,22 @@ public class ExtendedShacl {
         String constraints = "?x ?p ?o . FILTER( contains(str(?p), str(sh:)) || " +
                 "contains(str(?p), str(psh:)) || contains(str(?o), str(sh:)) || contains(str(?o), str(psh:)) || " +
                 "contains(str(?p), str(ex:)) ) .";
-        String query = "DELETE { ?x ?p ?o . } WHERE { " + constraints + "}";
+        String query = Global.PREFIXES + "DELETE { ?x ?p ?o . } WHERE { " + constraints + "}";
         // remove data in GET service
         endpoint.query(Format.JSON, query);
         logger.info("Done !");
+    }
+
+    public static String getRDFtripleForAcceptedShape(String uri) {
+        return uri + " ex:acceptance \"true\"^^xsd:boolean .\n";
+    }
+
+    public static String getRDFtripleForRejectedShape(String uri) {
+        return uri + " ex:acceptance \"false\"^^xsd:boolean .\n";
+    }
+
+    public static String getRDFtripleHTForShape(String uri, double x2) {
+        return uri + " ex:pvalue \"" + x2 + "\"^^xsd:double .\n";
     }
 
 }

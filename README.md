@@ -48,11 +48,11 @@ The dataset used in the experiments is stored in **Corese/data/**: covidontheweb
 > **INFO** For both modes used, the content of *YourShapesFile.ttl* MUST contains well-formed SHACL Shapes (e.g. using Turtle format) like:
 ```
 # You must define prefixes used in this file
-BASE             <http://example.com/shapes/>
+PREFIX :         <http://www.example.com/myDataGraph#> .
 PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX sh:       <http://www.w3.org/ns/shacl#> 
 
-<2> a sh:NodeShape ;
+:2 a sh:NodeShape ;
     sh:targetClass <http://www.wikidata.org/entity/Q194290> ;
     sh:property [  
         sh:path rdf:type ;  
