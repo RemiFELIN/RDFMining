@@ -238,7 +238,7 @@ public class Shape extends Entity {
         String parsedUri = this.uri.replace("<", "").replace(">", "");
         this.referenceCardinality = report.referenceCardinalityByShape.get(parsedUri).intValue();
         this.numConfirmations = report.numConfirmationsByShape.get(parsedUri).intValue();
-        this.numExceptions = report.numExceptionsByShape.get(parsedUri).intValue();
+        this.numExceptions = report.numViolationsByShape.get(parsedUri).intValue();
         this.likelihood = report.likelihoodByShape.get(parsedUri);
 //        this.generality = report.generalityByShape.get(parsedUri);
 //        this.fitness = report.fitnessByShape.get(parsedUri);

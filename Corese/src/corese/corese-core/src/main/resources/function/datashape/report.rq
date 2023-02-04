@@ -47,7 +47,7 @@ function xsd:boolean sh:report(report, subReport, name, sh, cst, s, p, o, suc, v
 # sn: shapeName
 # m: mode
 # rc: referenceCardinality
-# ne: numException
+# ne: numViolation
 # nc: numConfirmation
 # function sh:getExtendedShaclVar(sn, m, rc, ne, nc) {
 #     # TODO tmp: define properly where var must be define on different files
@@ -55,7 +55,7 @@ function xsd:boolean sh:report(report, subReport, name, sh, cst, s, p, o, suc, v
 #     set(shapeName = sn);
 #     # set(mode = m);
 #     # set(referenceCardinality = rc);
-#     set(numException = ne);
+#     set(numViolation = ne);
 #     set(numConfirmation = nc);
 #     # set the extended mode to true 
 #     # in order to render additional information
@@ -143,18 +143,18 @@ function sh:addExtendedShaclReport(report, exceptions) {
     sh:store(report, summary, psh:focusShape, shapeName);
     # referenceCardinality is defined on <main.rq> sh:shacleval(shape, focus)
     sh:store(report, summary, psh:referenceCardinality, referenceCardinality);
-    # numException is defined by the size of exceptions list such as :
-    set(numException = xt:size(exceptions));
-    sh:store(report, summary, psh:numException, numException);
+    # numViolation is defined by the size of exceptions list such as :
+    set(numViolation = xt:size(exceptions));
+    sh:store(report, summary, psh:numViolation, numViolation);
     # numConfirmation is defined by referenceCardinality and the size of exceptions list such as : 
-    set(numConfirmation = (referenceCardinality - numException));
+    set(numConfirmation = (referenceCardinality - numViolation));
     # fix negative values for the number of confirmations
     if(numConfirmation < 0) {
         set(numConfirmation = 0);
     };
     sh:store(report, summary, psh:numConfirmation, numConfirmation);
     # sh:log("core.rq", "sh:binomial", "start binomiale !");
-    set(likelihood = sh:binomial(referenceCardinality, prob, numException));
+    set(likelihood = sh:binomial(referenceCardinality, prob, numViolation));
     sh:store(report, summary, psh:likelihood, likelihood);
     set(generality = (referenceCardinality / numInstances));
     sh:store(report, summary, psh:generality, generality);

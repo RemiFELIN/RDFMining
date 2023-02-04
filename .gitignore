@@ -17,6 +17,7 @@ RDFMiner/io/
 *.idea
 .vscode
 # IO/
+IO/log/
 Corese/jar/*
 Corese/log/*
 Corese/src/corese/git_folder

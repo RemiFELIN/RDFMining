@@ -59,7 +59,7 @@ where  {
       psh:referenceCardinality ?refc ;
       psh:likelihood ?likelihood ; 
       psh:generality ?generality ; 
-      psh:numException ?nexc ; 
+      psh:numViolation ?nexc ; 
       psh:focusShape ?shape .
    ?shape sh:targetClass ?nant ; 
       sh:property ?p ;

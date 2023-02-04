@@ -50,9 +50,9 @@ psh:numConfirmation
     rdfs:range xsd:integer ;
     rdfs:isDefinedBy psh: .
 
-psh:numException
+psh:numViolation
     a rdf:Property ;
-    rdfs:label "number of exception"@en ;
+    rdfs:label "number of violation"@en ;
     rdfs:comment "Specifies the number of nodes that contradict the current shape"@en ;
     rdfs:domain sh:ValidationSummary ;
     rdfs:range xsd:integer ;
