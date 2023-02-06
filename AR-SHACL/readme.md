@@ -36,6 +36,6 @@ in our dataset.
 
 ## References 
 
-[1] Cadorel, L., Tettamanzi, A.: Mining rdf data of covid-19 scientific literature for
+[1] Cadorel et al.: Mining rdf data of covid-19 scientific literature for
 interesting association rules. 2020 IEEE/WIC/ACM International Joint Conference on 
 Web Intelligence and Intelligent Agent Technology (WI-IAT) pp. 145–152 (2020)
