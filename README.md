@@ -52,7 +52,7 @@ This section provides a way to launch your own experiments:
 
 ### Probabilistic SHACL Validation
 
-> **COMMAND LINE** docker-compose exec -T rdfminer ./rdfminer/scripts/run.sh -psh -shacl-p 0.5 -sf /rdfminer/io/*[YourShapesFile.ttl]* -dir *[YourResultsFolder/]* 
+> **COMMAND LINE** docker-compose exec -T rdfminer ./rdfminer/scripts/run.sh -psh -shacl-p *[p]* -sf /rdfminer/io/*[YourShapesFile.ttl]* -dir *[YourResultsFolder/]* 
 
 > **INFO** For both modes used, the content of *YourShapesFile.ttl* MUST contains well-formed SHACL Shapes (e.g. using Turtle format) like:
 ```
