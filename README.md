@@ -37,6 +37,15 @@ The dataset used in the experiments is stored in **Corese/data/**: covidontheweb
 
 ## SHACL Shapes evaluation
 
+This section provides a way to launch your own experiments:
+
+### How to load your RDF data 
+
+1. Interrupt the *Corese server*: ```sudo docker-compose stop corese```
+2. Put your data file(s) in the **/Corese/data/** folder (and remove the unused data file, i.e. *covidontheweb_data.ttl*)
+3. Launch *Corese server*: ```sudo docker-compose up -d corese```
+> **INFO** You can query your data on the following SPARQL endpoint: ```http://172.19.0.4:9100/sparql```
+
 ### Standard SHACL Validation
 
 > **COMMAND LINE** docker-compose exec -T rdfminer ./rdfminer/scripts/run.sh -cs -sf rdfminer/io/*[YourShapesFile.ttl]* -dir *[YourResultsFolder/]* 
