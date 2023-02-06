@@ -1,5 +1,9 @@
 # ESWC Conference : A Framework to Include and Exploit Probabilistic Information in SHACL Validation Reports
 
+## Revised article
+
+The revised article is avalaible in the **article/** folder.
+
 ## Requirements
 
 ### For users 
@@ -29,7 +33,7 @@
 
 ## Association rules to SHACL shapes
 
-All the informations about it are contained in **AR-SHACL** folder. 
+All the informations about it are contained in the **AR-SHACL** folder. 
 
 ## CovidOnTheWeb dataset
 
@@ -71,4 +75,4 @@ PREFIX sh:       <http://www.w3.org/ns/shacl#>
 
 ## RDFS Schema
 
-The RDF Schema is provided in **rdfs/** folder.
+The RDF Schema is provided in the **rdfs/** folder.
