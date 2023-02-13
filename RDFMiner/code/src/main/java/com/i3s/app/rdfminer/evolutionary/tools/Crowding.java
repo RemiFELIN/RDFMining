@@ -2,6 +2,7 @@ package com.i3s.app.rdfminer.evolutionary.tools;
 
 import Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.evolutionary.fitness.novelty.NoveltySearch;
 import com.i3s.app.rdfminer.evolutionary.fitness.novelty.Similarity;
@@ -69,9 +70,14 @@ public class Crowding {
 		return survivals;
 	}
 
-	public double distance(Entity a, Entity b) throws URISyntaxException, IOException {
-		return Similarity.getJaccardSimilarity(new CoreseEndpoint(Global.CORESE_IP, Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES),
-				a, b);
+	public double distance(Entity phi1, Entity phi2) throws URISyntaxException, IOException {
+		if(RDFMiner.similarityMap.get(phi1, phi2) != null) {
+			logger.debug("get similarity value from similarity map ...");
+			return RDFMiner.similarityMap.get(phi1, phi2);
+		} else {
+			return Similarity.getNormalizedSimilarity(
+					new CoreseEndpoint(Global.CORESE_IP, Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES), phi1, phi2);
+		}
 	}
 
 	public Entity compare(Entity parent, Entity child) throws URISyntaxException, IOException {

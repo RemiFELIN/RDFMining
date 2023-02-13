@@ -63,7 +63,7 @@ public class Global {
      * SPARQL endpoint}
      */
     public static String PREFIXES =
-              "BASE             <http://rdfminer.com/shapes/>\n"
+              "PREFIX :         <http://rdfminer.com/shapes/>\n"
             + "PREFIX owl:      <http://www.w3.org/2002/07/owl#>\n"
             + "PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>\n"
             + "PREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#>\n"
@@ -84,7 +84,7 @@ public class Global {
     /**
      * Size of the SHACL Shapes ID randomly generated using BNF Grammar
      */
-    public static final int SIZE_ID_SHACL_SHAPES = 6;
+//    public static final int SIZE_ID_SHACL_SHAPES = 6;
 
     /**
      * Output path of results, it corresponding to '/rdfminer/io/' in container
@@ -120,8 +120,10 @@ public class Global {
      */
     public static final String CACHE_PATH = HOME + "/caches/";
 
+    public static final String SIMILARITIES_FILE = HOME + "/caches/axioms_similarity.json";
+
     /**
-     * Number of threads used to perform evaluation of axioms, its value depends of
+     * Number of threads used to perform evaluation of axioms, its value depends on
      * the processor(s) of the server which are used to deploy and use the RDF
      * Miner.
      */

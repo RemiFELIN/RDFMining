@@ -7,6 +7,7 @@ import com.i3s.app.rdfminer.evolutionary.tools.CostGP;
 import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
 import com.i3s.app.rdfminer.launcher.Evaluator;
 import com.i3s.app.rdfminer.output.Results;
+import com.i3s.app.rdfminer.output.SimilarityMap;
 import com.i3s.app.rdfminer.output.Stat;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
 import org.apache.log4j.Logger;
@@ -57,6 +58,8 @@ public class RDFMiner {
 	public static Stat stats;
 	public static List<JSONObject> content;
 	public static int type;
+	// v1.5 Novelty search
+	public static SimilarityMap similarityMap = null;
 
 	/**
 	 * A table of predicates, used in {@link CostGP}
@@ -127,22 +130,12 @@ public class RDFMiner {
 			RDFMiner.outputFolder = Global.OUTPUT_PATH + parameters.resultFolder;
 		}
 
-		// get the mode used ( SHACL Shapes ; OWL 2 Axioms )
-//		if(parameters.useShaclMode) {
-//			mode = new Mode(TypeMode.SHACL_SHAPE);
-////			results = new ShapesResultsJSON();
-//		} else {
-//			mode = new Mode(TypeMode.AXIOMS);
-//		results = new AxiomsResultsJSON();
-//		}
-
 		// define a SPARQL Endpoint to use if provided
-		if (parameters.grammaticalEvolution && (parameters.useClassicShaclMode || parameters.useProbabilisticShaclMode)) {
+		if (parameters.useClassicShaclMode || parameters.useProbabilisticShaclMode) {
 			// SHACL Shapes mining !
-			logger.warn("Grammatical evolution activated for SHACL Shapes !");
+			Global.TARGET_SPARQL_ENDPOINT = Global.CORESE_IP;
 			logger.warn("RDFMiner will query the Corese semantic factory: " + Global.TARGET_SPARQL_ENDPOINT);
 			logger.warn("This version of Corese contains an implementation of SHACL (standard and probabilistic) ...");
-			Global.TARGET_SPARQL_ENDPOINT = Global.CORESE_IP;
 		} else if(parameters.targetSparqlEndpoint != null) {
 			logger.info("(--target-endpoint) a target SPARQL Endpoint is specified !");
 			try {
@@ -199,6 +192,16 @@ public class RDFMiner {
 			}
 		} else {
 			logger.info("RDFMiner will use the default prefixes to perform SPARQL queries ...");
+		}
+
+		// Novelty search
+		if(parameters.useNoveltySearch) {
+			if(!new File(Global.SIMILARITIES_FILE).exists()) {
+				logger.info("Create the similarity map and save it into " + Global.SIMILARITIES_FILE + " file");
+				similarityMap = new SimilarityMap();
+			} else {
+				similarityMap = new SimilarityMap(new File(Global.SIMILARITIES_FILE));
+			}
 		}
 
 		// If parameters.grammaticalEvolution is used, we launch an instance of

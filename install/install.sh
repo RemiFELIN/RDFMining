@@ -32,7 +32,8 @@ mv -f corese-server/target/corese-server-$CORESE_VERSION-jar-with-dependencies.j
 cd ../../..
 # prepare data folder for Corese
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Create data folder for Corese-server        v$CORESE_VERSION"
-mkdir ./Corese/data/
+mkdir -p ./Corese/data/
+mkdir -p ./Virtuoso/data/
 # Download SPIN 2.0.0 from http://topquadrant.com/repository/spin/
 SPIN_PATH="./RDFMiner/dep/org/topbraid/spin/2.0.0/"
 if [ ! -d "$SPIN_PATH" ]; then 

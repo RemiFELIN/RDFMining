@@ -56,17 +56,18 @@ public class EntityMining {
             }
         }
 
-        ArrayList<Entity> distinctEntities = EATools.getDistinctGenotypePopulation(entities);
+        // @todo tester avec une liste non distincte !!
+//        ArrayList<Entity> distinctEntities = EATools.getDistinctGenotypePopulation(entities);
         // STEP 3 - SELECTION OPERATION - Reproduce Selection - Parent Selection
-//        ArrayList<GEIndividual> entitiesAsIndividuals = new ArrayList<>();
-        ArrayList<GEIndividual> distinctEntitiesAsIndividuals = new ArrayList<>();
+        ArrayList<GEIndividual> entitiesAsIndividuals = new ArrayList<>();
+//        ArrayList<GEIndividual> distinctEntitiesAsIndividuals = new ArrayList<>();
         ArrayList<GEIndividual> selectedIndividuals;
         ArrayList<GEIndividual> elitismIndividuals = new ArrayList<>();
 
         // Use list of individuals instead of list of entities
         // i.e. apply GE process directly on individuals
-        for(Entity entity : distinctEntities) {
-            distinctEntitiesAsIndividuals.add(entity.individual);
+        for(Entity entity : entities) {
+            entitiesAsIndividuals.add(entity.individual);
         }
 
         if (RDFMiner.parameters.elitism == 1) {
@@ -77,13 +78,13 @@ public class EntityMining {
             logger.info("Selecting " + (int) (RDFMiner.parameters.sizeElite * 100)
                     + "% elite individuals for the new population");
             EliteSelection elite = new EliteSelection(sizeElite);
-            elite.setParentsSelectionElitism(distinctEntitiesAsIndividuals);
-            selectedIndividuals = elite.setupSelectedPopulation(distinctEntitiesAsIndividuals);
+            elite.setParentsSelectionElitism(entitiesAsIndividuals);
+            selectedIndividuals = elite.setupSelectedPopulation(entitiesAsIndividuals);
             logger.info("Size of the selected population: " + selectedIndividuals.size());
             elitismIndividuals = elite.getElitedPopulation();
             logger.info("Size of the elitism population: " + elitismIndividuals.size());
         } else {
-            selectedIndividuals = distinctEntitiesAsIndividuals;
+            selectedIndividuals = entitiesAsIndividuals;
             sizeElite = 0;
         }
         // set the type selection
@@ -92,12 +93,12 @@ public class EntityMining {
         if(crossoverIndividuals == null) {
             // set distinct entities instead of all entities
             // i.e. remove duplicates
-            crossoverIndividuals = distinctEntitiesAsIndividuals;
+            crossoverIndividuals = entitiesAsIndividuals;
         }
         /* STEP 4 - CROSSOVER & MUTATION OPERATION */
         // Crossover single point between 2 individuals of the selected population
-        ArrayList<Entity> crossoverEntities = EATools.bindIndividualsWithEntities(crossoverIndividuals, distinctEntities);
-        ArrayList<Entity> elitismEntities = EATools.bindIndividualsWithEntities(elitismIndividuals, distinctEntities);
+        ArrayList<Entity> crossoverEntities = EATools.bindIndividualsWithEntities(crossoverIndividuals, entities);
+        ArrayList<Entity> elitismEntities = EATools.bindIndividualsWithEntities(elitismIndividuals, entities);
         // Compute GE and add new population on a new list of individuals
         ArrayList<Entity> computedPopulation = Generation.compute(crossoverEntities, curGeneration, generator);
         // set new population

@@ -36,12 +36,7 @@ public class Similarity {
         Expression phi1SuperClass = ExpressionFactory.createClass(phi1.argumentClasses.get(1));
         Expression phi2SubClass = ExpressionFactory.createClass(phi2.argumentClasses.get(0));
         Expression phi2SuperClass = ExpressionFactory.createClass(phi2.argumentClasses.get(1));
-        // if the two axioms are equivalent, we set sim(phi1, phi2) = 1
-        if(Objects.equals(phi1SubClass.graphPattern, phi2SubClass.graphPattern) &&
-                Objects.equals(phi1SuperClass.graphPattern, phi2SuperClass.graphPattern)) {
-            logger.debug("The same axioms are compared, it will return sim(a,a) = 1 !");
-            return 1;
-        }
+        // compute sparql queries
         String simNumSparql = "{ " + phi1SubClass.graphPattern + phi1SuperClass.graphPattern + " } UNION { " +
                 phi2SubClass.graphPattern + phi2SuperClass.graphPattern + " } ";
         String simDenSparql = "{ " + phi1SubClass.graphPattern + " } UNION { " + phi2SubClass.graphPattern + " }";
@@ -51,6 +46,28 @@ public class Similarity {
         if(similarityDenominator == 0)  return 0;
         // else return value
         return similarityNumerator / similarityDenominator;
+    }
+
+    /**
+     * Compute the normalized similarity between an axiom &phi<sub>1</sub> and &phi<sub>2</sub> using the Jaccord similarity such as:<br><br>
+     * <center><sup>sim<sub>j</sub>(&phi<sub>1</sub>, &phi<sub>2</sub>)</sup>
+     * &frasl;
+     * <sub><var>max(</var> sim<sub>j</sub>(&phi<sub>1</sub>, &phi<sub>1</sub> , sim<sub>j</sub>(&phi<sub>2</sub>, &phi<sub>2</sub>) <var>)</var>
+     * </sub></center><br>
+     * @param endpoint an instance of CoreseEndpoint
+     * @param phi1 an instance of Axiom where &phi<sub>1</sub> = A &#8849; B
+     * @param phi2 another instance of Axiom to compare with &phi<sub>1</sub>, where &phi<sub>2</sub> = C &#8849; D
+     * @return the similarity value: <var>sim<sub>j</sub></var> (&phi<sub>1</sub>, &phi<sub>2</sub>) &isin <var>[0, 1]</var>
+     */
+    public static double getNormalizedSimilarity(CoreseEndpoint endpoint, Entity phi1, Entity phi2) throws URISyntaxException, IOException {
+        double simJphi1phi2 = getJaccardSimilarity(endpoint, phi1, phi2);
+        // get max sim(p1,p1) , sim(p2,p2)
+        double simJphi1phi1 = getJaccardSimilarity(endpoint, phi1, phi1);
+        double simJphi2phi2 = getJaccardSimilarity(endpoint, phi2, phi2);
+        // avoid NaN value returned by a zero-denominator
+        if(simJphi1phi1 == 0 && simJphi2phi2 == 0) return 0;
+        // compute normalized similarity
+        return simJphi1phi2 / Math.max(simJphi1phi1, simJphi2phi2);
     }
 
 }

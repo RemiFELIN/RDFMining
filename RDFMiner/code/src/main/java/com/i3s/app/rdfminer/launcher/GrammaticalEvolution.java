@@ -153,6 +153,10 @@ public class GrammaticalEvolution {
             RDFMiner.results.content = RDFMiner.content;
             RDFMiner.output.write(RDFMiner.results.toJSON().toString(2));
             RDFMiner.output.close();
+            // if novelty seach is used
+            if(RDFMiner.similarityMap != null) {
+                RDFMiner.similarityMap.editFile();
+            }
         } catch (IOException e) {
             logger.error("I/O error while closing JSON writer: " + e.getMessage());
             e.printStackTrace();

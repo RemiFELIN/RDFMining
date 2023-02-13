@@ -42,8 +42,16 @@ public class NoveltySearch {
         ArrayList<Entity> simEntities = new ArrayList<>();
         for(Entity phi1 : entities) {
             for(Entity phi2 : entities) {
-                if(!Objects.equals(phi1.individual.getGenotype().toString(), phi2.individual.getGenotype().toString())) {
-                    phi1.similarities.add(Similarity.getJaccardSimilarity(endpoint, phi1, phi2));
+                if(phi1 != phi2) {
+                    // use similarity cache$
+                    if(RDFMiner.similarityMap.get(phi1, phi2) != null) {
+                        logger.debug("get similarity value from similarity map ...");
+                        phi1.similarities.add(RDFMiner.similarityMap.get(phi1, phi2));
+                    } else {
+                        double sim = Similarity.getNormalizedSimilarity(endpoint, phi1, phi2);
+                        phi1.similarities.add(sim);
+                        RDFMiner.similarityMap.append(phi1, phi2, sim);
+                    }
                 }
             }
             simEntities.add(phi1);
@@ -59,15 +67,15 @@ public class NoveltySearch {
         return updatedEntities;
     }
 
-    public static Entity updateSimilarity(CoreseEndpoint endpoint, Entity entity, ArrayList<Entity> entities) throws URISyntaxException, IOException {
-        logger.debug("Update the similarity of axiom '" + entity.entityAsString + "' among its population to consider novelty approach");
-        for(Entity other : entities) {
-            if(!Objects.equals(entity.individual.getGenotype().toString(), other.individual.getGenotype().toString())) {
-                entity.similarities.add(Similarity.getJaccardSimilarity(endpoint, entity, other));
-            }
-        }
-        return entity;
-    }
+//    public static Entity updateSimilarity(CoreseEndpoint endpoint, Entity entity, ArrayList<Entity> entities) throws URISyntaxException, IOException {
+//        logger.debug("Update the similarity of axiom '" + entity.entityAsString + "' among its population to consider novelty approach");
+//        for(Entity other : entities) {
+//            if(!Objects.equals(entity.individual.getGenotype().toString(), other.individual.getGenotype().toString())) {
+//                entity.similarities.add(Similarity.getNormalizedSimilarity(endpoint, entity, other));
+//            }
+//        }
+//        return entity;
+//    }
 
     /**
      * compute the fitness value <var>f</var>(&phi) in the Novelty Search context using this formula:<br><br>
@@ -97,25 +105,32 @@ public class NoveltySearch {
         List<String> axiomsAsString = Arrays.asList(
 //                "SubClassOf(<http://dbpedia.org/ontology/InformationAppliance> <http://www.w3.org/2004/02/skos/core#Concept>)",
 //                "SubClassOf(<http://dbpedia.org/ontology/Monarch> <http://xmlns.com/foaf/0.1/Person>)",
-//                "SubClassOf(<http://schema.org/Airport> <http://dbpedia.org/ontology/Place>)",
+                "SubClassOf(<http://schema.org/Airport> <http://dbpedia.org/ontology/Place>)",
 //                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://dbpedia.org/ontology/Agent>)"
+                "SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>)",
                 "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)",
-                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)",
-                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://dbpedia.org/ontology/River>)",
+                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)"
+//                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://dbpedia.org/ontology/River>)",
 //                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://dbpedia.org/ontology/University>)",
-                "SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>)"
+//                "SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>)",
+
 //                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)"
         );
         ArrayList<Axiom> axioms = new ArrayList<>();
 
-        // We have a set of threads to compute each axioms
-        ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
-        // test future get
-        List<Callable<Axiom>> callables = new ArrayList<>();
-        callables.add(() -> AxiomFactory.create(null, axiomsAsString.get(0), endpoint));
-        Future<Axiom> futures = executor.submit(callables.get(0));
-        Axiom test = futures.get(2000, TimeUnit.MILLISECONDS);
-        System.out.println(test);
+//        // We have a set of threads to compute each axioms
+//        ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
+//        // test future get
+//        List<Callable<Axiom>> callables = new ArrayList<>();
+//        callables.add(() -> AxiomFactory.create(null, axiomsAsString.get(0), endpoint));
+//        Future<Axiom> futures = executor.submit(callables.get(0));
+//        Axiom test = futures.get(2000, TimeUnit.MILLISECONDS);
+//        System.out.println(test);
+
+        String test1 = "SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>)";
+        String test2 = "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)";
+        logger.info("hascode of SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>) ~> " + test1.hashCode());
+        logger.info("hashcode of SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>) ~> " + test2.hashCode());
 
         for(String axiom : axiomsAsString) {
             axioms.add(AxiomFactory.create(null, axiom, endpoint));
@@ -124,7 +139,7 @@ public class NoveltySearch {
         for(Axiom a : axioms) {
             for(Axiom b : axioms) {
                 if(a.argumentClasses.get(0).get(0) != b.argumentClasses.get(0).get(0)) {
-                    a.similarities.add(Similarity.getJaccardSimilarity(endpoint, a, b));
+                    a.similarities.add(Similarity.getNormalizedSimilarity(endpoint, a, b));
                 }
             }
             logger.info("similarities for " + a.argumentClasses + ": " + a.similarities);
