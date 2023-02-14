@@ -63,7 +63,7 @@ public class Global {
      * SPARQL endpoint}
      */
     public static String PREFIXES =
-              "PREFIX :         <http://rdfminer.com/shapes/>\n"
+              "PREFIX :         <http://www.example.com/myDataGraph#>\n"
             + "PREFIX owl:      <http://www.w3.org/2002/07/owl#>\n"
             + "PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>\n"
             + "PREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#>\n"
@@ -79,7 +79,7 @@ public class Global {
             + "PREFIX sp:       <http://spinrdf.org/sp#> \n"
             + "PREFIX sh:       <http://www.w3.org/ns/shacl#> \n"
             + "PREFIX dct:      <http://purl.org/dc/terms/> \n"
-            + "PREFIX psh:      <http://www.w3.org/ns/probabilistic-shacl#> \n";
+            + "PREFIX psh:      <http://www.example.org/ns/probabilistic-shacl#> \n";
 
     /**
      * Size of the SHACL Shapes ID randomly generated using BNF Grammar

@@ -3,7 +3,7 @@
 #
 # Olivier Corby - Wimmics Inria I3S - 2016-2020
 #
-prefix psh: <http://www.w3.org/ns/probabilistic-shacl#>
+prefix psh: <http://www.example.org/ns/probabilistic-shacl#>
 prefix sh:   <http://www.w3.org/ns/shacl#> 
 prefix xsh:  <http://www.w3.org/ns/shacl#> 
 prefix shex: <http://ns.inria.fr/shex/shacl#>
@@ -145,7 +145,7 @@ function sh:addExtendedShaclReport(report, exceptions) {
     sh:store(report, summary, psh:referenceCardinality, referenceCardinality);
     # numException is defined by the size of exceptions list such as :
     set(numException = xt:size(exceptions));
-    sh:store(report, summary, psh:numException, numException);
+    sh:store(report, summary, psh:numViolation, numException);
     # numConfirmation is defined by referenceCardinality and the size of exceptions list such as : 
     set(numConfirmation = (referenceCardinality - numException));
     # fix negative values for the number of confirmations

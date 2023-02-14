@@ -88,7 +88,7 @@ public class NSManager extends ASTObject {
     public static final String SHACL_JAVA = "function://fr.inria.corese.core.extension.SHACL.";
     public static final String SHACL_SHACL = RESOURCE+"data/shaclshacl.ttl";
     // Probabilistic SHACL
-    public static final String PROBSHACL = "http://www.w3.org/ns/probabilistic-shacl#";
+    public static final String PROBSHACL = "http://www.example.org/ns/probabilistic-shacl#";
 
     public static final String COSNS = RDFS.COSNS;
     public static final String COS = RDFS.COS;

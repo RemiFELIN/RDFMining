@@ -1,4 +1,4 @@
-prefix psh:  <http://www.w3.org/ns/probabilistic-shacl#>
+prefix psh:  <http://www.example.org/ns/probabilistic-shacl#>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 prefix sh:   <http://www.w3.org/ns/shacl#>
 prefix ex:   <http://example.org/demo#>
@@ -21,7 +21,7 @@ template {
             <th>antecedent</th>
             <th>consequent</th>
             <th>referenceCardinality</th>
-            <th>#exceptions</th>
+            <th>#violation</th>
             <th>likelihood</th>
             <th>generality</th>
             <th>X<sup>2</sup><sub>S</sub></th>
@@ -49,7 +49,7 @@ template {
             <td>%s</td>
          </tr>
             """       
-            ?ant ?con ?refc ?nexc ?likelihood ?generality ?X ?accept
+            ?ant ?con ?refc ?nvio ?likelihood ?generality ?X ?accept
          }
       }
    }
@@ -59,7 +59,7 @@ where  {
       psh:referenceCardinality ?refc ;
       psh:likelihood ?likelihood ; 
       psh:generality ?generality ; 
-      psh:numException ?nexc ; 
+      psh:numViolation ?nvio ; 
       psh:focusShape ?shape .
    ?shape sh:targetClass ?nant ; 
       sh:property ?p ;
@@ -70,4 +70,4 @@ where  {
    optional { ?shape ex:pvalue ?val . }
    bind(if(bound(?val), ?val, " ") as ?X)
 }
-order by ?ant ?con ?refc ?nexc ?likelihood ?generality ?X ?accept
+order by ?ant ?con ?refc ?nvio ?likelihood ?generality ?X ?accept
