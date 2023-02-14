@@ -40,22 +40,25 @@ public class NoveltySearch {
     public ArrayList<Entity> update(List<Entity> entities) throws URISyntaxException, IOException {
         logger.info("Updating similarities between individuals ...");
         ArrayList<Entity> simEntities = new ArrayList<>();
+        int countNewSim = 0;
         for(Entity phi1 : entities) {
             for(Entity phi2 : entities) {
                 if(phi1 != phi2) {
                     // use similarity cache$
                     if(RDFMiner.similarityMap.get(phi1, phi2) != null) {
-                        logger.debug("get similarity value from similarity map ...");
+//                        logger.debug("get similarity value from similarity map ...");
                         phi1.similarities.add(RDFMiner.similarityMap.get(phi1, phi2));
                     } else {
                         double sim = Similarity.getNormalizedSimilarity(endpoint, phi1, phi2);
                         phi1.similarities.add(sim);
                         RDFMiner.similarityMap.append(phi1, phi2, sim);
+                        countNewSim++;
                     }
                 }
             }
             simEntities.add(phi1);
         }
+        logger.info(countNewSim + " new similarities has been added into map");
         logger.info("updating the fitness ...");
         ArrayList<Entity> updatedEntities = new ArrayList<>();
         for(Entity e : simEntities) {
