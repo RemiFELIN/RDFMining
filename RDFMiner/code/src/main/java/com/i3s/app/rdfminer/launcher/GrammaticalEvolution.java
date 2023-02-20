@@ -31,9 +31,9 @@ public class GrammaticalEvolution {
 
         // ShutDownHook
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            logger.warn("Shutting down RDFMiner ...");
             // Save results in output file
             writeAndFinish();
+            logger.warn("Shutting down RDFMiner ...");
         }));
 
         // set results content as JSON object
@@ -196,23 +196,5 @@ public class GrammaticalEvolution {
                 break;
         }
     }
-
-//    public static void main(String[] args) {
-//        int curGen = 1;
-//        int ckp = 2;
-//        int curCkp = 0;
-//        int popSize = 10;
-//        int kb = 100;
-//        while (curCkp < ckp) {
-//            if (popSize * curGen == kb * (curCkp+1)) {
-//                System.out.print(curGen);
-//                curCkp++;
-//                System.out.println(" Checkpoint n°" + curCkp);
-//            } else {
-//                System.out.println(curGen);
-//            }
-//            curGen++;
-//        }
-//    }
 
 }

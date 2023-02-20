@@ -38,25 +38,28 @@ public class Crowding {
 		this.entities = entities;
 		this.parent1 = parent1;
 		this.parent2 = parent2;
-		logger.debug("# parent 1: " + parent1.individual.getPhenotype().getStringNoSpace());
+//		logger.debug("# parent 1: " + parent1.individual.getPhenotype().getStringNoSpace());
 		if(Objects.equals(child1.getGenotype().toString(), parent1.individual.getGenotype().toString())) {
-			logger.debug("No differences observed between the parent and its child ...");
+//			logger.debug("No differences observed between the parent and its child ...");
 			this.child1 = this.parent1;
+			this.similarityP1ToC1 = 1;
+			this.similarityP2ToC1 = this.distance(this.parent2, this.child1);
 		} else {
 			this.child1 = getEntityFromIndividual(child1);
+			this.similarityP1ToC1 = this.distance(this.parent1, this.child1);
+			this.similarityP2ToC1 = this.distance(this.parent2, this.child1);
 		}
-		logger.debug("# parent 2: " + parent2.individual.getPhenotype().getStringNoSpace());
+//		logger.debug("# parent 2: " + parent2.individual.getPhenotype().getStringNoSpace());
 		if(Objects.equals(child2.getGenotype().toString(), parent2.individual.getGenotype().toString())) {
-			logger.debug("No differences observed between the parent and its child ...");
+//			logger.debug("No differences observed between the parent and its child ...");
 			this.child2 = this.parent2;
+			this.similarityP1ToC2 = this.distance(this.parent1, this.child2);
+			this.similarityP2ToC2 = 1;
 		} else {
 			this.child2 = getEntityFromIndividual(child2);
+			this.similarityP1ToC2 = this.distance(this.parent1, this.child2);
+			this.similarityP2ToC2 = this.distance(this.parent2, this.child2);
 		}
-		// compute similarities between individuals
-		this.similarityP1ToC1 = this.distance(this.parent1, this.child1);
-		this.similarityP2ToC2 = this.distance(this.parent2, this.child2);
-		this.similarityP1ToC2 = this.distance(this.parent1, this.child2);
-		this.similarityP2ToC1 = this.distance(this.parent2, this.child1);
 	}
 
 	public ArrayList<Entity> getSurvivalSelection() throws URISyntaxException, IOException {
@@ -66,13 +69,13 @@ public class Crowding {
 		else survivals.add(compare(parent1, child2));
 		if (similarityP2ToC1 <= similarityP2ToC2) survivals.add(compare(parent2, child1));
 		else survivals.add(compare(parent2, child2));
-		logger.debug("Survival selection done !");
+//		logger.debug("Survival selection done !");
 		return survivals;
 	}
 
 	public double distance(Entity phi1, Entity phi2) throws URISyntaxException, IOException {
 		if(RDFMiner.similarityMap.get(phi1, phi2) != null) {
-			logger.debug("get similarity value from similarity map ...");
+//			logger.debug("get similarity value from similarity map ...");
 			return RDFMiner.similarityMap.get(phi1, phi2);
 		} else {
 			return Similarity.getNormalizedSimilarity(
@@ -83,12 +86,12 @@ public class Crowding {
 	public Entity compare(Entity parent, Entity child) throws URISyntaxException, IOException {
 		// if the parent is not evaluated
 		if (parent.individual.getFitness() == null) {
-			logger.warn("Compute parent fitness !");
+//			logger.warn("Compute parent fitness !");
 			parent = Fitness.computeEntity(parent.individual, this.generator);
 		}
 		// if the child is not evaluated
 		if (child.individual.getFitness() == null) {
-			logger.warn("Compute child fitness !");
+//			logger.warn("Compute child fitness !");
 			child = Fitness.computeEntity(child.individual, this.generator);
 		}
 		// we can compare parent and child
@@ -98,22 +101,17 @@ public class Crowding {
 		parent.individual.setFitness(new BasicFitness(parent.fitness, parent.individual));
 		child.individual.setFitness(new BasicFitness(child.fitness, child.individual));
 		// compare their fitness
-		if(Objects.equals(child1.individual.getGenotype().toString(), parent1.individual.getGenotype().toString())) {
-			logger.debug("Nothing to compare ...");
-			return parent;
-		} else if (parent.individual.getFitness().getDouble() <= child.individual.getFitness().getDouble()) {
-			logger.debug("child " + child.individual.getPhenotype().getStringNoSpace() + " is choosen instead of " +
-					parent.individual.getPhenotype().getStringNoSpace());
+		if(parent.fitness <= child.fitness) {
+//			logger.debug("Child is choosen !");
 			return child;
 		} else {
-			logger.debug("keep the parent " + parent.individual.getPhenotype().getStringNoSpace() + " instead of " +
-					child.individual.getPhenotype().getStringNoSpace());
+//			logger.debug("Keep the parent alive ...");
 			return parent;
 		}
 	}
 
 	private Entity getEntityFromIndividual(GEIndividual individual) throws URISyntaxException, IOException {
-		logger.debug("Assess " + individual.getPhenotype().getStringNoSpace() +  " ...");
+//		logger.debug("Assess " + individual.getPhenotype().getStringNoSpace() +  " ...");
 		// compute fitness for the current child
 		return Fitness.computeEntity(individual, this.generator);
 	}

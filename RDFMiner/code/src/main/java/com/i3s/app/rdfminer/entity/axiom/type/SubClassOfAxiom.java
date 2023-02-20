@@ -118,65 +118,6 @@ public class SubClassOfAxiom extends Axiom {
 	 * (<code>ComplementOf</code>(CE<sub>2</sub>))<sup>C</sup>.</li>
 	 * </ul>
 	 * <p>
-	 * This method, which is provided as a fallback in case {@link #update(VirtuosoEndpoint)} does
-	 * not work, uses a much slower, but hopefully safer, way of updating the counts
-	 * than the {@link #update(VirtuosoEndpoint)} method. The extension of the sub-class is
-	 * retrieved, than each individual instance is checked for membership in the
-	 * super-class and in the complement of the super-class by issuing two ASK
-	 * queries.
-	 * </p>
-	 * 
-	 */
-	// TODO: 7/11/22 to update
-//	public void naiveUpdate(CoreseEndpoint endpoint) throws URISyntaxException, IOException {
-//		referenceCardinality = numConfirmations = numExceptions = 0;
-//		confirmations = new ArrayList<>();
-//		exceptions = new ArrayList<>();
-//		Set<String> extension = subClass.extension(endpoint);
-//		String nicAsJson = endpoint.select(Format.JSON, endpoint.buildFederatedQuery("SELECT (count(distinct ?D) as ?n) WHERE { " + subClass.graphPattern + " ?x a ?D . }"));
-//		int numIntersectingClasses = Integer.parseInt(ResultParser.getResultsfromVariable("n", nicAsJson).get(0));
-//		timePredictor = (long) referenceCardinality * numIntersectingClasses;
-//
-//		for (String rdfNodePair : extension) {
-//			referenceCardinality++;
-//			if (superClass.contains(rdfNodePair, endpoint)) {
-//				numConfirmations++;
-//				confirmations.add(Expression.sparqlEncode(rdfNodePair.x));
-//			}
-//			// The following is correct, but not optimized (a lot of duplicated tests)
-//			else if (superClassComplement.contains(rdfNodePair, endpoint)) {
-//				numExceptions++;
-//				exceptions.add(Expression.sparqlEncode(rdfNodePair.x));
-//			}
-//			// A better idea would be to issue a SPARQL query
-//			// and let the SPARQL endpoint do the work: see the method below...
-//		}
-//		logger.info("Reference cardinality: " + referenceCardinality);
-//		logger.info("Number of confirmation(s): " + numConfirmations);
-//		logger.info("Number of exception(s): " + numExceptions);
-//
-//	}
-
-	/**
-	 * Updates the counts used to compute the possibility and necessity degrees.
-	 * <p>
-	 * According to the model-theoretic semantics, an axiom of the form
-	 * <code>SubClassOf(CE<sub>1</sub> CE<sub>2</sub>)</code> is satisfied if
-	 * <i>(CE<sub>1</sub>)<sup>C</sup></i> &sube;
-	 * <i>(CE<sub>2</sub>)<sup>C</sup></i>.
-	 * </p>
-	 * <p>
-	 * Therefore,
-	 * </p>
-	 * <ul>
-	 * <li>the universe of discourse is the extension of
-	 * <code>CE<sub>1</sub></code>;</li>
-	 * <li>confirmations are RDF nodes <var>x</var> such that <var>x</var> &in;
-	 * (CE<sub>2</sub>)<sup>C</sup>;</li>
-	 * <li>exceptions are RDF nodes <var>x</var> such that <var>x</var> &in;
-	 * (<code>ComplementOf</code>(CE<sub>2</sub>))<sup>C</sup>.</li>
-	 * </ul>
-	 * <p>
 	 * The updating of the counts is performed by issuing three SPARQL queries of
 	 * the form <code>SELECT count(DISTINCT ?x) AS</code> <var>n</var>
 	 * <code>WHERE</code>. If the number of confirmations or exceptions is not too

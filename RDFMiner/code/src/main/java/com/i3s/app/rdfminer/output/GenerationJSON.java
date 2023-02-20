@@ -26,15 +26,15 @@ public class GenerationJSON {
 	public long numIndividualsWithNonNullFitness;
 	public double averageSumDistance;
 
-	public void setGenerationJSON(ArrayList<Entity> entities, ArrayList<Entity> distinctEntities, int curGeneration) {
+	public void setGenerationJSON(ArrayList<Entity> entities, int curGeneration) {
 		Statistics stat = new Statistics();
 		this.generation = curGeneration;
 //		this.numSuccessMapping = stat.getCountSuccessMapping(distinctEntities);
-		this.diversityCoefficient = (double) distinctEntities.size() / entities.size();
+		this.diversityCoefficient = (double) EATools.getDistinctGenotypePopulation(entities).size() / entities.size();
 //		this.genotypeDiversityCoefficient = (double) EATools.getDistinctGenotypePopulation(entities).size()
 //				/ entities.size();
-		this.averageFitness = stat.computeAverageFitness(distinctEntities);
-		this.numIndividualsWithNonNullFitness = stat.getEntitiesWithNonNullFitness(distinctEntities);
+		this.averageFitness = stat.computeAverageFitness(entities);
+		this.numIndividualsWithNonNullFitness = stat.getEntitiesWithNonNullFitness(entities);
 		if(RDFMiner.parameters.useNoveltySearch) {
 			this.averageSumDistance = stat.getAverageSumDistance(entities);
 		}

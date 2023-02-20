@@ -1,9 +1,11 @@
 package com.i3s.app.rdfminer.evolutionary.tools;
 
+import Individuals.FitnessPackage.BasicFitness;
 import Individuals.GEChromosome;
 import Individuals.Genotype;
 import Individuals.Phenotype;
 import Individuals.Populations.Population;
+import Mapper.Symbol;
 import Operator.Operations.TournamentSelect;
 import Util.Random.MersenneTwisterFast;
 import Util.Random.RandomNumberGenerator;
@@ -14,6 +16,8 @@ import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.selection.ProportionalRouletteWheel;
 import com.i3s.app.rdfminer.evolutionary.selection.TruncationSelection;
 import com.i3s.app.rdfminer.evolutionary.selection.TypeSelection;
+import com.i3s.app.rdfminer.expression.ExpressionFactory;
+import com.i3s.app.rdfminer.grammar.DLFactory;
 import org.apache.log4j.Logger;
 
 import java.util.*;
@@ -108,7 +112,7 @@ public class EATools {
 				if (etilism.generation == null) {
 					etilism.generation = curGeneration;
 				}
-				etilism.individual.setAge(curGeneration);
+				etilism.individual.setAge(etilism.generation);
 				newEntities.add(etilism);
 			}
 		}
@@ -118,7 +122,7 @@ public class EATools {
 			if (entity.generation == null) {
 				entity.generation = curGeneration;
 			}
-			entity.individual.setAge(curGeneration);
+			entity.individual.setAge(entity.generation);
 			newEntities.add(entity);
 		}
 		return newEntities;
@@ -127,13 +131,70 @@ public class EATools {
 	public static ArrayList<Entity> bindIndividualsWithEntities(ArrayList<GEIndividual> individuals, ArrayList<Entity> entities) {
 		ArrayList<Entity> newEntities = new ArrayList<>();
 		for(GEIndividual individual : individuals) {
+//			logger.debug("# individual: " + individual);
 			for(Entity entity : entities) {
-				if(Objects.equals(individual.getGenotype().toString(), entity.individual.getGenotype().toString())) {
+//				logger.debug("### Entity: " + entity.individual);
+				if(individual == entity.individual) {
 					newEntities.add(entity);
+					break;
 				}
 			}
 		}
+//		logger.debug("bindIndividualsWithEntities size = " + newEntities.size());
 		return newEntities;
+	}
+
+	public static ArrayList<Entity> getTimeCappedEntities(ArrayList<Entity> oldEntities, List<Entity> evaluatedEntities) {
+		ArrayList<Entity> notEvaluated = new ArrayList<>(oldEntities);
+		for(Entity evaluated : evaluatedEntities) {
+			for(Entity entity : oldEntities) {
+				if(evaluated.individual == entity.individual) {
+//					logger.debug("remove " + entity.individual.getPhenotype().getStringNoSpace() + " ...");
+					notEvaluated.remove(entity);
+					break;
+				}
+			}
+		}
+		// for each not evaluated entities, we will set their fitness to 0
+		for(Entity entity : notEvaluated) {
+			logger.warn(entity.individual.getPhenotype().getStringNoSpace() + " will be considered as a candidate to reject");
+			// set fitness
+			entity.fitness = 0;
+			BasicFitness fit = new BasicFitness(entity.fitness, entity.individual);
+			fit.getIndividual().setValid(true);
+			entity.individual.setFitness(fit);
+		}
+		return notEvaluated;
+	}
+
+	public static ArrayList<Entity> getTimeCappedIndividuals(ArrayList<GEIndividual> individuals, List<Entity> evaluatedEntities) {
+		ArrayList<GEIndividual> notEvaluated = new ArrayList<>(individuals);
+		ArrayList<Entity> toReturn = new ArrayList<>();
+		for(Entity evaluated : evaluatedEntities) {
+			for(GEIndividual individual : individuals) {
+				if(evaluated.individual == individual) {
+//					logger.debug("remove " + individual.getPhenotype().getStringNoSpace() + " ...");
+					notEvaluated.remove(individual);
+					break;
+				}
+			}
+		}
+		// for each not evaluated individuals, we will set an Entity with their individual with a fitness = 0
+		for(GEIndividual notEval : notEvaluated) {
+			logger.warn(notEval.getPhenotype().getStringNoSpace() + " will be considered as a candidate to reject");
+			Entity entity = new Entity();
+			// for SubClassOf axioms, we will set sub and super class
+			entity.argumentClasses = DLFactory.parseArguments(notEval.getPhenotype());
+			// set individual
+			entity.individual = notEval;
+			// set fitness
+			entity.fitness = 0;
+			BasicFitness fit = new BasicFitness(entity.fitness, entity.individual);
+			fit.getIndividual().setValid(true);
+			entity.individual.setFitness(fit);
+			toReturn.add(entity);
+		}
+		return toReturn;
 	}
 
 	public static ArrayList<GEIndividual> rouletteWheel(ArrayList<GEIndividual> selectedPopulation) {

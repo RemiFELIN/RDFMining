@@ -48,8 +48,11 @@ public class Generation {
         int m = 0;
         // shuffle populations before crossover & mutation
         Collections.shuffle(canEntities);
+        // selected entities for crossover-mutation-crowding
+        ArrayList<Entity> selectedEntities = new ArrayList<>(canEntities);
         // process crossover and mutation 2 by 2
-        while (m <= canEntities.size() - 2) {
+        int even = canEntities.size() % 2;
+        while (m < canEntities.size() - even) {
             // get the two individuals which are neighbours
             GEIndividual parent1 = canEntities.get(m).individual;
             GEIndividual parent2 = canEntities.get(m + 1).individual;
@@ -67,7 +70,7 @@ public class Generation {
                     GEIndividual[] childs = spc.doOperation(parent1, parent2);
                     child1 = childs[0];
                     child2 = childs[1];
-                    logger.info("---");
+//                    logger.info("---");
                     break;
                 case TypeCrossover.SUBTREE_CROSSOVER:
                     // subtree crossover
@@ -105,7 +108,14 @@ public class Generation {
                 entitiesCallables.add(() -> new Crowding(canEntities.get(idx), canEntities.get(idx + 1), newChild1,
                         newChild2, canEntities, generator).getSurvivalSelection());
             }
+            selectedEntities.remove(canEntities.get(m));
+            selectedEntities.remove(canEntities.get(m + 1));
             m = m + 2;
+        }
+        // fill entity that was not choosen for the crossover-mutation process
+        if(!selectedEntities.isEmpty()) {
+            logger.debug("The last entity will be added directly on population");
+            evaluatedIndividuals.add(selectedEntities.get(0));
         }
         logger.info("Crossover & Mutation done");
         logger.info(entitiesCallables.size() + " tasks ready to be launched !");
@@ -133,7 +143,7 @@ public class Generation {
             }
         }
         // Log how many axioms has been evaluated
-        logger.info(evaluatedIndividuals.size() + " entities has been selected !");
+        logger.info(evaluatedIndividuals.size() + " entities has been computed after crossover-mutation !");
         executor.shutdown();
         try {
             if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
@@ -155,13 +165,27 @@ public class Generation {
                 e.printStackTrace();
             }
         }
-
-        // Shutdown the service
-        executor.shutdown();
-        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         // return the modified individuals
         return evaluatedIndividuals;
     }
 
+
+//    public static void main(String[] args) {
+//        int m = 0;
+//        ArrayList<Integer> test = new ArrayList<>(Arrays.asList(1,2,3,4,2,4,5,6,7));
+//        ArrayList<Integer> newTest = new ArrayList<>(test);
+//        int even = test.size() % 2;
+//        while(m < test.size() - even) {
+//            System.out.println("test.get(" + m + ") = " + test.get(m));
+//            System.out.println("test.get(" + (m+1) + ") = " + test.get(m+1));
+//            newTest.remove(test.get(m));
+//            newTest.remove(test.get(m+1));
+//            m = m + 2;
+//        }
+//        if(!newTest.isEmpty()) {
+//            System.out.println("# elem not selected : " + newTest.size());
+//            System.out.println("elem : " + newTest.get(0));
+//        }
+//    }
 
 }

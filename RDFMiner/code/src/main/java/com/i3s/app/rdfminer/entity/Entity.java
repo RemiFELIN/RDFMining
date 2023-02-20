@@ -12,11 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class describes an abstract entity that can be designed by RDFMiner.
+ * This class describes an entity that can be designed by RDFMiner.
  * It contains all the parameters that a future object must integrate to be mine and/or assessed.
  * @author Rémi FELIN
  */
-public abstract class Entity {
+public class Entity {
 
     public String entityAsString;
 

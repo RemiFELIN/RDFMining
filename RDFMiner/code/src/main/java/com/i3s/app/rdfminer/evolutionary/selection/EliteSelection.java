@@ -30,14 +30,9 @@ public class EliteSelection extends EliteOperationSelection {
 	 * @param canPop a given population
 	 */
 	public void setParentsSelectionElitism(ArrayList<GEIndividual> canPop) {
-//		System.out.println("canPop size: " + canPop.size());
-		/*for(GEIndividual ind : canPop) {
-			System.out.println("[IND] " + ind.getGenotype() + "\n -> Fitness: " + ind.getFitness().getDouble());
-		}*/
 		List<Individual> candidates = new ArrayList<>(canPop);
 		doOperation(candidates);
 		ArrayList<GEIndividual> selectedPopulation = new ArrayList<>();
-//		System.out.println("getSelectedPopulation size: " + getSelectedPopulation().size());
 		for (int i = 0; i < getSelectedPopulation().size(); i++) {
 			selectedPopulation.add((GEIndividual) getSelectedPopulation().get(i));
 		}

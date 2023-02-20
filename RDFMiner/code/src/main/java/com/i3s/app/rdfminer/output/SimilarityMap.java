@@ -15,7 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * This class will contains a KV map of owl axioms and their similarities
+ * This class contains a map (as JSON) of owl axioms and their similarities
  */
 public class SimilarityMap {
 

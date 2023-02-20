@@ -39,9 +39,13 @@ public class Similarity {
         // compute sparql queries
         String simNumSparql = "{ " + phi1SubClass.graphPattern + phi1SuperClass.graphPattern + " } UNION { " +
                 phi2SubClass.graphPattern + phi2SuperClass.graphPattern + " } ";
-        String simDenSparql = "{ " + phi1SubClass.graphPattern + " } UNION { " + phi2SubClass.graphPattern + " }";
+        String simDenSparql = "{ " + phi1SuperClass.graphPattern + " } UNION { " + phi2SuperClass.graphPattern + " }";
         double similarityNumerator = endpoint.count(simNumSparql);
+//        logger.info("numerator query : " + simNumSparql);
+//        logger.info("result = " + similarityNumerator);
         double similarityDenominator = endpoint.count(simDenSparql);
+//        logger.info("denominator query : " + simDenSparql);
+//        logger.info("result = " + similarityDenominator);
         // avoid NaN value returned by a zero-denominator
         if(similarityDenominator == 0)  return 0;
         // else return value
@@ -61,9 +65,11 @@ public class Similarity {
      */
     public static double getNormalizedSimilarity(CoreseEndpoint endpoint, Entity phi1, Entity phi2) throws URISyntaxException, IOException {
         double simJphi1phi2 = getJaccardSimilarity(endpoint, phi1, phi2);
-        // get max sim(p1,p1) , sim(p2,p2)
+//        logger.info("sim_j_phi1_phi2 = " + simJphi1phi2);
         double simJphi1phi1 = getJaccardSimilarity(endpoint, phi1, phi1);
+//        logger.info("sim_j_phi1_phi1 = " + simJphi1phi1);
         double simJphi2phi2 = getJaccardSimilarity(endpoint, phi2, phi2);
+//        logger.info("sim_j_phi2_phi2 = " + simJphi2phi2);
         // avoid NaN value returned by a zero-denominator
         if(simJphi1phi1 == 0 && simJphi2phi2 == 0) return 0;
         // compute normalized similarity

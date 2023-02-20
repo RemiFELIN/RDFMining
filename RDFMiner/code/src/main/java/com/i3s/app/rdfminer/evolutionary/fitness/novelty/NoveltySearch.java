@@ -15,8 +15,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 /**
  * The novelty search is a new technic in order to reward individuals that are very different of others.
@@ -41,22 +41,22 @@ public class NoveltySearch {
         logger.info("Updating similarities between individuals ...");
         ArrayList<Entity> simEntities = new ArrayList<>();
         int countNewSim = 0;
-        for(Entity phi1 : entities) {
-            for(Entity phi2 : entities) {
-                if(phi1 != phi2) {
+        for(int i = 0; i < entities.size(); i++) {
+            for(int j = 0; j < entities.size(); j++) {
+                if(i != j) {
                     // use similarity cache$
-                    if(RDFMiner.similarityMap.get(phi1, phi2) != null) {
+                    if(RDFMiner.similarityMap.get(entities.get(i), entities.get(j)) != null) {
 //                        logger.debug("get similarity value from similarity map ...");
-                        phi1.similarities.add(RDFMiner.similarityMap.get(phi1, phi2));
+                        entities.get(i).similarities.add(RDFMiner.similarityMap.get(entities.get(i), entities.get(j)));
                     } else {
-                        double sim = Similarity.getNormalizedSimilarity(endpoint, phi1, phi2);
-                        phi1.similarities.add(sim);
-                        RDFMiner.similarityMap.append(phi1, phi2, sim);
+                        double sim = Similarity.getNormalizedSimilarity(endpoint, entities.get(i), entities.get(j));
+                        entities.get(i).similarities.add(sim);
+                        RDFMiner.similarityMap.append(entities.get(i), entities.get(j), sim);
                         countNewSim++;
                     }
                 }
             }
-            simEntities.add(phi1);
+            simEntities.add(entities.get(i));
         }
         logger.info(countNewSim + " new similarities has been added into map");
         logger.info("updating the fitness ...");
@@ -97,7 +97,7 @@ public class NoveltySearch {
         PropertyConfigurator.configure("/home/rfelin/projects/RDFMining/RDFMiner/code/resources/log4j.properties");
 
         RDFMiner.parameters.loop = false;
-        RDFMiner.parameters.sparqlTimeOut = 10000;
+        RDFMiner.parameters.sparqlTimeOut = 30000;
 
         CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, "http://172.19.0.2:9000/sparql", Global.PREFIXES);
 //        Axiom a = AxiomFactory.create(null, "SubClassOf(<http://dbpedia.org/ontology/InformationAppliance> <http://www.w3.org/2004/02/skos/core#Concept>)",
@@ -107,16 +107,15 @@ public class NoveltySearch {
 
         List<String> axiomsAsString = Arrays.asList(
 //                "SubClassOf(<http://dbpedia.org/ontology/InformationAppliance> <http://www.w3.org/2004/02/skos/core#Concept>)",
-//                "SubClassOf(<http://dbpedia.org/ontology/Monarch> <http://xmlns.com/foaf/0.1/Person>)",
-                "SubClassOf(<http://schema.org/Airport> <http://dbpedia.org/ontology/Place>)",
+                "SubClassOf(<http://dbpedia.org/ontology/Monarch> <http://xmlns.com/foaf/0.1/Person>)",
+//                "SubClassOf(<http://schema.org/Airport> <http://dbpedia.org/ontology/Place>)",
 //                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://dbpedia.org/ontology/Agent>)"
-                "SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>)",
-                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)",
-                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)"
-//                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://dbpedia.org/ontology/River>)",
-//                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://dbpedia.org/ontology/University>)",
 //                "SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>)",
-
+                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)"
+//                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)"
+//                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://dbpedia.org/ontology/River>)"
+//                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://dbpedia.org/ontology/University>)"
+//                "SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>)"
 //                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)"
         );
         ArrayList<Axiom> axioms = new ArrayList<>();
@@ -130,10 +129,10 @@ public class NoveltySearch {
 //        Axiom test = futures.get(2000, TimeUnit.MILLISECONDS);
 //        System.out.println(test);
 
-        String test1 = "SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>)";
-        String test2 = "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)";
-        logger.info("hascode of SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>) ~> " + test1.hashCode());
-        logger.info("hashcode of SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>) ~> " + test2.hashCode());
+//        String test1 = "SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>)";
+//        String test2 = "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)";
+//        logger.info("hascode of SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>) ~> " + test1.hashCode());
+//        logger.info("hashcode of SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>) ~> " + test2.hashCode());
 
         for(String axiom : axiomsAsString) {
             axioms.add(AxiomFactory.create(null, axiom, endpoint));
@@ -142,18 +141,18 @@ public class NoveltySearch {
         for(Axiom a : axioms) {
             for(Axiom b : axioms) {
                 if(a.argumentClasses.get(0).get(0) != b.argumentClasses.get(0).get(0)) {
-                    a.similarities.add(Similarity.getNormalizedSimilarity(endpoint, a, b));
+                    logger.info("# Normalized similarity = " + Similarity.getNormalizedSimilarity(endpoint, a, b));
                 }
             }
-            logger.info("similarities for " + a.argumentClasses + ": " + a.similarities);
-            logger.info("sum(simJ) = " + a.similarities.stream().mapToDouble(x -> x).sum());
-            logger.info("sqrt(refCard): " + Math.sqrt(a.referenceCardinality));
+//            logger.info("similarities for " + a.argumentClasses + ": " + a.similarities);
+//            logger.info("sum(simJ) = " + a.similarities.stream().mapToDouble(x -> x).sum());
+//            logger.info("sqrt(refCard): " + Math.sqrt(a.referenceCardinality));
 //            NoveltyFitness fitnessForA = new NoveltyFitness(a);
 //            ObjectivesFitness.setFitness(a);
 //            NoveltyFitness.updateFitness(a);
-            logger.info("fitness value before update: " + a.fitness);
-            a.fitness = updateFitness(a);
-            logger.info("fitness value after update: " + a.fitness);
+//            logger.info("fitness value before update: " + a.fitness);
+//            a.fitness = updateFitness(a);
+//            logger.info("fitness value after update: " + a.fitness);
         }
 
     }

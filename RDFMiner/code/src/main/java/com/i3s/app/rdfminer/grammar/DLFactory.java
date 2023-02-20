@@ -73,7 +73,7 @@ public class DLFactory {
 			throw new RuntimeException("Syntax Error in an axiom!");
 	}
 
-	protected static List<List<Symbol>> parseArguments(List<Symbol> syntax) {
+	public static List<List<Symbol>> parseArguments(List<Symbol> syntax) {
 		int i = 1;
 		require(syntax.get(i++).equals("("));
 		List<List<Symbol>> argumentList = new ArrayList<List<Symbol>>();

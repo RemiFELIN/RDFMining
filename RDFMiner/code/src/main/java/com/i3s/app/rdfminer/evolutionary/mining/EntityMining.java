@@ -31,7 +31,7 @@ public class EntityMining {
                 // INTERMEDIATE step (i.e. checkpoint)
                 logger.info("Checkpoint n°" + (curCheckpoint + 1) + " reached !");
                 // evaluate distinct genotype and avoid additional useless computation
-                ArrayList<Entity> newPopulation = Fitness.computePopulation(EATools.getDistinctGenotypePopulation(entities), generator);
+                ArrayList<Entity> newPopulation = Fitness.computePopulation(entities, generator);
                 // stats
                 setStats(newPopulation, curGeneration);
                 // return final pop
@@ -39,7 +39,7 @@ public class EntityMining {
             } else {
                 // FINAL step
                 // evaluate distinct genotype and avoid additional useless computation
-                ArrayList<Entity> newPopulation = Fitness.computePopulation(EATools.getDistinctGenotypePopulation(entities), generator);
+                ArrayList<Entity> newPopulation = Fitness.computePopulation(entities, generator);
                 // stats
                 setStats(newPopulation, curGeneration);
                 // fill content in json output file
@@ -56,11 +56,8 @@ public class EntityMining {
             }
         }
 
-        // @todo tester avec une liste non distincte !!
-//        ArrayList<Entity> distinctEntities = EATools.getDistinctGenotypePopulation(entities);
         // STEP 3 - SELECTION OPERATION - Reproduce Selection - Parent Selection
         ArrayList<GEIndividual> entitiesAsIndividuals = new ArrayList<>();
-//        ArrayList<GEIndividual> distinctEntitiesAsIndividuals = new ArrayList<>();
         ArrayList<GEIndividual> selectedIndividuals;
         ArrayList<GEIndividual> elitismIndividuals = new ArrayList<>();
 
@@ -90,19 +87,19 @@ public class EntityMining {
         // set the type selection
         ArrayList<GEIndividual> crossoverIndividuals = EATools.getTypeSelection(RDFMiner.parameters.typeSelect,
                 selectedIndividuals, sizeElite, sizeSelection);
-        if(crossoverIndividuals == null) {
-            // set distinct entities instead of all entities
-            // i.e. remove duplicates
-            crossoverIndividuals = entitiesAsIndividuals;
-        }
+        logger.debug("crossoverIndividuals size = " + crossoverIndividuals.size());
         /* STEP 4 - CROSSOVER & MUTATION OPERATION */
         // Crossover single point between 2 individuals of the selected population
         ArrayList<Entity> crossoverEntities = EATools.bindIndividualsWithEntities(crossoverIndividuals, entities);
         ArrayList<Entity> elitismEntities = EATools.bindIndividualsWithEntities(elitismIndividuals, entities);
+//        logger.debug("size crossover entities = " + crossoverEntities.size());
+//        logger.debug("size elitism entities = " + elitismEntities.size());
         // Compute GE and add new population on a new list of individuals
         ArrayList<Entity> computedPopulation = Generation.compute(crossoverEntities, curGeneration, generator);
+//        logger.debug("size computed pop = " + computedPopulation.size());
         // set new population
         ArrayList<Entity> newPopulation = EATools.renew(curGeneration, computedPopulation, elitismEntities);
+//        logger.debug("size new pop = " + newPopulation.size());
         // stats
         setStats(newPopulation, curGeneration);
         // renew population
@@ -112,7 +109,7 @@ public class EntityMining {
     public static void setStats(ArrayList<Entity> entities, int curGeneration) {
         // set stats
         GenerationJSON generation = new GenerationJSON();
-        generation.setGenerationJSON(entities, EATools.getDistinctGenotypePopulation(entities), curGeneration);
+        generation.setGenerationJSON(entities, curGeneration);
         // Log usefull stats concerning the algorithm evolution
         logger.info("Average fitness: " + generation.averageFitness);
         logger.info("Diversity coefficient: " + generation.diversityCoefficient);
