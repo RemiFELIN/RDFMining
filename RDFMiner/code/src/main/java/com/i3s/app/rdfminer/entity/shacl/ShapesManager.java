@@ -1,5 +1,7 @@
 package com.i3s.app.rdfminer.entity.shacl;
 
+import Individuals.Genotype;
+import Individuals.Phenotype;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.entity.shacl.vocabulary.Shacl;
@@ -49,10 +51,9 @@ public class ShapesManager {
 
     public ShapesManager(String content, boolean prefix) {
         // set content to submit in http request
-        if(!prefix)
+        if(prefix)
             this.content += Global.PREFIXES;
         this.content += content;
-//        System.out.println(this.content);
         // init model
         try {
             this.model = Rio.parse(new StringReader(this.content), "", RDFFormat.TURTLE);
@@ -62,7 +63,7 @@ public class ShapesManager {
         }
         // fill population
         fillPopulation(this.model);
-        logger.info(population.size() + " SHACL Shape(s) ready to be evaluated !");
+//        logger.info(population.size() + " SHACL Shape(s) ready to be evaluated !");
     }
 
     /**
@@ -73,12 +74,13 @@ public class ShapesManager {
     public ShapesManager(ArrayList<GEIndividual> individuals) throws IOException {
         this.content += Global.PREFIXES;
         for (GEIndividual individual : individuals) {
-            population.add(new Shape(individual));
-            this.content += individual.getPhenotype().getStringNoSpace() + "\n";
+            Shape s = new Shape(individual);
+            population.add(s);
+            this.content += s + "\n";
         }
         // set the file content to evaluate this SHACL Shapes on server
 //        this.path = editShapesTmpFile(this.population);
-        logger.info(population.size() + " SHACL Shapes ready to be evaluated !");
+//        logger.info(population.size() + " SHACL Shapes ready to be evaluated !");
     }
 
     public void fillPopulation(Model model) {
@@ -138,11 +140,15 @@ public class ShapesManager {
         return population;
     }
 
-    public void setPopulationFromEntities(ArrayList<Entity> entities) {
+    public void setDistinctPopulationFromEntities(ArrayList<Entity> entities) {
+        ArrayList<Phenotype> distinctPhenotypes = new ArrayList<>();
         for(Entity entity : entities) {
-            this.population.add(new Shape(entity.individual));
+            if(!distinctPhenotypes.contains(entity.individual.getPhenotype())) {
+                distinctPhenotypes.add(entity.individual.getPhenotype());
+                this.population.add(new Shape(entity.individual));
+            }
         }
-        logger.info(population.size() + " SHACL Shapes ready to be evaluated !");
+//        logger.info(population.size() + " distinct SHACL shapes ready to be evaluated !");
         // set whole content
         setContent();
     }
@@ -151,7 +157,7 @@ public class ShapesManager {
         if(this.population.size() != 0) {
             this.content += Global.PREFIXES;
             for(Shape shape : this.population) {
-                this.content += shape.content;
+                this.content += shape + "\n";
             }
         } else {
             logger.warn("Population is empty !");

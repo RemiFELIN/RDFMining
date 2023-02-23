@@ -181,17 +181,18 @@ public class CoreseEndpoint {
             logger.error("Error " + response.getStatusLine().getStatusCode() + " while sending SHACL Shapes on server ...");
     }
 
-    public String getValidationReportFromServer(String content, String mode) throws URISyntaxException, IOException {
+    public String getValidationReportFromServer(String content) throws URISyntaxException, IOException {
         // fill params
         HashMap<String, String> params = new HashMap<>();
-        params.put("mode", mode);
+        if(RDFMiner.parameters.useProbabilisticShaclMode) {
+            params.put("mode", CoreseService.PROBABILISTIC_SHACL_EVALUATION);
+            params.put("p", RDFMiner.parameters.probShaclP);
+        } else {
+            params.put("mode", CoreseService.SHACL_EVALUATION);
+        }
 //        params.put("uri", this.url + CoreseService.CORESE_GET_SHACL_SHAPES_ENDPOINT + "?name=" + Global.SHACL_SHAPES_FILENAME);
         params.put("query", "construct where {?s ?p ?o}");
         params.put("format", Format.TURTLE);
-        if(Objects.equals(mode, CoreseService.PROBABILISTIC_SHACL_EVALUATION)) {
-            // v2 : binomial distribution
-            params.put("p", RDFMiner.parameters.probShaclP);
-        }
         // send GET request
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         URIBuilder builder = new URIBuilder(this.url + CoreseService.CORESE_SPARQL_ENDPOINT);

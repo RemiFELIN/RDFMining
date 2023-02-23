@@ -66,7 +66,7 @@ public class ValidationReport {
         // set a Map< str , List<str> > which contains a list of exceptions by Shape
         this.exceptionsByShape = getExceptionsByShape();
         // set a Map< str , number > which contains the numerical values by Shape
-        this.numExceptionsByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.NUM_EXCEPTION);
+        this.numExceptionsByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.NUM_VIOLATION);
         this.numConfirmationsByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.NUM_CONFIRMATION);
         this.referenceCardinalityByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.REFERENCE_CARDINALITY);
         this.likelihoodByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.LIKELIHOOD);

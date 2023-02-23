@@ -165,7 +165,7 @@ public class RDFMiner {
 			}
 			Global.TRAINING_SPARQL_ENDPOINT = parameters.trainSparqlEndpoint;
 			logger.info("RDFMiner will query the following link in SERVICE clause: " + Global.TRAINING_SPARQL_ENDPOINT);
-		} else if(parameters.grammaticalEvolution) {
+		} else if(parameters.grammaticalEvolution && (!parameters.useProbabilisticShaclMode && !parameters.useClassicShaclMode)) {
 			logger.warn("Grammatical evolution activated without training dataset specified !");
 			logger.warn("RDFMiner will query the target database in SERVICE clause: " + Global.TARGET_SPARQL_ENDPOINT);
 			logger.warn("The processes may take longer if the target database contains a large set of RDF triples ...");

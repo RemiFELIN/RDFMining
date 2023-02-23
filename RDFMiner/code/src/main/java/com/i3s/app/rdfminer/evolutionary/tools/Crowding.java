@@ -74,6 +74,14 @@ public class Crowding {
 	}
 
 	public double distance(Entity phi1, Entity phi2) throws URISyntaxException, IOException {
+		if(RDFMiner.parameters.useNoveltySearch) {
+			return similarityDistance(phi1, phi2);
+		} else {
+			return levenshteinDistance(phi1, phi2);
+		}
+	}
+
+	public double similarityDistance(Entity phi1, Entity phi2) throws URISyntaxException, IOException {
 		if(RDFMiner.similarityMap.get(phi1, phi2) != null) {
 //			logger.debug("get similarity value from similarity map ...");
 			return RDFMiner.similarityMap.get(phi1, phi2);
@@ -81,6 +89,42 @@ public class Crowding {
 			return Similarity.getNormalizedSimilarity(
 					new CoreseEndpoint(Global.CORESE_IP, Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES), phi1, phi2);
 		}
+	}
+
+	public double levenshteinDistance(Entity a, Entity b) {
+		String word1 = a.individual.getPhenotype().toString();
+		String word2 = b.individual.getPhenotype().toString();
+		int len1 = word1.length();
+		int len2 = word2.length();
+		int[][] dp = new int[len1 + 1][len2 + 1];
+
+		for (int i = 0; i <= len1; i++) {
+			dp[i][0] = i;
+		}
+		for (int j = 0; j <= len2; j++) {
+			dp[0][j] = j;
+		}
+		// iterate though, and check last char
+		for (int i = 0; i < len1; i++) {
+			char c1 = word1.charAt(i);
+			for (int j = 0; j < len2; j++) {
+				char c2 = word2.charAt(j);
+				// if last two chars equal
+				if (c1 == c2) {
+					// update dp value for +1 length
+					dp[i + 1][j + 1] = dp[i][j];
+				} else {
+					int replace = dp[i][j] + 1;
+					int insert = dp[i][j + 1] + 1;
+					int delete = dp[i + 1][j] + 1;
+					int min = Math.min(replace, insert);
+					min = Math.min(delete, min);
+					dp[i + 1][j + 1] = min;
+				}
+			}
+		}
+		if (dp[len1][len2] == 0) return 0;
+		return 1 / dp[len1][len2];
 	}
 
 	public Entity compare(Entity parent, Entity child) throws URISyntaxException, IOException {
@@ -100,9 +144,12 @@ public class Crowding {
 		child.fitness = NoveltySearch.updateFitness(child);
 		parent.individual.setFitness(new BasicFitness(parent.fitness, parent.individual));
 		child.individual.setFitness(new BasicFitness(child.fitness, child.individual));
+		// log if the offspring is different from its parent and if its fitness is upper to parent's fitness
+		if(child.individual.getGenotype() != parent.individual.getGenotype() && child.fitness > parent.fitness) {
+			logger.info("A better offspring has been found !");
+		}
 		// compare their fitness
 		if(parent.fitness <= child.fitness) {
-//			logger.debug("Child is choosen !");
 			return child;
 		} else {
 //			logger.debug("Keep the parent alive ...");

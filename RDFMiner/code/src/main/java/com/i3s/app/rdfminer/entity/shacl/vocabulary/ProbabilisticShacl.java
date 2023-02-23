@@ -14,7 +14,7 @@ public class ProbabilisticShacl {
 
     public static final String NUM_CONFIRMATION = PROBABILISTIC_SHACL + "numConfirmation";
 
-    public static final String NUM_EXCEPTION = PROBABILISTIC_SHACL + "numException";
+    public static final String NUM_VIOLATION = PROBABILISTIC_SHACL + "numViolation";
 
     public static final String LIKELIHOOD = PROBABILISTIC_SHACL + "likelihood";
 

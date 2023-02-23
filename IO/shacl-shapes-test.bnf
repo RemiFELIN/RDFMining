@@ -10,16 +10,16 @@
 #.
 
 # The subject of the given shape will be generate randomly using Java code
-Shape := Subject ' a ' NodeShape
+Shape := ' a ' NodeShape
 NodeShape := 'sh:NodeShape ; ' ShapeBody
 ShapeBody := 'sh:targetClass ' Class ' ; ' ShapeProperty
 ShapeProperty := ' sh:property [ ' PropertyBody ' ] . '
 PropertyBody := ' sh:path rdf:type ; sh:hasValue ' Class ' ; '
 
 # Example of generated subject: <hcijd94> <cciha942> <bbajd9424> <acijd94249> ... 
-Subject := '<' Letter Letter Letter Letter Letter Number Number [ Number ] '>'
-Number := '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
-Letter := 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j'
+# Subject := ':' Letter Letter Letter Letter Letter Number Number [ Number ] ' '
+# Number := '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+# Letter := 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j'
 # Shape := NodeShape
 # NodeShape := 'a' 'sh:NodeShape' ';' TargetClass
 # TargetClass := 'sh:targetClass' Class ';' SubjectProperty

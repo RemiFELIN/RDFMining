@@ -3,6 +3,7 @@ package com.i3s.app.rdfminer.entity.shacl;
 import Individuals.Phenotype;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.entity.Entity;
+import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.entity.shacl.vocabulary.Shacl;
 import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.sparql.RequestBuilder;
@@ -76,7 +77,6 @@ public class Shape extends Entity {
 //    public Number referenceCardinality;
 //    public Number numConfirmation;
 //    public Number numException;
-    public Number likelihood;
 //    public Number generality;
 //    public Number fitness;
 //    public List<String> exceptions = new ArrayList<>();
@@ -86,10 +86,12 @@ public class Shape extends Entity {
      */
     public Shape(GEIndividual individual) {
         this.individual = individual;
+        this.content = individual.getPhenotype().getStringNoSpace();
+        // get shape uri subject
+        this.uri = getShapeUri(this.content);
         // init model
         try {
-            this.content = individual.getPhenotype().getStringNoSpace();
-            this.model = Rio.parse(new StringReader(Global.PREFIXES + this.content), "", RDFFormat.TURTLE);
+            this.model = Rio.parse(new StringReader(Global.PREFIXES + this.uri + this.content), "", RDFFormat.TURTLE);
         } catch(Exception e) {
             logger.error("Individual as RDF turtle:\n" + individual.getPhenotype().getStringNoSpace());
             logger.warn("Error during the parsing of Individual: " + e.getMessage());
@@ -98,8 +100,6 @@ public class Shape extends Entity {
         // Create a new Repository. Here, we choose a database implementation
         // that simply stores everything in main memory.
         this.db = new SailRepository(new MemoryStore());
-        // get shape uri subject
-        this.uri = getShapeUri();
         // get the targetted class(es) if it provides
         this.targetClasses = getValuesFromProperty(Shacl.TARGETCLASS);
         // get the targetSubjectsOf if it provides
@@ -115,43 +115,13 @@ public class Shape extends Entity {
     public Shape(String content) {
         this.content = content;
         try {
-            this.model = Rio.parse(new StringReader(Global.PREFIXES + content), "", RDFFormat.TURTLE);
+            this.model = Rio.parse(new StringReader(this.content), "", RDFFormat.TURTLE);
         } catch(Exception e) {
             logger.warn("Error during the parsing of proposal SHACL shape: " + e.getMessage());
         }
         // Create a new Repository. Here, we choose a database implementation
         // that simply stores everything in main memory.
         this.db = new SailRepository(new MemoryStore());
-        // get shape uri subject
-        this.uri = getShapeUri();
-//        System.out.println("uri: " + this.uri);
-        // get the targetted class(es) if it provides
-        this.targetClasses = getValuesFromProperty(Shacl.TARGETCLASS);
-//        System.out.println("targetClasses: " + this.targetClasses);
-        // get the targetSubjectsOf if it provides
-        this.targetSubjectsOf = getValuesFromProperty(Shacl.TARGETSUBJECTSOF);
-        // get the targetObjectsOf if it provides
-        this.targetObjectsOf = getValuesFromProperty(Shacl.TARGETOBJECTSOF);
-        // search if it provide a sh:property values
-        this.properties = getProperties();
-//        System.out.println("properties: " + this.properties);
-//        System.out.println(this);
-    }
-
-    public Shape(String content, GEIndividual individual) {
-        this.content = content;
-        try {
-            this.model = Rio.parse(new StringReader(Global.PREFIXES + content), "", RDFFormat.TURTLE);
-        } catch(Exception e) {
-            logger.warn("Error during the parsing of proposal SHACL shape: " + e.getMessage());
-        }
-        // set instance of GEIndividual
-        this.individual = individual;
-        // Create a new Repository. Here, we choose a database implementation
-        // that simply stores everything in main memory.
-        this.db = new SailRepository(new MemoryStore());
-        // get shape uri subject
-        this.uri = getShapeUri();
 //        System.out.println("uri: " + this.uri);
         // get the targetted class(es) if it provides
         this.targetClasses = getValuesFromProperty(Shacl.TARGETCLASS);
@@ -185,20 +155,9 @@ public class Shape extends Entity {
         return results;
     }
 
-    public String getShapeUri() {
-        try(RepositoryConnection con = db.getConnection()) {
-            con.add(this.model);
-            String request = RequestBuilder.select("?x", "?x a sh:NodeShape .", true);
-            TupleQuery query = con.prepareTupleQuery(request);
-            try (TupleQueryResult result = query.evaluate()) {
-                for (BindingSet solution : result) {
-                    return "<" + solution.getValue("x") + ">";
-                }
-            }
-        } finally {
-            db.shutDown();
-        }
-        return null;
+    public String getShapeUri(String content) {
+        // return a random shape uri as subject
+        return ":" + (content.hashCode() & 0xfffffff);
     }
 
     /**
@@ -235,28 +194,37 @@ public class Shape extends Entity {
 //    }
 
     public void fillParamFromReport(ValidationReport report) {
-        String parsedUri = this.uri.replace("<", "").replace(">", "");
-        this.referenceCardinality = report.referenceCardinalityByShape.get(parsedUri).intValue();
-        this.numConfirmations = report.numConfirmationsByShape.get(parsedUri).intValue();
-        this.numExceptions = report.numExceptionsByShape.get(parsedUri).intValue();
-        this.likelihood = report.likelihoodByShape.get(parsedUri);
+        String fullUri = this.uri.replace(":", "http://www.example.com/myDataGraph#");
+//        System.out.println(fullUri);
+        this.referenceCardinality = report.referenceCardinalityByShape.get(fullUri).intValue();
+        this.numConfirmations = report.numConfirmationsByShape.get(fullUri).intValue();
+        this.numExceptions = report.numExceptionsByShape.get(fullUri).intValue();
+        this.likelihood = report.likelihoodByShape.get(fullUri);
 //        this.generality = report.generalityByShape.get(parsedUri);
-//        this.fitness = report.fitnessByShape.get(parsedUri);
-        if(report.exceptionsByShape.get(parsedUri) != null) {
-            this.exceptions = new ArrayList<>(report.exceptionsByShape.get(parsedUri));
+        this.fitness = computeFitness();
+        if(report.exceptionsByShape.get(fullUri) != null) {
+            this.exceptions = new ArrayList<>(report.exceptionsByShape.get(fullUri));
         }
     }
 
     @Override
     public String toString() {
-        return this.content;
+        return this.uri + this.content;
     }
 
-    public static void main(String[] args) {
-        String s = "<1> a sh:NodeShape ; sh:targetClass <http://www.wikidata.org/entity/Q14875321>, <http://www.wikidata.org/entity/Q3> ; sh:property [" +
-                " sh:path rdf:type ; sh:hasValue <http://www.wikidata.org/entity/Q14863991>; ] .";
-        Shape shape = new Shape(s);
-        System.out.println(shape);
+    /**
+     * Compute the fitness of a given shape by using referenceCardinality and
+     * {@link Axiom#necessity() necessity} values.
+     */
+    public double computeFitness() {
+        return this.numConfirmations * this.likelihood.doubleValue();
     }
+
+//    public static void main(String[] args) {
+//        String s = " a sh:NodeShape ; sh:targetClass <http://www.wikidata.org/entity/Q14875321>, <http://www.wikidata.org/entity/Q348> ; sh:property [" +
+//                " sh:path rdf:type ; sh:hasValue <http://www.wikidata.org/entity/Q14863991>; ] .";
+//        Shape shape = new Shape(s);
+//        System.out.println(shape);
+//    }
 
 }

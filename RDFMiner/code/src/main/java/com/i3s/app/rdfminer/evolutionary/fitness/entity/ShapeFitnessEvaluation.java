@@ -8,9 +8,11 @@ import com.i3s.app.rdfminer.entity.shacl.Shape;
 import com.i3s.app.rdfminer.entity.shacl.ShapesManager;
 import com.i3s.app.rdfminer.entity.shacl.ValidationReport;
 import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
+import com.i3s.app.rdfminer.launcher.evaluator.ExtendedShacl;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import com.i3s.app.rdfminer.sparql.corese.CoreseService;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -36,12 +38,10 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
         // evaluation of SHACL Shapes
         try {
             ShapesManager shapesManager = new ShapesManager(individuals);
+            logger.info(shapesManager.getPopulation().size() + " SHACL Shapes ready to be evaluated !");
             // launch evaluation
-            CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, Global.PREFIXES);
-            String report = null;
-            if(RDFMiner.parameters.useProbabilisticShaclMode) 
-                report = endpoint.getValidationReportFromServer(shapesManager.content, CoreseService.PROBABILISTIC_SHACL_EVALUATION);
-            // @todo : manage others types of validation (classic, possibilistic (incoming...))
+            CoreseEndpoint endpoint = new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
+            String report = endpoint.getValidationReportFromServer(shapesManager.content);
             // read evaluation report
             ValidationReport validationReport = new ValidationReport(report);
             // For each SHACL Shapes individuals, we set all results of them
@@ -73,10 +73,14 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
         try {
             // set content in shape manager
             ShapesManager shapesManager = new ShapesManager();
-            shapesManager.setPopulationFromEntities(population);
+            // last population evaluation of shapes mining
+            // we will assess distinct shapes from population (avoid duplication)
+            shapesManager.setDistinctPopulationFromEntities(population);
+            logger.info(shapesManager.getPopulation().size() + " SHACL Shapes ready to be evaluated !");
             // launch evaluation
             CoreseEndpoint endpoint = new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
-            String report = endpoint.getValidationReportFromServer(shapesManager.content, CoreseService.PROBABILISTIC_SHACL_EVALUATION);
+//            System.out.println(shapesManager.content);
+            String report = endpoint.getValidationReportFromServer(shapesManager.content);
             // read evaluation report
             ValidationReport validationReport = new ValidationReport(report);
 //            System.out.println(validationReport.prettifyPrint());
@@ -91,6 +95,8 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
                 shape.individual.setFitness(fit);
                 newPop.add(shape);
             }
+            // run extended shacl
+            ExtendedShacl.runWithoutEval(report, shapesManager);
             // return new population
             return newPop;
         } catch (IOException e) {
@@ -117,7 +123,7 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
             ShapesManager shapesManager = new ShapesManager(new ArrayList<>(List.of(individual)));
             // launch evaluation
             CoreseEndpoint endpoint = new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
-            String report = endpoint.getValidationReportFromServer(shapesManager.content, CoreseService.PROBABILISTIC_SHACL_EVALUATION);
+            String report = endpoint.getValidationReportFromServer(shapesManager.content);
             // read evaluation report
             ValidationReport validationReport = new ValidationReport(report);
             Shape shape = shapesManager.getPopulation().get(0);
@@ -141,39 +147,20 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
         return null;
     }
 
-//    /**
-//     * Store a given population in a temporary file
-//     * @param population a given population of entities
-//     * @return the path of the temporary file
-//     */
-//    public Path editShapesTmpFile(ArrayList<Entity> population) throws IOException {
-//        // create temp file
-//        Path tmpPath = Files.createTempFile("shapes", ".ttl");
-//        // edit this file
-//        FileWriter fw = new FileWriter(tmpPath.toFile());
-//        // edit turtle file which will contains shapes
-//        // set prefixes
-//        fw.write(Global.PREFIXES);
-//        for(Entity entity : population) {
-//            // write phenotype individuals
-//            fw.write(entity.individual.getPhenotype().getString());
-//        }
-//        fw.close();
-//        return tmpPath;
-//    }
-//
-//    public Path editShapesTmpFile(GEIndividual individual) throws IOException {
-//        // create temp file
-//        Path tmpPath = Files.createTempFile("shapes", ".ttl");
-//        // edit this file
-//        FileWriter fw = new FileWriter(tmpPath.toFile());
-//        // edit turtle file which will contains shapes
-//        // set prefixes
-//        fw.write(Global.PREFIXES);
-//        // write phenotype individual
-//        fw.write(individual.getPhenotype().getStringNoSpace());
-//        fw.close();
-//        return tmpPath;
-//    }
+    public static void main(String[] args) throws URISyntaxException, IOException {
+        // Load librdfminer_axiom_Axiom.so generated by ./compile_c_code.sh (see /scripts folder)
+        System.loadLibrary(Global.SO_LIBRARY);
+        // Configure the log4j loggers:
+        PropertyConfigurator.configure("/home/rfelin/projects/RDFMining/RDFMiner/code/resources/log4j.properties");
+        // corese
+        String content = "\n:1 a sh:NodeShape ; sh:targetClass <http://www.wikidata.org/entity/Q11435>  ;  sh:property [  sh:path rdf:type ; sh:hasValue <http://www.wikidata.org/entity/Q39833>  ;  ] .\n"
+                + "\n:1 a sh:NodeShape ; sh:targetClass <http://www.wikidata.org/entity/Q11435>  ;  sh:property [  sh:path rdf:type ; sh:hasValue <http://www.wikidata.org/entity/Q39833>  ;  ] ."
+                ;
+        ShapesManager shapesManager = new ShapesManager(content, true);
+        // launch evaluation
+        CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, Global.PREFIXES);
+        String report = endpoint.getValidationReportFromServer(shapesManager.content);
+        System.out.println(new ValidationReport(report).prettifyPrint());
+    }
 
 }

@@ -7,9 +7,7 @@ import com.i3s.app.rdfminer.entity.shacl.ShapesManager;
 import com.i3s.app.rdfminer.entity.shacl.ValidationReport;
 import com.i3s.app.rdfminer.output.STTL;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
-import com.i3s.app.rdfminer.sparql.corese.CoreseService;
 import com.i3s.app.rdfminer.sparql.corese.Format;
-import com.i3s.app.rdfminer.sparql.corese.ResultParser;
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 import org.apache.log4j.Logger;
 
@@ -17,19 +15,16 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class ExtendedShacl {
 
     private static final Logger logger = Logger.getLogger(ExtendedShacl.class.getName());
 
-    public static void run(ShapesManager shapesManager) throws URISyntaxException, IOException {
+    public static void runWithEval(ShapesManager shapesManager) throws URISyntaxException, IOException {
         // launch evaluation
         CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, Global.PREFIXES);
         // Launch SHACL evaluation from the Corese server and get the result in turtle
-        String report = endpoint.getValidationReportFromServer(shapesManager.content, CoreseService.PROBABILISTIC_SHACL_EVALUATION);
+        String report = endpoint.getValidationReportFromServer(shapesManager.content);
         endpoint.sendFileToServer(new File(RDFMiner.parameters.shapeFile), Global.SHACL_SHAPES_FILENAME);
         // write SHACL report in output file
         String pretiffyReport = pretiffyProbabilisticSHACLReport(report);
@@ -40,6 +35,33 @@ public class ExtendedShacl {
         ValidationReport validationReport = new ValidationReport(report);
         // perform hypothesis testing
         performHypothesisTesting(validationReport, shapesManager);
+        // send hypothesis result to Corese graph
+        endpoint.sendFileToServer(new File(RDFMiner.outputFolder + Global.SHACL_HYPOTHESIS_TEST_FILENAME), Global.SHACL_HYPOTHESIS_TEST_FILENAME);
+        endpoint.sendRDFDataToDB(endpoint.getFilePathFromServer(Global.SHACL_HYPOTHESIS_TEST_FILENAME));
+        // Send the SHACL Validation Report and shapes graph into Corese graph in order to
+        // perform a HTML report with STTL transformation
+        endpoint.sendFileToServer(new File(RDFMiner.outputFolder + Global.SHACL_VALIDATION_REPORT_FILENAME), Global.SHACL_VALIDATION_REPORT_FILENAME);
+        endpoint.sendRDFDataToDB(endpoint.getFilePathFromServer(Global.SHACL_VALIDATION_REPORT_FILENAME));
+        // load shapes graph in corese DB
+        endpoint.sendRDFDataToDB(endpoint.getFilePathFromServer(Global.SHACL_SHAPES_FILENAME));
+        // perform STTL transformation
+        STTL.perform(endpoint, Global.PROBABILISTIC_STTL_TEMPLATE, Global.PROBABILISTIC_STTL_RESULT_AS_HTML);
+        // remove imported data
+        removeImportedData(endpoint);
+    }
+
+    public static void runWithoutEval(String report, ShapesManager shapesManager) throws URISyntaxException, IOException {
+        CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, Global.PREFIXES);
+        // write shapes from population
+        createShapesFile(shapesManager.content);
+        endpoint.sendFileToServer(new File(Global.SHACL_SHAPES_FILENAME), Global.SHACL_SHAPES_FILENAME);
+        logger.info("Writting validation report in " + RDFMiner.outputFolder + Global.SHACL_VALIDATION_REPORT_FILENAME + " ...");
+        // write SHACL report in output file
+        FileWriter valReport = new FileWriter(Global.SHACL_VALIDATION_REPORT_FILENAME);
+        valReport.write(pretiffyProbabilisticSHACLReport(report));
+        valReport.close();
+        // perform hypothesis testing
+        performHypothesisTesting(new ValidationReport(report), shapesManager);
         // send hypothesis result to Corese graph
         endpoint.sendFileToServer(new File(RDFMiner.outputFolder + Global.SHACL_HYPOTHESIS_TEST_FILENAME), Global.SHACL_HYPOTHESIS_TEST_FILENAME);
         endpoint.sendRDFDataToDB(endpoint.getFilePathFromServer(Global.SHACL_HYPOTHESIS_TEST_FILENAME));
@@ -117,6 +139,12 @@ public class ExtendedShacl {
         // remove data in GET service
         endpoint.query(Format.JSON, query);
         logger.info("Done !");
+    }
+
+    public static void createShapesFile(String shapes) throws IOException {
+        FileWriter fw = new FileWriter(Global.SHACL_SHAPES_FILENAME);
+        fw.write(shapes);
+        fw.close();
     }
 
 }

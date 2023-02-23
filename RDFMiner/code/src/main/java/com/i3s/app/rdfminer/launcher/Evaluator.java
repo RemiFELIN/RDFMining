@@ -15,7 +15,6 @@ import com.i3s.app.rdfminer.generator.axiom.IncreasingTimePredictorAxiomGenerato
 import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.launcher.evaluator.ExtendedShacl;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
-import com.i3s.app.rdfminer.sparql.corese.CoreseService;
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.engine.http.QueryExceptionHTTP;
@@ -24,7 +23,6 @@ import org.json.JSONArray;
 
 import java.io.*;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -231,8 +229,6 @@ public class Evaluator {
 
 		// ShutDownHook
 		// Save results in output file
-		//			logger.warn("Shutting down RDFMiner ...");
-		// Save results in output file
 		Runtime.getRuntime().addShutdownHook(new Thread(Evaluator::writeAndFinish));
 
 		// create output file
@@ -244,19 +240,19 @@ public class Evaluator {
 			System.exit(1);
 		}
 
-		ShapesManager shapesManager = new ShapesManager(shapesContent, true);
+		ShapesManager shapesManager = new ShapesManager(shapesContent, false);
 		CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, Global.PREFIXES);
 		String report;
 
 		if (RDFMiner.parameters.useProbabilisticShaclMode) {
 			// run extended SHACL eval
-			ExtendedShacl.run(shapesManager);
+			ExtendedShacl.runWithEval(shapesManager);
 		} else {
 			if(!RDFMiner.parameters.useClassicShaclMode) {
 				logger.warn("No validation mode specified !");
 				logger.warn("By default, the standard SHACL validation will be used");
 			}
-			report = endpoint.getValidationReportFromServer(shapesManager.content, CoreseService.SHACL_EVALUATION);
+			report = endpoint.getValidationReportFromServer(shapesManager.content);
 //			System.out.println(report);
 			ValidationReport validationReport = new ValidationReport(report);
 			RDFMiner.output.write(validationReport.prettifyPrint());

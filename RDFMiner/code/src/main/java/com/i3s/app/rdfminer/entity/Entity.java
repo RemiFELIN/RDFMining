@@ -1,6 +1,7 @@
 package com.i3s.app.rdfminer.entity;
 
 import Mapper.Symbol;
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.entity.axiom.type.DisjointClassesAxiom;
 import com.i3s.app.rdfminer.fuzzy.TruthDegree;
@@ -80,6 +81,8 @@ public class Entity {
      * the time it took to test the axiom, in ms.
      */
     public long elapsedTime = 0L;
+
+    public Number likelihood;
 
     /**
      * A list of facts in the RDF store that explicitly corroborate the axiom.
@@ -170,20 +173,24 @@ public class Entity {
 
     public JSONObject toJSON() {
         JSONObject json = new JSONObject();
-        json.put("entity", entityAsString);
-        json.put("referenceCardinality", referenceCardinality);
-        json.put("numConfirmations", numConfirmations);
-        json.put("numExceptions", numExceptions);
-        json.put("possibility", possibility().doubleValue());
-        json.put("necessity", necessity().doubleValue());
-        json.put("elapsedTime", elapsedTime);
-        json.put("isTimeOut", isTimeout);
-        json.put("exceptions", new JSONArray(exceptions));
-        json.put("confirmations", new JSONArray(confirmations));
-        json.put("generation", generation);
-        json.put("fitness", fitness);
-        json.put("generality", generality);
-        json.put("ari", ari);
+        json.put("entity", this.entityAsString);
+        json.put("referenceCardinality", this.referenceCardinality);
+        json.put("numConfirmations", this.numConfirmations);
+        json.put("numExceptions", this.numExceptions);
+        json.put("exceptions", new JSONArray(this.exceptions));
+        json.put("confirmations", new JSONArray(this.confirmations));
+        json.put("generation", this.generation);
+        json.put("fitness", this.fitness);
+        if(RDFMiner.parameters.useProbabilisticShaclMode || RDFMiner.parameters.useClassicShaclMode) {
+            json.put("likelihood", this.likelihood.doubleValue());
+        } else {
+            json.put("possibility", this.possibility().doubleValue());
+            json.put("necessity",this.necessity().doubleValue());
+            json.put("elapsedTime", this.elapsedTime);
+            json.put("isTimeOut", this.isTimeout);
+            json.put("generality", this.generality);
+            json.put("ari", this.ari);
+        }
         return json;
     }
 
