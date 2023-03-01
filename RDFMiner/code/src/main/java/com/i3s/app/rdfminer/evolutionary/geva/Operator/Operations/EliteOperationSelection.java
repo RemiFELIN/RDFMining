@@ -92,7 +92,7 @@ public class EliteOperationSelection extends SelectionOperation {
         return this.evaluate_elites;
     }
 
-    public void doOperation(Individual operand) {
+    public void doOperation(GEIndividual operand) {
     }
 
     /**
@@ -101,7 +101,7 @@ public class EliteOperationSelection extends SelectionOperation {
      *
      * @param operands Individuals to select from
      **/
-    public void doOperation(List<Individual> operands) {
+    public void doOperation(List<GEIndividual> operands) {
         Fitness[] fA = rankPopulation(operands);
         int cnt = 0;
         while (cnt < this.size && cnt < operands.size()) {
@@ -138,7 +138,7 @@ public class EliteOperationSelection extends SelectionOperation {
      * @param operands List of Individuals to rank
      * @return An ordered Fitness array
      **/
-    Fitness[] rankPopulation(List<Individual> operands) {
+    Fitness[] rankPopulation(List<GEIndividual> operands) {
         Fitness[] fAt = new Fitness[operands.size()];
 
         //System.out.print("EliteRank org:");

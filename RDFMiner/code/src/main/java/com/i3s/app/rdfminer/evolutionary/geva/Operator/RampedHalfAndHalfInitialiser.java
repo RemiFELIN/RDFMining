@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package com.i3s.app.rdfminer.evolutionary.geva.Operator;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Exceptions.BadParameterException;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.SimplePopulation;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.GEGrammar;
@@ -124,9 +125,9 @@ public class RampedHalfAndHalfInitialiser extends Initialiser {
     public void perform() {
         this.depthInterval = getDepthInterval(this.size);
         int i = 0;
-        Individual individual;
+        GEIndividual individual;
         while(i<this.size) {
-            individual = this.population.get(i);
+            individual = (GEIndividual) this.population.get(i);
             if(i%this.depthInterval==0) { //ramp up the depth
                 ((FullInitialiser)operation).setMaxDepth(this.currentDepth);
                 ((GrowInitialiser)growInitialisation).setMaxDepth(this.currentDepth);

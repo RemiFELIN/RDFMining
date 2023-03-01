@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package com.i3s.app.rdfminer.evolutionary.geva.Operator;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Exceptions.BadParameterException;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.Population;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.SimplePopulation;
@@ -38,7 +39,6 @@ import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.Operation;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 
-import java.util.Iterator;
 import java.util.Properties;
 
 
@@ -114,10 +114,8 @@ public class Initialiser extends SourceModule implements Creator{
      * Calls the operation to add codons to the individuals in the population
      **/
     public void perform() {
-        Iterator<Individual> iIt = this.population.iterator();
-        //Operation adds codons
-        while(iIt.hasNext()) {
-            this.operation.doOperation(iIt.next());
+        for(Individual i : this.population.getAll()) {
+            this.operation.doOperation((GEIndividual) i);
         }
     }
     

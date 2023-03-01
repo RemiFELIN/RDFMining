@@ -82,9 +82,9 @@ public class SelectionScheme extends SplitOperator{
     }
 
     public void perform() {
-        super.operation.doOperation(super.population.getAll());
-        //System.out.println("ops:"+this.population.size()+" "+this.population);
-        //System.out.println("sps:"+this.destinationPopulation.size()+" "+this.destinationPopulation);
+        for(Individual i : super.population.getAll()) {
+            super.operation.doOperation((GEIndividual) i);
+        }
     }
     
     public void setOperation(Operation op) {

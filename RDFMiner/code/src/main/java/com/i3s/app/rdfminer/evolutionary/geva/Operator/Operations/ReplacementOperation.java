@@ -38,7 +38,7 @@ package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Exceptions.BadParameterException;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.Fitness;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
 
 import java.util.Arrays;
@@ -106,13 +106,13 @@ public class ReplacementOperation implements Operation {
         this.replacementSize = size;
     }
   
-    public void doOperation(Individual operand) {}
+    public void doOperation(GEIndividual operand) {}
     
     /**
      * Sort ascending and remove the worst individuals
      * @param operand Individuals to trim
      */
-    public void doOperation(List<Individual> operand) {
+    public void doOperation(List<GEIndividual> operand) {
         this.fitnessA = rankPopulation(operand);
         removeIndividuals(operand, this.replacementSize);
     }
@@ -122,7 +122,7 @@ public class ReplacementOperation implements Operation {
      * @param operand Individuals to trim
      * @param size Number of individuals to remove
      */
-    public void doOperation(List<Individual> operand, int size) {
+    public void doOperation(List<GEIndividual> operand, int size) {
         this.fitnessA = rankPopulation(operand);
         removeIndividuals(operand, size);
     }
@@ -132,11 +132,11 @@ public class ReplacementOperation implements Operation {
      * @param operand Individuals that might be removed
      * @param size Number of individuals to remove
      **/
-    private void removeIndividuals(List<Individual> operand, int size) {
+    private void removeIndividuals(List<GEIndividual> operand, int size) {
         int cnt = 0;
         while(cnt < size) {
             cnt++;
-            operand.remove(this.fitnessA[this.fitnessA.length - cnt].getIndividual());
+            operand.remove((GEIndividual) this.fitnessA[this.fitnessA.length - cnt].getIndividual());
         }
     }
 
@@ -145,7 +145,7 @@ public class ReplacementOperation implements Operation {
      * @param operand Individuals to be ranked
      * @return The ranked Individuals fitness in an array
      **/
-    private Fitness[] rankPopulation(List<Individual> operand) {
+    private Fitness[] rankPopulation(List<GEIndividual> operand) {
         Fitness[] fA = new Fitness[operand.size()];
         for(int i=0;i<fA.length;i++) {
             fA[i] = operand.get(i).getFitness();

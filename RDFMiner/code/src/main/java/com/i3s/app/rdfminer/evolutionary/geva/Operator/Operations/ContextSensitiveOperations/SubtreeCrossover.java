@@ -31,14 +31,12 @@ package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensit
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.DerivationNode;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.DerivationTree;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.CrossoverOperation;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.GenotypeHelper;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -68,9 +66,7 @@ public class SubtreeCrossover extends CrossoverOperation {
     }
 
     @Override
-    public void doOperation(List<Individual> operands) {}
-
-    public void doOperation(ArrayList<GEIndividual> operands) {
+    public void doOperation(List<GEIndividual> operands) {
         assert operands.size() >= 2 : operands.size();
         GEIndividual i1 = operands.get(0);
         GEIndividual i2 = operands.get(1);
@@ -229,7 +225,7 @@ public class SubtreeCrossover extends CrossoverOperation {
 //        } catch(IOException e) {}
 //    }
 
-    public void doOperation(Individual operand) {
+    public void doOperation(GEIndividual operand) {
     }
 
 

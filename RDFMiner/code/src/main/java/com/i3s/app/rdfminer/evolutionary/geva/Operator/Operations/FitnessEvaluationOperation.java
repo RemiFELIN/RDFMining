@@ -38,24 +38,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 
 import com.i3s.app.rdfminer.evolutionary.geva.FitnessEvaluation.FitnessFunction;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.GEGrammar;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
-import java.lang.management.MemoryNotificationInfo;
-import java.lang.management.MemoryPoolMXBean;
-import java.lang.management.MemoryType;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
 import javax.management.Notification;
 import javax.management.NotificationEmitter;
 import javax.management.NotificationListener;
+import java.lang.management.*;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Operation for evaluating the fitness. Has a FitnessFunction.
@@ -67,7 +60,7 @@ public class FitnessEvaluationOperation implements Operation {
 
     private FitnessFunction fitnessFunction;
     private boolean evaluateEverytime = false;
-    private HashMap<String, CacheItem> fitnessCache = new HashMap<String, CacheItem>();
+    private final HashMap<String, CacheItem> fitnessCache = new HashMap<String, CacheItem>();
     private int currentAge;
     private int originalPopulationSize;
     private int populationSize;
@@ -102,7 +95,7 @@ public class FitnessEvaluationOperation implements Operation {
      * Mark the individual as evaluated.
      * @param operand Individual to evaluate
      **/
-    public void doOperation(Individual operand) {
+    public void doOperation(GEIndividual operand) {
         //	System.out.println(this.getClass().getName()+".doOperation("+operand+") ENTRY");
         operand.setEvaluated(false);
         if (!operand.isEvaluated()) {
@@ -122,22 +115,18 @@ public class FitnessEvaluationOperation implements Operation {
 
             boolean cache = fitnessFunction.canCache();
             //cache = false;
-            if (cache == false // Short-circuit, won't getFitnessFromCache if cache==false
-                    || getFitnessFromCache(operand) == false) {
+            if (!cache // Short-circuit, won't getFitnessFromCache if cache==false
+                    || !getFitnessFromCache(operand)) {
                 if (operand.isValid()) {
                     this.fitnessFunction.getFitness(operand);
                 } else {
                     operand.getFitness().setDefault();
                 }
-                if (cache == true) {
+                if (cache) {
                     addFitnessToCache(operand);
                 }
             }
-            if (this.evaluateEverytime) {
-                operand.setEvaluated(false);
-            } else {
-                operand.setEvaluated(true);
-            }
+            operand.setEvaluated(!this.evaluateEverytime);
         }
     //	System.out.println(this.getClass().getName()+".doOperation("+operand+") EXIT");
     //	System.out.println(this.getClass().getName()+".doOperation("+operand+") fit:"+operand.getFitness().getDouble());
@@ -151,11 +140,11 @@ public class FitnessEvaluationOperation implements Operation {
      * @return true if the value was taken from the cache, false otherwise
      */
     private boolean getFitnessFromCache(Individual operand) {
-        assert fitnessFunction.canCache() == true;
+        assert fitnessFunction.canCache();
 
         String fitnessName = ((GEGrammar) operand.getMapper()).getName();
         synchronized (fitnessCache) {
-            if (fitnessCache.containsKey(fitnessName) == true) {
+            if (fitnessCache.containsKey(fitnessName)) {
                 CacheItem cacheItem = fitnessCache.get(fitnessName);
                 cacheItem.age = currentAge++;
                 cacheItem.lives++;
@@ -179,7 +168,7 @@ public class FitnessEvaluationOperation implements Operation {
      *  control
      */
     private void addFitnessToCache(Individual operand) {
-        assert fitnessFunction.canCache() == true;
+        assert fitnessFunction.canCache();
 
         synchronized (fitnessCache) {
 
@@ -194,7 +183,7 @@ public class FitnessEvaluationOperation implements Operation {
                 Set<Entry<String, CacheItem>> entries = fitnessCache.entrySet();
                 Iterator<Entry<String, CacheItem>> entry = entries.iterator();
 
-                while (entry.hasNext() == true) {
+                while (entry.hasNext()) {
                     CacheItem item = entry.next().getValue();
                     if (item.age - currentAge < -populationSize * GENERATIONS_SURVIVAL / 2) {
                         item.lives--;
@@ -239,11 +228,9 @@ public class FitnessEvaluationOperation implements Operation {
         return originalPopulationSize;
     }
 
-    public void doOperation(List<Individual> operands) {
-        Individual ind;
-        for (Individual operand : operands) {
-            ind = operand;
-            this.doOperation(ind);
+    public void doOperation(List<GEIndividual> operands) {
+        for (GEIndividual operand : operands) {
+            this.doOperation(operand);
         }
     }
 
@@ -325,7 +312,7 @@ public class FitnessEvaluationOperation implements Operation {
          */
         private void initialiseThreshold() {
             for (MemoryPoolMXBean pool : ManagementFactory.getMemoryPoolMXBeans()) {
-                if (pool.getType() == MemoryType.HEAP && pool.isUsageThresholdSupported() == true) {
+                if (pool.getType() == MemoryType.HEAP && pool.isUsageThresholdSupported()) {
                     pool.setUsageThreshold((long) (pool.getUsage().getMax() * memoryThreshold));
                 }
             }
@@ -362,7 +349,7 @@ public class FitnessEvaluationOperation implements Operation {
                 Set<Entry<String, CacheItem>> entries = fitnessCache.entrySet();
                 Iterator<Entry<String, CacheItem>> entry = entries.iterator();
 
-                while (entry.hasNext() == true && size > 0) {
+                while (entry.hasNext() && size > 0) {
                     entry.next();
                     entry.remove();
                     size--;

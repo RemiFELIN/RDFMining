@@ -3,11 +3,11 @@
  */
 package com.i3s.app.rdfminer.parameters;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A container of command line parameters and options.
@@ -144,8 +144,12 @@ public class CmdLineParameters {
 	public int typeSelect = 2; // 1- Roulette wheel; 2- truncation; 3- Tournament ; other numbers- normal way
 
 	@Option(name = "-cr", aliases = {
-			"--type-crossover" }, usage = "use as this value as the type of parent selection operation", metaVar = "TYPE_CROSSOVER")
-	public int typeCrossover = 0; // 0-; 1- Single-point Crossover; 2- Subtree Crossover
+			"--type-crossover" }, usage = "use as this value as the type of crossover operation", metaVar = "TYPE_CROSSOVER")
+	public int typeCrossover = 0;
+
+	@Option(name = "-mu", aliases = {
+			"--type-mutation" }, usage = "use as this value as the type of mutation operation", metaVar = "TYPE_MUTATION")
+	public int typeMutation = 0;
 
 	@Option(name = "-sez", aliases = {
 			"--size-select" }, usage = "use as this value as the size of parent selection operation", metaVar = "SIZE_SELECTION")

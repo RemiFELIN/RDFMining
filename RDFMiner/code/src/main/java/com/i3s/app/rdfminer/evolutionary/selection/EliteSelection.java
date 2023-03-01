@@ -4,10 +4,8 @@
 package com.i3s.app.rdfminer.evolutionary.selection;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -31,8 +29,7 @@ public class EliteSelection extends EliteOperationSelection {
 	 * @param canPop a given population
 	 */
 	public void setParentsSelectionElitism(ArrayList<GEIndividual> canPop) {
-		List<Individual> candidates = new ArrayList<>(canPop);
-		doOperation(candidates);
+		doOperation(canPop);
 		ArrayList<GEIndividual> selectedPopulation = new ArrayList<>();
 		for (int i = 0; i < getSelectedPopulation().size(); i++) {
 			selectedPopulation.add((GEIndividual) getSelectedPopulation().get(i));

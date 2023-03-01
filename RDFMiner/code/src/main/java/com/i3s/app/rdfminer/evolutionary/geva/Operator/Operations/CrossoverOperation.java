@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Exceptions.BadParameterException;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.Stochastic;
@@ -54,7 +54,7 @@ public abstract class CrossoverOperation implements Operation, Stochastic {
     protected double probability;
     protected RandomNumberGenerator rand;
     
-    public abstract void doOperation(List<Individual> operands);
+    public abstract void doOperation(List<GEIndividual> operands);
     
     /** Creates a new instance of CrossoverOperation
      * @param prob crossover probability

@@ -36,9 +36,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.FitnessEvaluationOperation;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.Operation;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * FitnessEvaluator is a module that is used to evaluate an entire populations fitness.
@@ -69,7 +74,11 @@ public class FitnessEvaluator extends OperatorModule{
      **/
     public void perform() {
         //System.out.println("pFE:"+this.population);
-        this.fitnessEvaluationOperation.doOperation(this.population.getAll());
+        List<GEIndividual> individuals = new ArrayList<>();
+        for(Individual i : this.population.getAll()) {
+            individuals.add((GEIndividual) i);
+        }
+        this.fitnessEvaluationOperation.doOperation(individuals);
          //System.out.println("aFE:"+this.population);
     }
     

@@ -37,10 +37,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
- 
+
 import com.i3s.app.rdfminer.evolutionary.geva.Exceptions.BadParameterException;
 import com.i3s.app.rdfminer.evolutionary.geva.FitnessEvaluation.FitnessFunction;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.Stochastic;
@@ -115,9 +115,9 @@ public abstract class MutationOperation implements Stochastic, Operation {
         this.noOfMutationCalls = generations * popSize;
     }
 
-    public abstract void doOperation(Individual operand);
+    public abstract void doOperation(GEIndividual operand);
     
-    public abstract void doOperation(List<Individual> operand);
+    public abstract void doOperation(List<GEIndividual> operand);
     
     public void setFitnessFunction(FitnessFunction ff)
     {

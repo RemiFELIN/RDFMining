@@ -1,7 +1,7 @@
 package com.i3s.app.rdfminer.evolutionary.geva.Operator;
 
 import com.i3s.app.rdfminer.RDFMiner;
-import com.i3s.app.rdfminer.evolutionary.crossover.TwoPointCrossover;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.TwoPointCrossover;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Genotype;
@@ -48,7 +48,7 @@ public class Test {
         i2.setMapper(new GEGrammar());
         i2.setGenotype(g2);
         // create population
-        ArrayList<Individual> aI = new ArrayList<>(2);
+        ArrayList<GEIndividual> aI = new ArrayList<>(2);
         aI.add(i1);
         aI.add(i2);
         // test doOperation
@@ -187,7 +187,7 @@ public class Test {
         // SINGLE POINT CROSSOVER
 //        Test.testSinglePointCrossover(aI, true);
         // TWO POINT CROSSOVER
-        Test.testTwoPointCrossover(aI, true);
+//        Test.testTwoPointCrossover(aI, true);
         // SUBTREE CROSSOVER
 //        Test.testSubtreeCrossover();
     }

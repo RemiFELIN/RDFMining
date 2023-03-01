@@ -66,7 +66,6 @@ package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 
 import java.io.BufferedWriter;
@@ -99,8 +98,8 @@ public class IntFlipFitness extends MutationOperation {
         super(rng, p);
     }
     
-    public void doOperation(List<Individual> operands) {
-        for (Individual operand : operands) {
+    public void doOperation(List<GEIndividual> operands) {
+        for (GEIndividual operand : operands) {
             this.doOperation(operand);
 
         }
@@ -110,19 +109,19 @@ public class IntFlipFitness extends MutationOperation {
      * Calls doMutation(GEIndividual c) and then calls Individual.invalidate()
      * @param operand operand to operate on
      */
-    public void doOperation(Individual operand) {
+    public void doOperation(GEIndividual operand) {
         //doMutation((GEChromosome)operand.getGenotype().get(0));        
 	    doMutation(operand);
-	    ((GEIndividual)operand).invalidate();
+	    operand.invalidate();
     }
     
     /**
      * According to this.probability a codon in the chromosome is  
      * replaced with a new randomly chosen integer
      */
-    private void doMutation(Individual operand) {
+    private void doMutation(GEIndividual operand) {
         GEChromosome c = (GEChromosome)operand.getGenotype().get(0);
-        ((GEIndividual)operand).setMapped(false);
+        operand.setMapped(false);
         operand.map(0); //map original genome
         fitnessFunction.getFitness(operand);
 	    double fitnessBefore =operand.getFitness().getDouble();
@@ -134,7 +133,7 @@ public class IntFlipFitness extends MutationOperation {
             }
         }
 	    // Record change from mutation
-        ((GEIndividual)operand).setMapped(false);
+        operand.setMapped(false);
 	    operand.map(0); //map mutated chromosome
 	    fitnessFunction.getFitness(operand); //get fitness of mutated child
 	    double fitnessAfter =operand.getFitness().getDouble();

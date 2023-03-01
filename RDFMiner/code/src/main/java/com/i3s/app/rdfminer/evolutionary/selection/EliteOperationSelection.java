@@ -93,10 +93,10 @@ public class EliteOperationSelection extends SelectionOperation {
 		return this.evaluateElites;
 	}
 
-	public void doOperation(Individual operand) {
+	public void doOperation(GEIndividual operand) {
 	}
 
-	public void doOperation(List<Individual> operands) {
+	public void doOperation(List<GEIndividual> operands) {
 		operands.sort(Comparator.comparing(Individual::getFitness).reversed());
 		int cnt = 0;
 		while (cnt < this.size && cnt < operands.size()) {

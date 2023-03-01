@@ -5,7 +5,6 @@ import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.Population;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.TournamentSelect;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
@@ -201,7 +200,7 @@ public class EATools {
 		RandomNumberGenerator random;
 		random = new MersenneTwisterFast(System.currentTimeMillis());
 		ProportionalRouletteWheel rl = new ProportionalRouletteWheel(size, random);
-		rl.doOperation(((Population) selectedPopulation).getAll());
+		rl.doOperation(selectedPopulation);
 		return new ArrayList<>(selectedPopulation);
 	}
 

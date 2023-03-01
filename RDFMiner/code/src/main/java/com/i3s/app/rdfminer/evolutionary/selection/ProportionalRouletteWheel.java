@@ -77,7 +77,7 @@ public class ProportionalRouletteWheel extends RouletteWheel implements Stochast
 	 * 
 	 * @param operands Individuals to take into account
 	 ***/
-	protected void calculateAccumulatedFitnessProbabilities(List<Individual> operands) {
+	protected void calculateAccumulatedFitnessProbabilities(List<GEIndividual> operands) {
 		if (this.sumFit == 0) {
 			return;
 		}
@@ -88,7 +88,7 @@ public class ProportionalRouletteWheel extends RouletteWheel implements Stochast
 		for (int cnt = 0; cnt < operands.size(); cnt++) {
 			tmp = operands.get(cnt).getFitness().getDouble();
 			// this is to lessen any distortions for very small fitness values
-			if (this.smallFit == true) {
+			if (this.smallFit) {
 				tmp = tmp * 1000;
 			}
 			tmp = 0.1 + tmp; // 1/(tmp+1)
@@ -119,7 +119,7 @@ public class ProportionalRouletteWheel extends RouletteWheel implements Stochast
 			MersenneTwisterFast rng = new MersenneTwisterFast();
 			ProportionalRouletteWheel rws = new ProportionalRouletteWheel(size, rng);
 			int popSize = 5;
-			ArrayList<Individual> alI = new ArrayList<Individual>(popSize);
+			ArrayList<GEIndividual> alI = new ArrayList<>(popSize);
 			GEIndividual ind;
 			String grammarFile = System.getProperty("user.dir") + "/param/Grammar/sf_grammar.bnf";
 			GEGrammar gram = new GEGrammar(grammarFile);

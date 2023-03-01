@@ -82,12 +82,16 @@ public class SubtreeMutation extends MutationOperation {
         super(prob, rng);
     }
 
+    public SubtreeMutation(RandomNumberGenerator rng, double prob) {
+        super(prob, rng);
+    }
+
     public void setCreationOperation(CreationOperation creationOperation) {
         this.creationOperation = creationOperation;
     }
 
     @Override
-    public void doOperation(Individual operand) {
+    public void doOperation(GEIndividual operand) {
         // Only mutate based on a probability that a mutate should occur
         if (super.rng.nextDouble() >= this.probability)
             return;
@@ -145,7 +149,7 @@ public class SubtreeMutation extends MutationOperation {
                     //  that it's known to be valid
                     operand.getGenotype().set(0, chromosome);
                     operand.getMapper().setGenotype(chromosome);
-                    ((GEIndividual) operand).invalidate();
+                    operand.invalidate();
                     operand.map(0);
                 }
             } else {
@@ -205,8 +209,8 @@ public class SubtreeMutation extends MutationOperation {
 //    }
 
     @Override
-    public void doOperation(List<Individual> operands) {
-        for (Individual operand : operands)
+    public void doOperation(List<GEIndividual> operands) {
+        for (GEIndividual operand : operands)
             doOperation(operand);
     }
 
@@ -218,7 +222,7 @@ public class SubtreeMutation extends MutationOperation {
      */
     private Individual buildMutatedIndividual(DerivationNode node) {
         Individual individual = creationOperation.createIndividual();
-        creationOperation.doOperation(individual);
+        creationOperation.doOperation((GEIndividual) individual);
         if (GenotypeHelper.buildDerivationTree(individual, node) != null)
             return individual;
 

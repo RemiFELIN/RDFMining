@@ -29,12 +29,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.Population;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.EliteReplacementOperation;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.Operation;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -64,8 +66,12 @@ public class EliteReplacementOperator extends JoinOperator {
      * Remove the worst individuals from the origninal population.
      **/
     public void perform() {
+        List<GEIndividual> incomingIndividuals = new ArrayList<>();
+        for(Individual i : this.incomingPopulation.getAll()) {
+            incomingIndividuals.add((GEIndividual) i);
+        }
         //System.out.print("+OE:"+this.incomingPopulation+" => ");
-        this.replacementOperation.doOperation(this.incomingPopulation.getAll());
+        this.replacementOperation.doOperation(incomingIndividuals);
         //System.out.print("+NE:"+this.incomingPopulation+" ");
         //for(int i=0;i<this.incomingPopulation.size();i++) {
             //System.out.println(this.incomingPopulation.get(i).isValid());

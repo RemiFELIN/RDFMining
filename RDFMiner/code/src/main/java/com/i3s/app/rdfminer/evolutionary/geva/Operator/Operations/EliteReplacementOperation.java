@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.Fitness;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
 
 import java.util.Collections;
@@ -80,14 +80,14 @@ public class EliteReplacementOperation implements Operation {
         this.eliteSize = value;
     }
 
-    public void doOperation(Individual operand) {
+    public void doOperation(GEIndividual operand) {
     }
 
     /**
      * Sort ascending and remove the worst individuals
      * @param operand individuals to sort
      */
-    public void doOperation(List<Individual> operand) {
+    public void doOperation(List<GEIndividual> operand) {
         Collections.sort(operand);
         int cnt = operand.size();
         while (cnt > this.eliteSize && cnt > 0) {

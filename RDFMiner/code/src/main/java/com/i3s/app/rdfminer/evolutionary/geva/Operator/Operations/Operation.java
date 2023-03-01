@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 
 
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Parameter.ParameterI;
 
 import java.util.List;
@@ -52,11 +52,11 @@ public interface Operation extends ParameterI {
      * Performs the operation on the list passed
      * @param operands operands to be operated on
      */
-    public void doOperation(List<Individual> operands);
+    public void doOperation(List<GEIndividual> operands);
 
     /**
      * Performs the operation on an operand
      * @param operand operand to perform operation on
      */
-    public void doOperation(Individual operand);    
+    public void doOperation(GEIndividual operand);
 }

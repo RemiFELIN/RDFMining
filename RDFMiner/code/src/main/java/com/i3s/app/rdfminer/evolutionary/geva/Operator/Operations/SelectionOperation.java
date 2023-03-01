@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.Population;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.SimplePopulation;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
@@ -101,9 +101,9 @@ public abstract class SelectionOperation implements Operation {
     }
 
     @SuppressWarnings({"EmptyMethod"})
-    public abstract void doOperation(Individual operand);
+    public abstract void doOperation(GEIndividual operand);
 
-    public abstract void doOperation(List<Individual> operands);
+    public abstract void doOperation(List<GEIndividual> operands);
 
     /**
      * Returns the selected population.

@@ -31,7 +31,7 @@ package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Exceptions.BadParameterException;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.Fitness;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.Stochastic;
@@ -102,14 +102,14 @@ public class TournamentSelect extends SelectionOperation implements Stochastic {
         this.tournamentSize = value;
     }
     
-    public void doOperation(Individual operand) {}
+    public void doOperation(GEIndividual operand) {}
     
     /**
      * Individuals from operands will be added to the selected population
      * if the win their tournament.
      * @param operands Individuals to be selected from
      **/
-    public void doOperation(List<Individual> operands) {
+    public void doOperation(List<GEIndividual> operands) {
         this.selectedPopulation.clear();
         while(this.selectedPopulation.size()<this.size){
             getTour(operands);
@@ -122,7 +122,7 @@ public class TournamentSelect extends SelectionOperation implements Stochastic {
      * the operands untill the tounramentSize is reached.
      * @param operands Individuals that can be selected to the tournament
      **/
-    public void getTour(List<Individual> operands) {
+    public void getTour(List<GEIndividual> operands) {
         tour.clear();
         int contestant;
         for(int i = 0;i<this.tournamentSize;i++) {

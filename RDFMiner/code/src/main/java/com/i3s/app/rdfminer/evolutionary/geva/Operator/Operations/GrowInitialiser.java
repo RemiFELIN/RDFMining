@@ -52,6 +52,7 @@ import java.util.Properties;
 
 /**
  * Class for growing individuals to the maximum derrivationTree size of maxDepth
+ *
  * @author erikhemberg
  */
 public class GrowInitialiser implements CreationOperation, Stochastic {
@@ -67,9 +68,10 @@ public class GrowInitialiser implements CreationOperation, Stochastic {
 
     /**
      * New instance
-     * @param rng random number generator
+     *
+     * @param rng       random number generator
      * @param gegrammar grammatical evolution grammar
-     * @param maxDepth max growth depth of tree
+     * @param maxDepth  max growth depth of tree
      */
     public GrowInitialiser(RandomNumberGenerator rng, GEGrammar gegrammar, int maxDepth) {
         this.grammar = gegrammar;
@@ -81,9 +83,10 @@ public class GrowInitialiser implements CreationOperation, Stochastic {
 
     /**
      * New instance
-     * @param rng random number generator
+     *
+     * @param rng       random number generator
      * @param gegrammar grammatical evolution grammar
-     * @param p properties
+     * @param p         properties
      */
     public GrowInitialiser(RandomNumberGenerator rng, GEGrammar gegrammar, Properties p) {
         this.grammar = gegrammar;
@@ -102,17 +105,17 @@ public class GrowInitialiser implements CreationOperation, Stochastic {
     }
 
     public void setProperties(Properties p) {
-      maxDepth = Integer.parseInt(p.getProperty(Constants.MAX_DEPTH, "-1"));
-      if (maxDepth == -1)
-        throw new BadParameterException(Constants.MAX_DEPTH, getClass().getName());
+        maxDepth = Integer.parseInt(p.getProperty(Constants.MAX_DEPTH, "-1"));
+        if (maxDepth == -1)
+            throw new BadParameterException(Constants.MAX_DEPTH, getClass().getName());
 
-      tailSize = Double.parseDouble(p.getProperty(Constants.TAIL_PERCENTAGE, "-1.0"));
-      if (tailSize < 0)
-        throw new BadParameterException(Constants.TAIL_PERCENTAGE, getClass().getName());
+        tailSize = Double.parseDouble(p.getProperty(Constants.TAIL_PERCENTAGE, "-1.0"));
+        if (tailSize < 0)
+            throw new BadParameterException(Constants.TAIL_PERCENTAGE, getClass().getName());
     }
 
     /**
-     *  Creates an Individuals
+     * Creates an Individuals
      */
     public Individual createIndividual() {
         GEGrammar gram = GEGrammar.getGrammar(this.grammar);
@@ -134,6 +137,7 @@ public class GrowInitialiser implements CreationOperation, Stochastic {
 
     /**
      * Get minimum depth of tree
+     *
      * @return minimum depth
      */
     public int getMinDepth() {
@@ -142,6 +146,7 @@ public class GrowInitialiser implements CreationOperation, Stochastic {
 
     /**
      * Set minimum depth
+     *
      * @param minDepth minumum depth
      */
     public void setMinDepth(int minDepth) {
@@ -150,6 +155,7 @@ public class GrowInitialiser implements CreationOperation, Stochastic {
 
     /**
      * Set maximum depth of tree
+     *
      * @param i max depth
      */
     public void setMaxDepth(int i) {
@@ -158,27 +164,26 @@ public class GrowInitialiser implements CreationOperation, Stochastic {
 
     /**
      * Get max depth of tree
+     *
      * @return max depth
      */
     public int getMaxDepth() {
         return this.maxDepth;
     }
 
-    public void doOperation(Individual operand) {
-        GEIndividual ind = (GEIndividual) operand;
-        //ind = new GEIndividual(ind);
-        ind.setGenotype(this.getGenotype(((GEChromosome) ind.getGenotype().get(0)).getMaxChromosomeLength()));
-    //ind.getMapper().setGenotype(ind.getGenotype().get(0));
-
+    public void doOperation(GEIndividual operand) {
+        operand.setGenotype(this.getGenotype(((GEChromosome) operand.getGenotype().get(0)).getMaxChromosomeLength()));
     }
 
     // Implement
-    public void doOperation(List<Individual> operands) {
+    public void doOperation(List<GEIndividual> operands) {
     }
 
-    /** Creates a genotype by building a tree to the most maxDepth for one branch.
-     *  WHAT TO DO IF SIZE IS LARGER THAN MAX_LENGTH*WRAPS??
-     *  @return A valid Genotype
+    /**
+     * Creates a genotype by building a tree to the most maxDepth for one branch.
+     * WHAT TO DO IF SIZE IS LARGER THAN MAX_LENGTH*WRAPS??
+     *
+     * @return A valid Genotype
      **/
     public Genotype getGenotype(int maxLength) {
         genotype = new Genotype();
@@ -190,15 +195,16 @@ public class GrowInitialiser implements CreationOperation, Stochastic {
         grow(dt);
 
         //Add tail
-        int extraCodons = (int)Math.ceil(chromosome.getLength()*tailSize);
-        for (;extraCodons > 0; extraCodons--)
-          chromosome.add(rng.nextInt(Integer.MAX_VALUE));
+        int extraCodons = (int) Math.ceil(chromosome.getLength() * tailSize);
+        for (; extraCodons > 0; extraCodons--)
+            chromosome.add(rng.nextInt(Integer.MAX_VALUE));
 
         return genotype;
     }
 
     /**
      * Recursively builds a tree.
+     *
      * @param dt Tree to grow on
      * @return If the tree is valid
      **/
@@ -271,32 +277,32 @@ public class GrowInitialiser implements CreationOperation, Stochastic {
                             dt.getCurrentNode().getData().getSymbolString());
                 }
             }
-        } 
-        catch (InitializationException e) {
-          System.out.println(e);
-          e.printStackTrace();
+        } catch (InitializationException e) {
+            System.out.println(e);
+            e.printStackTrace();
         }
 
         //Will only get here if rule == null or if an exception is thrown/caught
         return false;
     }
 
-  public ArrayList<Integer> getPossibleRules(NimbleTree<Symbol> dt, Rule rule) {
-    ArrayList<Integer> possibleRules = new ArrayList<Integer>();
+    public ArrayList<Integer> getPossibleRules(NimbleTree<Symbol> dt, Rule rule) {
+        ArrayList<Integer> possibleRules = new ArrayList<Integer>();
 
-    //Iterate through each possible production and store indices to the usable ones
-    int i = 0;
-    for (Production p : rule) {
-      if ((dt.getCurrentNode().getDepth() + 1 + p.getMinimumDepth()) <= this.maxDepth)
-        possibleRules.add(i);
-      i++;
+        //Iterate through each possible production and store indices to the usable ones
+        int i = 0;
+        for (Production p : rule) {
+            if ((dt.getCurrentNode().getDepth() + 1 + p.getMinimumDepth()) <= this.maxDepth)
+                possibleRules.add(i);
+            i++;
+        }
+
+        return possibleRules;
     }
-    
-    return possibleRules;
-  }
 
     /**
      * Check if it is a GECodonValue. Sapecific construct for inserting informatino into the grammar
+     *
      * @param dt tree
      * @return if it is a GECodonValue
      */

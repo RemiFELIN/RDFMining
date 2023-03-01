@@ -3,15 +3,21 @@ package com.i3s.app.rdfminer.evolutionary.mining;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
-import com.i3s.app.rdfminer.evolutionary.crossover.SinglePointCrossoverAxiom;
-import com.i3s.app.rdfminer.evolutionary.crossover.SubtreeCrossoverAxioms;
-import com.i3s.app.rdfminer.evolutionary.crossover.TwoPointCrossover;
-import com.i3s.app.rdfminer.evolutionary.crossover.TypeCrossover;
+import com.i3s.app.rdfminer.evolutionary.TypeCrossover;
+import com.i3s.app.rdfminer.evolutionary.TypeMutation;
 import com.i3s.app.rdfminer.evolutionary.fitness.novelty.NoveltySearch;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.SimplePopulation;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.CrossoverModule;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.NodalMutation;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.StructuralMutation;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.SubtreeCrossover;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.SubtreeMutation;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.IntFlipByteMutation;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.IntFlipMutation;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.SinglePointCrossover;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.TwoPointCrossover;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
-import com.i3s.app.rdfminer.evolutionary.mutation.IntFlipMutation;
 import com.i3s.app.rdfminer.evolutionary.tools.Crowding;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
@@ -54,59 +60,68 @@ public class Generation {
         int even = canEntities.size() % 2;
         while (m < canEntities.size() - even) {
             // get the two individuals which are neighbours
-            GEIndividual parent1 = canEntities.get(m).individual;
-            GEIndividual parent2 = canEntities.get(m + 1).individual;
-            GEIndividual child1, child2;
-            GEChromosome[] chromosomes;
+            ArrayList<GEIndividual> parents = new ArrayList<>(List.of(canEntities.get(m).individual, canEntities.get(m + 1).individual));
+            // prepare crossover module
+            CrossoverModule crossoverModule = null;
+//            GEChromosome[] chromosomes;
             /* CROSSOVER PHASIS */
             switch (RDFMiner.parameters.typeCrossover) {
-                case TypeCrossover.SINGLE_POINT_CROSSOVER:
-                    // Single-point crossover
-                    SinglePointCrossoverAxiom spc = new SinglePointCrossoverAxiom(RDFMiner.parameters.proCrossover,
-                            new MersenneTwisterFast(), generator, curGeneration);
-                    spc.setFixedCrossoverPoint(true);
-//                    child1 = parent1;
-//                    child2 = parent2;
-                    GEIndividual[] childs = spc.doOperation(parent1, parent2);
-                    child1 = childs[0];
-                    child2 = childs[1];
-//                    logger.info("---");
-                    break;
-                case TypeCrossover.SUBTREE_CROSSOVER:
-                    // subtree crossover
-                    SubtreeCrossoverAxioms sca = new SubtreeCrossoverAxioms(RDFMiner.parameters.proCrossover,
-                            new MersenneTwisterFast());
-                    GEIndividual[] inds = sca.crossoverTree(parent1, parent2);
-                    child1 = inds[0];
-                    child2 = inds[1];
-                    break;
                 default:
+                case TypeCrossover.SINGLE_POINT:
+                    // Single-point crossover
+                    SinglePointCrossover spc = new SinglePointCrossover(new MersenneTwisterFast(), RDFMiner.parameters.proCrossover);
+                    spc.setFixedCrossoverPoint(true);
+                    crossoverModule = new CrossoverModule(new MersenneTwisterFast(), spc);
+                    break;
+                case TypeCrossover.TWO_POINT:
                     // Two point crossover
-                    TwoPointCrossover tpc = new TwoPointCrossover(RDFMiner.parameters.proCrossover,
-                            new MersenneTwisterFast());
+                    TwoPointCrossover tpc = new TwoPointCrossover(new MersenneTwisterFast(), RDFMiner.parameters.proCrossover);
                     tpc.setFixedCrossoverPoint(true);
-                    chromosomes = tpc.crossover(
-                            new GEChromosome((GEChromosome) parent1.getGenotype().get(0)),
-                            new GEChromosome((GEChromosome) parent2.getGenotype().get(0))
-                    );
-                    child1 = generator.getIndividualFromChromosome(chromosomes[0], curGeneration);
-                    child2 = generator.getIndividualFromChromosome(chromosomes[1], curGeneration);
+                    crossoverModule = new CrossoverModule(new MersenneTwisterFast(), tpc);
+                    break;
+                case TypeCrossover.SUBTREE:
+                    // subtree crossover
+                    // special implementation due to the original implementation by GEVA developers
+                    SubtreeCrossover stc = new SubtreeCrossover(new MersenneTwisterFast(), RDFMiner.parameters.proCrossover);
+                    stc.doOperation(parents);
                     break;
             }
-
+            // perform crossover
+            if(RDFMiner.parameters.typeCrossover != TypeCrossover.SUBTREE && crossoverModule != null) {
+                Generation.performCrossover(parents, crossoverModule);
+            }
             /* MUTATION PHASIS */
-//			RandomNumberGenerator rand1 = new MersenneTwisterFast();
-            IntFlipMutation mutation = new IntFlipMutation(RDFMiner.parameters.proMutation, new MersenneTwisterFast());
-            // make mutation and return new childs from it
-            GEIndividual newChild1 = mutation.doOperation(child1, generator, curGeneration, child1.getMutationPoints());
-            GEIndividual newChild2 = mutation.doOperation(child2, generator, curGeneration, child2.getMutationPoints());
+            switch (RDFMiner.parameters.typeMutation) {
+                default:
+                case TypeMutation.INT_FLIP:
+                    IntFlipMutation ifm = new IntFlipMutation(new MersenneTwisterFast(), RDFMiner.parameters.proMutation);
+                    ifm.doOperation(parents);
+                    break;
+                case TypeMutation.NODAL:
+                    NodalMutation nm = new NodalMutation(new MersenneTwisterFast(), RDFMiner.parameters.proMutation);
+                    nm.doOperation(parents);
+                    break;
+                case TypeMutation.SUBTREE:
+                    SubtreeMutation sm = new SubtreeMutation(new MersenneTwisterFast(), RDFMiner.parameters.proMutation);
+                    sm.doOperation(parents);
+                    break;
+                case TypeMutation.STRUCTURAL:
+                    StructuralMutation stm = new StructuralMutation(new MersenneTwisterFast(), RDFMiner.parameters.proMutation);
+                    stm.doOperation(parents);
+                    break;
+                case TypeMutation.INT_FLIP_BYTE:
+                    IntFlipByteMutation ifbm = new IntFlipByteMutation(new MersenneTwisterFast(), RDFMiner.parameters.proMutation);
+                    ifbm.doOperation(parents);
+                    break;
+            }
+            // After crossover and mutation phasis; each parent is directly modified and gives an offspring
             // if using crowding method in survival selection
             if (RDFMiner.parameters.diversity == 1) {
                 // if crowding is chosen, we need to compute and return the individuals chosen
                 // (between parents and childs) in function of their fitness
                 final int idx = m;
-                entitiesCallables.add(() -> new Crowding(canEntities.get(idx), canEntities.get(idx + 1), newChild1,
-                        newChild2, canEntities, generator).getSurvivalSelection());
+                entitiesCallables.add(() -> new Crowding(canEntities.get(idx), canEntities.get(idx + 1), parents.get(0),
+                        parents.get(1), canEntities, generator).getSurvivalSelection());
             }
             selectedEntities.remove(canEntities.get(m));
             selectedEntities.remove(canEntities.get(m + 1));
@@ -167,6 +182,15 @@ public class Generation {
         }
         // return the modified individuals
         return evaluatedIndividuals;
+    }
+
+    private static void performCrossover(ArrayList<GEIndividual> individuals, CrossoverModule cm) {
+        SimplePopulation p = new SimplePopulation();
+        for(GEIndividual i : individuals) {
+            p.add(i);
+        }
+        cm.setPopulation(p);
+        cm.perform();
     }
 
 

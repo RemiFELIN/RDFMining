@@ -36,12 +36,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.MutationOperation;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.Operation;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
-
-import java.util.Iterator;
 
 /**
  * MutationOperator has a MutationOperation.
@@ -65,9 +64,8 @@ public class MutationOperator extends OperatorModule {
     }
 
     public void perform() {
-        Iterator<Individual> iIt = this.population.iterator();
-        while(iIt.hasNext()) {
-            operation.doOperation(iIt.next());
+        for(Individual i : this.population.getAll()) {
+            operation.doOperation((GEIndividual) i);
         }
     }
     

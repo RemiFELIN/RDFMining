@@ -67,7 +67,7 @@ public class ScaledRouletteWheel extends RouletteWheel implements Stochastic {
      * Store the accumulated probabilities in the accProbs array
      * @param operands Individuals to take into account
      ***/
-    protected void calculateAccumulatedFitnessProbabilities(List<Individual> operands) {
+    protected void calculateAccumulatedFitnessProbabilities(List<GEIndividual> operands) {
         if (this.sumFit == 0) {
             return;
         }
@@ -106,7 +106,7 @@ public class ScaledRouletteWheel extends RouletteWheel implements Stochastic {
             MersenneTwisterFast rng = new MersenneTwisterFast();
             ScaledRouletteWheel rws = new ScaledRouletteWheel(size, rng);
             int popSize = 5;
-            ArrayList<Individual> alI = new ArrayList<Individual>(popSize);
+            ArrayList<GEIndividual> alI = new ArrayList<>(popSize);
             GEIndividual ind;
             String grammarFile = System.getProperty("user.dir") + "/param/Grammar/sf_grammar.bnf";
             GEGrammar gram = new GEGrammar(grammarFile);

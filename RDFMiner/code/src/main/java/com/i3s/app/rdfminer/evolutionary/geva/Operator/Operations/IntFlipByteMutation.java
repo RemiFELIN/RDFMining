@@ -38,7 +38,6 @@ package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 
 import java.util.List;
@@ -60,6 +59,10 @@ public class IntFlipByteMutation extends MutationOperation {
         super(prob, rng);
     }
 
+    public IntFlipByteMutation(RandomNumberGenerator rng, double prob) {
+        super(prob, rng);
+    }
+
     /**
      * New instance
      * @param rng random number generator
@@ -69,8 +72,8 @@ public class IntFlipByteMutation extends MutationOperation {
         super(rng, p);
     }
     
-    public void doOperation(List<Individual> operands) {
-        for (Individual operand : operands) {
+    public void doOperation(List<GEIndividual> operands) {
+        for (GEIndividual operand : operands) {
             this.doOperation(operand);
         }
     }
@@ -79,9 +82,9 @@ public class IntFlipByteMutation extends MutationOperation {
      * Calls doMutation(GEIndividual c) and then calls Individual.invalidate()
      * @param operand operand to operate on
      */
-    public void doOperation(Individual operand) {
+    public void doOperation(GEIndividual operand) {
         doMutation((GEChromosome)operand.getGenotype().get(0));
-        ((GEIndividual)operand).invalidate();
+        operand.invalidate();
     }
     
     /**

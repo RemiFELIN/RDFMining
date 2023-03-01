@@ -36,6 +36,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.Population;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.Operation;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.OutputI;
@@ -72,7 +74,9 @@ public class Collector implements Operator{
     }
 
     public void perform() {
-        this.operation.doOperation(this.population.getAll());
+        for(Individual i : this.population.getAll()) {
+            this.operation.doOperation((GEIndividual) i);
+        }
     }
 
     /**

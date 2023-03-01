@@ -31,7 +31,6 @@ package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 
@@ -118,7 +117,7 @@ public class SinglePointCrossover extends CrossoverOperation {
 
     }
 
-    public void doOperation(Individual operands) {
+    public void doOperation(GEIndividual operands) {
     }
 
     /**
@@ -127,14 +126,14 @@ public class SinglePointCrossover extends CrossoverOperation {
      *
      * @param operands Individuals to crossover
      **/
-    public void doOperation(List<Individual> operands) {
+    public void doOperation(List<GEIndividual> operands) {
         GEIndividual p1, p2;
         GEChromosome chrom1, chrom2;
         int p1maxXOPoint = 0;
         int p2maxXOPoint = 0;
         if (this.rand.nextDouble() < this.probability) {
-            p1 = (GEIndividual) operands.get(0);
-            p2 = (GEIndividual) operands.get(1);
+            p1 = operands.get(0);
+            p2 = operands.get(1);
             chrom1 = (GEChromosome) p1.getGenotype().get(0);
             chrom2 = (GEChromosome) p2.getGenotype().get(0);
             p1maxXOPoint = this.getMaxXOPoint(p1);

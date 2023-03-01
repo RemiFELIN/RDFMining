@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.Stochastic;
@@ -46,6 +47,7 @@ import java.util.Properties;
 /**
  * This is an abstract class for creating Roulette wheel selection
  * methods with different distributions
+ *
  * @author jbyrne
  */
 public abstract class RouletteWheel extends SelectionOperation implements Stochastic {
@@ -57,13 +59,13 @@ public abstract class RouletteWheel extends SelectionOperation implements Stocha
     protected double[] accProbs;
 
     public RouletteWheel(int size, RandomNumberGenerator rng) {
-    super(size);
-    this.rng = rng;
+        super(size);
+        this.rng = rng;
     }
 
     /**
-    * New instance
-    */
+     * New instance
+     */
     public RouletteWheel() {
         super();
     }
@@ -74,11 +76,11 @@ public abstract class RouletteWheel extends SelectionOperation implements Stocha
     }
 
     @Override
-    public void doOperation(Individual operand) {
+    public void doOperation(GEIndividual operand) {
     }
 
 
-    public void doOperation(List<Individual> operands) {
+    public void doOperation(List<GEIndividual> operands) {
         rankPopulation(operands);
         calculateFitnessSum(operands);
         calculateAccumulatedFitnessProbabilities(operands);
@@ -87,61 +89,63 @@ public abstract class RouletteWheel extends SelectionOperation implements Stocha
 
     /**
      * Rank the population
+     *
      * @param operands population
      */
-    public void rankPopulation(List<Individual> operands) {
+    public void rankPopulation(List<GEIndividual> operands) {
         Collections.sort(operands);
     }
 
     /**
      * Selects Indivudals from operand and adds to the selected population
      * until the selected population is full.
+     *
      * @param operands Individuals to be chosen form
      **/
-    protected void spinRoulette(List<Individual> operands) {
+    protected void spinRoulette(List<GEIndividual> operands) {
         double prob;
         Individual selected;
         this.selectedPopulation.clear();
 
-        while(this.selectedPopulation.size()<super.getSize()) {
+        while (this.selectedPopulation.size() < super.getSize()) {
             prob = rng.nextDouble();
 
-            int cnt = 0;        
-            while(cnt < operands.size() && this.accProbs[cnt] < prob) {
+            int cnt = 0;
+            while (cnt < operands.size() && this.accProbs[cnt] < prob) {
                 cnt++;
             }
-            if(cnt >= operands.size()) {
-		//                System.out.println("Doh:"+cnt);
+            if (cnt >= operands.size()) {
+                //                System.out.println("Doh:"+cnt);
                 cnt = operands.size() - 1; //If the selction with the roulette fails, take the last individual
             }
-            selected = operands.get(cnt);   
+            selected = operands.get(cnt);
             this.selectedPopulation.add(selected.clone());
 
         }
     }
 
-    protected abstract void calculateAccumulatedFitnessProbabilities(List<Individual> operands);
+    protected abstract void calculateAccumulatedFitnessProbabilities(List<GEIndividual> operands);
 
-     /**
+    /**
      * Calculate the fitness sum.
      * Get the minimum fitness.
      * If fitness is NaN or Infinite Double.MAX_VAALUE is assigned
+     *
      * @param c List of individuals which fitness is taken into account
      **/
-    protected void calculateFitnessSum(List<Individual> c) {
+    protected void calculateFitnessSum(List<GEIndividual> c) {
         double sum = 0;
         double tmp;
-        Iterator<Individual> itI = c.iterator();
+        Iterator<GEIndividual> itI = c.iterator();
         this.minFit = Double.MAX_VALUE;
-        while(itI.hasNext()) {
+        while (itI.hasNext()) {
             tmp = itI.next().getFitness().getDouble();
-            if (tmp > 1)
-            {
+            if (tmp > 1) {
                 this.smallFit = false;
             }
 
             sum += tmp;
-            if(this.minFit < tmp) {
+            if (this.minFit < tmp) {
                 this.minFit = tmp;
             }
         }

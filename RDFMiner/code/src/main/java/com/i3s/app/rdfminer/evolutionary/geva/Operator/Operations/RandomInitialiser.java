@@ -120,7 +120,7 @@ public class RandomInitialiser implements CreationOperation, Stochastic {
      * in the incoming individual.
      * @param operand Individual to get the new chromosome
      **/
-    public void doOperation(Individual operand) {
+    public void doOperation(GEIndividual operand) {
         int[] chr = new int[operand.getGenotype().get(0).getLength()];
         for (int i = 0; i < operand.getGenotype().get(0).getLength(); i++) {
             chr[i] = rng.nextInt(Integer.MAX_VALUE);
@@ -133,8 +133,8 @@ public class RandomInitialiser implements CreationOperation, Stochastic {
      * Calls doOperation(Individual operand)
      * @param operands list of individuals
      */
-    public void doOperation(List<Individual> operands) {
-        for (Individual operand : operands) {
+    public void doOperation(List<GEIndividual> operands) {
+        for (GEIndividual operand : operands) {
             this.doOperation(operand);
         }
     }

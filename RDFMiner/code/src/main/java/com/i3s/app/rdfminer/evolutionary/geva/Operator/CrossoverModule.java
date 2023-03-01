@@ -36,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.CrossoverOperation;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.Operation;
@@ -53,7 +54,7 @@ import java.util.ArrayList;
 public class CrossoverModule extends OperatorModule {
     
     private CrossoverOperation op;
-    private ArrayList<Individual> alI;
+    private ArrayList<GEIndividual> alI;
 
     /** Creates a new instance of CrossoverModule
      * @param m random number generator
@@ -62,21 +63,21 @@ public class CrossoverModule extends OperatorModule {
     public CrossoverModule(RandomNumberGenerator m, CrossoverOperation xOver){
         super(m);
         this.op = xOver;
-        this.alI = new ArrayList<Individual>(2);
+        this.alI = new ArrayList<>(2);
     }
 
     /**
      * Crossover is performed on in pairs. The neighbouring individuals will be crossed over
      **/
     public void perform() {
-        Individual i1;
-        Individual i2;
+        GEIndividual i1;
+        GEIndividual i2;
         int length = this.population.size() - this.population.size()%2;
         //System.out.println("xo:"+this.population);
         for(int i=0;i<length;i=i+2) {
             alI.clear();
-            i1 = this.population.get(i);
-            i2 = this.population.get(i+1);
+            i1 = (GEIndividual) this.population.get(i);
+            i2 = (GEIndividual) this.population.get(i+1);
             alI.add(i1);
             alI.add(i2);
             this.op.doOperation(alI);
@@ -84,8 +85,8 @@ public class CrossoverModule extends OperatorModule {
         //This handles the case when the selection size is an odd number
         if(this.population.size()%2!=0) {
             int i =this.population.size()-1;
-            i1 = this.population.get(i);
-            i2 = this.getRandomNotThis(this.population.get(i));
+            i1 = (GEIndividual) this.population.get(i);
+            i2 = (GEIndividual) this.getRandomNotThis(this.population.get(i));
             alI.add(i1);
             alI.add(i2);
             this.op.doOperation(alI);

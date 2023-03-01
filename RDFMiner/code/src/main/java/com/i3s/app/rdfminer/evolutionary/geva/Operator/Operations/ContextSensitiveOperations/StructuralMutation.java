@@ -31,7 +31,6 @@ package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensit
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.ContextualDerivationTree;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.MutationOperation;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.GenotypeHelper;
@@ -55,8 +54,12 @@ public class StructuralMutation extends MutationOperation {
         super(prob, rng);
     }
 
+    public StructuralMutation(RandomNumberGenerator rng, double prob) {
+        super(prob, rng);
+    }
+
     @Override
-    public void doOperation(Individual operand) {
+    public void doOperation(GEIndividual operand) {
         ContextualDerivationTree tree = (ContextualDerivationTree) GenotypeHelper.buildDerivationTree(operand);
         GEChromosome chromosome = (GEChromosome) operand.getGenotype().get(0);
 
@@ -87,14 +90,14 @@ public class StructuralMutation extends MutationOperation {
                 }
 
             }
-            ((GEIndividual) operand).invalidate();
+            operand.invalidate();
             tree = null;
         }
     }
 
     @Override
-    public void doOperation(List<Individual> operands) {
-        for (Individual operand : operands)
+    public void doOperation(List<GEIndividual> operands) {
+        for (GEIndividual operand : operands)
             doOperation(operand);
     }
 }

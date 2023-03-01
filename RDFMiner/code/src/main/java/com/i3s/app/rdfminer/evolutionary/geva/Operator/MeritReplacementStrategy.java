@@ -29,10 +29,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.Population;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.Operation;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ReplacementOperation;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * MeritReplacementStrategy joins to populations. It has a ReplacementOperation
@@ -72,12 +77,20 @@ public class MeritReplacementStrategy extends JoinOperator{
         //System.out.println("ops:"+this.population.size()+" "+this.population);
         if(this.incomingPopulation.size()>this.replacementOperation.getReplacementSize()) {
             int size = this.incomingPopulation.size()-this.replacementOperation.getReplacementSize();
-            this.replacementOperation.doOperation(this.incomingPopulation.getAll(), size);
+            List<GEIndividual> incomingIndividuals = new ArrayList<>();
+            for(Individual i : this.incomingPopulation.getAll()) {
+                incomingIndividuals.add((GEIndividual) i);
+            }
+            this.replacementOperation.doOperation(incomingIndividuals, size);
         }
         //System.out.println("ips:"+this.incomingPopulation.size()+" "+this.incomingPopulation);
         this.population.addAll(this.incomingPopulation);
         //System.out.println("t-ps:"+this.population.size()+" "+this.population);
-        this.replacementOperation.doOperation(this.population.getAll(), (this.population.size() - populationSize));
+        List<GEIndividual> individuals = new ArrayList<>();
+        for(Individual i : this.population.getAll()) {
+            individuals.add((GEIndividual) i);
+        }
+        this.replacementOperation.doOperation(individuals, (this.population.size() - populationSize));
         this.incomingPopulation.clear();
          //System.out.println("nps:"+this.population.size()+" "+this.population);
         super.increaseAge(this.population.getAll());
