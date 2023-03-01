@@ -30,11 +30,6 @@ echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Extract Corese-server
 mkdir -p ../../jar/
 mv -f corese-server/target/corese-server-$CORESE_VERSION-jar-with-dependencies.jar ../../jar/corese-server-$CORESE_VERSION.jar
 cd ../../..
-# prepare data folder for Corese
-echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Create data folder for Corese-server        v$CORESE_VERSION"
-mkdir -p ./Corese/data/
-mkdir -p ./Corese/log/
-mkdir -p ./Virtuoso/data/
 # Download SPIN 2.0.0 from http://topquadrant.com/repository/spin/
 SPIN_PATH="./RDFMiner/dep/org/topbraid/spin/2.0.0/"
 if [ ! -d "$SPIN_PATH" ]; then 
@@ -42,7 +37,12 @@ if [ ! -d "$SPIN_PATH" ]; then
     mkdir -p "$SPIN_PATH"
     wget -P "$SPIN_PATH" https://archive.topquadrant.com/repository/spin/org/topbraid/spin/2.0.0/spin-2.0.0.jar
 fi
-
+# prepare shared folder
+echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Create shared folders"
+mkdir -p ./Corese/data/
+mkdir -p ./Corese/log/
+mkdir -p ./Virtuoso/data/
+mkdir -p ./RDFMiner/caches/
 # Build services
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Build services ..."
 # Read params provided by user
