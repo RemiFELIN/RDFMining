@@ -29,14 +29,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations;
 
-import Operator.Operations.*;
-import Individuals.GEChromosome;
-import Individuals.GEIndividual;
-import Individuals.Individual;
-import Mapper.DerivationNode;
-import Mapper.DerivationTree;
-import Util.GenotypeHelper;
-import Util.Random.RandomNumberGenerator;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.DerivationNode;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.DerivationTree;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.CrossoverOperation;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.GenotypeHelper;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 
 import java.util.List;
 import java.util.Properties;
@@ -89,8 +89,7 @@ public class SubtreeCrossover extends CrossoverOperation {
         // Prepare to pick one of the branches in individual 1
         boolean[] wasPicked = new boolean[chromosome1.getUsedGenes()];
         int pickCount = wasPicked.length;
-        DerivationNode node1 = null;
-        DerivationNode node2 = null;
+        DerivationNode node1, node2 = null;
         int point1 = 0;
         int point2 = 0;
         int length1 = 0;
@@ -146,7 +145,7 @@ public class SubtreeCrossover extends CrossoverOperation {
             //  the range of all codons. This loop maps from 0..pickCount to
             //  actual codon by skipping over previously picked codons
             for (int pickIndex = 0; pickIndex < wasPicked.length; pickIndex++)
-                if (wasPicked[pickIndex] == false)
+                if (!wasPicked[pickIndex])
                     if (point1 == 0) {
                         wasPicked[pickIndex] = true;
                         point1 = pickIndex;
@@ -156,7 +155,6 @@ public class SubtreeCrossover extends CrossoverOperation {
             pickCount--;
 
             assert point1 >= 0 && point1 < chromosome1.getUsedGenes() : point1;
-            assert pickCount >= 0 : pickCount;
 
             // Find the tree-node related to the chosen crossover point. As the
             //  point was chosen from the list of used codons, this will always
@@ -164,7 +162,6 @@ public class SubtreeCrossover extends CrossoverOperation {
             node1 = GenotypeHelper.findNodeFromCodonIndex(tree1,
                     point1);
 
-            assert node1 != null;
             // Find the tree-node nearest the chosen crossover point that has
             //  the same type, so that the crossover will map into it
             node2 = findRelatedNode(tree2,
@@ -256,13 +253,13 @@ public class SubtreeCrossover extends CrossoverOperation {
         int offset = 0;
         boolean Continue = true;
 
-        while (Continue == true) {
+        while (Continue) {
 
             Continue = false;
             if (codonIndex + offset < codonTotal) {
                 node = GenotypeHelper.findNodeFromCodonIndex(tree,
                         codonIndex + offset);
-                if (node.getData().equals(relatedNode.getData()) == true)
+                if (node.getData().equals(relatedNode.getData()))
                     return node;
                 Continue = true;
             }
@@ -270,14 +267,14 @@ public class SubtreeCrossover extends CrossoverOperation {
             if (offset != 0 && codonIndex - offset >= 0) {
                 node = GenotypeHelper.findNodeFromCodonIndex(tree,
                         codonIndex - offset);
-                if (node.getData().equals(relatedNode.getData()) == true)
+                if (node.getData().equals(relatedNode.getData()))
                     return node;
                 Continue = true;
             }
 
             if (codonIndex + offset == 0 && codonTotal == 0) {
                 node = GenotypeHelper.findNodeFromCodonIndex(tree, 0);
-                if (node.getData().equals(relatedNode.getData()) == true)
+                if (node.getData().equals(relatedNode.getData()))
                     return node;
                 Continue = true;
             }

@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Algorithm;
 
-import Operator.Module;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Module;
 
 import java.util.Collection;
 

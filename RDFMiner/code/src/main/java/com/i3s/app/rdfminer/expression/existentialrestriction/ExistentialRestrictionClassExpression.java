@@ -5,11 +5,10 @@ package com.i3s.app.rdfminer.expression.existentialrestriction;
 
 import java.util.List;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.expression.extensional.ExtensionalClassExpression;
-
-import Mapper.Symbol;
 
 /**
  * An existential restriction class expression of the form
@@ -23,8 +22,7 @@ public class ExistentialRestrictionClassExpression extends Expression {
 	/**
 	 * Creates a new existential restriction class expression based on the provided
 	 * functional-style syntax.
-	 * 
-	 * @param syntax an expression in OWL 2 functional-style syntax.
+	 *
 	 */
 	public ExistentialRestrictionClassExpression(List<Symbol> role, List<Symbol> concept) {
 		super();

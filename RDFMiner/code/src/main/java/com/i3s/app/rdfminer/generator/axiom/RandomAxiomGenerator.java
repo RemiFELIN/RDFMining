@@ -4,10 +4,10 @@
 
 package com.i3s.app.rdfminer.generator.axiom;
 
-import Individuals.GEChromosome;
-import Individuals.Phenotype;
-import Util.Random.MersenneTwisterFast;
-import Util.Random.RandomNumberGenerator;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Phenotype;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

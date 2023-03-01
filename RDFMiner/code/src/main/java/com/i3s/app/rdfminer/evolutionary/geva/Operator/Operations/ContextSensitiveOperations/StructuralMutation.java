@@ -29,15 +29,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations;
 
-import Operator.Operations.*;
-import Individuals.GEChromosome;
-import Individuals.GEIndividual;
-import Individuals.Individual;
-import Mapper.ContextualDerivationTree;
-import Mapper.ContextualDerivationTree;
-import Mapper.DerivationTree;
-import Util.GenotypeHelper;
-import Util.Random.RandomNumberGenerator;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.ContextualDerivationTree;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.MutationOperation;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.GenotypeHelper;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -46,33 +45,28 @@ import java.util.Properties;
  * This will find if the chromosome contains a expandable structural node
  * and will mutate it depending on the mutation probability
  */
-public class StructuralMutation extends MutationOperation
-{
+public class StructuralMutation extends MutationOperation {
 
-    public StructuralMutation(RandomNumberGenerator rng, Properties p)
-    {   super(rng, p);
+    public StructuralMutation(RandomNumberGenerator rng, Properties p) {
+        super(rng, p);
     }
 
-    public StructuralMutation(double prob, RandomNumberGenerator rng)
-    {   super(prob, rng);
+    public StructuralMutation(double prob, RandomNumberGenerator rng) {
+        super(prob, rng);
     }
 
     @Override
-    public void doOperation(Individual operand)
-    {
+    public void doOperation(Individual operand) {
         ContextualDerivationTree tree = (ContextualDerivationTree) GenotypeHelper.buildDerivationTree(operand);
-        GEChromosome chromosome = (GEChromosome)operand.getGenotype().get(0);
-               
-        if(tree!=null) // this is to check that the individual is not invalid
+        GEChromosome chromosome = (GEChromosome) operand.getGenotype().get(0);
+
+        if (tree != null) // this is to check that the individual is not invalid
         {
             // This vector contains the index values for all the structural codons
             ArrayList<Integer> structCodonList = new ArrayList(tree.getStructCodonList());
             //iterate through the structural codons and mutate depending on probability
-            for(int i =0;i< structCodonList.size();i++)
-            {               
-                int codonIndex  =structCodonList.get(i);
-                if(this.rng.nextBoolean(this.probability)) 
-                {  
+            for (int codonIndex : structCodonList) {
+                if (this.rng.nextBoolean(this.probability)) {
 //                    if(tree!=null) // this is to check that the individual is not invalid
 //                    {
 //                    System.out.println("The old tree was:");
@@ -81,7 +75,7 @@ public class StructuralMutation extends MutationOperation
 //                    System.out.println("The codon to mutate is:"+codonIndex);
 //                    }
 
-                    chromosome.set(codonIndex, Math.abs(rng.nextInt()));                   
+                    chromosome.set(codonIndex, Math.abs(rng.nextInt()));
                     tree = (ContextualDerivationTree) GenotypeHelper.buildDerivationTree(operand);
 //                    if(tree!=null)
 //                    {
@@ -91,16 +85,16 @@ public class StructuralMutation extends MutationOperation
 //                    System.out.println(tree.toString());
 //                    }
                 }
-                                         
+
             }
-            ((GEIndividual)operand).invalidate();
-            tree = null;  
+            ((GEIndividual) operand).invalidate();
+            tree = null;
         }
     }
-    
+
     @Override
-    public void doOperation(List<Individual> operands)
-    {   for(Individual operand : operands)
+    public void doOperation(List<Individual> operands) {
+        for (Individual operand : operands)
             doOperation(operand);
     }
 }

@@ -3,14 +3,12 @@
  */
 package com.i3s.app.rdfminer.entity.axiom;
 
-import Mapper.Symbol;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.List;
 
 /**
  * An abstract class at the top of the hierarchy of OWL 2 axioms.

@@ -29,21 +29,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.selection;
 
-import Individuals.FitnessPackage.Fitness;
-//import Individuals.GEIndividual;
-import Individuals.Individual;
-import Individuals.Populations.SimplePopulation;
-import Operator.Operations.SelectionOperation;
-import Util.Constants;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
-
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.Fitness;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.SimplePopulation;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.SelectionOperation;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
 import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 
 /**
  * Class for selection of elites.

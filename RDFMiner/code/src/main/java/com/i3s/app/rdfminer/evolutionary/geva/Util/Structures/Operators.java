@@ -33,7 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.i3s.app.rdfminer.evolutionary.geva.Util.Structures;
 
-import Mapper.Symbol;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
+
 import java.util.HashSet;
 import java.util.Hashtable;
 
@@ -43,8 +44,8 @@ import java.util.Hashtable;
  */
 public class Operators<E> {
 
-    private final Hashtable<String, Integer> operators = new Hashtable<String, Integer>();
-    private final HashSet<String> unaryOperators = new HashSet<String>();
+    private final Hashtable<String, Integer> operators = new Hashtable<>();
+    private final HashSet<String> unaryOperators = new HashSet<>();
 
     public Operators() {
         operators.put("(", 10);
@@ -63,11 +64,7 @@ public class Operators<E> {
 
     public int priority(final String operator) {
         final int value;
-        if (!operators.containsKey(operator)) {
-            value = -1;
-        } else {
-            value = operators.get(operator);
-        }
+        value = operators.getOrDefault(operator, -1);
         return value;
     }
 

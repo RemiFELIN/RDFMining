@@ -6,6 +6,8 @@ package com.i3s.app.rdfminer.expression;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Enums;
 import com.i3s.app.rdfminer.expression.atomic.AtomicClassExpression;
 import com.i3s.app.rdfminer.expression.atomic.AtomicDatatypeExpression;
 import com.i3s.app.rdfminer.expression.atomic.AtomicPropertyExpression;
@@ -23,9 +25,6 @@ import com.i3s.app.rdfminer.expression.union.UnionClassExpression;
 import com.i3s.app.rdfminer.expression.union.UnionDatatypeExpression;
 import com.i3s.app.rdfminer.expression.valuerestriction.ValueRestrictionClassExpression;
 import com.i3s.app.rdfminer.grammar.DLFactory;
-
-import Mapper.Symbol;
-import Util.Enums;
 
 /**
  * The expression factory singleton class is able to construct expressions of

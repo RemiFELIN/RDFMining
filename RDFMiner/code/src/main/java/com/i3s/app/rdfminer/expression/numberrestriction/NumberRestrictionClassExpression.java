@@ -5,10 +5,9 @@ package com.i3s.app.rdfminer.expression.numberrestriction;
 
 import java.util.List;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
-
-import Mapper.Symbol;
 
 /**
  * A number restriction class expression of the form ObjectMinCardinality(...),

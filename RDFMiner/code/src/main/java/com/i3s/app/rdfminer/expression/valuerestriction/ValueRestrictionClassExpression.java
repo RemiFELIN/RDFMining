@@ -5,11 +5,10 @@ package com.i3s.app.rdfminer.expression.valuerestriction;
 
 import java.util.List;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.expression.extensional.ExtensionalClassExpression;
-
-import Mapper.Symbol;
 
 /**
  * A class expression of the form ObjectAllValuesFrom(...).
@@ -22,8 +21,6 @@ public class ValueRestrictionClassExpression extends Expression {
 	/**
 	 * Creates a new value restriction class expression based on the provided
 	 * functional-style syntax.
-	 * 
-	 * @param syntax an expression in OWL 2 functional-style syntax.
 	 */
 	public ValueRestrictionClassExpression(List<Symbol> role, List<Symbol> concept) {
 		super();

@@ -3,11 +3,11 @@
  */
 package com.i3s.app.rdfminer.grammar;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Enums;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import Mapper.Symbol;
-import Util.Enums;
 
 /**
  * @author Andrea G. B. Tettamanzi

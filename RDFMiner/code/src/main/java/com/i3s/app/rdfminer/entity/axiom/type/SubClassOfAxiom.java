@@ -3,9 +3,9 @@
  */
 package com.i3s.app.rdfminer.entity.axiom.type;
 
-import Mapper.Symbol;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.expression.complement.ComplementClassExpression;
@@ -64,7 +64,7 @@ public class SubClassOfAxiom extends Axiom {
 	 * @param endpoint             the sparql endpoint used for the queries
 	 */
 	public SubClassOfAxiom(List<Symbol> subClassExpression, List<Symbol> superClassExpression,
-			CoreseEndpoint endpoint) {
+						   CoreseEndpoint endpoint) {
 		// set a t0 using the CPU time
 		long t0 = getProcessCPUTime();
 		subClass = ExpressionFactory.createClass(subClassExpression);

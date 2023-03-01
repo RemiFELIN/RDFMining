@@ -1,9 +1,9 @@
 package com.i3s.app.rdfminer.entity;
 
-import Mapper.Symbol;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.entity.axiom.type.DisjointClassesAxiom;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
 import com.i3s.app.rdfminer.fuzzy.TruthDegree;
 import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 import org.json.JSONArray;

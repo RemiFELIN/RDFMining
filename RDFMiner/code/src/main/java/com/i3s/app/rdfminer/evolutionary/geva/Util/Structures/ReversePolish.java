@@ -29,9 +29,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Util.Structures;
 
-import Individuals.Phenotype;
-import Mapper.Symbol;
-import Util.Enums;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Phenotype;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Enums;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +41,7 @@ import java.util.Stack;
 public class ReversePolish {
 
     private BinaryNode<Symbol> root;
-    private ArrayList<Symbol> postfix = new ArrayList<Symbol>();
+    private ArrayList<Symbol> postfix = new ArrayList<>();
     private ArrayList<Symbol> tokens;
     private int global_cnt;
     private Operators operators;
@@ -67,7 +68,7 @@ public class ReversePolish {
         tokens = new ArrayList<Symbol>();
         List<String> als = Arrays.asList(s.split("\\s+"));
         for(int i = 0; i<als.size(); i++) {
-            tokens.add(new Symbol(als.get(i),Enums.SymbolType.TSymbol));
+            tokens.add(new Symbol(als.get(i), Enums.SymbolType.TSymbol));
         }
     }
 
@@ -127,8 +128,8 @@ public class ReversePolish {
      */
     public String toReversePolish() {
         Symbol nextToken;
-        Symbol operator = null;
-        Stack<Symbol> siding = new Stack<Symbol>();
+        Symbol operator;
+        Stack<Symbol> siding = new Stack<>();
 
         for (int index = 0; index < tokens.size(); index++) {
             nextToken = tokens.get(index);

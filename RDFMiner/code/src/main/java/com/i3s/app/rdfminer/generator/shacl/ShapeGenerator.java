@@ -1,10 +1,10 @@
 package com.i3s.app.rdfminer.generator.shacl;
 
-import Mapper.Production;
-import Mapper.Rule;
-import Mapper.Symbol;
-import Util.Enums;
 import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Production;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Rule;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Enums;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;

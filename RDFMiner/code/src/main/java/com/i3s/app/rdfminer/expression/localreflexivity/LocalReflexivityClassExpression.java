@@ -5,10 +5,9 @@ package com.i3s.app.rdfminer.expression.localreflexivity;
 
 import java.util.List;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
-
-import Mapper.Symbol;
 
 /**
  * A local reflexivity class expression of the form ObjectHasSelf(...).
@@ -21,8 +20,7 @@ public class LocalReflexivityClassExpression extends Expression {
 	/**
 	 * Creates a new local reflexivity class expression based on the provided
 	 * functional-style syntax.
-	 * 
-	 * @param syntax an expression in OWL 2 functional-style syntax.
+	 *
 	 */
 	public LocalReflexivityClassExpression(List<Symbol> role) {
 		super();

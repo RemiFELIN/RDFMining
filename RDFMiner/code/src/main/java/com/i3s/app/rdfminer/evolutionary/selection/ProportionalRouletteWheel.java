@@ -29,14 +29,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.selection;
 
-import Individuals.FitnessPackage.BasicFitness;
-import Individuals.*;
-import Mapper.GEGrammar;
-import Util.Random.MersenneTwisterFast;
-import Util.Random.RandomNumberGenerator;
-import Util.Random.Stochastic;
-import Operator.Operations.RouletteWheel;
-import java.util.*;
+
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.*;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.GEGrammar;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.RouletteWheel;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.Stochastic;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Roulette wheel selection based on fitness proprtional selection. it uses

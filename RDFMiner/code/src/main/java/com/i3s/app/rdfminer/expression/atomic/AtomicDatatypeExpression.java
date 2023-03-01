@@ -5,9 +5,8 @@ package com.i3s.app.rdfminer.expression.atomic;
 
 import java.util.List;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
 import com.i3s.app.rdfminer.expression.Expression;
-
-import Mapper.Symbol;
 
 /**
  * An OWL 2 atomic datatype expression.

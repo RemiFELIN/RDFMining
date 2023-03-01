@@ -1,7 +1,7 @@
 package com.i3s.app.rdfminer.generator.shacl;
 
-import Util.Random.MersenneTwisterFast;
-import Util.Random.RandomNumberGenerator;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

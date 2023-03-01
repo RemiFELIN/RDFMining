@@ -3,11 +3,12 @@
  */
 package com.i3s.app.rdfminer.evolutionary.selection;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 
-import Individuals.Individual;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Selection of the 'elite' population : a population composed of the 'best'

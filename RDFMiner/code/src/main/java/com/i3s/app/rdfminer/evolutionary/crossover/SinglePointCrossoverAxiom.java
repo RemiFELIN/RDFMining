@@ -1,10 +1,10 @@
 package com.i3s.app.rdfminer.evolutionary.crossover;
 
-import Individuals.GEChromosome;
-import Operator.Operations.SinglePointCrossover;
-import Util.Random.MersenneTwisterFast;
-import Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.SinglePointCrossover;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.evolutionary.individual.CandidatePopulation;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;

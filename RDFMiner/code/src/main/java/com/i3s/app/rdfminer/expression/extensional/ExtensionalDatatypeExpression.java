@@ -7,14 +7,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
 import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
-
-import Mapper.Symbol;
 
 /**
  * A class expression of the form DataOneOf(...).

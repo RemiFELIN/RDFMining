@@ -1,26 +1,24 @@
 package com.i3s.app.rdfminer.evolutionary.tools;
 
-import Individuals.FitnessPackage.BasicFitness;
-import Individuals.GEChromosome;
-import Individuals.Genotype;
-import Individuals.Phenotype;
-import Individuals.Populations.Population;
-import Mapper.Symbol;
-import Operator.Operations.TournamentSelect;
-import Util.Random.MersenneTwisterFast;
-import Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
-import com.i3s.app.rdfminer.entity.shacl.Shape;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.Population;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.TournamentSelect;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.selection.ProportionalRouletteWheel;
 import com.i3s.app.rdfminer.evolutionary.selection.TruncationSelection;
 import com.i3s.app.rdfminer.evolutionary.selection.TypeSelection;
-import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.grammar.DLFactory;
 import org.apache.log4j.Logger;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This class is used to deployed all EA tools like crossover, mutation, ...

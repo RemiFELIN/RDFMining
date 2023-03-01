@@ -29,7 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Util;
 
-import Util.Random.MersenneTwisterFast;
+
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 
 /**
  * This class is used to generate constants for symbolic regression

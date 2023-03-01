@@ -1,14 +1,14 @@
 package com.i3s.app.rdfminer.evolutionary.tools;
 
-import Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
+import com.i3s.app.rdfminer.evolutionary.fitness.Fitness;
 import com.i3s.app.rdfminer.evolutionary.fitness.novelty.NoveltySearch;
 import com.i3s.app.rdfminer.evolutionary.fitness.novelty.Similarity;
-import com.i3s.app.rdfminer.generator.Generator;
-import com.i3s.app.rdfminer.evolutionary.fitness.Fitness;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
+import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
 

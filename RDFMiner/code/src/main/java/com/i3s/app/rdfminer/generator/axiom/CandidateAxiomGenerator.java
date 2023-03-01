@@ -3,13 +3,13 @@
  */
 package com.i3s.app.rdfminer.generator.axiom;
 
-import Individuals.Phenotype;
-import Mapper.Production;
-import Mapper.Rule;
-import Mapper.Symbol;
-import Util.Enums;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Phenotype;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Production;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Rule;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Enums;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;

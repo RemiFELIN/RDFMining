@@ -3,12 +3,12 @@
  */
 package com.i3s.app.rdfminer.entity.axiom;
 
-import Mapper.Symbol;
-import Util.Enums;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.axiom.type.DisjointClassesAxiom;
 import com.i3s.app.rdfminer.entity.axiom.type.OWLAxiom;
 import com.i3s.app.rdfminer.entity.axiom.type.SubClassOfAxiom;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Enums;
 import com.i3s.app.rdfminer.grammar.DLFactory;
 import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;

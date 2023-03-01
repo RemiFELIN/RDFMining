@@ -33,6 +33,7 @@ cd ../../..
 # prepare data folder for Corese
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Create data folder for Corese-server        v$CORESE_VERSION"
 mkdir -p ./Corese/data/
+mkdir -p ./Corese/log/
 mkdir -p ./Virtuoso/data/
 # Download SPIN 2.0.0 from http://topquadrant.com/repository/spin/
 SPIN_PATH="./RDFMiner/dep/org/topbraid/spin/2.0.0/"
@@ -45,19 +46,19 @@ fi
 # Build services
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Build services ..."
 # Read params provided by user
-if [ $# -eq 0 ]; then 
-    echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - No parameters provided ..."
-else
-    params=("$@")
-    for index in ${!params[@]}; do
-        # Set SPARQL Endpoint provided by user to allow federated queries (using SERVICE)
-        if [ "${params[index]}" == "-e" ] || [ "${params[index]}" == "--endpoints" ]; then 
-            # Copy the file (which contains SPARQL Endpoints) into config/ folder from Corese
-            echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - SPARQL Endpoint(s) provided ! Creating endpoints.txt ..."
-            cp ${params[index + 1]} Corese/config/endpoints.txt
-        fi
-    done
-fi
+# if [ $# -eq 0 ]; then 
+#     echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - No parameters provided ..."
+# else
+#     params=("$@")
+#     for index in ${!params[@]}; do
+#         # Set SPARQL Endpoint provided by user to allow federated queries (using SERVICE)
+#         if [ "${params[index]}" == "-e" ] || [ "${params[index]}" == "--endpoints" ]; then 
+#             # Copy the file (which contains SPARQL Endpoints) into config/ folder from Corese
+#             echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - SPARQL Endpoint(s) provided ! Creating endpoints.txt ..."
+#             cp ${params[index + 1]} Corese/config/endpoints.txt
+#         fi
+#     done
+# fi
 ./install/services/build_rdfminer.sh
 ./install/services/build_corese.sh
 ./install/services/build_virtuoso.sh

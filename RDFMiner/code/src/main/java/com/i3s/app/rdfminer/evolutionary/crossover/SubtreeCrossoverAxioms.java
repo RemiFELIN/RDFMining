@@ -1,14 +1,12 @@
 package com.i3s.app.rdfminer.evolutionary.crossover;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.DerivationNode;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.DerivationTree;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.SubtreeCrossover;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.evolutionary.tools.GenotypeHelper;
 import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
-
-import Individuals.GEChromosome;
-import Mapper.DerivationNode;
-import Mapper.DerivationTree;
-import Operator.Operations.ContextSensitiveOperations.SubtreeCrossover;
-//import Util.GenotypeHelper;
-import Util.Random.RandomNumberGenerator;
 
 /**
  * 

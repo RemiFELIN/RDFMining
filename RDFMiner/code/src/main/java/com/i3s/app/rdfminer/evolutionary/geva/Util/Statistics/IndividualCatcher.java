@@ -36,15 +36,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Util.Statistics;
 
-import Exceptions.BadParameterException;
-import Individuals.FitnessPackage.Fitness;
-import Individuals.Individual;
+
+import com.i3s.app.rdfminer.evolutionary.geva.Exceptions.BadParameterException;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.Fitness;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
+import com.i3s.app.rdfminer.evolutionary.geva.Parameter.ParameterI;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-
-import Parameter.ParameterI;
-import Util.Constants;
 
 /**
  * Stores Individuals

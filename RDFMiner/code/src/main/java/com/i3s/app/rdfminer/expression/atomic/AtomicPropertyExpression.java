@@ -5,11 +5,10 @@ package com.i3s.app.rdfminer.expression.atomic;
 
 import java.util.List;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
 import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
-
-import Mapper.Symbol;
 
 /**
  * An OWL 2 property expression.
@@ -49,8 +48,6 @@ public class AtomicPropertyExpression extends Expression {
 	/**
 	 * Check whether the given RDF node pair is an instance of the property
 	 * represented by this expression.
-	 * 
-	 * @see com.i3s.app.rdfminer.expression.Expression#contains(org.apache.jena.rdf.model.RDFNode)
 	 * @param pair an RDF node pair
 	 */
 	@Override

@@ -46,8 +46,9 @@ import java.util.Properties;
 
 /**
  * Single point crossover.
- * @version 2007.0305
+ *
  * @author Blip
+ * @version 2007.0305
  */
 public class SinglePointCrossover extends CrossoverOperation {
 
@@ -56,7 +57,8 @@ public class SinglePointCrossover extends CrossoverOperation {
 
     /**
      * Creates a new instance of SinglePointCrossover
-     * @param m random number generator
+     *
+     * @param m    random number generator
      * @param prob crossover probability
      */
     @SuppressWarnings({"SameParameterValue"})
@@ -66,7 +68,8 @@ public class SinglePointCrossover extends CrossoverOperation {
 
     /**
      * Creates a new instance of SinglePointCrossover
-     * @param m random number generator
+     *
+     * @param m    random number generator
      * @param prob crossover probability
      */
     @SuppressWarnings({"SameParameterValue"})
@@ -76,6 +79,7 @@ public class SinglePointCrossover extends CrossoverOperation {
 
     /**
      * New instance
+     *
      * @param m random number generator
      * @param p properties
      */
@@ -126,6 +130,7 @@ public class SinglePointCrossover extends CrossoverOperation {
     /**
      * Performes crossover on the 2 first individuals in the incoming list.
      * Depending on the crossover probability.
+     *
      * @param operands Individuals to crossover
      **/
     public void doOperation(List<Individual> operands) {
@@ -140,61 +145,60 @@ public class SinglePointCrossover extends CrossoverOperation {
             chrom2 = (GEChromosome) p2.getGenotype().get(0);
             p1maxXOPoint = this.getMaxXOPoint(p1);
             p2maxXOPoint = this.getMaxXOPoint(p2);
-	    performCrossover(p1, p2,
-			     chrom1, chrom2, 
-			     p1maxXOPoint, p2maxXOPoint);
+            performCrossover(p1, p2, chrom1, chrom2, p1maxXOPoint, p2maxXOPoint);
         }
     }
 
     /**
      * This method actually performs the crossover and returns an int
      * array with the crossover points.
-     * 
-     * @param indiv1 The first individual
-     * @param indiv2 The second individual
-     * @param chrome1 The first individual's chromosome
-     * @param chrome2 The second individual's chromosome
+     *
+     * @param indiv1            The first individual
+     * @param indiv2            The second individual
+     * @param chrome1           The first individual's chromosome
+     * @param chrome2           The second individual's chromosome
      * @param chrome1MaxXOPoint The first Individual's maximum crossover point
      * @param chrome2MaxXOPoint The second Individual's maximum crossover point
      * @return int[] The crossover points for each individual
      */
     public int[] performCrossover(GEIndividual indiv1,
-				  GEIndividual indiv2,
-				  GEChromosome chrome1,
-				  GEChromosome chrome2,
-				  int chrome1MaxXOPoint, 
-				  int chrome2MaxXOPoint){
+                                  GEIndividual indiv2,
+                                  GEChromosome chrome1,
+                                  GEChromosome chrome2,
+                                  int chrome1MaxXOPoint,
+                                  int chrome2MaxXOPoint) {
 
-	// Save the crossover points
-	int[] xoPoints = this.makeNewChromosome(chrome1,
-					  chrome2, 
-					  chrome1MaxXOPoint, 
-					  chrome2MaxXOPoint);
-	// Clear the old parent IDs
-	indiv1.getParentUIDs().clear();
-	indiv2.getParentUIDs().clear();
+        // Save the crossover points
+        int[] xoPoints = this.makeNewChromosome(chrome1,
+                chrome2,
+                chrome1MaxXOPoint,
+                chrome2MaxXOPoint);
+        // Clear the old parent IDs
+        indiv1.getParentUIDs().clear();
+        indiv2.getParentUIDs().clear();
 
-	if(xoPoints[0] == 0)
-	    indiv1.getParentUIDs().add(indiv2.getUID());
-	else{
-	    indiv1.getParentUIDs().add(indiv1.getUID());
-	    indiv1.getParentUIDs().add(indiv2.getUID());
-	}
-	
-	if(xoPoints[1] == 0)
-	    indiv2.getParentUIDs().add(indiv1.getUID());
-	else{
-	    indiv2.getParentUIDs().add(indiv2.getUID());
-	    indiv2.getParentUIDs().add(indiv1.getUID());
-	}
-	
-	return xoPoints;
+        if (xoPoints[0] == 0)
+            indiv1.getParentUIDs().add(indiv2.getUID());
+        else {
+            indiv1.getParentUIDs().add(indiv1.getUID());
+            indiv1.getParentUIDs().add(indiv2.getUID());
+        }
+
+        if (xoPoints[1] == 0)
+            indiv2.getParentUIDs().add(indiv1.getUID());
+        else {
+            indiv2.getParentUIDs().add(indiv2.getUID());
+            indiv2.getParentUIDs().add(indiv1.getUID());
+        }
+
+        return xoPoints;
     }
 
     /**
-     * Get xover max point based on used codons. 
+     * Get xover max point based on used codons.
      * If used codons are 0 or not codon use sensitive
      * chromosone length is returned (all are legal).
+     *
      * @param i GEIndividual to get find the max XO point
      * @return int Max crossover point
      */
@@ -211,6 +215,7 @@ public class SinglePointCrossover extends CrossoverOperation {
 
     /**
      * Get the crossover point within the shortest of the incoming chromosomes
+     *
      * @param length1 Chromsome length 1
      * @param length2 Chromsome length 2
      * @return The crossover point
@@ -229,23 +234,23 @@ public class SinglePointCrossover extends CrossoverOperation {
      * Creates the new chromsome, with fixed crossver point or not,
      * and returns the crossover points on the individuals.
      *
-     * @param c1 Chromsome 1
-     * @param c2 Chromsome 2
+     * @param c1           Chromsome 1
+     * @param c2           Chromsome 2
      * @param p1maxXOPoint Max crossover point Chromsome 1
      * @param p2maxXOPoint Max crossover point Chromsome 2
      * @return int[] Crossover points for both individuals
      **/
     public int[] makeNewChromosome(final GEChromosome c1, final GEChromosome c2,
-            final int p1maxXOPoint, final int p2maxXOPoint) {
-        final int point1,  point2;
-	int[] xoPoints = new int[2];
-	
+                                   final int p1maxXOPoint, final int p2maxXOPoint) {
+        final int point1, point2;
+        int[] xoPoints = new int[2];
+
 
         if (this.fixedCrossoverPoint) {
             point1 = getXoverPoint(p1maxXOPoint, p2maxXOPoint);
 
-	    xoPoints[0] = point1;
-	    xoPoints[1] = point1;
+            xoPoints[0] = point1;
+            xoPoints[1] = point1;
 
             int tmp1, tmp2;
             for (int i = 0; i < point1; i++) {
@@ -257,8 +262,8 @@ public class SinglePointCrossover extends CrossoverOperation {
         } else {
             point1 = this.rand.nextInt(p1maxXOPoint);
             point2 = this.rand.nextInt(p2maxXOPoint);
-	    xoPoints[0] = point1;
-	    xoPoints[1] = point2;
+            xoPoints[0] = point1;
+            xoPoints[1] = point2;
 
             int[] tmp1 = c1.toArray();
             int[] tmp2 = c2.toArray();
@@ -280,11 +285,12 @@ public class SinglePointCrossover extends CrossoverOperation {
             }
         }
 
-	return xoPoints;
+        return xoPoints;
     }
 
     /**
      * Chech is the crossover point is fixed
+     *
      * @return true if crossover point is fixed
      */
     public boolean isFixedCrossoverPoint() {
@@ -293,6 +299,7 @@ public class SinglePointCrossover extends CrossoverOperation {
 
     /**
      * Set crossover point to be fixed (same on both chromsomes) or not fixed
+     *
      * @param fixedCrossoverPoint crossverpoint fixation
      */
     @SuppressWarnings({"SameParameterValue"})
@@ -302,7 +309,7 @@ public class SinglePointCrossover extends CrossoverOperation {
 
     public static void main(String[] args) {
         SinglePointCrossover cop = new SinglePointCrossover(new MersenneTwisterFast(), 1);
-        cop.setFixedCrossoverPoint(false);
+        cop.setFixedCrossoverPoint(true);
         GEChromosome c1 = new GEChromosome(10);
         GEChromosome c2 = new GEChromosome(10);
 
@@ -313,7 +320,15 @@ public class SinglePointCrossover extends CrossoverOperation {
 
         }
 
-        cop.makeNewChromosome(c1, c2, c1.size(), c2.size());
+        System.out.println("before makeNewChromosome");
+        System.out.println("c1: " + c1);
+        System.out.println("c2: " + c2);
+
+//        cop.makeNewChromosome(c1, c2, c1.size(), c2.size());
+
+        System.out.println("after makeNewChromosome");
+        System.out.println("c1: " + c1);
+        System.out.println("c2: " + c2);
 
         Genotype g1 = new Genotype();
         Genotype g2 = new Genotype();
@@ -327,7 +342,7 @@ public class SinglePointCrossover extends CrossoverOperation {
         i2.setGenotype(g2);
 
 
-        ArrayList<Individual> aI = new ArrayList<Individual>(2);
+        ArrayList<Individual> aI = new ArrayList<>(2);
         aI.add(i1);
         aI.add(i2);
 
@@ -350,14 +365,14 @@ public class SinglePointCrossover extends CrossoverOperation {
         p.add(i2);
         cm.setPopulation(p);
         long st = System.currentTimeMillis();
-        for (int i = 1; i < 100000000; i += 20) {
+//        for (int i = 1; i < 100000000; i += 20) {
 
-            cm.perform();
+        cm.perform();
 
 
-        }
+//        }
         long et = System.currentTimeMillis();
-        System.out.println("Done running: Total time(Ms) for " + 100000000 + " generations was " + (et - st));
+        System.out.println("Done running: Total time(Ms) for 1 generations was " + (et - st));
         System.out.println();
         System.out.println("Testing module crossover");
         System.out.println();
@@ -367,7 +382,6 @@ public class SinglePointCrossover extends CrossoverOperation {
 
         System.out.println(c1.toString());
         System.out.println(c2.toString());
-
 
 
     }

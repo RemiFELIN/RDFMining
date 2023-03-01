@@ -29,12 +29,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.crossover;
 
-import Individuals.GEChromosome;
-import Individuals.GEIndividual;
-import Individuals.Individual;
-import Operator.Operations.CrossoverOperation;
-import Util.Constants;
-import Util.Random.RandomNumberGenerator;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.CrossoverOperation;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
+
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.List;
 import java.util.Properties;

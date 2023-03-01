@@ -5,11 +5,10 @@ package com.i3s.app.rdfminer.expression.atomic;
 
 import java.util.List;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
 import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
-
-import Mapper.Symbol;
 
 /**
  * An OWL 2 class expression.

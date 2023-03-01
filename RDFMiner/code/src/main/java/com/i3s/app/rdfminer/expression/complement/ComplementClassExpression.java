@@ -5,10 +5,9 @@ package com.i3s.app.rdfminer.expression.complement;
 
 import java.util.List;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
-
-import Mapper.Symbol;
 
 /**
  * A class expression of the form ObjectComplementOf(...).

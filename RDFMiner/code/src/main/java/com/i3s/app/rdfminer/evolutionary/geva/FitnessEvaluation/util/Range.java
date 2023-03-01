@@ -26,10 +26,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 />.
 */
+package com.i3s.app.rdfminer.evolutionary.geva.FitnessEvaluation.util;
 
-package FitnessEvaluation.util;
-
-import Util.Random.RandomNumberGenerator;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 
 /**
  * Parses an input string to a range of doubles, either random or fixed

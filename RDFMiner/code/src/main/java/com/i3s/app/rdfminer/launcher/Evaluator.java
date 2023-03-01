@@ -1,6 +1,5 @@
 package com.i3s.app.rdfminer.launcher;
 
-import Individuals.Phenotype;
 import com.github.jsonldjava.shaded.com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.i3s.app.rdfminer.Global;
@@ -9,6 +8,7 @@ import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.entity.axiom.AxiomFactory;
 import com.i3s.app.rdfminer.entity.shacl.ShapesManager;
 import com.i3s.app.rdfminer.entity.shacl.ValidationReport;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Phenotype;
 import com.i3s.app.rdfminer.generator.axiom.AxiomGenerator;
 import com.i3s.app.rdfminer.generator.axiom.CandidateAxiomGenerator;
 import com.i3s.app.rdfminer.generator.axiom.IncreasingTimePredictorAxiomGenerator;

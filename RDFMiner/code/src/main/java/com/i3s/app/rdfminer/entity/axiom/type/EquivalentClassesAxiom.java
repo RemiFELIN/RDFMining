@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
 import com.i3s.app.rdfminer.expression.Expression;
 import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.expression.complement.ComplementClassExpression;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 
-import Mapper.Symbol;
 import org.apache.log4j.Logger;
 
 /**

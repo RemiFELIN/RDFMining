@@ -35,19 +35,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.i3s.app.rdfminer.evolutionary.geva.Util.Statistics;
-import java.util.Collections;
-import Individuals.FitnessPackage.BasicFitness;
-import Individuals.FitnessPackage.Fitness;
-import Individuals.GEIndividual;
-import Individuals.Individual;
-import Mapper.GEGrammar;
+
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.Fitness;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.GEGrammar;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
  * Stores statistics from the population;
- * @author Blip
  *
+ * @author Blip
  */
 public class StatCatcher {
     protected ArrayList<Double> meanFitness;
@@ -64,63 +65,67 @@ public class StatCatcher {
     protected ArrayList<ArrayList<Double>> allFitness;
     protected ArrayList<Individual> bestIndividualOfGeneration;
 
-    /** Creates a new instance of StatCatcher */
+    /**
+     * Creates a new instance of StatCatcher
+     */
     public StatCatcher() {
-        this.meanFitness = new ArrayList<Double>();
-        this.bestFitness = new ArrayList<Double>();
-        this.varFitness = new ArrayList<Double>();
-        this.aveLength = new ArrayList<Double>();
-        this.varLength = new ArrayList<Double>();
-        this.maxLength = new ArrayList<Integer>();
-        this.minLength = new ArrayList<Integer>();
-        this.meanUsedGenes = new ArrayList<Double>();
-        this.meanDerivationTreeDepth = new ArrayList<Double>();
-        this.time = new ArrayList<Long>();
-        this.invalids = new ArrayList<Integer>();
-        this.allFitness = new ArrayList<ArrayList<Double>>();
-	this.bestIndividualOfGeneration = new ArrayList<Individual>();
-        }
+        this.meanFitness = new ArrayList<>();
+        this.bestFitness = new ArrayList<>();
+        this.varFitness = new ArrayList<>();
+        this.aveLength = new ArrayList<>();
+        this.varLength = new ArrayList<>();
+        this.maxLength = new ArrayList<>();
+        this.minLength = new ArrayList<>();
+        this.meanUsedGenes = new ArrayList<>();
+        this.meanDerivationTreeDepth = new ArrayList<>();
+        this.time = new ArrayList<>();
+        this.invalids = new ArrayList<>();
+        this.allFitness = new ArrayList<>();
+        this.bestIndividualOfGeneration = new ArrayList<>();
+    }
 
     /**
      * New instance
+     *
      * @param gen number of generations
      */
     public StatCatcher(int gen) {
-        this.meanFitness = new ArrayList<Double>(gen);
-        this.bestFitness = new ArrayList<Double>(gen);
-        this.varFitness = new ArrayList<Double>(gen);
-        this.aveLength = new ArrayList<Double>(gen);
-        this.varLength = new ArrayList<Double>(gen);
-        this.maxLength = new ArrayList<Integer>(gen);
-        this.minLength = new ArrayList<Integer>(gen);
-        this.meanUsedGenes = new ArrayList<Double>(gen);
-        this.meanDerivationTreeDepth = new ArrayList<Double>(gen);
-        this.time = new ArrayList<Long>(gen);
-        this.invalids = new ArrayList<Integer>(gen);
-        this.allFitness = new ArrayList<ArrayList<Double>>(gen);
-	this.bestIndividualOfGeneration = new ArrayList<Individual>(gen);
+        this.meanFitness = new ArrayList<>(gen);
+        this.bestFitness = new ArrayList<>(gen);
+        this.varFitness = new ArrayList<>(gen);
+        this.aveLength = new ArrayList<>(gen);
+        this.varLength = new ArrayList<>(gen);
+        this.maxLength = new ArrayList<>(gen);
+        this.minLength = new ArrayList<>(gen);
+        this.meanUsedGenes = new ArrayList<>(gen);
+        this.meanDerivationTreeDepth = new ArrayList<>(gen);
+        this.time = new ArrayList<>(gen);
+        this.invalids = new ArrayList<>(gen);
+        this.allFitness = new ArrayList<>(gen);
+        this.bestIndividualOfGeneration = new ArrayList<>(gen);
     }
 
     /**
      * Clear the structures in the class
      */
     public void clear() {
-        this.bestFitness = new ArrayList<Double>();
-        this.meanFitness = new ArrayList<Double>();
-        this.varFitness = new ArrayList<Double>();
-        this.aveLength = new ArrayList<Double>();
-        this.varLength = new ArrayList<Double>();
-        this.maxLength = new ArrayList<Integer>();
-        this.minLength = new ArrayList<Integer>();
-        this.meanUsedGenes = new ArrayList<Double>();
-        this.meanDerivationTreeDepth = new ArrayList<Double>();
-        this.invalids = new ArrayList<Integer>();
-        this.allFitness = new ArrayList<ArrayList<Double>>();
-	this.bestIndividualOfGeneration = new ArrayList<Individual>();
+        this.bestFitness = new ArrayList<>();
+        this.meanFitness = new ArrayList<>();
+        this.varFitness = new ArrayList<>();
+        this.aveLength = new ArrayList<>();
+        this.varLength = new ArrayList<>();
+        this.maxLength = new ArrayList<>();
+        this.minLength = new ArrayList<>();
+        this.meanUsedGenes = new ArrayList<>();
+        this.meanDerivationTreeDepth = new ArrayList<>();
+        this.invalids = new ArrayList<>();
+        this.allFitness = new ArrayList<>();
+        this.bestIndividualOfGeneration = new ArrayList<>();
     }
 
     /**
      * Add time
+     *
      * @param t time
      */
     public void addTime(Long t) {
@@ -129,6 +134,7 @@ public class StatCatcher {
 
     /**
      * Add stats. Extracts information from the fitness of the population.
+     *
      * @param popFitness fitness of the population
      */
     public void addStats(Fitness[] popFitness) {
@@ -136,7 +142,7 @@ public class StatCatcher {
         double bestSoFar = Double.MAX_VALUE;
         double temp;
         double n = 0;
-	Individual bestIndSoFar = null;
+        Individual bestIndSoFar = null;
         //Calc best and mean
         for (Fitness popFitnes : popFitness) {
             temp = popFitnes.getDouble();
@@ -145,17 +151,17 @@ public class StatCatcher {
                 n++;
                 if (temp < bestSoFar) {
                     bestSoFar = temp;
-		    bestIndSoFar = popFitnes.getIndividual();
+                    bestIndSoFar = popFitnes.getIndividual();
                 }
             }
         }
-       if(Double.isInfinite(total)) {
+        if (Double.isInfinite(total)) {
             total = Double.MAX_VALUE;
         }
-        double mean = total/n;
+        double mean = total / n;
         this.meanFitness.add(mean);
         this.bestFitness.add(bestSoFar);
-	this.bestIndividualOfGeneration.add(bestIndSoFar);
+        this.bestIndividualOfGeneration.add(bestIndSoFar);
         //calc variance
         total = 0;
         double x;
@@ -168,13 +174,14 @@ public class StatCatcher {
                 }
             }
         }
-        
-        double variance = total/n;
+
+        double variance = total / n;
         this.varFitness.add(variance);
     }
 
     /**
      * Add length data
+     *
      * @param popLength population length
      */
     public void addLength(ArrayList<Integer> popLength) {
@@ -183,70 +190,72 @@ public class StatCatcher {
         int longest = Integer.MIN_VALUE;
         int shortest = Integer.MAX_VALUE;
         int temp;
-        
+
         //Calc best and mean
-        while(iterD.hasNext()) {
+        while (iterD.hasNext()) {
             temp = iterD.next();
             total += temp;
-            if(temp > longest) {
+            if (temp > longest) {
                 longest = temp;
             }
-            if(temp < shortest) {
+            if (temp < shortest) {
                 shortest = temp;
             }
         }
-        
+
         int n = popLength.size();
-        double mean = total/n;
+        double mean = total / n;
         this.aveLength.add(mean);
         this.maxLength.add(longest);
         this.minLength.add(shortest);
-        
+
         //calc variance
         iterD = popLength.iterator();
         total = 0;
         double x;
-        while(iterD.hasNext()) {
+        while (iterD.hasNext()) {
             x = (iterD.next() - mean);
-            total += x*x;
+            total += x * x;
         }
-        
-        double variance = total/n;
+
+        double variance = total / n;
         this.varLength.add(variance);
     }
 
     /**
      * Add mean depth of the derivation trees in the population
+     *
      * @param mG fitness
      */
     public void addMeanDerivationTreeDepth(Fitness[] mG) {
         int total = 0;
         int temp;
         double n = 0;
-	//	ArrayList<Integer> ali = new ArrayList<Integer>(mG.length);
+        //	ArrayList<Integer> ali = new ArrayList<Integer>(mG.length);
         //Calc best and mean
         for (Fitness aMG : mG) {
             if (aMG.getIndividual().isValid()) {
-                GEIndividual ind = (GEIndividual)aMG.getIndividual();
-		if (ind.getMapper() == null) {
-		    // FIXME this hack allows NGram to run even though inds have no mapper
-		    temp = 0;
-		} else {
-		    temp = ((GEGrammar)ind.getMapper()).getMaxCurrentTreeDepth();
-		    //		    ali.add(temp);
-		}
+                GEIndividual ind = (GEIndividual) aMG.getIndividual();
+                if (ind.getMapper() == null) {
+                    // FIXME this hack allows NGram to run even though inds have no mapper
+                    temp = 0;
+                } else {
+                    temp = ((GEGrammar) ind.getMapper()).getMaxCurrentTreeDepth();
+                    //		    ali.add(temp);
+                }
                 total += temp;
                 n++;
             }
         }
-	//        Collections.sort(ali);
-	//	System.out.println(this.getClass().getName()+".addMeanDerivationTreeDepth(.):\n"+ali);
-        double mean = total/n;
+        //        Collections.sort(ali);
+        //	System.out.println(this.getClass().getName()+".addMeanDerivationTreeDepth(.):\n"+ali);
+        double mean = total / n;
         this.meanDerivationTreeDepth.add(mean);
     }
-    
+
     /**
      * Add mean used genes
+     *
      * @param mG fitness
      */
     public void addMeanUsedGenes(Fitness[] mG) {
@@ -261,13 +270,14 @@ public class StatCatcher {
                 n++;
             }
         }
-        double mean = total/n;
+        double mean = total / n;
         this.meanUsedGenes.add(mean);
     }
 
     /**
-     * Add population to the statcatcher to work with. Calls many of the 
+     * Add population to the statcatcher to work with. Calls many of the
      * functions for adding statistics.
+     *
      * @param population incoming population
      */
     public void addStatsPop(ArrayList<Individual> population) {
@@ -280,24 +290,24 @@ public class StatCatcher {
         Individual i;
         int cnt = 0;
         int nr_invalids = 0;
-        while(iterP.hasNext()) {
+        while (iterP.hasNext()) {
             i = iterP.next();
-            fits[cnt] =i.getFitness();
+            fits[cnt] = i.getFitness();
             usedGenes[cnt] = i.getFitness();
-	    if (i.getGenotype() == null) {
-		// FIXME this hack allows NGram to run even though inds have no genotype
-		allLength.add(0);
-	    } else {
-		allLength.add(i.getGenotype().get(0).getLength());
-	    }
-            if(!i.isValid()) {
+            if (i.getGenotype() == null) {
+                // FIXME this hack allows NGram to run even though inds have no genotype
+                allLength.add(0);
+            } else {
+                allLength.add(i.getGenotype().get(0).getLength());
+            }
+            if (!i.isValid()) {
                 nr_invalids++;
             }
-            if(i.getAge()<2) {
+            if (i.getAge() < 2) {
                 allFit.add(i.getFitness().getDouble());
-                }
+            }
             cnt++;
-            
+
         }
         this.allFitness.add(allFit);
         this.invalids.add(nr_invalids);
@@ -313,22 +323,25 @@ public class StatCatcher {
 
     /**
      * Get best individual of generation
+     *
      * @return best individual of the latest generation
      */
     public Individual getBestIndividualOfGeneration() {
-	return this.bestIndividualOfGeneration.get(this.bestIndividualOfGeneration.size()-1);
+        return this.bestIndividualOfGeneration.get(this.bestIndividualOfGeneration.size() - 1);
     }
 
     /**
      * Get best individuals of all generations
+     *
      * @return best individuals of the generations
      */
     public ArrayList<Individual> getBestIndividualOfGenerations() {
-	return this.bestIndividualOfGeneration;
+        return this.bestIndividualOfGeneration;
     }
 
     /**
      * Get the mean max depth of the derivation trees in the population
+     *
      * @return ArrayList<Double> The mean max depth of the derivation trees in the population
      */
     public ArrayList<Double> getMeanDerivationTreeDepth() {
@@ -337,6 +350,7 @@ public class StatCatcher {
 
     /**
      * Get all fitness stored
+     *
      * @return all fitness stored
      */
     public ArrayList<ArrayList<Double>> getAllFitness() {
@@ -345,6 +359,7 @@ public class StatCatcher {
 
     /**
      * Get mean used genes
+     *
      * @return mean used genes
      */
     public ArrayList<Double> getMeanUsedGenes() {
@@ -353,22 +368,25 @@ public class StatCatcher {
 
     /**
      * Get the mean used genes for the latest generation
+     *
      * @return current mean used genes
      */
     public double getCurrentMeanUsedGenes() {
-        return meanUsedGenes.get(this.meanUsedGenes.size()-1);
+        return meanUsedGenes.get(this.meanUsedGenes.size() - 1);
     }
 
     /**
      * Get mean for the latest generation
+     *
      * @return current mean
      */
     public double getCurrentMean() {
-        return meanFitness.get(this.meanFitness.size()-1);
+        return meanFitness.get(this.meanFitness.size() - 1);
     }
 
     /**
      * Get number of invalid individuals
+     *
      * @return invalids
      */
     public ArrayList<Integer> getInvalids() {
@@ -377,14 +395,16 @@ public class StatCatcher {
 
     /**
      * Get the best fitness for the latest generation
+     *
      * @return current best fitness
      */
     public double getCurrentBestFitness() {
-        return this.bestFitness.get(this.bestFitness.size()-1);
+        return this.bestFitness.get(this.bestFitness.size() - 1);
     }
 
     /**
      * Get best fitness
+     *
      * @return best fitness
      */
     public ArrayList<Double> getBestFitness() {
@@ -393,6 +413,7 @@ public class StatCatcher {
 
     /**
      * Get variance of the fitness in the population
+     *
      * @return variance of fitness
      */
     public ArrayList<Double> getVarFitness() {
@@ -401,6 +422,7 @@ public class StatCatcher {
 
     /**
      * Get mean fitness of the population
+     *
      * @return mean fitness
      */
     public ArrayList<Double> getMeanFitness() {
@@ -409,6 +431,7 @@ public class StatCatcher {
 
     /**
      * Get the average length
+     *
      * @return average length
      */
     public ArrayList<Double> getAveLength() {
@@ -417,6 +440,7 @@ public class StatCatcher {
 
     /**
      * Get max length
+     *
      * @return max length
      */
     public ArrayList<Integer> getMaxLength() {
@@ -425,6 +449,7 @@ public class StatCatcher {
 
     /**
      * Get min length
+     *
      * @return min length
      */
     public ArrayList<Integer> getMinLength() {
@@ -433,6 +458,7 @@ public class StatCatcher {
 
     /**
      * Get variance of the lengths in the population
+     *
      * @return variance of the lengths
      */
     public ArrayList<Double> getVarLength() {
@@ -441,6 +467,7 @@ public class StatCatcher {
 
     /**
      * Get the time for execution of a generation
+     *
      * @return time
      */
     public ArrayList<Long> getTime() {

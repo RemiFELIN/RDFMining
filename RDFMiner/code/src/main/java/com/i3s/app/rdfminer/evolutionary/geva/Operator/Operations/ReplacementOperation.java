@@ -36,14 +36,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
-
-import Util.Constants;
 import com.i3s.app.rdfminer.evolutionary.geva.Exceptions.BadParameterException;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.Fitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * ReplacementOperation removes replacementSize Individuals from the population

@@ -36,11 +36,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.individual;
 
-import Individuals.Genotype;
-import Individuals.Individual;
-import Individuals.Phenotype;
-import Individuals.FitnessPackage.Fitness;
-import Mapper.Mapper;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.Fitness;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Genotype;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Phenotype;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Mapper;
+
 import java.util.List;
 
 import java.util.ArrayList;

@@ -29,21 +29,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.tools;
 
-import Individuals.GEChromosome;
-import Individuals.Individual;
-import Individuals.Phenotype;
-import Mapper.DerivationNode;
-import Mapper.DerivationTree;
-import Mapper.GEGrammar;
-import Mapper.Production;
-import Mapper.Symbol;
-import Mapper.Rule;
-import Mapper.TreeMill;
-import Util.Enums;
-import Util.Structures.TreeNode;
-import java.util.*;
-
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Phenotype;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.*;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Enums;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Structures.TreeNode;
 import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
+
+import java.util.*;
 
 /**
  * A collection of useful functions for manipulating genotype and such
@@ -72,7 +66,7 @@ public class GenotypeHelper {
 			grammar.setStartSymbol(node.getData());
 		grammar.getPhenotype().clear();
 		DerivationTree tree = TreeMill.getDerivationTree(grammar);
-		if (tree.buildDerivationTree() == true)
+		if (tree.buildDerivationTree())
 			return tree;
 		// Don't return invalids
 		return null;
@@ -133,7 +127,7 @@ public class GenotypeHelper {
 		Stack<DerivationNode> nodeStack = new Stack<DerivationNode>();
 		nodeStack.push((DerivationNode) tree.getRoot());
 
-		while (nodeStack.empty() == false) {
+		while (!nodeStack.empty()) {
 			DerivationNode nodes = nodeStack.pop();
 			if (nodes.getCodonIndex() == codonIndex)
 				return nodes;
@@ -153,7 +147,7 @@ public class GenotypeHelper {
 		Stack<DerivationNode> nodeStack = new Stack<DerivationNode>();
 		nodeStack.push(nodes);
 		int size = 0;
-		while (nodeStack.empty() == false) {
+		while (!nodeStack.empty()) {
 			nodes = nodeStack.pop();
 			if (nodes.getCodonIndex() != -1)
 				size++;

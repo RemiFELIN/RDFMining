@@ -3,8 +3,8 @@
  */
 package com.i3s.app.rdfminer.expression.extensional;
 
-import Mapper.Symbol;
 import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
 import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 import org.apache.jena.rdf.model.AnonId;
