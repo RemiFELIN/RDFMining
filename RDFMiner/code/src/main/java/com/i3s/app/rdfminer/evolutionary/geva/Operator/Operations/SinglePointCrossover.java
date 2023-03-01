@@ -357,7 +357,7 @@ public class SinglePointCrossover extends CrossoverOperation {
 
         }
         long et = System.currentTimeMillis();
-        System.out.println("Done running: Total time(Ms) for " + 100000000 + " generations was" + (et - st));
+        System.out.println("Done running: Total time(Ms) for " + 100000000 + " generations was " + (et - st));
         System.out.println();
         System.out.println("Testing module crossover");
         System.out.println();

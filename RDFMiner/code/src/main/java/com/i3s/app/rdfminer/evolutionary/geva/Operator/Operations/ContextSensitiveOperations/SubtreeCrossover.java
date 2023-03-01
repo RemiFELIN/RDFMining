@@ -37,54 +37,54 @@ import Mapper.DerivationNode;
 import Mapper.DerivationTree;
 import Util.GenotypeHelper;
 import Util.Random.RandomNumberGenerator;
+
 import java.util.List;
 import java.util.Properties;
 
 /**
  * Preform a crossover where the branch of one tree crosses with the branch of
- *  another. The two branches must be of the same type so the chromosome's
- *  codons will build the same branch on both trees. The crossover chromosome,
- *  because it potentially can insert a small unique group of codons into a
- *  wrapped chromosome, unwraps the chromosomes as they are crossed-over. This
- *  also changes the size of the chromosome, even if no unwrapping occurs,
- *  shrinking the chromosome
+ * another. The two branches must be of the same type so the chromosome's
+ * codons will build the same branch on both trees. The crossover chromosome,
+ * because it potentially can insert a small unique group of codons into a
+ * wrapped chromosome, unwraps the chromosomes as they are crossed-over. This
+ * also changes the size of the chromosome, even if no unwrapping occurs,
+ * shrinking the chromosome
+ *
  * @author eliott bartley
  */
-public class SubtreeCrossover extends CrossoverOperation
-{
+public class SubtreeCrossover extends CrossoverOperation {
 
-    public SubtreeCrossover(RandomNumberGenerator rng, Properties p)
-    {
+    public SubtreeCrossover(RandomNumberGenerator rng, Properties p) {
         super(rng, p);
     }
 
-    public SubtreeCrossover(double prob, RandomNumberGenerator rng)
-    {   super(prob, rng);
+    public SubtreeCrossover(double prob, RandomNumberGenerator rng) {
+        super(prob, rng);
     }
 
     @Override
-    public void doOperation(List<Individual> operands)
-    {   assert operands.size() >= 2 : operands.size();
+    public void doOperation(List<Individual> operands) {
+        assert operands.size() >= 2 : operands.size();
 
         Individual i1 = operands.get(0);
         Individual i2 = operands.get(1);
 
         // Only crossover based on a probability that a crossover should occur
-        if(this.rand.nextDouble() >= this.probability)
+        if (this.rand.nextDouble() >= this.probability)
             return;
 
         // Turn the genotype into a tree. The tree nodes will state which
         //  codons each branch used to determine its child production
         DerivationTree tree1 = GenotypeHelper.buildDerivationTree(i1);
         DerivationTree tree2 = GenotypeHelper.buildDerivationTree(i2);
-	
+
         // Don't operate on invalids
-        if(tree1 == null || tree2 == null)
+        if (tree1 == null || tree2 == null)
             return;
 
         // Helper: get the chromosomes
-        GEChromosome chromosome1 = (GEChromosome)i1.getGenotype().get(0);
-        GEChromosome chromosome2 = (GEChromosome)i2.getGenotype().get(0);
+        GEChromosome chromosome1 = (GEChromosome) i1.getGenotype().get(0);
+        GEChromosome chromosome2 = (GEChromosome) i2.getGenotype().get(0);
 
         // Prepare to pick one of the branches in individual 1
         boolean[] wasPicked = new boolean[chromosome1.getUsedGenes()];
@@ -102,46 +102,42 @@ public class SubtreeCrossover extends CrossoverOperation
         //  then they'll all share that same child)
         // node2 == null means a branch found in node1 was not found in node2
         // length1 == 0
-        while(node2 == null)
-        {
+        while (node2 == null) {
 
             assert pickCount > 0 && pickCount <= chromosome1.getUsedGenes()
-                 : pickCount;
-            
+                    : pickCount;
+
             // Pick random points from the genotype for crossover
             //  The random point chosen from individual 2 is a only a starting
             //  point from which a matching type will be searched. The search
             //  runs right and left of point2 evenly on both sides to find the
             //  nearest type that matches
 
-	    //OLD
+            //OLD
             //point1 = super.getRNG().nextInt(pickCount);
-	    // OLD
+            // OLD
             //point2 = super.getRNG().nextInt(chromosome2.getUsedGenes());
-	    int maxPoint1 = GenotypeHelper.getMaxDTIndex(tree1);
-	    if(maxPoint1 == 0){
-		point1 = 0;
-	    }
-	    else{
-		if(maxPoint1 < pickCount){
-		    point1 = super.getRNG().nextInt(maxPoint1);
-		}
-		else{
-		    point1 = super.getRNG().nextInt(pickCount);
-		}
-	    }
+            int maxPoint1 = GenotypeHelper.getMaxDTIndex(tree1);
+            if (maxPoint1 == 0) {
+                point1 = 0;
+            } else {
+                if (maxPoint1 < pickCount) {
+                    point1 = super.getRNG().nextInt(maxPoint1);
+                } else {
+                    point1 = super.getRNG().nextInt(pickCount);
+                }
+            }
 
-	    int maxPoint2 = GenotypeHelper.getMaxDTIndex(tree2);
-	    if(maxPoint2 == 0){
-		point2 = 0;
-	    }
-	    else{
-		point2 = super.getRNG().nextInt(maxPoint2);
-	    }
-	    
+            int maxPoint2 = GenotypeHelper.getMaxDTIndex(tree2);
+            if (maxPoint2 == 0) {
+                point2 = 0;
+            } else {
+                point2 = super.getRNG().nextInt(maxPoint2);
+            }
+
             assert point1 >= 0 && point1 < pickCount : point1;
             assert point2 >= 0 && point2 < chromosome2.getUsedGenes() : point2;
-            
+
             // Only pick new codons from the individual each loop around
             //  Each time a codon is chosen, the total number of codons which
             //  can be chosen is decreased and the chosen codon is flagged as
@@ -149,37 +145,35 @@ public class SubtreeCrossover extends CrossoverOperation
             //  [0..pickCount) but the codons themselves will be split across
             //  the range of all codons. This loop maps from 0..pickCount to
             //  actual codon by skipping over previously picked codons
-            for(int pickIndex = 0; pickIndex < wasPicked.length; pickIndex++)
-                if(wasPicked[pickIndex] == false)
-                    if(point1 == 0)
-                    {   wasPicked[pickIndex] = true;
+            for (int pickIndex = 0; pickIndex < wasPicked.length; pickIndex++)
+                if (wasPicked[pickIndex] == false)
+                    if (point1 == 0) {
+                        wasPicked[pickIndex] = true;
                         point1 = pickIndex;
                         pickIndex = wasPicked.length;
-                    }
-                    else
+                    } else
                         point1--;
             pickCount--;
 
             assert point1 >= 0 && point1 < chromosome1.getUsedGenes() : point1;
             assert pickCount >= 0 : pickCount;
-            
+
             // Find the tree-node related to the chosen crossover point. As the
             //  point was chosen from the list of used codons, this will always
             //  find the node
             node1 = GenotypeHelper.findNodeFromCodonIndex(tree1,
-							  point1);
-	    
+                    point1);
+
             assert node1 != null;
             // Find the tree-node nearest the chosen crossover point that has
             //  the same type, so that the crossover will map into it
             node2 = findRelatedNode(tree2,
-				    point2,
-				    maxPoint2,
-				    node1);
+                    point2,
+                    maxPoint2,
+                    node1);
 
             // If the point is found that is the same type..
-            if(node2 != null)
-            {   // The chosen point is probably wrong, change it to the correct
+            if (node2 != null) {   // The chosen point is probably wrong, change it to the correct
                 //  value
                 point2 = node2.getCodonIndex();
                 // Calculate how many codons make up the sub-tree of the chosen
@@ -191,9 +185,9 @@ public class SubtreeCrossover extends CrossoverOperation
         }
 
         assert point1 + length1 <= chromosome1.getUsedGenes()
-             : point1 + "+" + length1 + ":" + chromosome1.getUsedGenes();
+                : point1 + "+" + length1 + ":" + chromosome1.getUsedGenes();
         assert point2 + length2 <= chromosome2.getUsedGenes()
-             : point2 + "+" + length2 + ":" + chromosome2.getUsedGenes();
+                : point2 + "+" + length2 + ":" + chromosome2.getUsedGenes();
 
         // Do the crossover, creating new chromosomes in the process
         chromosome1 = GenotypeHelper.makeNewChromosome(i1, point1, length1, i2, point2, length2);
@@ -202,14 +196,14 @@ public class SubtreeCrossover extends CrossoverOperation
         // Update the individuals with the new crossed-over chromosomes
         i1.getGenotype().set(0, chromosome1);
         i2.getGenotype().set(0, chromosome2);
-	i1.getMapper().setGenotype(chromosome1);
-	i2.getMapper().setGenotype(chromosome2);
+        i1.getMapper().setGenotype(chromosome1);
+        i2.getMapper().setGenotype(chromosome2);
 
-	((GEIndividual)i1).invalidate();
-	((GEIndividual)i2).invalidate();
+        ((GEIndividual) i1).invalidate();
+        ((GEIndividual) i2).invalidate();
 
-	i1.map(0);
-	i2.map(0);
+        i1.map(0);
+        i2.map(0);
     }
 
 // All my debugging stuff pulled out of the actual code, in case I need it again
@@ -232,64 +226,66 @@ public class SubtreeCrossover extends CrossoverOperation
 //        writer.close();
 //        } catch(IOException e) {}
 //    }
-    
-    public void doOperation(Individual operand) { }
+
+    public void doOperation(Individual operand) {
+    }
 
 
     /**
      * Given a derivation tree, a start search index, and total search range,
-     *  and a node, find a node in the tree, nearest to the start index (nearest
-     *  based on the codon index, not nearest in the tree), that matches the
-     *  node (based on their symbol). The search alternates between right and
-     *  left of the start index incrementing away either side up until the total
-     *  range (right) or 0 (left) is reached, then only searching the remaining
-     *  unsearched indexes on the other side
-     * @param tree The tree to search
-     * @param codonIndex The index of the codon to begin the search at
-     * @param codonTotal The total number of useful codons
+     * and a node, find a node in the tree, nearest to the start index (nearest
+     * based on the codon index, not nearest in the tree), that matches the
+     * node (based on their symbol). The search alternates between right and
+     * left of the start index incrementing away either side up until the total
+     * range (right) or 0 (left) is reached, then only searching the remaining
+     * unsearched indexes on the other side
+     *
+     * @param tree        The tree to search
+     * @param codonIndex  The index of the codon to begin the search at
+     * @param codonTotal  The total number of useful codons
      * @param relatedNode The node whose symbol is to be matched in the tree
      * @return null if no node is found that has the same symbol as the
-     *  relatedNode
+     * relatedNode
      */
-     private DerivationNode findRelatedNode(DerivationTree tree,
-					    int codonIndex,
-					    int codonTotal,
-					    DerivationNode relatedNode){  
+    private DerivationNode findRelatedNode(DerivationTree tree,
+                                           int codonIndex,
+                                           int codonTotal,
+                                           DerivationNode relatedNode) {
 
-	 DerivationNode node;
-	 int offset = 0;
-	 boolean Continue = true;
-	 
-	 while(Continue == true){
-	     
-	     Continue = false;
-	     if(codonIndex + offset < codonTotal){
-		 node = GenotypeHelper.findNodeFromCodonIndex(tree,
-							      codonIndex + offset);
-		 if(node.getData().equals(relatedNode.getData()) == true)
-		     return node;
-		 Continue = true;
-	     }
+        DerivationNode node;
+        int offset = 0;
+        boolean Continue = true;
 
-	     if(offset != 0 && codonIndex - offset >= 0){   
-		 node = GenotypeHelper.findNodeFromCodonIndex(tree,
-							      codonIndex - offset);
-		 if(node.getData().equals(relatedNode.getData()) == true)
-		     return node;
-		 Continue = true;
-	     }
-	     
-	     if(codonIndex + offset == 0 && codonTotal == 0){
-		 node = GenotypeHelper.findNodeFromCodonIndex(tree, 0);
-		 if(node.getData().equals(relatedNode.getData()) == true)
-		     return node;
-		 Continue = true;
-	     }
+        while (Continue == true) {
 
-	     offset++;
-	 }
-	 
-	 return null;
-     }
+            Continue = false;
+            if (codonIndex + offset < codonTotal) {
+                node = GenotypeHelper.findNodeFromCodonIndex(tree,
+                        codonIndex + offset);
+                if (node.getData().equals(relatedNode.getData()) == true)
+                    return node;
+                Continue = true;
+            }
+
+            if (offset != 0 && codonIndex - offset >= 0) {
+                node = GenotypeHelper.findNodeFromCodonIndex(tree,
+                        codonIndex - offset);
+                if (node.getData().equals(relatedNode.getData()) == true)
+                    return node;
+                Continue = true;
+            }
+
+            if (codonIndex + offset == 0 && codonTotal == 0) {
+                node = GenotypeHelper.findNodeFromCodonIndex(tree, 0);
+                if (node.getData().equals(relatedNode.getData()) == true)
+                    return node;
+                Continue = true;
+            }
+
+            offset++;
+        }
+
+        return null;
+    }
 
 }
