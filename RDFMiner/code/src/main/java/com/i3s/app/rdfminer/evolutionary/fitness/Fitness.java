@@ -1,10 +1,10 @@
 package com.i3s.app.rdfminer.evolutionary.fitness;
 
 import com.i3s.app.rdfminer.entity.Entity;
-import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.evolutionary.fitness.entity.AxiomFitnessEvaluation;
 import com.i3s.app.rdfminer.evolutionary.fitness.entity.ShapeFitnessEvaluation;
-import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+import com.i3s.app.rdfminer.generator.Generator;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;

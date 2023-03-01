@@ -30,12 +30,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package com.i3s.app.rdfminer.evolutionary.tools;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Phenotype;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.*;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Enums;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Structures.TreeNode;
-import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 
 import java.util.*;
 

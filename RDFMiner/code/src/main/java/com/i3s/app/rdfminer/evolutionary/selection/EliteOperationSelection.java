@@ -31,11 +31,11 @@ package com.i3s.app.rdfminer.evolutionary.selection;
 
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.Fitness;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.SimplePopulation;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.SelectionOperation;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
-import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 
 import java.util.*;
 

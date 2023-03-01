@@ -3,8 +3,8 @@
  */
 package com.i3s.app.rdfminer.evolutionary.selection;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
-import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 
 import java.util.ArrayList;
 import java.util.List;

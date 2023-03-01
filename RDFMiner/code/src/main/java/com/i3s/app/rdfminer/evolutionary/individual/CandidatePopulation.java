@@ -2,6 +2,7 @@ package com.i3s.app.rdfminer.evolutionary.individual;
 
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.generator.Generator;

@@ -3,9 +3,10 @@
  */
 package com.i3s.app.rdfminer.evolutionary.selection;
 
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+
 import java.util.ArrayList;
 
-import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 
 /**
  * {@link TypeSelection#TRUNCATION TRUNCATION} selection.

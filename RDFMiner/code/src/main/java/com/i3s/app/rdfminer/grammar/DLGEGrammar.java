@@ -3,17 +3,6 @@
  */
 package com.i3s.app.rdfminer.grammar;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.Iterator;
-import java.util.Properties;
-
 import com.i3s.app.rdfminer.evolutionary.geva.Exceptions.MalformedGrammarException;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.GEGrammar;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Production;
@@ -21,6 +10,10 @@ import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Rule;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Enums;
 import org.apache.log4j.Logger;
+
+import java.io.*;
+import java.util.Iterator;
+import java.util.Properties;
 
 /**
  * A Genetic Evolution grammar of a Description Logic language, adapted to the
@@ -108,6 +101,7 @@ public class DLGEGrammar extends GEGrammar {
      */
     public void readW3CGrammarFile(String fileName) throws MalformedGrammarException {
         try {
+            logger.info("Reading grammar file ...");
             File file = new File(fileName);
             InputStream is = new FileInputStream(file);
             logger.assertLog(is != null, "Cannot open file: " + fileName);

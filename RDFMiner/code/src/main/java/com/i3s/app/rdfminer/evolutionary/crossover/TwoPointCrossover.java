@@ -252,8 +252,8 @@ public class TwoPointCrossover extends CrossoverOperation {
 				midpoint = p2maxXOPoint / 2;
 			point1 = getXoverPoint2(p1maxXOPoint / 2, p2maxXOPoint / 2, 4);
 			point2 = getXoverPoint2(p1maxXOPoint, p2maxXOPoint, midpoint);
-			System.out.println("point1: " + point1);
-			System.out.println("point2: " + point2);
+//			System.out.println("point1: " + point1);
+//			System.out.println("point2: " + point2);
 
 			xoPoints[0] = point1;
 			xoPoints[1] = point1;

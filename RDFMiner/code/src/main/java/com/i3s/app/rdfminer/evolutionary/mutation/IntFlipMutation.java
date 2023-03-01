@@ -37,10 +37,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package com.i3s.app.rdfminer.evolutionary.mutation;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.MutationOperation;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
-import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.generator.Generator;
 import org.apache.log4j.Logger;
 

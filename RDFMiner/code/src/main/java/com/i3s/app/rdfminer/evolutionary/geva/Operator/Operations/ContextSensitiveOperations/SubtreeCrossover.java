@@ -38,6 +38,7 @@ import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.CrossoverOpera
 import com.i3s.app.rdfminer.evolutionary.geva.Util.GenotypeHelper;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -62,13 +63,17 @@ public class SubtreeCrossover extends CrossoverOperation {
         super(prob, rng);
     }
 
+    public SubtreeCrossover(RandomNumberGenerator rng, double prob) {
+        super(prob, rng);
+    }
+
     @Override
-    public void doOperation(List<Individual> operands) {
+    public void doOperation(List<Individual> operands) {}
+
+    public void doOperation(ArrayList<GEIndividual> operands) {
         assert operands.size() >= 2 : operands.size();
-
-        Individual i1 = operands.get(0);
-        Individual i2 = operands.get(1);
-
+        GEIndividual i1 = operands.get(0);
+        GEIndividual i2 = operands.get(1);
         // Only crossover based on a probability that a crossover should occur
         if (this.rand.nextDouble() >= this.probability)
             return;

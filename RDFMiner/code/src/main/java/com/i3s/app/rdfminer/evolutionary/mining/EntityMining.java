@@ -2,11 +2,11 @@ package com.i3s.app.rdfminer.evolutionary.mining;
 
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
-import com.i3s.app.rdfminer.generator.Generator;
-import com.i3s.app.rdfminer.evolutionary.tools.EATools;
 import com.i3s.app.rdfminer.evolutionary.fitness.Fitness;
-import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.selection.EliteSelection;
+import com.i3s.app.rdfminer.evolutionary.tools.EATools;
+import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.output.GenerationJSON;
 import org.apache.log4j.Logger;
 

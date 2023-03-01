@@ -3,12 +3,12 @@ package com.i3s.app.rdfminer.generator;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Genotype;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Phenotype;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.ContextFreeGrammar;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.DerivationTree;
 import com.i3s.app.rdfminer.grammar.DLGEGrammar;
-import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -114,7 +114,6 @@ public abstract class Generator {
      */
     public static String cacheName(String symbol, String sparql) {
 //        return String.format("/home/rfelin/projects/RDFMining/RDFMiner/caches/%s%08x.cache", symbol, sparql.hashCode());
-
         return String.format(Global.CACHE_PATH + "%s%08x.cache", symbol, sparql.hashCode());
     }
 

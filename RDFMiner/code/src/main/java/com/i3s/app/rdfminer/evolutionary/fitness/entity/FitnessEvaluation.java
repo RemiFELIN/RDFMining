@@ -1,7 +1,7 @@
 package com.i3s.app.rdfminer.evolutionary.fitness.entity;
 
 import com.i3s.app.rdfminer.entity.Entity;
-import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

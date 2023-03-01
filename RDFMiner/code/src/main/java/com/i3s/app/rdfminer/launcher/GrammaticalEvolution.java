@@ -4,8 +4,8 @@ import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.evolutionary.fitness.Fitness;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.individual.CandidatePopulation;
-import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.mining.EntityMining;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
@@ -113,7 +113,7 @@ public class GrammaticalEvolution {
         // Generate candidate population
         CandidatePopulation canPop = new CandidatePopulation(generator);
         candidatePopulation = canPop.initialize(cache, curGeneration);
-        // Initialize population as Axioms or SHACL Shapes
+        // Initialize population
         ArrayList<Entity> entities = Fitness.initializePopulation(candidatePopulation, generator);
         // start GE
         while (curCheckpoint < parameters.checkpoint) {

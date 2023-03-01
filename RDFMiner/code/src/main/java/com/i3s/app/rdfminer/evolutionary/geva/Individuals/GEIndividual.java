@@ -46,43 +46,45 @@ import java.util.ArrayList;
  * GEIndividual. Has a genotype, Phenotype and a GEGrammar.
  * Has fields for validity and mapped status.
  * Only has one chromosome and grammar
+ *
  * @author Blip
  */
 @SuppressWarnings({"CloneDoesntCallSuperClone"})
 public class GEIndividual extends AbstractIndividual {
-    
-    private Genotype            genotype;
-    private Phenotype           phenotype;
+
+    private Genotype genotype;
+    private Phenotype phenotype;
     private GEGrammar grammar;
-    private boolean             mapped;
-    private boolean             valid;
-    private int                 usedCodons;
-    private int                 usedWraps;
-    private int                 previouslyUsedCodons;
-    private boolean             previouslyValid;
+    private boolean mapped;
+    private boolean valid;
+    private int usedCodons;
+    private int usedWraps;
+    private int previouslyUsedCodons;
+    private boolean previouslyValid;
 
     int[] mutationPoints;
     int[] crossoverPoints;
     ArrayList<Fitness> parentsFitness;
 
-    /** Creates a new instance of GEIndividual
-     *
+    /**
+     * Creates a new instance of GEIndividual
      */
     public GEIndividual() {
         super();
         this.mapped = false;
         this.valid = false;
-	this.previouslyValid = false;
+        this.previouslyValid = false;
         this.usedCodons = -1;
         this.usedWraps = -1;
     }
 
     /**
      * Create new GEindividual instance
-     * @param g mapper(grammar)
-     * @param p output(phenotype)
+     *
+     * @param g   mapper(grammar)
+     * @param p   output(phenotype)
      * @param gen input(genotype)
-     * @param f fitness
+     * @param f   fitness
      */
     public GEIndividual(GEGrammar g, Phenotype p, Genotype gen, Fitness f) {
         this.grammar = GEGrammar.getGrammar(g);
@@ -92,7 +94,7 @@ public class GEIndividual extends AbstractIndividual {
         this.evaluated = false;
         this.mapped = false;
         this.valid = false;
-	this.previouslyValid = false;
+        this.previouslyValid = false;
         this.usedCodons = -1;
         this.usedWraps = -1;
         //Setting genotype and phenotype
@@ -108,9 +110,10 @@ public class GEIndividual extends AbstractIndividual {
 
     /**
      * Copy constructor
+     *
      * @param i individual to copy
      */
-    private GEIndividual(GEIndividual i) {
+    public GEIndividual(GEIndividual i) {
         super(i);
         //Check the grammar type
         this.grammar = GEGrammar.getGrammar(i.grammar);
@@ -136,21 +139,23 @@ public class GEIndividual extends AbstractIndividual {
 
     /**
      * Factory method for creating GEIndivdual with different grammars
-     * @param grammar grammar
-     * @param phen phenotype
+     *
+     * @param grammar  grammar
+     * @param phen     phenotype
      * @param genotype genotype
-     * @param fitness fitness
+     * @param fitness  fitness
      * @return new GEIndividual
      */
     public static GEIndividual getIndividual(final GEGrammar grammar, final Phenotype phen, final Genotype genotype, final Fitness fitness) {
         final GEIndividual gei;
-	gei = new GEIndividual(grammar, phen, genotype, fitness);
+        gei = new GEIndividual(grammar, phen, genotype, fitness);
         return gei;
     }
 
     /**
      * Sets the values reset by invalidate to the values from the individual
      * passed in.
+     *
      * @param ind individual which values are taken from
      */
     public void revalidate(GEIndividual ind) {
@@ -172,11 +177,12 @@ public class GEIndividual extends AbstractIndividual {
         this.mapped = false;
         this.evaluated = false;// All new individuals must be evaluated seperaately
         this.age = 1;
-    //this.fitness.setDefault();
+        //this.fitness.setDefault();
     }
 
     /**
      * Is the individual mapped
+     *
      * @return mapped
      */
     public boolean isMapped() {
@@ -185,6 +191,7 @@ public class GEIndividual extends AbstractIndividual {
 
     /**
      * Set the mapped status of the individual
+     *
      * @param mapped status of the individuals mapping
      */
     public void setMapped(boolean mapped) {
@@ -197,21 +204,23 @@ public class GEIndividual extends AbstractIndividual {
 
     public void setValid(boolean b) {
         this.valid = b;
-	this.previouslyValid = b;
+        this.previouslyValid = b;
     }
 
     /**
      * Find out whether individual was *previously* valid. Used in NGramUpdateOperator,
      * because it needs to know, after selection has invalidated everything, whether individuals
      * are "really" valid.
+     *
      * @return whether it was valid before being invalidated by clone().
      */
     public boolean wasPreviouslyValid() {
-	return this.previouslyValid;
+        return this.previouslyValid;
     }
 
     /**
      * Set how many codons were used
+     *
      * @param usedCodons number of codons used
      */
     public void setUsedCodons(int usedCodons) {
@@ -220,6 +229,7 @@ public class GEIndividual extends AbstractIndividual {
 
     /**
      * Set how many wraps were used
+     *
      * @param usedWraps number of wraps used
      */
     public void setUsedWraps(int usedWraps) {
@@ -229,6 +239,7 @@ public class GEIndividual extends AbstractIndividual {
     /**
      * Setting these both here so as to negate the need for multiple
      * copies of the Mapper.
+     *
      * @param map index to use
      */
     public void map(int map) {
@@ -236,7 +247,7 @@ public class GEIndividual extends AbstractIndividual {
             //Clear the phenotype
             this.phenotype.clear();
             this.valid = this.grammar.genotype2Phenotype(true);
-	    this.previouslyValid = this.valid;
+            this.previouslyValid = this.valid;
             this.mapped = true;
             this.usedCodons = this.grammar.getUsedCodons();
             this.usedWraps = this.grammar.getUsedWraps();
@@ -266,6 +277,7 @@ public class GEIndividual extends AbstractIndividual {
     /**
      * Invalidates the individual because a change has been made to the genotype.
      * Sets the new genotype in the indivudual as well as in the mapper
+     *
      * @param g genotype
      */
     public void setGenotype(Genotype g) {
@@ -284,6 +296,7 @@ public class GEIndividual extends AbstractIndividual {
 
     /**
      * Clone this individual, invialidate and return the clone
+     *
      * @return Individual cloned and invalidated individual
      */
     public Individual clone() {
@@ -306,6 +319,7 @@ public class GEIndividual extends AbstractIndividual {
 
     /**
      * Get number of codons used for mapping
+     *
      * @return codons used for mapping
      */
     public int getUsedCodons() {
@@ -319,6 +333,7 @@ public class GEIndividual extends AbstractIndividual {
     /**
      * Get number of codons used for mapping previoulsy. Used when the
      * individual gets invalidated but previous information is needed
+     *
      * @return codons used for mapping previously
      */
     public int getPreviouslyUsedCodons() {
@@ -327,6 +342,7 @@ public class GEIndividual extends AbstractIndividual {
 
     /**
      * Get number of wraps used for mapping
+     *
      * @return wraps used
      */
     public int getUsedWraps() {

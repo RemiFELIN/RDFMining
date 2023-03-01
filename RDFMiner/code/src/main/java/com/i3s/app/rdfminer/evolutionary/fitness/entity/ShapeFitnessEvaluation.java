@@ -6,7 +6,7 @@ import com.i3s.app.rdfminer.entity.shacl.Shape;
 import com.i3s.app.rdfminer.entity.shacl.ShapesManager;
 import com.i3s.app.rdfminer.entity.shacl.ValidationReport;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
-import com.i3s.app.rdfminer.evolutionary.individual.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.launcher.evaluator.ExtendedShacl;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
