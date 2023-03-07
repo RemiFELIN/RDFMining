@@ -1,6 +1,5 @@
 package com.i3s.app.rdfminer.generator;
 
-import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
@@ -113,8 +112,8 @@ public abstract class Generator {
      * different name.
      */
     public static String cacheName(String symbol, String sparql) {
-//        return String.format("/home/rfelin/projects/RDFMining/RDFMiner/caches/%s%08x.cache", symbol, sparql.hashCode());
-        return String.format(Global.CACHE_PATH + "%s%08x.cache", symbol, sparql.hashCode());
+        return String.format("/home/rfelin/projects/RDFMining/RDFMiner/caches/%s%08x.cache", symbol, sparql.hashCode());
+//        return String.format(Global.CACHE_PATH + "%s%08x.cache", symbol, sparql.hashCode());
     }
 
 }

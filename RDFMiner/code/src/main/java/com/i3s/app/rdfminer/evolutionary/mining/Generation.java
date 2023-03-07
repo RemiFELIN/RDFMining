@@ -7,10 +7,7 @@ import com.i3s.app.rdfminer.evolutionary.TypeCrossover;
 import com.i3s.app.rdfminer.evolutionary.TypeMutation;
 import com.i3s.app.rdfminer.evolutionary.fitness.novelty.NoveltySearch;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.SimplePopulation;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.CrossoverModule;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.NodalMutation;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.StructuralMutation;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.SubtreeCrossover;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.SubtreeMutation;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.IntFlipByteMutation;
@@ -61,9 +58,6 @@ public class Generation {
         while (m < canEntities.size() - even) {
             // get the two individuals which are neighbours
             ArrayList<GEIndividual> parents = new ArrayList<>(List.of(canEntities.get(m).individual, canEntities.get(m + 1).individual));
-            // prepare crossover module
-            CrossoverModule crossoverModule = null;
-//            GEChromosome[] chromosomes;
             /* CROSSOVER PHASIS */
             switch (RDFMiner.parameters.typeCrossover) {
                 default:
@@ -71,13 +65,13 @@ public class Generation {
                     // Single-point crossover
                     SinglePointCrossover spc = new SinglePointCrossover(new MersenneTwisterFast(), RDFMiner.parameters.proCrossover);
                     spc.setFixedCrossoverPoint(true);
-                    crossoverModule = new CrossoverModule(new MersenneTwisterFast(), spc);
+                    spc.doOperation(parents);
                     break;
                 case TypeCrossover.TWO_POINT:
                     // Two point crossover
                     TwoPointCrossover tpc = new TwoPointCrossover(new MersenneTwisterFast(), RDFMiner.parameters.proCrossover);
                     tpc.setFixedCrossoverPoint(true);
-                    crossoverModule = new CrossoverModule(new MersenneTwisterFast(), tpc);
+                    tpc.doOperation(parents);
                     break;
                 case TypeCrossover.SUBTREE:
                     // subtree crossover
@@ -85,10 +79,6 @@ public class Generation {
                     SubtreeCrossover stc = new SubtreeCrossover(new MersenneTwisterFast(), RDFMiner.parameters.proCrossover);
                     stc.doOperation(parents);
                     break;
-            }
-            // perform crossover
-            if(RDFMiner.parameters.typeCrossover != TypeCrossover.SUBTREE && crossoverModule != null) {
-                Generation.performCrossover(parents, crossoverModule);
             }
             /* MUTATION PHASIS */
             switch (RDFMiner.parameters.typeMutation) {
@@ -105,10 +95,10 @@ public class Generation {
                     SubtreeMutation sm = new SubtreeMutation(new MersenneTwisterFast(), RDFMiner.parameters.proMutation);
                     sm.doOperation(parents);
                     break;
-                case TypeMutation.STRUCTURAL:
-                    StructuralMutation stm = new StructuralMutation(new MersenneTwisterFast(), RDFMiner.parameters.proMutation);
-                    stm.doOperation(parents);
-                    break;
+//                case TypeMutation.STRUCTURAL:
+//                    StructuralMutation stm = new StructuralMutation(new MersenneTwisterFast(), RDFMiner.parameters.proMutation);
+//                    stm.doOperation(parents);
+//                    break;
                 case TypeMutation.INT_FLIP_BYTE:
                     IntFlipByteMutation ifbm = new IntFlipByteMutation(new MersenneTwisterFast(), RDFMiner.parameters.proMutation);
                     ifbm.doOperation(parents);
@@ -183,16 +173,6 @@ public class Generation {
         // return the modified individuals
         return evaluatedIndividuals;
     }
-
-    private static void performCrossover(ArrayList<GEIndividual> individuals, CrossoverModule cm) {
-        SimplePopulation p = new SimplePopulation();
-        for(GEIndividual i : individuals) {
-            p.add(i);
-        }
-        cm.setPopulation(p);
-        cm.perform();
-    }
-
 
 //    public static void main(String[] args) {
 //        int m = 0;

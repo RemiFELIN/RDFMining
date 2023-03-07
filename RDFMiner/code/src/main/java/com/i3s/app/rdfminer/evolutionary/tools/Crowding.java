@@ -86,8 +86,9 @@ public class Crowding {
 //			logger.debug("get similarity value from similarity map ...");
 			return RDFMiner.similarityMap.get(phi1, phi2);
 		} else {
-			return Similarity.getNormalizedSimilarity(
-					new CoreseEndpoint(Global.CORESE_IP, Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES), phi1, phi2);
+			Similarity sim = new Similarity(phi1, phi2);
+			CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES);
+			return sim.getModifiedSimilarity(endpoint);
 		}
 	}
 

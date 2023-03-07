@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 
 /**
  * Interface for creation of individuals
@@ -50,5 +50,5 @@ public interface CreationOperation extends Operation
      * Creates an individual
      * @return created individual
      */
-    public Individual createIndividual();
+    public GEIndividual createIndividual();
 }

@@ -1,15 +1,20 @@
 package com.i3s.app.rdfminer.evolutionary.geva.Operator;
 
 import com.i3s.app.rdfminer.RDFMiner;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.TwoPointCrossover;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Genotype;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.SimplePopulation;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.GEGrammar;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.NodalMutation;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.StructuralMutation;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.SubtreeCrossover;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.SubtreeMutation;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.IntFlipByteMutation;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.IntFlipMutation;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.SinglePointCrossover;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.TwoPointCrossover;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 import com.i3s.app.rdfminer.evolutionary.individual.CandidatePopulation;
 import com.i3s.app.rdfminer.generator.Generator;
@@ -91,17 +96,7 @@ public class Test {
         System.out.println("--------\nSINGLE CROSSOVER");
         SinglePointCrossover cop = new SinglePointCrossover(new MersenneTwisterFast(), 1);
         cop.setFixedCrossoverPoint(fixed);
-        CrossoverModule cm = new CrossoverModule(new MersenneTwisterFast(), cop);
-        SimplePopulation p = new SimplePopulation();
-        for(GEIndividual i : individuals) {
-            p.add(i);
-        }
-        cm.setPopulation(p);
-        long st = System.currentTimeMillis();
-        cm.perform();
-        long et = System.currentTimeMillis();
-        System.out.println("Done running: Total time(Ms) for 1 generations was " + (et - st));
-        System.out.println();
+        cop.doOperation(individuals);
         for(GEIndividual i : individuals) {
             System.out.println("individual after two point crossover -> " + i.getGenotype());
         }
@@ -114,19 +109,7 @@ public class Test {
         System.out.println("--------\nTWO POINT CROSSOVER");
         TwoPointCrossover tpc = new TwoPointCrossover(new MersenneTwisterFast(), 1);
         tpc.setFixedCrossoverPoint(fixed);
-        CrossoverModule cm = new CrossoverModule(new MersenneTwisterFast(), tpc);
-        SimplePopulation p = new SimplePopulation();
-        for(GEIndividual i : individuals) {
-            p.add(i);
-        }
-        cm.setPopulation(p);
-        long st = System.currentTimeMillis();
-        cm.perform();
-        long et = System.currentTimeMillis();
-        System.out.println("Done running: Total time(Ms) for 1 generations was " + (et - st));
-        System.out.println();
-//        tpc.setFixedCrossoverPoint(fixed);
-//        tpc.doOperation(individuals);
+        tpc.doOperation(individuals);
         for(GEIndividual i : individuals) {
             System.out.println("individual after two point crossover -> " + i.getGenotype());
         }
@@ -157,6 +140,109 @@ public class Test {
         }
     }
 
+
+
+
+
+    /**
+     * Just a test ...
+     */
+    public static void testIntFlipMutation(ArrayList<GEIndividual> individuals) {
+        System.out.println("--------\nInt Flip Mutation");
+        IntFlipMutation ifm = new IntFlipMutation(new MersenneTwisterFast(), .1);
+        ifm.doOperation(individuals);
+        for(GEIndividual i : individuals) {
+            System.out.println("individual after Int Flip Mutation -> " + i.getGenotype());
+        }
+    }
+
+    /**
+     * Just a test ...
+     */
+    public static void testNodalMutation() {
+        RDFMiner.parameters.initLenChromosome = 2;
+        RDFMiner.parameters.populationSize = 2;
+        Generator generator = null;
+        try {
+            generator = new RandomAxiomGenerator("/user/rfelin/home/projects/RDFMining/IO/OWL2Axiom-complex-subclassof.bnf", true);
+        } catch (URISyntaxException | IOException e) {
+            e.printStackTrace();
+        };
+        CandidatePopulation canPop = new CandidatePopulation(generator);
+        ArrayList<GEIndividual> population = canPop.initialize(null, 1);
+        System.out.println("--------\nNodal Mutation");
+        NodalMutation ifm = new NodalMutation(new MersenneTwisterFast(), .8);
+        for(Individual i : population) {
+            System.out.println("individual before -> " + i.getGenotype());
+        }
+        ifm.doOperation(population);
+        for(GEIndividual i : population) {
+            System.out.println("individual after Nodal Mutation -> " + i.getGenotype());
+        }
+    }
+
+    /**
+     * Just a test ...
+     */
+    public static void testSubtreeMutation() {
+        RDFMiner.parameters.initLenChromosome = 2;
+        RDFMiner.parameters.populationSize = 2;
+        Generator generator = null;
+        try {
+            generator = new RandomAxiomGenerator("/user/rfelin/home/projects/RDFMining/IO/OWL2Axiom-complex-subclassof.bnf", true);
+        } catch (URISyntaxException | IOException e) {
+            e.printStackTrace();
+        };
+        CandidatePopulation canPop = new CandidatePopulation(generator);
+        ArrayList<GEIndividual> population = canPop.initialize(null, 1);
+        System.out.println("--------\nNodal Mutation");
+        SubtreeMutation ifm = new SubtreeMutation(new MersenneTwisterFast(), 1);
+        for(Individual i : population) {
+            System.out.println("individual before -> " + i.getGenotype());
+        }
+        ifm.doOperation(population);
+        for(GEIndividual i : population) {
+            System.out.println("individual after Subtree Mutation -> " + i.getGenotype());
+        }
+    }
+
+    /**
+     * Just a test ...
+     */
+    public static void testStructuralMutation() {
+        RDFMiner.parameters.initLenChromosome = 2;
+        RDFMiner.parameters.populationSize = 2;
+        Generator generator = null;
+        try {
+            generator = new RandomAxiomGenerator("/user/rfelin/home/projects/RDFMining/IO/OWL2Axiom-complex-subclassof.bnf", true);
+        } catch (URISyntaxException | IOException e) {
+            e.printStackTrace();
+        };
+        CandidatePopulation canPop = new CandidatePopulation(generator);
+        ArrayList<GEIndividual> population = canPop.initialize(null, 1);
+        System.out.println("--------\nStructural Mutation");
+        StructuralMutation ifm = new StructuralMutation(new MersenneTwisterFast(), 1);
+        for(Individual i : population) {
+            System.out.println("individual before -> " + i.getGenotype());
+        }
+        ifm.doOperation(population);
+        for(GEIndividual i : population) {
+            System.out.println("individual after Structural Mutation -> " + i.getGenotype());
+        }
+    }
+
+    /**
+     * Just a test ...
+     */
+    public static void testIntFlipByteMutation(ArrayList<GEIndividual> individuals) {
+        System.out.println("--------\nInt Flip Byte Mutation");
+        IntFlipByteMutation ifm = new IntFlipByteMutation(new MersenneTwisterFast(), .01);
+        ifm.doOperation(individuals);
+        for(GEIndividual i : individuals) {
+            System.out.println("individual after Int Flip Byte Mutation -> " + i.getGenotype());
+        }
+    }
+
     public static void main(String[] args) {
         // Create individuals
         GEChromosome c1 = new GEChromosome(10);
@@ -171,17 +257,19 @@ public class Test {
         g2.add(c2);
         GEIndividual i1 = new GEIndividual();
         GEIndividual i2 = new GEIndividual();
-        i1.setMapper(new GEGrammar());
+        GEGrammar grammar = new GEGrammar();
+        i1.setMapper(grammar);
         i1.setGenotype(g1);
-        i2.setMapper(new GEGrammar());
+        i2.setMapper(grammar);
         i2.setGenotype(g2);
         // create population
         ArrayList<GEIndividual> aI = new ArrayList<>(2);
         aI.add(i1);
         aI.add(i2);
         for(Individual i : aI) {
-            System.out.println("individual before crossover -> " + i.getGenotype());
+            System.out.println("individual before -> " + i.getGenotype());
         }
+        /* CROSSOVER */
         // SINGLE POINT CROSSOVER (ORIGINAL EXAMPLE)
 //        Test.testSinglePointCrossoverOriginalExample(c1, c2, true);
         // SINGLE POINT CROSSOVER
@@ -190,6 +278,13 @@ public class Test {
 //        Test.testTwoPointCrossover(aI, true);
         // SUBTREE CROSSOVER
 //        Test.testSubtreeCrossover();
+
+        /* MUTATION */
+//        Test.testIntFlipMutation(aI);
+//        Test.testNodalMutation();
+//        Test.testSubtreeMutation();
+//        Test.testStructuralMutation(); // didn't work !!
+        Test.testIntFlipByteMutation(aI);
     }
 
 }

@@ -117,7 +117,7 @@ public class GrowInitialiser implements CreationOperation, Stochastic {
     /**
      * Creates an Individuals
      */
-    public Individual createIndividual() {
+    public GEIndividual createIndividual() {
         GEGrammar gram = GEGrammar.getGrammar(this.grammar);
         Phenotype phenotype = new Phenotype();
         int[] codons = new int[this.initChromSize];
@@ -131,8 +131,7 @@ public class GrowInitialiser implements CreationOperation, Stochastic {
         chrom.setMaxChromosomeLength(gram.getMaxChromosomeLengthByDepth());
         Genotype geno = new Genotype(1, chrom);
         Fitness fitness = new BasicFitness();
-        GEIndividual gei = new GEIndividual(gram, phenotype, geno, fitness);
-        return gei;
+        return new GEIndividual(gram, phenotype, geno, fitness);
     }
 
     /**

@@ -32,11 +32,7 @@ package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensit
 import com.i3s.app.rdfminer.evolutionary.geva.Exceptions.BadParameterException;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
-import com.i3s.app.rdfminer.evolutionary.geva.Mapper.DerivationNode;
-import com.i3s.app.rdfminer.evolutionary.geva.Mapper.DerivationTree;
-import com.i3s.app.rdfminer.evolutionary.geva.Mapper.GEGrammar;
-import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.*;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Initialiser;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.*;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.RampedHalfAndHalfInitialiser;
@@ -95,12 +91,13 @@ public class SubtreeMutation extends MutationOperation {
         // Only mutate based on a probability that a mutate should occur
         if (super.rng.nextDouble() >= this.probability)
             return;
-        DerivationTree tree = GenotypeHelper.buildDerivationTree(operand);
+//        DerivationTree tree = GenotypeHelper.buildDerivationTree(operand);
+        DerivationTree tree = new DerivationTree((GEGrammar) operand.getMapper(), (GEChromosome) operand.getGenotype().get(0));
+        tree.buildDerivationTree();
         boolean isValid = false;
         // Don't operate on invalids
-        if (tree == null)
-            return;
         while (!isValid) {
+//            System.out.println("!isValid");
             // Assume everything will go ok
             isValid = true;
             // Choose a branch to mutate
@@ -125,7 +122,7 @@ public class SubtreeMutation extends MutationOperation {
             //  to create all individuals in the system) but instead of building
             //  a complete individual, this builds one with the root set to the
             //  specified node (so will build a sub-tree)
-            Individual mutation = buildMutatedIndividual(node);
+            GEIndividual mutation = buildMutatedIndividual(node, (GEGrammar) operand.getMapper(), chromosome.initialSize);
             // If the mutated sub-tree is valid..
             if (mutation != null) {
                 // The the number of codons used to define the chosen branch.
@@ -139,9 +136,9 @@ public class SubtreeMutation extends MutationOperation {
                 //  mutation [sub-]tree
                 chromosome = GenotypeHelper.makeNewChromosome(operand, point, length, mutation, tree);
                 // Make sure the new tree is valid
-                Individual testOperand = operand.clone();
+                GEIndividual testOperand = operand.clone();
                 ((GEChromosome) testOperand.getGenotype().get(0)).setAll(chromosome.data);
-                DerivationTree validTree = GenotypeHelper.buildDerivationTree(testOperand);
+                DerivationTree validTree = GenotypeHelper.buildDerivationTree(testOperand, node);
                 if (validTree == null) {
                     isValid = false;
                 } else {
@@ -154,6 +151,7 @@ public class SubtreeMutation extends MutationOperation {
                 }
             } else {
                 // If mutation created an invalid, don't use it
+//                System.out.println("mutation == null is true");
                 isValid = false;
             }
             // If the attempt to mutate created an invalid, try to mutate again,
@@ -220,14 +218,17 @@ public class SubtreeMutation extends MutationOperation {
      * this new tree will then be returned and inserted into the original
      * chromosome
      */
-    private Individual buildMutatedIndividual(DerivationNode node) {
-        Individual individual = creationOperation.createIndividual();
-        creationOperation.doOperation((GEIndividual) individual);
-        if (GenotypeHelper.buildDerivationTree(individual, node) != null)
+    private GEIndividual buildMutatedIndividual(DerivationNode node, GEGrammar grammar, int size) {
+        // RandomNumberGenerator rng, GEGrammar g, int initChromSize
+        setCreationOperation(new RandomInitialiser(this.rng, grammar, size));
+        GEIndividual individual = creationOperation.createIndividual();
+//        System.out.println("doOperation buildMutatedIndividual !");
+        creationOperation.doOperation(individual);
+//        System.out.println(GenotypeHelper.buildDerivationTree(individual, node));
+        if (GenotypeHelper.buildDerivationTree(individual, node) != null) {
             return individual;
-
+        }
         return null;
-
     }
 
     /**
@@ -248,7 +249,7 @@ public class SubtreeMutation extends MutationOperation {
             if (className == null) {
                 throw new BadParameterException(key);
             }
-            Class clazz = Class.forName(className);
+            Class<?> clazz = Class.forName(className);
             initialiser = (Initialiser) clazz.newInstance();
             // For RampedHalfAndHalfInitialiser
             if (clazz.getName().equals(RampedHalfAndHalfInitialiser.class.getName())) {

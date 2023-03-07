@@ -102,7 +102,7 @@ public class RandomInitialiser implements CreationOperation, Stochastic {
     /** Creates an Individual
      *  @return A new individual
      **/
-    public Individual createIndividual() {
+    public GEIndividual createIndividual() {
         GEGrammar gram = GEGrammar.getGrammar(this.grammar);
         Phenotype phenotype = new Phenotype();
         int[] codons = new int[this.initChromSize];

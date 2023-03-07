@@ -54,7 +54,7 @@ public class GenotypeHelper {
      *
      * @return null if the tree is invalid
      */
-    public static DerivationTree buildDerivationTree(Individual individual, DerivationNode node) {
+    public static DerivationTree buildDerivationTree(GEIndividual individual, DerivationNode node) {
         assert individual.getGenotype().get(0) instanceof GEChromosome : individual.getGenotype().get(0).getClass().getName();
         assert individual.getMapper() instanceof GEGrammar : individual.getMapper().getClass().getName();
         // Build the derivation tree
@@ -104,7 +104,7 @@ public class GenotypeHelper {
      *
      * @return null if the tree is invalid
      */
-    public static DerivationTree buildDerivationTree(Individual individual) {
+    public static DerivationTree buildDerivationTree(GEIndividual individual) {
         return buildDerivationTree(individual, null);
     }
 
@@ -143,7 +143,7 @@ public class GenotypeHelper {
         Stack<DerivationNode> nodeStack = new Stack<DerivationNode>();
         nodeStack.push(nodes);
         int size = 0;
-        while (nodeStack.empty() == false) {
+        while (!nodeStack.empty()) {
             nodes = nodeStack.pop();
             if (nodes.getCodonIndex() != -1)
                 size++;
@@ -416,7 +416,7 @@ public class GenotypeHelper {
      *                    the new information
      * @return Individual Updated individual
      **/
-    public static Individual extendChromeAtRecursiveNode(Individual indiv, GEChromosome giver, Symbol giverSym,
+    public static Individual extendChromeAtRecursiveNode(GEIndividual indiv, GEChromosome giver, Symbol giverSym,
                                                          int mutatePoint) {
 
         GEChromosome receiver = (GEChromosome) indiv.getGenotype().get(0);
@@ -482,7 +482,7 @@ public class GenotypeHelper {
      * @param indiv The individual to search
      * @return int Index of the last recursive derivation tree node
      */
-    public static int findLastRecIndex(Individual indiv) {
+    public static int findLastRecIndex(GEIndividual indiv) {
         GEGrammar gram = (GEGrammar) indiv.getMapper();
         DerivationTree tree = GenotypeHelper.buildDerivationTree(indiv);
         DerivationNode root = (DerivationNode) tree.getRoot();

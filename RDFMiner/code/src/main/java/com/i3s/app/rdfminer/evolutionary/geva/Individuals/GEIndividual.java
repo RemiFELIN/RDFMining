@@ -133,7 +133,8 @@ public class GEIndividual extends AbstractIndividual {
                 this.parentsFitness.add(new BasicFitness(i));
             }
         }
-        this.fitness = new BasicFitness(i.fitness.getDouble(), this);
+        if(this.fitness != null)
+            this.fitness = new BasicFitness(i.fitness.getDouble(), this);
         this.grammar.setPhenotype(this.phenotype);
     }
 
@@ -299,7 +300,7 @@ public class GEIndividual extends AbstractIndividual {
      *
      * @return Individual cloned and invalidated individual
      */
-    public Individual clone() {
+    public GEIndividual clone() {
         //System.out.println("Before clone dT:"+this.grammar.getDerivationTree());
         GEIndividual ind = new GEIndividual(this);
         ind.setPreviouslyUsedCodons(this.usedCodons);

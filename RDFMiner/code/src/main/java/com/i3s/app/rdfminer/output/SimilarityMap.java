@@ -8,7 +8,6 @@ import org.json.JSONTokener;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,12 +24,17 @@ public class SimilarityMap {
 
     public JSONObject map;
 
-    public SimilarityMap() throws IOException {
+    public SimilarityMap() {
         this.file = new File(Global.SIMILARITIES_FILE);
         // create this file
-        Files.createFile(this.file.toPath());
+        try {
+            Files.createFile(this.file.toPath());
+        } catch (IOException e) {
+            logger.error("Error during the creation of file " + Global.SIMILARITIES_FILE);
+            e.printStackTrace();
+        }
         if(this.file.exists()) logger.info(this.file.getAbsolutePath() + " has been created !");
-        else logger.error("Cannot create this file for path: " + Global.SIMILARITIES_FILE);
+        else logger.error("This file " + Global.SIMILARITIES_FILE + " does not exists !");
         this.map = new JSONObject();
     }
 

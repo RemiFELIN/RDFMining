@@ -32,8 +32,8 @@ package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensit
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.ContextualDerivationTree;
+import com.i3s.app.rdfminer.evolutionary.geva.Mapper.GEGrammar;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.MutationOperation;
-import com.i3s.app.rdfminer.evolutionary.geva.Util.GenotypeHelper;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 
 import java.util.ArrayList;
@@ -60,21 +60,19 @@ public class NodalMutation extends MutationOperation {
 
     @Override
     public void doOperation(GEIndividual operand) {
-        ContextualDerivationTree tree = (ContextualDerivationTree) GenotypeHelper.buildDerivationTree(operand);
         GEChromosome chromosome = (GEChromosome) operand.getGenotype().get(0);
-
-        if (tree != null) {
-            // this is to check that the individual is not invalid
-            // This vector contains the index values for all the leaf node codons
-            ArrayList<Integer> nodeCodonList = new ArrayList(tree.getNodeCodonList());
-            //iterate through the leaf Node codons and mutate depending on probability
-            for (int codonIndex : nodeCodonList) {
-                if (this.rng.nextBoolean(this.probability)) {
-                    chromosome.set(codonIndex, Math.abs(rng.nextInt()));
-                }
+        ContextualDerivationTree tree = new ContextualDerivationTree((GEGrammar) operand.getMapper(), chromosome);
+        tree.buildDerivationTree();
+        // this is to check that the individual is not invalid
+        // This vector contains the index values for all the leaf node codons
+        ArrayList<Integer> nodeCodonList = new ArrayList(tree.getNodeCodonList());
+        //iterate through the leaf Node codons and mutate depending on probability
+        for (int codonIndex : nodeCodonList) {
+            if (this.rng.nextBoolean(this.probability)) {
+                chromosome.set(codonIndex-1, Math.abs(rng.nextInt()));
             }
-            operand.invalidate();
         }
+        operand.invalidate();
     }
 
     @Override

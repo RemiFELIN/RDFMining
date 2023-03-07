@@ -106,7 +106,7 @@ public class DerivationTree extends NimbleTree<Symbol> implements Derivation {
         assert this.getCurrentNode() instanceof DerivationNode
                 : this.getCurrentNode().getClass().getName();
         DerivationNode t;
-        Boolean validBuild;
+        boolean validBuild;
         t = (DerivationNode) this.getCurrentNode();
         this.grammy.findRule(t.getData());
         validBuild = growNode(t);

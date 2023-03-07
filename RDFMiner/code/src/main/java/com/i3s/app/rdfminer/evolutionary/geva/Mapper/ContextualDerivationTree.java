@@ -68,8 +68,8 @@ public class ContextualDerivationTree extends DerivationTree {
      */
     public ContextualDerivationTree(ContextualDerivationTree copy) {
         super(copy);
-        this.terminalRules = new ArrayList<Symbol>(copy.terminalRules);
-        this.nonTerminalRules = new ArrayList<Symbol>(copy.nonTerminalRules);
+        this.terminalRules = new ArrayList<>(copy.terminalRules);
+        this.nonTerminalRules = new ArrayList<>(copy.nonTerminalRules);
         this.structCodonList = new ArrayList(copy.structCodonList);
         this.nodeCodonList = new ArrayList(copy.nodeCodonList);
     }
@@ -98,7 +98,7 @@ public class ContextualDerivationTree extends DerivationTree {
         Rule r = this.grammy.findRule(s);
         boolean usedCodon = false;
 
-        if (r != null && found == false) {
+        if (r != null && !found) {
             //ugly as sin but this allows GECODONVALUES to be mutated
             if (r.size() > 1 || r.get(0).get(0).getSymbolString().startsWith(Constants.GE_CODON_VALUE_PARSING)) {
                 usedCodon = true;
@@ -113,8 +113,7 @@ public class ContextualDerivationTree extends DerivationTree {
             }
         }
 
-        boolean result = super.growNode(t);
-        return result;
+        return super.growNode(t);
     }
 
     /**

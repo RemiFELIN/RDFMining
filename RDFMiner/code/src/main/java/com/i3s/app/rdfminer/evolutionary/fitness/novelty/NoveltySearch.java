@@ -6,10 +6,13 @@ import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.entity.axiom.AxiomFactory;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+import com.i3s.app.rdfminer.output.SimilarityMap;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -20,6 +23,7 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * The novelty search is a new technic in order to reward individuals that are very different of others.
+ *
  * @author Rémi FELIN
  */
 public class NoveltySearch {
@@ -34,6 +38,7 @@ public class NoveltySearch {
 
     /**
      * Update similarities between individuals from a given population and fitness values to consider novelty approach
+     *
      * @param entities a population composed of entities
      * @return an updated population
      */
@@ -41,17 +46,18 @@ public class NoveltySearch {
         logger.info("Updating similarities between individuals ...");
         ArrayList<Entity> simEntities = new ArrayList<>();
         int countNewSim = 0;
-        for(int i = 0; i < entities.size(); i++) {
-            for(int j = 0; j < entities.size(); j++) {
-                if(i != j) {
+        for (int i = 0; i < entities.size(); i++) {
+            for (int j = 0; j < entities.size(); j++) {
+                if (i != j) {
                     // use similarity cache$
-                    if(RDFMiner.similarityMap.get(entities.get(i), entities.get(j)) != null) {
+                    if (RDFMiner.similarityMap.get(entities.get(i), entities.get(j)) != null) {
 //                        logger.debug("get similarity value from similarity map ...");
                         entities.get(i).similarities.add(RDFMiner.similarityMap.get(entities.get(i), entities.get(j)));
                     } else {
-                        double sim = Similarity.getNormalizedSimilarity(endpoint, entities.get(i), entities.get(j));
-                        entities.get(i).similarities.add(sim);
-                        RDFMiner.similarityMap.append(entities.get(i), entities.get(j), sim);
+                        Similarity sim = new Similarity(entities.get(i), entities.get(j));
+                        double simValue = sim.getModifiedSimilarity(endpoint);
+                        entities.get(i).similarities.add(simValue);
+                        RDFMiner.similarityMap.append(entities.get(i), entities.get(j), simValue);
                         countNewSim++;
                     }
                 }
@@ -61,7 +67,7 @@ public class NoveltySearch {
         logger.info(countNewSim + " new similarities has been added into map");
         logger.info("updating the fitness ...");
         ArrayList<Entity> updatedEntities = new ArrayList<>();
-        for(Entity e : simEntities) {
+        for (Entity e : simEntities) {
             e.fitness = updateFitness(e);
             e.individual.setFitness(new BasicFitness(e.fitness, e.individual));
             updatedEntities.add(e);
@@ -83,7 +89,8 @@ public class NoveltySearch {
     /**
      * compute the fitness value <var>f</var>(&phi) in the Novelty Search context using this formula:<br><br>
      * <center> ((&radic&#8741 &phi &#8741) &times (&Pi(&phi) + N(&phi)) &frasl; 2) &times
-     *                    (1 &frasl (1 + &sum sim<sub>j</sub>(&phi)) </center>
+     * (1 &frasl (1 + &sum sim<sub>j</sub>(&phi)) </center>
+     *
      * @return the value of based novelty fitness <var>f</var>(&phi)
      */
     public static double updateFitness(Entity phi) {
@@ -97,7 +104,9 @@ public class NoveltySearch {
         PropertyConfigurator.configure("/home/rfelin/projects/RDFMining/RDFMiner/code/resources/log4j.properties");
 
         RDFMiner.parameters.loop = false;
-        RDFMiner.parameters.sparqlTimeOut = 30000;
+        RDFMiner.parameters.sparqlTimeOut = 1000000;
+
+        RDFMiner.similarityMap = new SimilarityMap(new File("/user/rfelin/home/projects/RDFMining/RDFMiner/caches/axioms_similarity.json"));
 
         CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, "http://172.19.0.2:9000/sparql", Global.PREFIXES);
 //        Axiom a = AxiomFactory.create(null, "SubClassOf(<http://dbpedia.org/ontology/InformationAppliance> <http://www.w3.org/2004/02/skos/core#Concept>)",
@@ -107,18 +116,18 @@ public class NoveltySearch {
 
         List<String> axiomsAsString = Arrays.asList(
 //                "SubClassOf(<http://dbpedia.org/ontology/InformationAppliance> <http://www.w3.org/2004/02/skos/core#Concept>)",
-                "SubClassOf(<http://dbpedia.org/ontology/Monarch> <http://xmlns.com/foaf/0.1/Person>)",
-//                "SubClassOf(<http://schema.org/Airport> <http://dbpedia.org/ontology/Place>)",
+//                "SubClassOf(<http://dbpedia.org/ontology/Monarch> <http://xmlns.com/foaf/0.1/Person>)",
+//                "SubClassOf(<http://schema.org/Airport> <http://dbpedia.org/ontology/Place>)"
 //                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://dbpedia.org/ontology/Agent>)"
 //                "SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>)",
+                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)",
                 "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)"
-//                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)"
 //                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://dbpedia.org/ontology/River>)"
 //                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://dbpedia.org/ontology/University>)"
 //                "SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>)"
 //                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)"
         );
-        ArrayList<Axiom> axioms = new ArrayList<>();
+        ArrayList<Entity> axioms = new ArrayList<>();
 
 //        // We have a set of threads to compute each axioms
 //        ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
@@ -134,16 +143,20 @@ public class NoveltySearch {
 //        logger.info("hascode of SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>) ~> " + test1.hashCode());
 //        logger.info("hashcode of SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>) ~> " + test2.hashCode());
 
-        for(String axiom : axiomsAsString) {
-            axioms.add(AxiomFactory.create(null, axiom, endpoint));
+        for (String axiom : axiomsAsString) {
+            Axiom a = AxiomFactory.create(null, axiom, endpoint);
+            a.individual = new GEIndividual();
+            axioms.add(a);
         }
 
-        for(Axiom a : axioms) {
-            for(Axiom b : axioms) {
-                if(a.argumentClasses.get(0).get(0) != b.argumentClasses.get(0).get(0)) {
-                    logger.info("# Normalized similarity = " + Similarity.getNormalizedSimilarity(endpoint, a, b));
+        for (int i = 0; i < axioms.size(); i++) {
+            for (int j = 0; j < axioms.size(); j++) {
+                if (i != j) {
+                    Similarity sim = new Similarity(axioms.get(i), axioms.get(j));
+                    logger.info("Similarity = " + sim.getModifiedSimilarity(endpoint));
                 }
             }
+        }
 //            logger.info("similarities for " + a.argumentClasses + ": " + a.similarities);
 //            logger.info("sum(simJ) = " + a.similarities.stream().mapToDouble(x -> x).sum());
 //            logger.info("sqrt(refCard): " + Math.sqrt(a.referenceCardinality));
@@ -153,8 +166,6 @@ public class NoveltySearch {
 //            logger.info("fitness value before update: " + a.fitness);
 //            a.fitness = updateFitness(a);
 //            logger.info("fitness value after update: " + a.fitness);
-        }
-
     }
 
 }
