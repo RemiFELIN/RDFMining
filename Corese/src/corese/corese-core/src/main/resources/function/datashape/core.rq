@@ -4,7 +4,7 @@
 # Olivier Corby - Wimmics Inria I3S - 2016-2019
 #
 
-# prefix psh: <http://www.example.org/ns/probabilistic-shacl#>
+# prefix psh: <http://ns.inria.fr/probabilistic-shacl/>
 prefix sh:  <http://www.w3.org/ns/shacl#> 
 prefix msh: <http://ns.inria.fr/shacl/>
 prefix shex: <http://ns.inria.fr/shex/shacl#>
