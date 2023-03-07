@@ -13,7 +13,7 @@ PREFIX ex:       <http://example.org/demo#>
 PREFIX sp:       <http://spinrdf.org/sp#>
 PREFIX sh:       <http://www.w3.org/ns/shacl#>
 PREFIX dct:      <http://purl.org/dc/terms/>
-PREFIX psh:      <http://www.example.org/ns/probabilistic-shacl#>
+PREFIX psh:      <http://ns.inria.fr/probabilistic-shacl/>
 
 <http://www.example.com/myDataGraph#1> ex:pvalue "1.9215686274509804"^^xsd:double .
 <http://www.example.com/myDataGraph#1> ex:acceptance "true"^^xsd:boolean .

@@ -79,7 +79,7 @@ public class Global {
             + "PREFIX sp:       <http://spinrdf.org/sp#>\n"
             + "PREFIX sh:       <http://www.w3.org/ns/shacl#>\n"
             + "PREFIX dct:      <http://purl.org/dc/terms/>\n"
-            + "PREFIX psh:      <http://www.example.org/ns/probabilistic-shacl#>\n";
+            + "PREFIX psh:      <http://ns.inria.fr/probabilistic-shacl/>\n";
 
     /**
      * Size of the SHACL Shapes ID randomly generated using BNF Grammar
