@@ -338,6 +338,11 @@ function sh:coreboolean(shape, cst) {
 
 # Optimized combinaison (n k)
 function sh:comb(n, k) {
+    # apply properties to optimize the computation
+    # http://pierrelux.net/documents/cours/ts/combinaisons.pdf
+    if(?n = ?k || ?k = 0) {
+        return (1)
+    };
     # not scalable :
     # return (sh:fac(?n) / (sh:fac(?k) * sh:fac(?n - ?k)))
     if(?k>?n-?k) {
@@ -362,7 +367,6 @@ function sh:comb(n, k) {
 
 # P(X = k)
 function sh:binomial(n, p, k) {
-    # sh:log("core.rq", "sh:binomial", concat("bin(", n, ", ", p, ", ", k, ") = ", sh:comb(?n, ?k)));
     return (sh:comb(?n, ?k) * power(?p, ?k) * power(1 - ?p, ?n - ?k))
 }
 
