@@ -50,7 +50,9 @@ import java.util.Properties;
  * @author Conor
  */
 public class IntFlipByteMutation extends MutationOperation {
-    
+
+    public IntFlipByteMutation() { super(); }
+
     /** Creates a new instance of IntFlipMutation
      * @param prob mutation probability
      * @param rng random number generator

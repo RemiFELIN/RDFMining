@@ -49,7 +49,9 @@ import java.util.Properties;
  * @author Conor
  */
 public class IntFlipMutation extends MutationOperation {
-    
+
+    public IntFlipMutation() { super(); }
+
     /** Creates a new instance of IntFlipMutation
      * @param prob mutation probability
      * @param rng random number generator

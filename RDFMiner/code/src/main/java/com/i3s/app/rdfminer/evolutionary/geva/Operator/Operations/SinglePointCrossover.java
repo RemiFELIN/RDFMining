@@ -48,6 +48,10 @@ public class SinglePointCrossover extends CrossoverOperation {
     protected boolean fixedCrossoverPoint = false;
     protected boolean codonsUsedSensitive = true;
 
+    public SinglePointCrossover() {
+        super();
+    }
+
     /**
      * Creates a new instance of SinglePointCrossover
      *

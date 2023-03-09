@@ -57,6 +57,8 @@ public class SubtreeMutation extends MutationOperation {
     private CreationOperation creationOperation;
     protected Initialiser initialiser;
 
+    public SubtreeMutation() { super(); }
+
     public SubtreeMutation(RandomNumberGenerator rng, Properties p) {
         super(rng, p);
         GEGrammar geg = null;
@@ -64,7 +66,7 @@ public class SubtreeMutation extends MutationOperation {
         String key = Constants.GEGRAMMAR;
         try {
             className = p.getProperty(key, Constants.DEFAULT_GEGRAMMAR);
-            Class clazz = Class.forName(className);
+            Class<?> clazz = Class.forName(className);
             geg = (GEGrammar) clazz.newInstance();
             geg.setProperties(p);
         } catch (Exception e) {

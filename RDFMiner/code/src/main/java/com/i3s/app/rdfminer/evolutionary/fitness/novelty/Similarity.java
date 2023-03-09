@@ -46,13 +46,13 @@ public class Similarity {
         // compute sparql queries
         String simNumSparql = "{ " + this.phi1SubClass.graphPattern + this.phi1SuperClass.graphPattern + " } UNION { " +
                 phi2SubClass.graphPattern + phi2SuperClass.graphPattern + " } ";
-        String simDenSparql = "{ " + this.phi1SubClass.graphPattern + " } UNION { " + this.phi2SubClass.graphPattern + " }";
+        String simDenSparql = "{ " + this.phi1SuperClass.graphPattern + " } UNION { " + this.phi2SuperClass.graphPattern + " }";
         double similarityNumerator = endpoint.count(simNumSparql);
-        logger.info("numerator query : " + simNumSparql);
-        logger.info("result = " + similarityNumerator);
+//        logger.info("numerator query : " + simNumSparql);
+//        logger.info("result = " + similarityNumerator);
         double similarityDenominator = endpoint.count(simDenSparql);
-        logger.info("denominator query : " + simDenSparql);
-        logger.info("result = " + similarityDenominator);
+//        logger.info("denominator query : " + simDenSparql);
+//        logger.info("result = " + similarityDenominator);
         // avoid NaN value returned by a zero-denominator
         if(similarityDenominator == 0)  return 0;
         // else return value
@@ -90,11 +90,11 @@ public class Similarity {
      */
     public double getNormalizedSimilarity(CoreseEndpoint endpoint) throws URISyntaxException, IOException {
         double simJphi1phi2 = this.getJaccardSimilarity(endpoint);
-        logger.info("sim_j_phi1_phi2 = " + simJphi1phi2);
+//        logger.info("sim_j_phi1_phi2 = " + simJphi1phi2);
         double simJphi1phi1 = this.getJaccardSimilarity(endpoint);
-        logger.info("sim_j_phi1_phi1 = " + simJphi1phi1);
+//        logger.info("sim_j_phi1_phi1 = " + simJphi1phi1);
         double simJphi2phi2 = this.getJaccardSimilarity(endpoint);
-        logger.info("sim_j_phi2_phi2 = " + simJphi2phi2);
+//        logger.info("sim_j_phi2_phi2 = " + simJphi2phi2);
         // avoid NaN value returned by a zero-denominator
         if(simJphi1phi1 == 0 && simJphi2phi2 == 0) return 0;
         // compute normalized similarity

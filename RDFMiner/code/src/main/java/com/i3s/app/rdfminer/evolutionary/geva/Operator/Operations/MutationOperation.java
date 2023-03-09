@@ -38,10 +38,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.evolutionary.geva.Exceptions.BadParameterException;
 import com.i3s.app.rdfminer.evolutionary.geva.FitnessEvaluation.FitnessFunction;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.Stochastic;
 
@@ -58,6 +60,16 @@ public abstract class MutationOperation implements Stochastic, Operation {
     protected double noOfMutationCalls;
     protected RandomNumberGenerator rng;
     protected FitnessFunction fitnessFunction;
+
+    /**
+     * Creates a new instances of MutationOperation based on
+     * parameters provided by RDFMiner application
+     */
+    public MutationOperation() {
+        this.probability = RDFMiner.parameters.proMutation;
+        this.rng = new MersenneTwisterFast();
+        this.noOfMutationCalls = 0;
+    }
 
     /** Creates a new instance of MutationOperation
      * @param prob mutation probability

@@ -53,6 +53,8 @@ import java.util.Properties;
  */
 public class SubtreeCrossover extends CrossoverOperation {
 
+    public SubtreeCrossover() { super(); }
+
     public SubtreeCrossover(RandomNumberGenerator rng, Properties p) {
         super(rng, p);
     }

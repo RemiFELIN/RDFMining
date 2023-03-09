@@ -46,6 +46,8 @@ import java.util.Properties;
  */
 public class NodalMutation extends MutationOperation {
 
+    public NodalMutation() { super(); }
+
     public NodalMutation(RandomNumberGenerator rng, Properties p) {
         super(rng, p);
     }

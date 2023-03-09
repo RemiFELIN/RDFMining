@@ -117,14 +117,14 @@ public class NoveltySearch {
         List<String> axiomsAsString = Arrays.asList(
 //                "SubClassOf(<http://dbpedia.org/ontology/InformationAppliance> <http://www.w3.org/2004/02/skos/core#Concept>)",
 //                "SubClassOf(<http://dbpedia.org/ontology/Monarch> <http://xmlns.com/foaf/0.1/Person>)",
-//                "SubClassOf(<http://schema.org/Airport> <http://dbpedia.org/ontology/Place>)"
+                "SubClassOf(<http://schema.org/Airport> <http://dbpedia.org/ontology/Place>)",
 //                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://dbpedia.org/ontology/Agent>)"
 //                "SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>)",
-                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)",
-                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)"
+//                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)",
+//                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)"
 //                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://dbpedia.org/ontology/River>)"
 //                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://dbpedia.org/ontology/University>)"
-//                "SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>)"
+                "SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>)"
 //                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)"
         );
         ArrayList<Entity> axioms = new ArrayList<>();
@@ -153,7 +153,8 @@ public class NoveltySearch {
             for (int j = 0; j < axioms.size(); j++) {
                 if (i != j) {
                     Similarity sim = new Similarity(axioms.get(i), axioms.get(j));
-                    logger.info("Similarity = " + sim.getModifiedSimilarity(endpoint));
+                    logger.info("v0.1 similarity = " + sim.getJaccardSimilarity(endpoint));
+                    logger.info("New similarity = " + sim.getModifiedSimilarity(endpoint));
                 }
             }
         }

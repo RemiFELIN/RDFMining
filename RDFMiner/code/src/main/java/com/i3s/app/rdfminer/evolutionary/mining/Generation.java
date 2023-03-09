@@ -14,7 +14,6 @@ import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.IntFlipByteMut
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.IntFlipMutation;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.SinglePointCrossover;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.TwoPointCrossover;
-import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 import com.i3s.app.rdfminer.evolutionary.tools.Crowding;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
@@ -63,20 +62,20 @@ public class Generation {
                 default:
                 case TypeCrossover.SINGLE_POINT:
                     // Single-point crossover
-                    SinglePointCrossover spc = new SinglePointCrossover(new MersenneTwisterFast(), RDFMiner.parameters.proCrossover);
+                    SinglePointCrossover spc = new SinglePointCrossover();
                     spc.setFixedCrossoverPoint(true);
                     spc.doOperation(parents);
                     break;
                 case TypeCrossover.TWO_POINT:
                     // Two point crossover
-                    TwoPointCrossover tpc = new TwoPointCrossover(new MersenneTwisterFast(), RDFMiner.parameters.proCrossover);
+                    TwoPointCrossover tpc = new TwoPointCrossover();
                     tpc.setFixedCrossoverPoint(true);
                     tpc.doOperation(parents);
                     break;
                 case TypeCrossover.SUBTREE:
                     // subtree crossover
                     // special implementation due to the original implementation by GEVA developers
-                    SubtreeCrossover stc = new SubtreeCrossover(new MersenneTwisterFast(), RDFMiner.parameters.proCrossover);
+                    SubtreeCrossover stc = new SubtreeCrossover();
                     stc.doOperation(parents);
                     break;
             }
@@ -84,15 +83,15 @@ public class Generation {
             switch (RDFMiner.parameters.typeMutation) {
                 default:
                 case TypeMutation.INT_FLIP:
-                    IntFlipMutation ifm = new IntFlipMutation(new MersenneTwisterFast(), RDFMiner.parameters.proMutation);
+                    IntFlipMutation ifm = new IntFlipMutation();
                     ifm.doOperation(parents);
                     break;
                 case TypeMutation.NODAL:
-                    NodalMutation nm = new NodalMutation(new MersenneTwisterFast(), RDFMiner.parameters.proMutation);
+                    NodalMutation nm = new NodalMutation();
                     nm.doOperation(parents);
                     break;
                 case TypeMutation.SUBTREE:
-                    SubtreeMutation sm = new SubtreeMutation(new MersenneTwisterFast(), RDFMiner.parameters.proMutation);
+                    SubtreeMutation sm = new SubtreeMutation();
                     sm.doOperation(parents);
                     break;
 //                case TypeMutation.STRUCTURAL:
@@ -100,7 +99,7 @@ public class Generation {
 //                    stm.doOperation(parents);
 //                    break;
                 case TypeMutation.INT_FLIP_BYTE:
-                    IntFlipByteMutation ifbm = new IntFlipByteMutation(new MersenneTwisterFast(), RDFMiner.parameters.proMutation);
+                    IntFlipByteMutation ifbm = new IntFlipByteMutation();
                     ifbm.doOperation(parents);
                     break;
             }
