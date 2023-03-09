@@ -6,7 +6,7 @@ import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.evolutionary.fitness.Fitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.individual.CandidatePopulation;
-import com.i3s.app.rdfminer.evolutionary.mining.EntityMining;
+import com.i3s.app.rdfminer.evolutionary.EntityMining;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.generator.shacl.RandomShapeGenerator;

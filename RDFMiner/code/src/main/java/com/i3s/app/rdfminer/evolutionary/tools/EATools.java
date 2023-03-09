@@ -1,16 +1,9 @@
 package com.i3s.app.rdfminer.evolutionary.tools;
 
-import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.TournamentSelect;
-import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
-import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
-import com.i3s.app.rdfminer.evolutionary.selection.ProportionalRouletteWheel;
-import com.i3s.app.rdfminer.evolutionary.selection.TruncationSelection;
-import com.i3s.app.rdfminer.evolutionary.selection.TypeSelection;
 import com.i3s.app.rdfminer.grammar.DLFactory;
 import org.apache.log4j.Logger;
 
@@ -62,35 +55,6 @@ public class EATools {
 			}
 		}
 		return entities;
-	}
-
-	public static ArrayList<GEIndividual> getTypeSelection(int type, ArrayList<GEIndividual> selectedPopulation, int sizeElite, int sizeSelection) {
-		switch (type) {
-			case TypeSelection.ROULETTE_WHEEL:
-				// Roulette wheel method
-				// if6
-				logger.info("Type selection: Roulette Wheel");
-				return EATools.rouletteWheel(selectedPopulation);
-			case TypeSelection.TRUNCATION:
-				// Truncation selection method
-				// if7
-				logger.info("Type selection: Truncation");
-				TruncationSelection truncation = new TruncationSelection(sizeSelection);
-				truncation.setParentsSelectionElitism(selectedPopulation);
-				return truncation.setupSelectedPopulation(RDFMiner.parameters.populationSize - sizeElite);
-			case TypeSelection.TOURNAMENT:
-				// Tournament method
-				// if8
-				logger.info("Type selection: Tournament");
-				return EATools.tournament(selectedPopulation);
-			default:
-				// Normal crossover way - All individual of the current generation
-				// will be selected for crossover operation to create the new
-				// population
-				// if6
-				logger.info("Type selection: Normal");
-				return null;
-		}
 	}
 
 	/**
@@ -192,27 +156,6 @@ public class EATools {
 			toReturn.add(entity);
 		}
 		return toReturn;
-	}
-
-	public static ArrayList<GEIndividual> rouletteWheel(ArrayList<GEIndividual> selectedPopulation) {
-		// RouletteWheel
-		int size = selectedPopulation.size();
-		RandomNumberGenerator random;
-		random = new MersenneTwisterFast(System.currentTimeMillis());
-		ProportionalRouletteWheel rl = new ProportionalRouletteWheel(size, random);
-		rl.doOperation(selectedPopulation);
-		return new ArrayList<>(selectedPopulation);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static ArrayList<GEIndividual> tournament(ArrayList<GEIndividual> selectedPopulation) {
-		// Tournament
-		int size = selectedPopulation.size();
-		RandomNumberGenerator random;
-		random = new MersenneTwisterFast(System.currentTimeMillis());
-		TournamentSelect tn = new TournamentSelect(size, size / 10, random);
-		tn.selectFromTour();
-		return (ArrayList<GEIndividual>) tn.getSelectedPopulation();
 	}
 
 }

@@ -1,11 +1,17 @@
-package com.i3s.app.rdfminer.evolutionary.mining;
+package com.i3s.app.rdfminer.evolutionary;
 
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.evolutionary.fitness.Fitness;
+import com.i3s.app.rdfminer.evolutionary.generation.Generation;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
-import com.i3s.app.rdfminer.evolutionary.selection.EliteSelection;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.EliteOperationSelection;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ProportionalRouletteWheel;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ScaledRouletteWheel;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.TournamentSelect;
 import com.i3s.app.rdfminer.evolutionary.tools.EATools;
+import com.i3s.app.rdfminer.evolutionary.types.TypeSelection;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.output.GenerationJSON;
 import org.apache.log4j.Logger;
@@ -58,8 +64,8 @@ public class EntityMining {
 
         // STEP 3 - SELECTION OPERATION - Reproduce Selection - Parent Selection
         ArrayList<GEIndividual> entitiesAsIndividuals = new ArrayList<>();
-        ArrayList<GEIndividual> selectedIndividuals;
         ArrayList<GEIndividual> elitismIndividuals = new ArrayList<>();
+        ArrayList<GEIndividual> selectedIndividuals = new ArrayList<>();
 
         // Use list of individuals instead of list of entities
         // i.e. apply GE process directly on individuals
@@ -67,38 +73,68 @@ public class EntityMining {
             entitiesAsIndividuals.add(entity.individual);
         }
 
-        if (RDFMiner.parameters.elitism == 1) {
+//        if (RDFMiner.parameters.elitism == 1) {
             // Elitism method, which copies the best chromosome( or a few best
             // chromosome) to new population. The rest done classical way. it
             // prevents losing the best found solution
-            logger.info("Selecting elite individuals...");
-            logger.info("Selecting " + (int) (RDFMiner.parameters.sizeElite * 100)
-                    + "% elite individuals for the new population");
-            EliteSelection elite = new EliteSelection(sizeElite);
-            elite.setParentsSelectionElitism(entitiesAsIndividuals);
-            selectedIndividuals = elite.setupSelectedPopulation(entitiesAsIndividuals);
-            logger.info("Size of the selected population: " + selectedIndividuals.size());
-            elitismIndividuals = elite.getElitedPopulation();
-            logger.info("Size of the elitism population: " + elitismIndividuals.size());
-        } else {
-            selectedIndividuals = entitiesAsIndividuals;
-            sizeElite = 0;
+//            logger.info("Selecting elite individuals...");
+//            logger.info("Selecting " + (int) (RDFMiner.parameters.sizeElite * 100)
+//                    + "% elite individuals for the new population");
+//            EliteSelection elite = new EliteSelection(sizeElite);
+//            elite.setParentsSelectionElitism(entitiesAsIndividuals);
+//            selectedIndividuals = elite.setupSelectedPopulation(entitiesAsIndividuals);
+//            logger.info("Size of the selected population: " + selectedIndividuals.size());
+//            elitismIndividuals = elite.getElitedPopulation();
+//            logger.info("Size of the elitism population: " + elitismIndividuals.size());
+//        } else {
+//            selectedIndividuals = entitiesAsIndividuals;
+//        }
+        /* SELECTION */
+        switch(RDFMiner.parameters.typeSelect) {
+            default:
+            case TypeSelection.ELITE_OPERATION_SELECTION:
+                EliteOperationSelection eos = new EliteOperationSelection();
+                eos.doOperation(entitiesAsIndividuals);
+                for(Individual selected : eos.getSelectedPopulation().getAll()) {
+                    selectedIndividuals.add((GEIndividual) selected);
+                    entitiesAsIndividuals.remove((GEIndividual) selected);
+                }
+                break;
+            case TypeSelection.PROPORTIONAL_ROULETTE_WHEEL:
+                ProportionalRouletteWheel prw = new ProportionalRouletteWheel();
+                prw.doOperation(entitiesAsIndividuals);
+                for(Individual selected : prw.getSelectedPopulation().getAll()) {
+                    selectedIndividuals.add((GEIndividual) selected);
+                    entitiesAsIndividuals.remove((GEIndividual) selected);
+                }
+                break;
+            case TypeSelection.SCALED_ROULETTE_WHEEL:
+                ScaledRouletteWheel srw = new ScaledRouletteWheel();
+                srw.doOperation(entitiesAsIndividuals);
+                for(Individual selected : srw.getSelectedPopulation().getAll()) {
+                    selectedIndividuals.add((GEIndividual) selected);
+                    entitiesAsIndividuals.remove((GEIndividual) selected);
+                }
+                break;
+            case TypeSelection.TOURNAMENT_SELECT:
+                TournamentSelect ts = new TournamentSelect();
+                ts.doOperation(entitiesAsIndividuals);
+                for(Individual selected : ts.getSelectedPopulation().getAll()) {
+                    selectedIndividuals.add((GEIndividual) selected);
+                    entitiesAsIndividuals.remove((GEIndividual) selected);
+                }
+                break;
         }
-        // set the type selection
-        ArrayList<GEIndividual> crossoverIndividuals = EATools.getTypeSelection(RDFMiner.parameters.typeSelect,
-                selectedIndividuals, sizeElite, sizeSelection);
-        logger.debug("crossoverIndividuals size = " + crossoverIndividuals.size());
         /* STEP 4 - CROSSOVER & MUTATION OPERATION */
-        // Crossover single point between 2 individuals of the selected population
-        ArrayList<Entity> crossoverEntities = EATools.bindIndividualsWithEntities(crossoverIndividuals, entities);
-        ArrayList<Entity> elitismEntities = EATools.bindIndividualsWithEntities(elitismIndividuals, entities);
+        ArrayList<Entity> selectedEntities = EATools.bindIndividualsWithEntities(selectedIndividuals, entities);
+        ArrayList<Entity> toCompute = EATools.bindIndividualsWithEntities(entitiesAsIndividuals, entities);
 //        logger.debug("size crossover entities = " + crossoverEntities.size());
 //        logger.debug("size elitism entities = " + elitismEntities.size());
         // Compute GE and add new population on a new list of individuals
-        ArrayList<Entity> computedPopulation = Generation.compute(crossoverEntities, curGeneration, generator);
+        ArrayList<Entity> computedPopulation = Generation.compute(toCompute, curGeneration, generator);
 //        logger.debug("size computed pop = " + computedPopulation.size());
         // set new population
-        ArrayList<Entity> newPopulation = EATools.renew(curGeneration, computedPopulation, elitismEntities);
+        ArrayList<Entity> newPopulation = EATools.renew(curGeneration, computedPopulation, selectedEntities);
 //        logger.debug("size new pop = " + newPopulation.size());
         // stats
         setStats(newPopulation, curGeneration);

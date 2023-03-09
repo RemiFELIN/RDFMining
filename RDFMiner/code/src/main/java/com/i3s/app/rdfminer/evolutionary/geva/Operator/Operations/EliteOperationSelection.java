@@ -36,6 +36,7 @@ import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.SimplePopu
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -45,6 +46,10 @@ import java.util.Properties;
 public class EliteOperationSelection extends SelectionOperation {
 
     private boolean evaluate_elites;
+
+    public EliteOperationSelection() {
+        super();
+    }
 
     /**
      * New instance
@@ -107,16 +112,15 @@ public class EliteOperationSelection extends SelectionOperation {
         while (cnt < this.size && cnt < operands.size()) {
             //Avoid duplicates
             final boolean valid = fA[cnt].getIndividual().isValid();
-            final boolean duplicate = this.selectedPopulation.contains(fA[cnt].getIndividual());
-            if (!duplicate && valid) {
+//            final boolean duplicate = this.selectedPopulation.contains(fA[cnt].getIndividual());
+            if (valid) { // !duplicate && valid
                 Individual ind = fA[cnt].getIndividual().clone();
-                //		System.out.println("org:\t"+fA[cnt].getIndividual().getGenotype().hashCode());
-                //		System.out.println("new:\t"+ind.getGenotype().hashCode());
                 //Set individual as valid
                 if (!this.evaluate_elites) {
                     ind.setEvaluated(fA[cnt].getIndividual().isEvaluated());
                     ind.setValid(fA[cnt].getIndividual().isValid());
                     ind.setAge(fA[cnt].getIndividual().getAge());
+                    ind.setFitness(fA[cnt].getIndividual().getFitness());
                     ((GEIndividual) ind).setMapped(((GEIndividual) (fA[cnt].getIndividual())).isMapped());
                     ((GEIndividual) ind).setUsedCodons(((GEIndividual) (fA[cnt].getIndividual())).getUsedCodons());
                 }
@@ -128,7 +132,7 @@ public class EliteOperationSelection extends SelectionOperation {
 
     }
 
-    public void setEvaluate_elites(boolean evaluate_elites) {
+    public void setEvaluateElites(boolean evaluate_elites) {
         this.evaluate_elites = evaluate_elites;
     }
 
@@ -140,15 +144,11 @@ public class EliteOperationSelection extends SelectionOperation {
      **/
     Fitness[] rankPopulation(List<GEIndividual> operands) {
         Fitness[] fAt = new Fitness[operands.size()];
-
-        //System.out.print("EliteRank org:");
         for (int i = 0; i < fAt.length; i++) {
             fAt[i] = operands.get(i).getFitness();
-            //System.out.print(fAt[i].getDouble()+",");
         }
-        //System.out.println();
-        //Sort ascending
-        Arrays.sort(fAt);
+        //Sort descending
+        Arrays.sort(fAt, Collections.reverseOrder());
         return fAt;
     }
 

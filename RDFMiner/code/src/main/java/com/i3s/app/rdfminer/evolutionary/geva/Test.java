@@ -1,20 +1,19 @@
-package com.i3s.app.rdfminer.evolutionary.geva.Operator;
+package com.i3s.app.rdfminer.evolutionary.geva;
 
 import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Genotype;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.SimplePopulation;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.GEGrammar;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.CrossoverModule;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.NodalMutation;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.StructuralMutation;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.SubtreeCrossover;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.SubtreeMutation;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.IntFlipByteMutation;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.IntFlipMutation;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.SinglePointCrossover;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.TwoPointCrossover;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.*;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 import com.i3s.app.rdfminer.evolutionary.individual.CandidatePopulation;
 import com.i3s.app.rdfminer.generator.Generator;
@@ -23,6 +22,7 @@ import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Test {
 
@@ -243,7 +243,7 @@ public class Test {
         }
     }
 
-    public static void main(String[] args) {
+    public static void testCrossoverMutation() {
         // Create individuals
         GEChromosome c1 = new GEChromosome(10);
         GEChromosome c2 = new GEChromosome(10);
@@ -285,6 +285,45 @@ public class Test {
 //        Test.testSubtreeMutation();
 //        Test.testStructuralMutation(); // didn't work !!
         Test.testIntFlipByteMutation(aI);
+    }
+
+    public static void testSelection() {
+        RDFMiner.parameters.initLenChromosome = 2;
+//        RDFMiner.parameters.sizeSelection = 0.3;
+        RDFMiner.parameters.populationSize = 10;
+        Generator generator = null;
+        try {
+            generator = new RandomAxiomGenerator("/user/rfelin/home/projects/RDFMining/IO/OWL2Axiom-subclassof.bnf", true);
+        } catch (URISyntaxException | IOException e) {
+            e.printStackTrace();
+        };
+        CandidatePopulation canPop = new CandidatePopulation(generator);
+        ArrayList<GEIndividual> population = canPop.initialize(null, 1);
+        ArrayList<GEIndividual> updatedPopulation = new ArrayList<>();
+        // generate individuals
+        for(GEIndividual individual : population) {
+            // set a random fitness between 0 and 10 (exclusive)
+            individual.setFitness(new BasicFitness(new Random().nextDouble() * 10, individual));
+            // log usefull information
+            System.out.println("i: " + individual.getGenotype() + " ~ F(i)= " + individual.getFitness().getDouble());
+            // add the individual into population
+            updatedPopulation.add(individual);
+        }
+        // operate selection
+//        EliteOperationSelection selection = new EliteOperationSelection(3);
+//        ScaledRouletteWheel selection = new ScaledRouletteWheel(3, new MersenneTwisterFast());
+//        ProportionalRouletteWheel selection = new ProportionalRouletteWheel(3, new MersenneTwisterFast());
+        TournamentSelect selection = new TournamentSelect(3, 5, new MersenneTwisterFast());
+        selection.doOperation(updatedPopulation);
+        System.out.println("Selection done ... ");
+        for(Individual selected : selection.getSelectedPopulation().getAll()) {
+            System.out.println("s(i): " + selected.getGenotype() + " ~ F(i)= " + selected.getFitness().getDouble());
+        }
+    }
+
+    public static void main(String[] args) {
+//        testCrossoverMutation();
+        testSelection();
     }
 
 }

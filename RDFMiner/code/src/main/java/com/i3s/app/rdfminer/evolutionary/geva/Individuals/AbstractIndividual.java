@@ -125,7 +125,7 @@ public abstract class AbstractIndividual implements Individual {
 
     public void setFitness(Fitness f){
         this.fitness = f;
-        f.setIndividual(this);
+        f.setIndividual((GEIndividual) this);
     }
 
     public boolean isEvaluated() {

@@ -1,10 +1,10 @@
-package com.i3s.app.rdfminer.evolutionary.mining;
+package com.i3s.app.rdfminer.evolutionary.generation;
 
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
-import com.i3s.app.rdfminer.evolutionary.TypeCrossover;
-import com.i3s.app.rdfminer.evolutionary.TypeMutation;
+import com.i3s.app.rdfminer.evolutionary.types.TypeCrossover;
+import com.i3s.app.rdfminer.evolutionary.types.TypeMutation;
 import com.i3s.app.rdfminer.evolutionary.fitness.novelty.NoveltySearch;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.NodalMutation;
@@ -116,6 +116,7 @@ public class Generation {
             selectedEntities.remove(canEntities.get(m + 1));
             m = m + 2;
         }
+        // @TODO not work if crowding is not choosen
         // fill entity that was not choosen for the crossover-mutation process
         if(!selectedEntities.isEmpty()) {
             logger.debug("The last entity will be added directly on population");

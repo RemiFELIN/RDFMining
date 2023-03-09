@@ -29,17 +29,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.evolutionary.geva.Exceptions.BadParameterException;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.Fitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.Stochastic;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * The operation of this class is tournament selection.
@@ -62,7 +61,7 @@ public class TournamentSelect extends SelectionOperation implements Stochastic {
         super(size);
         this.rng = rand;
         this.tournamentSize = tourSize;
-        tour = new ArrayList<Fitness>(tourSize);
+        tour = new ArrayList<>(tourSize);
     }
     
     /** Creates a new instance of TournamentSelect
@@ -73,7 +72,7 @@ public class TournamentSelect extends SelectionOperation implements Stochastic {
         super(p);
         setProperties(p);
         this.rng = rand;
-        tour = new ArrayList<Fitness>(this.tournamentSize);
+        tour = new ArrayList<>(this.tournamentSize);
     }
 
     /**
@@ -81,7 +80,10 @@ public class TournamentSelect extends SelectionOperation implements Stochastic {
      */
     public TournamentSelect() {
         super();
-        tour = new ArrayList<Fitness>(this.tournamentSize);
+        this.rng = new MersenneTwisterFast();
+        // Heuristic: ~50% of popsize for the size of turnament
+        this.tournamentSize = (int) (RDFMiner.parameters.populationSize / 2);
+        tour = new ArrayList<>(this.tournamentSize);
     }
     
     public void setProperties(Properties p) {
@@ -112,7 +114,7 @@ public class TournamentSelect extends SelectionOperation implements Stochastic {
     public void doOperation(List<GEIndividual> operands) {
         this.selectedPopulation.clear();
         while(this.selectedPopulation.size()<this.size){
-            getTour(operands);
+            fillTour(operands);
             selectFromTour();
         }
     }
@@ -122,12 +124,14 @@ public class TournamentSelect extends SelectionOperation implements Stochastic {
      * the operands untill the tounramentSize is reached.
      * @param operands Individuals that can be selected to the tournament
      **/
-    public void getTour(List<GEIndividual> operands) {
+    public void fillTour(List<GEIndividual> operands) {
         tour.clear();
         int contestant;
-        for(int i = 0;i<this.tournamentSize;i++) {
+        int i=0;
+        while(i < this.tournamentSize) {
             contestant = this.rng.nextInt(operands.size());
             tour.add(operands.get(contestant).getFitness());
+            i++;
         }
     }
     
@@ -135,8 +139,12 @@ public class TournamentSelect extends SelectionOperation implements Stochastic {
      * Select a winner from the tournament and add to the selected population.
      **/
     public void selectFromTour() {
-	    Collections.sort(tour);
-	    this.selectedPopulation.add(tour.get(0).getIndividual().clone());
+//        System.out.println("Tournament: ");
+        for(Fitness f : tour) {
+//            System.out.println("   f(i)= " + f.getDouble());
+        }
+        tour.sort(Collections.reverseOrder());
+	    this.selectedPopulation.add(tour.get(0).getIndividual());
 
     }
 

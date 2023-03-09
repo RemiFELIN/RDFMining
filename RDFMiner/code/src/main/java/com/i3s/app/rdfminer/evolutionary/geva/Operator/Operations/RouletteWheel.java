@@ -116,10 +116,10 @@ public abstract class RouletteWheel extends SelectionOperation implements Stocha
             }
             if (cnt >= operands.size()) {
                 //                System.out.println("Doh:"+cnt);
-                cnt = operands.size() - 1; //If the selction with the roulette fails, take the last individual
+                cnt = operands.size() - 1; //If the selection with the roulette fails, take the last individual
             }
             selected = operands.get(cnt);
-            this.selectedPopulation.add(selected.clone());
+            this.selectedPopulation.add(selected);
 
         }
     }
@@ -129,7 +129,7 @@ public abstract class RouletteWheel extends SelectionOperation implements Stocha
     /**
      * Calculate the fitness sum.
      * Get the minimum fitness.
-     * If fitness is NaN or Infinite Double.MAX_VAALUE is assigned
+     * If fitness is NaN or Infinite Double.MAX_VALUE is assigned
      *
      * @param c List of individuals which fitness is taken into account
      **/
@@ -150,6 +150,7 @@ public abstract class RouletteWheel extends SelectionOperation implements Stocha
             }
         }
         this.sumFit = sum;
+//        System.out.println("sumFit= " + this.sumFit);
     }
 
     public RandomNumberGenerator getRNG() {

@@ -100,6 +100,7 @@ public class ProportionalRouletteWheel extends RouletteWheel implements Stochast
                 accProbs[cnt] = 1;
             }
         }
+//        System.out.println("acc. Probs: " + Arrays.toString(accProbs));
     }
 
     public static void main(String[] args) {

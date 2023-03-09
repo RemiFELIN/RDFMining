@@ -1,4 +1,4 @@
-package com.i3s.app.rdfminer.evolutionary;
+package com.i3s.app.rdfminer.evolutionary.types;
 
 public class TypeCrossover {
 	
