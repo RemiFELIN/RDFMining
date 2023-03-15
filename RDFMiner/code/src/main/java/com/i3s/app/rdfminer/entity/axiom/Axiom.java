@@ -4,7 +4,7 @@
 package com.i3s.app.rdfminer.entity.axiom;
 
 import com.i3s.app.rdfminer.entity.Entity;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 
 import java.io.IOException;
@@ -48,20 +48,11 @@ public abstract class Axiom extends Entity {
 	public void computeFitness() {
 		// Evaluate axioms with generality formula or (initial) formula with necessity
 		if (this.generality != 0) {
-			this.fitness = this.possibility().doubleValue() * this.generality;
+			this.individual.setFitness(new BasicFitness(this.possibility().doubleValue() * this.generality, this.individual));
 		} else {
-			this.fitness = this.referenceCardinality *
-					((this.possibility().doubleValue() + this.necessity().doubleValue()) / 2);
+			this.individual.setFitness(new BasicFitness(this.referenceCardinality *
+					((this.possibility().doubleValue() + this.necessity().doubleValue()) / 2), this.individual));
 		}
-	}
-
-	/**
-	 * Get the individual involved by the current axiom
-	 * 
-	 * @return individual the current individual
-	 */
-	public GEIndividual getIndividual() {
-		return individual;
 	}
 
 	/**

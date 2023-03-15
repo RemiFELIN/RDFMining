@@ -36,6 +36,7 @@ import com.i3s.app.rdfminer.evolutionary.geva.Mapper.DerivationTree;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.CrossoverOperation;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.GenotypeHelper;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 import java.util.Properties;
@@ -52,6 +53,8 @@ import java.util.Properties;
  * @author eliott bartley
  */
 public class SubtreeCrossover extends CrossoverOperation {
+
+    private static final Logger logger = Logger.getLogger(SubtreeCrossover.class.getName());
 
     public SubtreeCrossover() { super(); }
 
@@ -76,6 +79,7 @@ public class SubtreeCrossover extends CrossoverOperation {
         if (this.rand.nextDouble() >= this.probability)
             return;
 
+        logger.info("~ perform crossover between " + i1.getGenotype() + " and " + i2.getGenotype());
         // Turn the genotype into a tree. The tree nodes will state which
         //  codons each branch used to determine its child production
         DerivationTree tree1 = GenotypeHelper.buildDerivationTree(i1);

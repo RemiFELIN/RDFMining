@@ -1,17 +1,18 @@
 package com.i3s.app.rdfminer.evolutionary.fitness.entity;
 
 import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.entity.shacl.Shape;
 import com.i3s.app.rdfminer.entity.shacl.ShapesManager;
 import com.i3s.app.rdfminer.entity.shacl.ValidationReport;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.launcher.evaluator.ExtendedShacl;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -42,11 +43,12 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
             ArrayList<Entity> newPopulation = new ArrayList<>();
             for(Shape shape : shapesManager.getPopulation()) {
                 shape.fillParamFromReport(validationReport);
-                BasicFitness fit = new BasicFitness(shape.fitness, shape.individual);
-                fit.setIndividual(shape.individual);
-                fit.getIndividual().setValid(true);
-                shape.individual.setFitness(fit);
+//                BasicFitness fit = new BasicFitness(shape.fitness, shape);
+//                fit.setIndividual(shape);
+//                fit.getIndividual().setValid(true);
+//                shape.setFitness(fit);
                 newPopulation.add(shape);
+                logger.debug("i: " + shape.individual.getGenotype() + " ~ F(i)= " + shape.individual.getFitness().getDouble());
             }
             // return new population
             return newPopulation;
@@ -83,12 +85,16 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
             for(Shape shape : shapesManager.getPopulation()) {
                 shape.fillParamFromReport(validationReport);
                 // set the fitness of each individuals provided by the population
-                BasicFitness fit = new BasicFitness(shape.fitness, shape.individual);
-                fit.setIndividual(shape.individual);
-                fit.getIndividual().setValid(true);
-                shape.individual.setFitness(fit);
+//                BasicFitness fit = new BasicFitness(shape.fitness, shape);
+//                fit.setIndividual(shape);
+//                fit.getIndividual().setValid(true);
+//                shape.setFitness(fit);
                 newPop.add(shape);
             }
+            // write validation report in file
+            FileWriter fw = new FileWriter(RDFMiner.outputFolder + Global.SHACL_VALIDATION_REPORT_FILENAME);
+            fw.write(validationReport.prettifyPrint());
+            fw.close();
             // run extended shacl
             ExtendedShacl.runWithoutEval(report, shapesManager);
             // return new population
@@ -124,10 +130,11 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
             // set all results
             shape.fillParamFromReport(validationReport);
             // set fitness
-            BasicFitness fit = new BasicFitness(shape.fitness, shape.individual);
-            fit.setIndividual(shape.individual);
-            fit.getIndividual().setValid(true);
-            shape.individual.setFitness(fit);
+//            BasicFitness fit = new BasicFitness(shape.fitness, shape);
+//            fit.setIndividual(shape);
+//            fit.getIndividual().setValid(true);
+//            shape.setFitness(fit);
+            logger.debug("new(i): " + shape.individual.getGenotype() + " ~ F(i)= " + shape.individual.getFitness().getDouble());
             return shape;
         } catch (IOException e) {
             logger.error("I/O exceptions while evaluating SHACL Shapes ...");

@@ -189,20 +189,14 @@ public class ValidationReport {
 
     @Override
     public String toString() {
-        return this.numSummary + " |\n" +
-                this.reportedShapes + " |\n" +
-                this.exceptionsByShape + " |\n" +
-                this.numExceptionsByShape + " |\n" +
-                this.numConfirmationsByShape + " |\n" +
-                this.referenceCardinalityByShape + " |\n" +
-                this.likelihoodByShape + " |\n" +
-                this.generalityByShape;
+        return this.prettifyPrint();
     }
 
     public String prettifyPrint() {
         return this.content.replace(".@", ".\n@")
                 .replace(".<", ".\n\n<")
                 .replace(";sh", ";\nsh")
+                .replace(";psh", ";\npsh")
                 .replace(";r", ";\nr")
                 .replace("._", ".\n\n_");
     }

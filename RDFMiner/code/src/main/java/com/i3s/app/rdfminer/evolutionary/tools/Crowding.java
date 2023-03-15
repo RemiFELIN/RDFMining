@@ -141,16 +141,15 @@ public class Crowding {
 		}
 		// we can compare parent and child
 //		logger.info("update fitness of parent and child");
-		parent.fitness = NoveltySearch.updateFitness(parent);
-		child.fitness = NoveltySearch.updateFitness(child);
-		parent.individual.setFitness(new BasicFitness(parent.fitness, parent.individual));
-		child.individual.setFitness(new BasicFitness(child.fitness, child.individual));
+		parent.individual.setFitness(new BasicFitness(NoveltySearch.updateFitness(parent), parent.individual));
+		child.individual.setFitness(new BasicFitness(NoveltySearch.updateFitness(child), child.individual));
 		// log if the offspring is different from its parent and if its fitness is upper to parent's fitness
-		if(child.individual.getGenotype() != parent.individual.getGenotype() && child.fitness > parent.fitness) {
+		if(child.individual.getGenotype() != parent.individual.getGenotype() &&
+				child.individual.getFitness().getDouble() > parent.individual.getFitness().getDouble()) {
 			logger.info("A better offspring has been found !");
 		}
 		// compare their fitness
-		if(parent.fitness <= child.fitness) {
+		if(parent.individual.getFitness().getDouble() <= child.individual.getFitness().getDouble()) {
 			return child;
 		} else {
 //			logger.debug("Keep the parent alive ...");

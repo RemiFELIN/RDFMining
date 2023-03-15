@@ -1,5 +1,6 @@
 package com.i3s.app.rdfminer.evolutionary.tools;
 
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
@@ -57,6 +58,20 @@ public class EATools {
 		return entities;
 	}
 
+	public static double getPopulationDevelopmentRate(ArrayList<Entity> originalPopulation, ArrayList<Entity> newPopulation) {
+		ArrayList<String> genotypes = new ArrayList<>();
+		for (Entity entity : originalPopulation) {
+			genotypes.add(entity.individual.getGenotype().toString());
+		}
+		int count = 0;
+		for (Entity entity : newPopulation) {
+			if (!genotypes.contains(entity.individual.getGenotype().toString())) {
+				count++;
+			}
+		}
+		return (double) count / newPopulation.size();
+	}
+
 	/**
 	 * Renew a given axioms population
 	 * @param entities a given population
@@ -101,7 +116,18 @@ public class EATools {
 				}
 			}
 		}
-//		logger.debug("bindIndividualsWithEntities size = " + newEntities.size());
+		// Special case with duplicates individuals due to their fitness equal to 0
+		// common case at the beginning of GE.
+		// Since they are "bad" candidates, we just remove last entities from new entities to return
+		// in order to do not unbalance the not selected candidates population
+		int notSelectedPopSize = (int) ( (1 - RDFMiner.parameters.sizeSelection) * RDFMiner.parameters.populationSize);
+		int i = 0;
+		while(newEntities.size() > notSelectedPopSize) {
+			newEntities.remove(newEntities.size() - 1);
+			i++;
+		}
+		if (i != 0)
+			logger.debug(i + " entities has been removed due to duplicates individuals into selected population");
 		return newEntities;
 	}
 
@@ -109,7 +135,7 @@ public class EATools {
 		ArrayList<Entity> notEvaluated = new ArrayList<>(oldEntities);
 		for(Entity evaluated : evaluatedEntities) {
 			for(Entity entity : oldEntities) {
-				if(evaluated.individual == entity.individual) {
+				if(evaluated == entity) {
 //					logger.debug("remove " + entity.individual.getPhenotype().getStringNoSpace() + " ...");
 					notEvaluated.remove(entity);
 					break;
@@ -120,10 +146,7 @@ public class EATools {
 		for(Entity entity : notEvaluated) {
 			logger.warn(entity.individual.getPhenotype().getStringNoSpace() + " will be considered as a candidate to reject");
 			// set fitness
-			entity.fitness = 0;
-			BasicFitness fit = new BasicFitness(entity.fitness, entity.individual);
-			fit.getIndividual().setValid(true);
-			entity.individual.setFitness(fit);
+			entity.individual.setFitness(new BasicFitness(0, entity.individual));
 		}
 		return notEvaluated;
 	}
@@ -146,13 +169,8 @@ public class EATools {
 			Entity entity = new Entity();
 			// for SubClassOf axioms, we will set sub and super class
 			entity.argumentClasses = DLFactory.parseArguments(notEval.getPhenotype());
-			// set individual
-			entity.individual = notEval;
 			// set fitness
-			entity.fitness = 0;
-			BasicFitness fit = new BasicFitness(entity.fitness, entity.individual);
-			fit.getIndividual().setValid(true);
-			entity.individual.setFitness(fit);
+			entity.individual.setFitness(new BasicFitness(0, entity.individual));
 			toReturn.add(entity);
 		}
 		return toReturn;

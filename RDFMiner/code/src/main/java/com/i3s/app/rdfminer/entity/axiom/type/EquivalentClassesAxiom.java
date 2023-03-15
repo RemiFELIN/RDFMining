@@ -3,11 +3,6 @@
  */
 package com.i3s.app.rdfminer.entity.axiom.type;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
 import com.i3s.app.rdfminer.expression.Expression;
@@ -15,8 +10,12 @@ import com.i3s.app.rdfminer.expression.ExpressionFactory;
 import com.i3s.app.rdfminer.expression.complement.ComplementClassExpression;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
-
 import org.apache.log4j.Logger;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A class that represents a <code>EquivalentClasses</code> axiom.
@@ -46,6 +45,7 @@ public class EquivalentClassesAxiom extends Axiom {
 	 *
 	 */
 	public EquivalentClassesAxiom(List<List<Symbol>> arguments, CoreseEndpoint endpoint) throws URISyntaxException, IOException {
+		super();
 		long t0 = getProcessCPUTime();
 		equivalentClass = new Expression[arguments.size()];
 		equivalentClassComplement = new Expression[equivalentClass.length];

@@ -3,6 +3,7 @@ package com.i3s.app.rdfminer.evolutionary.generation;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
+import com.i3s.app.rdfminer.evolutionary.tools.Offspring;
 import com.i3s.app.rdfminer.evolutionary.types.TypeCrossover;
 import com.i3s.app.rdfminer.evolutionary.types.TypeMutation;
 import com.i3s.app.rdfminer.evolutionary.fitness.novelty.NoveltySearch;
@@ -56,7 +57,10 @@ public class Generation {
         int even = canEntities.size() % 2;
         while (m < canEntities.size() - even) {
             // get the two individuals which are neighbours
-            ArrayList<GEIndividual> parents = new ArrayList<>(List.of(canEntities.get(m).individual, canEntities.get(m + 1).individual));
+//            ArrayList<GEIndividual> parents = new ArrayList<>(List.of(canEntities.get(m).individual, canEntities.get(m + 1).individual));
+            GEIndividual parent1 = new GEIndividual(canEntities.get(m).individual);
+            GEIndividual parent2 = new GEIndividual(canEntities.get(m + 1).individual);
+            ArrayList<GEIndividual> futureOffsprings = new ArrayList<>(List.of(parent1, parent2));
             /* CROSSOVER PHASIS */
             switch (RDFMiner.parameters.typeCrossover) {
                 default:
@@ -64,19 +68,19 @@ public class Generation {
                     // Single-point crossover
                     SinglePointCrossover spc = new SinglePointCrossover();
                     spc.setFixedCrossoverPoint(true);
-                    spc.doOperation(parents);
+                    spc.doOperation(futureOffsprings);
                     break;
                 case TypeCrossover.TWO_POINT:
                     // Two point crossover
                     TwoPointCrossover tpc = new TwoPointCrossover();
                     tpc.setFixedCrossoverPoint(true);
-                    tpc.doOperation(parents);
+                    tpc.doOperation(futureOffsprings);
                     break;
                 case TypeCrossover.SUBTREE:
                     // subtree crossover
                     // special implementation due to the original implementation by GEVA developers
                     SubtreeCrossover stc = new SubtreeCrossover();
-                    stc.doOperation(parents);
+                    stc.doOperation(futureOffsprings);
                     break;
             }
             /* MUTATION PHASIS */
@@ -84,15 +88,15 @@ public class Generation {
                 default:
                 case TypeMutation.INT_FLIP:
                     IntFlipMutation ifm = new IntFlipMutation();
-                    ifm.doOperation(parents);
+                    ifm.doOperation(futureOffsprings);
                     break;
                 case TypeMutation.NODAL:
                     NodalMutation nm = new NodalMutation();
-                    nm.doOperation(parents);
+                    nm.doOperation(futureOffsprings);
                     break;
                 case TypeMutation.SUBTREE:
                     SubtreeMutation sm = new SubtreeMutation();
-                    sm.doOperation(parents);
+                    sm.doOperation(futureOffsprings);
                     break;
 //                case TypeMutation.STRUCTURAL:
 //                    StructuralMutation stm = new StructuralMutation(new MersenneTwisterFast(), RDFMiner.parameters.proMutation);
@@ -100,7 +104,7 @@ public class Generation {
 //                    break;
                 case TypeMutation.INT_FLIP_BYTE:
                     IntFlipByteMutation ifbm = new IntFlipByteMutation();
-                    ifbm.doOperation(parents);
+                    ifbm.doOperation(futureOffsprings);
                     break;
             }
             // After crossover and mutation phasis; each parent is directly modified and gives an offspring
@@ -108,15 +112,19 @@ public class Generation {
             if (RDFMiner.parameters.diversity == 1) {
                 // if crowding is chosen, we need to compute and return the individuals chosen
                 // (between parents and childs) in function of their fitness
-                final int idx = m;
-                entitiesCallables.add(() -> new Crowding(canEntities.get(idx), canEntities.get(idx + 1), parents.get(0),
-                        parents.get(1), canEntities, generator).getSurvivalSelection());
+                int idx = m;
+                entitiesCallables.add(() -> new Crowding(canEntities.get(idx), canEntities.get(idx + 1), futureOffsprings.get(0),
+                        futureOffsprings.get(1), canEntities, generator).getSurvivalSelection());
+            } else {
+                // simply return offsprings
+                int idx = m;
+                entitiesCallables.add(() -> new Offspring(canEntities.get(idx), canEntities.get(idx + 1), futureOffsprings.get(0),
+                        futureOffsprings.get(1), generator).get());
             }
             selectedEntities.remove(canEntities.get(m));
             selectedEntities.remove(canEntities.get(m + 1));
             m = m + 2;
         }
-        // @TODO not work if crowding is not choosen
         // fill entity that was not choosen for the crossover-mutation process
         if(!selectedEntities.isEmpty()) {
             logger.debug("The last entity will be added directly on population");

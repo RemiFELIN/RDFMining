@@ -5,10 +5,10 @@ import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.shacl.Shape;
 import com.i3s.app.rdfminer.entity.shacl.ShapesManager;
 import com.i3s.app.rdfminer.entity.shacl.ValidationReport;
+import com.i3s.app.rdfminer.ht.HypothesisTesting;
 import com.i3s.app.rdfminer.output.STTL;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import com.i3s.app.rdfminer.sparql.corese.Format;
-import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -27,12 +27,10 @@ public class ExtendedShacl {
         String report = endpoint.getValidationReportFromServer(shapesManager.content);
         endpoint.sendFileToServer(new File(RDFMiner.parameters.shapeFile), Global.SHACL_SHAPES_FILENAME);
         // write SHACL report in output file
-        String pretiffyReport = pretiffyProbabilisticSHACLReport(report);
-        logger.info("Writting validation report in " + RDFMiner.outputFolder + Global.SHACL_VALIDATION_REPORT_FILENAME + " ...");
-        RDFMiner.output.write(pretiffyReport);
-        RDFMiner.output.close();
-        // Hypothesis test
         ValidationReport validationReport = new ValidationReport(report);
+        logger.info("Writting validation report in " + RDFMiner.outputFolder + Global.SHACL_VALIDATION_REPORT_FILENAME + " ...");
+        RDFMiner.output.write(validationReport.prettifyPrint());
+        RDFMiner.output.close();
         // perform hypothesis testing
         performHypothesisTesting(validationReport, shapesManager);
         // send hypothesis result to Corese graph
@@ -56,10 +54,11 @@ public class ExtendedShacl {
         createShapesFile(shapesManager.content);
         endpoint.sendFileToServer(new File(Global.SHACL_SHAPES_FILENAME), Global.SHACL_SHAPES_FILENAME);
         logger.info("Writting validation report in " + RDFMiner.outputFolder + Global.SHACL_VALIDATION_REPORT_FILENAME + " ...");
+        ValidationReport validationReport = new ValidationReport(report);
         // write SHACL report in output file
-        FileWriter valReport = new FileWriter(Global.SHACL_VALIDATION_REPORT_FILENAME);
-        valReport.write(pretiffyProbabilisticSHACLReport(report));
-        valReport.close();
+        FileWriter validationReportFw = new FileWriter(Global.SHACL_VALIDATION_REPORT_FILENAME);
+        validationReportFw.write(validationReport.prettifyPrint());
+        validationReportFw.close();
         // perform hypothesis testing
         performHypothesisTesting(new ValidationReport(report), shapesManager);
         // send hypothesis result to Corese graph
@@ -86,47 +85,17 @@ public class ExtendedShacl {
         hypothesisTestFw.write(Global.PREFIXES + "\n");
         logger.info(validationReport.reportedShapes.size() + " shapes has been evaluated !");
         for(Shape shape : shapesManager.getPopulation()) {
-            if(validationReport.reportedShapes.contains(shape.uri.replace("<", "").replace(">", ""))) {
+            if(validationReport.reportedShapes.contains(shape.fullUri.replace("<", "").replace(">", ""))) {
                 // get shapes with metrics
                 shape.fillParamFromReport(validationReport);
-//                logger.info(shape.toString());
-                // X^2 computation
-                double nExcTheo = shape.referenceCardinality * Double.parseDouble(RDFMiner.parameters.probShaclP);
-                double nConfTheo = shape.referenceCardinality - nExcTheo;
-                // if observed error is lower, accept the shape
-                if(shape.numExceptions <= nExcTheo) {
-                    hypothesisTestFw.write(shape.uri + " ex:acceptance \"true\"^^xsd:boolean .\n");
-                }  else if (nExcTheo >= 5 && nConfTheo >= 5) {
-                    // apply statistic test X2
-                    Double X2 = (Math.pow(shape.numExceptions - nExcTheo, 2) / nExcTheo) +
-                            (Math.pow(shape.numConfirmations - nConfTheo, 2) / nConfTheo);
-                    hypothesisTestFw.write(shape.uri + " ex:pvalue \"" + X2 + "\"^^xsd:double .\n");
-                    double critical = new ChiSquaredDistribution(1).inverseCumulativeProbability(1 - RDFMiner.parameters.alpha);
-                    if (X2 <= critical) {
-                        // Accepted !
-                        hypothesisTestFw.write(shape.uri + " ex:acceptance \"true\"^^xsd:boolean .\n");
-                    } else {
-                        // rejected !
-                        hypothesisTestFw.write(shape.uri + " ex:acceptance \"false\"^^xsd:boolean .\n");
-                    }
-                } else {
-                    // rejected !
-                    hypothesisTestFw.write(shape.uri + " ex:acceptance \"false\"^^xsd:boolean .\n");
-                }
-            } else {
-                logger.warn("Shape to remove: " + shape.uri);
+                // instanciate hypothesis testing with current shape
+                HypothesisTesting ht = new HypothesisTesting(shape);
+                hypothesisTestFw.write(ht.getAcceptanceTriple());
+                if(ht.getX2() != null)
+                    hypothesisTestFw.write(ht.getX2ValueTriple());
             }
         }
         hypothesisTestFw.close();
-    }
-
-    public static String pretiffyProbabilisticSHACLReport(String report) {
-        return report.replace(".@", ".\n@")
-                .replace(".<", ".\n\n<")
-                .replace(";sh", ";\nsh")
-                .replace(";psh", ";\npsh")
-                .replace(";r", ";\nr")
-                .replace("._", ".\n\n_");
     }
 
     public static void removeImportedData(CoreseEndpoint endpoint) throws URISyntaxException, IOException {

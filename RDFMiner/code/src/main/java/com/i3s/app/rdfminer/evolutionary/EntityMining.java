@@ -26,11 +26,13 @@ public class EntityMining {
     public static ArrayList<Entity> run(Generator generator, ArrayList<Entity> entities,
                                         int curGeneration, int curCheckpoint)
             throws ExecutionException, InterruptedException {
+        // set a save of original population
+        // to see how GE will modify it
+        ArrayList<Entity> originalPopulation = new ArrayList<>(entities);
         // set size selection
-        int sizeSelection = (int) (RDFMiner.parameters.sizeSelection * RDFMiner.parameters.populationSize);
-        int sizeElite = RDFMiner.parameters.sizeElite * RDFMiner.parameters.populationSize < 1 ?
-                1 : (int) (RDFMiner.parameters.sizeElite * RDFMiner.parameters.populationSize);
-
+//        int sizeSelection = (int) (RDFMiner.parameters.sizeSelection * RDFMiner.parameters.populationSize);
+//        int sizeElite = RDFMiner.parameters.sizeElite * RDFMiner.parameters.populationSize < 1 ?
+//                1 : (int) (RDFMiner.parameters.sizeElite * RDFMiner.parameters.populationSize);
         // Checkpoint reached, this is a code to evaluate and save axioms in output file
         if(RDFMiner.parameters.populationSize * curGeneration == RDFMiner.parameters.kBase * (curCheckpoint + 1)) {
             if(RDFMiner.parameters.checkpoint != 1 && curCheckpoint != RDFMiner.parameters.checkpoint - 1) {
@@ -39,7 +41,7 @@ public class EntityMining {
                 // evaluate distinct genotype and avoid additional useless computation
                 ArrayList<Entity> newPopulation = Fitness.computePopulation(entities, generator);
                 // stats
-                setStats(newPopulation, curGeneration);
+                setStats(originalPopulation, newPopulation, curGeneration);
                 // return final pop
                 return newPopulation;
             } else {
@@ -47,12 +49,11 @@ public class EntityMining {
                 // evaluate distinct genotype and avoid additional useless computation
                 ArrayList<Entity> newPopulation = Fitness.computePopulation(entities, generator);
                 // stats
-                setStats(newPopulation, curGeneration);
+                setStats(originalPopulation, newPopulation, curGeneration);
                 // fill content in json output file
                 for(Entity entity : newPopulation) {
                     // add this entity is its fitness is not equal to 0
-                    if(entity.fitness != 0) {
-                        entity.setEntityAsString();
+                    if(entity.individual.getFitness().getDouble() != 0) {
                         RDFMiner.content.add(entity.toJSON());
                     }
                 }
@@ -61,36 +62,16 @@ public class EntityMining {
                 return newPopulation;
             }
         }
-
-        // STEP 3 - SELECTION OPERATION - Reproduce Selection - Parent Selection
+        // STEP 3 - SELECTION OPERATION
         ArrayList<GEIndividual> entitiesAsIndividuals = new ArrayList<>();
-        ArrayList<GEIndividual> elitismIndividuals = new ArrayList<>();
         ArrayList<GEIndividual> selectedIndividuals = new ArrayList<>();
-
         // Use list of individuals instead of list of entities
         // i.e. apply GE process directly on individuals
         for(Entity entity : entities) {
             entitiesAsIndividuals.add(entity.individual);
         }
-
-//        if (RDFMiner.parameters.elitism == 1) {
-            // Elitism method, which copies the best chromosome( or a few best
-            // chromosome) to new population. The rest done classical way. it
-            // prevents losing the best found solution
-//            logger.info("Selecting elite individuals...");
-//            logger.info("Selecting " + (int) (RDFMiner.parameters.sizeElite * 100)
-//                    + "% elite individuals for the new population");
-//            EliteSelection elite = new EliteSelection(sizeElite);
-//            elite.setParentsSelectionElitism(entitiesAsIndividuals);
-//            selectedIndividuals = elite.setupSelectedPopulation(entitiesAsIndividuals);
-//            logger.info("Size of the selected population: " + selectedIndividuals.size());
-//            elitismIndividuals = elite.getElitedPopulation();
-//            logger.info("Size of the elitism population: " + elitismIndividuals.size());
-//        } else {
-//            selectedIndividuals = entitiesAsIndividuals;
-//        }
         /* SELECTION */
-        switch(RDFMiner.parameters.typeSelect) {
+        switch(RDFMiner.parameters.typeSelection) {
             default:
             case TypeSelection.ELITE_OPERATION_SELECTION:
                 EliteOperationSelection eos = new EliteOperationSelection();
@@ -126,10 +107,11 @@ public class EntityMining {
                 break;
         }
         /* STEP 4 - CROSSOVER & MUTATION OPERATION */
+//        logger.debug("entitiesAsIndividuals.size= " + entitiesAsIndividuals.size());
         ArrayList<Entity> selectedEntities = EATools.bindIndividualsWithEntities(selectedIndividuals, entities);
         ArrayList<Entity> toCompute = EATools.bindIndividualsWithEntities(entitiesAsIndividuals, entities);
-//        logger.debug("size crossover entities = " + crossoverEntities.size());
-//        logger.debug("size elitism entities = " + elitismEntities.size());
+//        logger.debug("selectedEntities.size= " + selectedEntities.size());
+//        logger.debug("toCompute.size= " + toCompute.size());
         // Compute GE and add new population on a new list of individuals
         ArrayList<Entity> computedPopulation = Generation.compute(toCompute, curGeneration, generator);
 //        logger.debug("size computed pop = " + computedPopulation.size());
@@ -137,18 +119,19 @@ public class EntityMining {
         ArrayList<Entity> newPopulation = EATools.renew(curGeneration, computedPopulation, selectedEntities);
 //        logger.debug("size new pop = " + newPopulation.size());
         // stats
-        setStats(newPopulation, curGeneration);
+        setStats(originalPopulation, newPopulation, curGeneration);
         // renew population
         return newPopulation;
     }
 
-    public static void setStats(ArrayList<Entity> entities, int curGeneration) {
+    public static void setStats(ArrayList<Entity> originalPopulation, ArrayList<Entity> newPopulation, int curGeneration) {
         // set stats
         GenerationJSON generation = new GenerationJSON();
-        generation.setGenerationJSON(entities, curGeneration);
+        generation.setGenerationJSON(originalPopulation, newPopulation, curGeneration);
         // Log usefull stats concerning the algorithm evolution
         logger.info("Average fitness: " + generation.averageFitness);
-        logger.info("Diversity coefficient: " + generation.diversityCoefficient);
+        logger.info("Diversity coefficient: " + (generation.diversityCoefficient * 100) + "%");
+        logger.info("Population development rate: " + (generation.populationDevelopmentRate * 100) + "%");
         logger.info("Number of individual(s) with a non-null fitness: " + generation.numIndividualsWithNonNullFitness);
         RDFMiner.stats.generations.add(generation.toJSON());
     }

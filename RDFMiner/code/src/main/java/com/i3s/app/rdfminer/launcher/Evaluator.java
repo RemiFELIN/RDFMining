@@ -132,7 +132,7 @@ public class Evaluator {
 					try {
 						logger.info("Testing axiom: " + finalAxiomName);
 						Axiom a = AxiomFactory.create(null, axiom, new CoreseEndpoint(Global.CORESE_IP, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
-						a.setEntityAsString(finalAxiomName);
+//						a.setEntityAsString(finalAxiomName);
 						return a;
 					} catch (QueryExceptionHTTP httpError) {
 						logger.error("HTTP Error " + httpError.getMessage() + " making a SPARQL query.");

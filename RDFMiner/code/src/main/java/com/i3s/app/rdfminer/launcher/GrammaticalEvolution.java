@@ -7,6 +7,9 @@ import com.i3s.app.rdfminer.evolutionary.fitness.Fitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.individual.CandidatePopulation;
 import com.i3s.app.rdfminer.evolutionary.EntityMining;
+import com.i3s.app.rdfminer.evolutionary.types.TypeCrossover;
+import com.i3s.app.rdfminer.evolutionary.types.TypeMutation;
+import com.i3s.app.rdfminer.evolutionary.types.TypeSelection;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.generator.shacl.RandomShapeGenerator;
@@ -68,27 +71,31 @@ public class GrammaticalEvolution {
         }
 
         /* GRAMMATICAL EVOLUTIONARY */
-        // Fill the 'stats' part of the JSON output
-        setParameters(parameters);
         /* Parameters as the inputs of GE */
         logger.info("========================================================");
         logger.info("PARAMETERS AS THE INPUTS OF GE");
         logger.info("========================================================");
         logger.info("POPULATION SIZE: " + parameters.populationSize);
-        logger.info("SIZE SELECTION: " + parameters.sizeSelection);
-        int sizeElite = parameters.sizeElite * parameters.populationSize < 1 ?
-                1 : (int) (parameters.sizeElite * parameters.populationSize);
-        logger.info("SIZE ELITE: " + sizeElite);
         logger.info("TOTAL EFFORT : " + parameters.kBase);
-        if(parameters.checkpoint != 1)
-            logger.info("# CHECKPOINT: " + parameters.checkpoint);
         logger.info("INITIALIZED LENGTH CHROMOSOME: " + parameters.initLenChromosome);
         logger.info("MAXIMUM WRAPPING: " + parameters.maxWrapp);
+        logger.info("========================================================");
+        logger.info("TYPE SELECTION: " + TypeSelection.getLabel(parameters.typeSelection));
+        logger.info("SIZE SELECTION: " + parameters.sizeSelection);
+//        int sizeElite = parameters.sizeElite * parameters.populationSize < 1 ?
+//                1 : (int) (parameters.sizeElite * parameters.populationSize);
+//        logger.info("SIZE ELITE: " + sizeElite);
+        logger.info("========================================================");
+        logger.info("TYPE CROSSOVER: " + TypeCrossover.getLabel(parameters.typeCrossover));
         logger.info("CROSSOVER PROBABILITY: " + parameters.proCrossover);
+        logger.info("========================================================");
+        logger.info("TYPE MUTATION: " + TypeMutation.getLabel(parameters.typeMutation));
         logger.info("MUTATION PROBABILITY: " + parameters.proMutation);
+        logger.info("========================================================");
+        if(parameters.checkpoint != 1)
+            logger.info("# CHECKPOINT: " + parameters.checkpoint);
         logger.info("SPARQL TIMEOUT: " + (parameters.sparqlTimeOut == 0 ? "Not used" : parameters.sparqlTimeOut + " ms."));
         logger.info("TIME-CAP: " + (parameters.timeCap == 0 ? "Not used" : parameters.timeCap + " min."));
-        logger.info("========================================================");
         logger.info("NUMBER OF THREAD(S) USED: " + Global.NB_THREADS);
         logger.info("========================================================");
 
@@ -161,39 +168,6 @@ public class GrammaticalEvolution {
             logger.error("I/O error while closing JSON writer: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
-        }
-    }
-
-    public static void setParameters(CmdLineParameters parameters) {
-        RDFMiner.stats.populationSize = parameters.populationSize;
-        RDFMiner.stats.maxLengthChromosome = parameters.initLenChromosome;
-        RDFMiner.stats.maxWrapping = parameters.maxWrapp;
-        RDFMiner.stats.crossoverProbability = parameters.proCrossover;
-        RDFMiner.stats.mutationProbability = parameters.proMutation;
-        RDFMiner.stats.timeOut = (int) parameters.sparqlTimeOut;
-        // Elitism
-        if (parameters.elitism == 1) {
-            RDFMiner.stats.elitismSelection = true;
-            RDFMiner.stats.eliteSize = parameters.sizeElite;
-        } else {
-            RDFMiner.stats.elitismSelection = false;
-        }
-        // Type select
-        switch (parameters.typeSelect) {
-            case 1:
-                RDFMiner.stats.selectionMethod = "Roulette Wheel selection method";
-                break;
-            default:
-            case 2:
-                RDFMiner.stats.selectionMethod = "Truncation selection method";
-                RDFMiner.stats.selectionSize = parameters.sizeSelection;
-                break;
-            case 3:
-                RDFMiner.stats.selectionMethod = "Tournament selection method";
-                break;
-            case 4:
-                RDFMiner.stats.selectionMethod = "Normal selection method";
-                break;
         }
     }
 

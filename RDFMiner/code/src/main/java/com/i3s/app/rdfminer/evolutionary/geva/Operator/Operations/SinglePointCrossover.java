@@ -33,6 +33,7 @@ import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 import java.util.Properties;
@@ -44,6 +45,8 @@ import java.util.Properties;
  * @version 2007.0305
  */
 public class SinglePointCrossover extends CrossoverOperation {
+
+    private static final Logger logger = Logger.getLogger(SinglePointCrossover.class.getName());
 
     protected boolean fixedCrossoverPoint = false;
     protected boolean codonsUsedSensitive = true;
@@ -133,9 +136,10 @@ public class SinglePointCrossover extends CrossoverOperation {
     public void doOperation(List<GEIndividual> operands) {
         GEIndividual p1, p2;
         GEChromosome chrom1, chrom2;
-        int p1maxXOPoint = 0;
-        int p2maxXOPoint = 0;
+        int p1maxXOPoint, p2maxXOPoint;
         if (this.rand.nextDouble() < this.probability) {
+            logger.info("~ perform crossover between " + operands.get(0).getGenotype() + " and " +
+                    operands.get(1).getGenotype());
             p1 = operands.get(0);
             p2 = operands.get(1);
             chrom1 = (GEChromosome) p1.getGenotype().get(0);
@@ -219,7 +223,9 @@ public class SinglePointCrossover extends CrossoverOperation {
      **/
     protected int getXoverPoint(final int length1, final int length2) {
         final int crossoverPoint;
-        if (length1 < length2) {
+        if (length1 == 2 && length2 == 2) {
+            crossoverPoint = 1;
+        } else if (length1 < length2) {
             crossoverPoint = rand.nextInt(length1);
         } else {
             crossoverPoint = rand.nextInt(length2);

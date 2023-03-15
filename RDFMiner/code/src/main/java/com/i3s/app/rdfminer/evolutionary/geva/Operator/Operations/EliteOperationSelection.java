@@ -45,7 +45,7 @@ import java.util.Properties;
  **/
 public class EliteOperationSelection extends SelectionOperation {
 
-    private boolean evaluate_elites;
+    private boolean evaluateElites;
 
     public EliteOperationSelection() {
         super();
@@ -89,12 +89,12 @@ public class EliteOperationSelection extends SelectionOperation {
             valueS = Constants.FALSE;
             System.out.println(this.getClass().getName() + ".setProperties " + e + " using default: " + valueS);
         }
-        this.evaluate_elites = valueS.equals(Constants.TRUE);
+        this.evaluateElites = valueS.equals(Constants.TRUE);
         super.selectedPopulation = new SimplePopulation(this.size);
     }
 
     public boolean isEvaluateElites() {
-        return this.evaluate_elites;
+        return this.evaluateElites;
     }
 
     public void doOperation(GEIndividual operand) {
@@ -109,14 +109,15 @@ public class EliteOperationSelection extends SelectionOperation {
     public void doOperation(List<GEIndividual> operands) {
         Fitness[] fA = rankPopulation(operands);
         int cnt = 0;
-        while (cnt < this.size && cnt < operands.size()) {
+        while (cnt < this.size) {
+//            System.out.println("cnt in doOperation: " + cnt);
             //Avoid duplicates
             final boolean valid = fA[cnt].getIndividual().isValid();
-//            final boolean duplicate = this.selectedPopulation.contains(fA[cnt].getIndividual());
-            if (valid) { // !duplicate && valid
-                Individual ind = fA[cnt].getIndividual().clone();
+            Individual ind = fA[cnt].getIndividual();
+//            System.out.println(ind.getGenotype());
+            if (!this.selectedPopulation.contains(ind) && valid) { // !duplicate && valid
                 //Set individual as valid
-                if (!this.evaluate_elites) {
+                if (!this.evaluateElites) {
                     ind.setEvaluated(fA[cnt].getIndividual().isEvaluated());
                     ind.setValid(fA[cnt].getIndividual().isValid());
                     ind.setAge(fA[cnt].getIndividual().getAge());
@@ -132,8 +133,8 @@ public class EliteOperationSelection extends SelectionOperation {
 
     }
 
-    public void setEvaluateElites(boolean evaluate_elites) {
-        this.evaluate_elites = evaluate_elites;
+    public void setEvaluateElites(boolean evaluateElites) {
+        this.evaluateElites = evaluateElites;
     }
 
     /**

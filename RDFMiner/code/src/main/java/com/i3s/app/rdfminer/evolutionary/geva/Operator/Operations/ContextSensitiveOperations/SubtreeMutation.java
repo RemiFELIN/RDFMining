@@ -40,6 +40,7 @@ import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.GenotypeHelper;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Structures.TreeNode;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
@@ -53,6 +54,8 @@ import java.util.*;
  * @author eliott bartley
  */
 public class SubtreeMutation extends MutationOperation {
+
+    private static final Logger logger = Logger.getLogger(SubtreeMutation.class.getName());
 
     private CreationOperation creationOperation;
     protected Initialiser initialiser;
@@ -93,6 +96,7 @@ public class SubtreeMutation extends MutationOperation {
         // Only mutate based on a probability that a mutate should occur
         if (super.rng.nextDouble() >= this.probability)
             return;
+        logger.info("~ perform mutation");
 //        DerivationTree tree = GenotypeHelper.buildDerivationTree(operand);
         DerivationTree tree = new DerivationTree((GEGrammar) operand.getMapper(), (GEChromosome) operand.getGenotype().get(0));
         tree.buildDerivationTree();

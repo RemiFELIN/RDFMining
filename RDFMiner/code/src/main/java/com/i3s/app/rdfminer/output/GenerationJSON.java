@@ -20,30 +20,31 @@ public class GenerationJSON {
 
 	public int generation;
 //	public double numSuccessMapping;
+	public double populationDevelopmentRate;
 	public double diversityCoefficient;
 //	public double genotypeDiversityCoefficient;
 	public double averageFitness;
 	public long numIndividualsWithNonNullFitness;
 	public double averageSumDistance;
 
-	public void setGenerationJSON(ArrayList<Entity> entities, int curGeneration) {
+	public void setGenerationJSON(ArrayList<Entity> originalPopulation, ArrayList<Entity> newPopulation, int curGeneration) {
 		Statistics stat = new Statistics();
 		this.generation = curGeneration;
-//		this.numSuccessMapping = stat.getCountSuccessMapping(distinctEntities);
-		this.diversityCoefficient = (double) EATools.getDistinctGenotypePopulation(entities).size() / entities.size();
+		this.populationDevelopmentRate = EATools.getPopulationDevelopmentRate(originalPopulation, newPopulation);
+		this.diversityCoefficient = (double) EATools.getDistinctGenotypePopulation(newPopulation).size() / newPopulation.size();
 //		this.genotypeDiversityCoefficient = (double) EATools.getDistinctGenotypePopulation(entities).size()
 //				/ entities.size();
-		this.averageFitness = stat.computeAverageFitness(entities);
-		this.numIndividualsWithNonNullFitness = stat.getEntitiesWithNonNullFitness(entities);
+		this.averageFitness = stat.computeAverageFitness(newPopulation);
+		this.numIndividualsWithNonNullFitness = stat.getEntitiesWithNonNullFitness(newPopulation);
 		if(RDFMiner.parameters.useNoveltySearch) {
-			this.averageSumDistance = stat.getAverageSumDistance(entities);
+			this.averageSumDistance = stat.getAverageSumDistance(newPopulation);
 		}
 	}
 
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		json.put("generation", generation);
-//		json.put("numSuccessMapping", numSuccessMapping);
+		json.put("populationDevelopmentRate", populationDevelopmentRate);
 		json.put("diversityCoefficient", diversityCoefficient);
 //		json.put("genotypeDiversityCoefficient", genotypeDiversityCoefficient);
 		json.put("averageFitness", averageFitness);

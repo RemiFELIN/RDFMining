@@ -43,13 +43,15 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 			if (individual.getPhenotype() == null)
 				break;
 			if (individual.isMapped()) {
-				callables.add(() -> AxiomFactory.create(individual, individual.getPhenotype(),
-						new CoreseEndpoint(Global.CORESE_IP, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES)));
+				callables.add(() -> {
+					Axiom axiom = AxiomFactory.create(individual, individual.getPhenotype(),
+						new CoreseEndpoint(Global.CORESE_IP, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
+					// compute fitness
+					axiom.computeFitness();
+					return axiom;
+				});
 			} else {
-				BasicFitness fit = new BasicFitness(0, individual);
-				fit.setIndividual(individual);
-				fit.getIndividual().setValid(true);
-				individual.setFitness(fit);
+				individual.setFitness(new BasicFitness(0, individual));
 			}
 		}
 		// We have a set of threads to compute each axioms
@@ -107,10 +109,9 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 //			ObjectivesFitness.setFitness(axiom);
 //			if(RDFMiner.parameters.useNoveltySearch)
 //				NoveltyFitness.updateFitness(axiom);
-			BasicFitness fit = new BasicFitness(entity.fitness, entity.individual);
-			fit.getIndividual().setValid(true);
-			entity.individual.setFitness(fit);
+//			entity.setFitness(new BasicFitness(entity.fitness, entity));
 			newPopulation.add(entity);
+			logger.debug("i: " + entity.individual.getGenotype() + " ~ F(i)= " + entity.individual.getFitness().getDouble());
 		}
 		return newPopulation;
 	}
@@ -124,6 +125,8 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 			callables.add(() -> {
 				Axiom axiom = AxiomFactory.create(entity.individual, entity.individual.getPhenotype(),
 						new CoreseEndpoint(Global.CORESE_IP, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
+				// compute fitness
+				axiom.computeFitness();
 				// the generation in which this axiom was discovered
 				axiom.generation = entity.generation;
 				return axiom;
@@ -181,34 +184,28 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 			}
 		}
 		// Update fitness of individuals from a population
-		for (Entity entity : entities) {
-			BasicFitness fit = new BasicFitness(entity.fitness, entity.individual);
-			fit.getIndividual().setValid(true);
-			entity.individual.setFitness(fit);
-			newPopulation.add(entity);
-		}
+		//			entity.setFitness(new BasicFitness(entity.fitness, entity));
+		newPopulation.addAll(entities);
 		return newPopulation;
 	}
 
 	@Override
 	public Entity updateIndividual(GEIndividual individual) throws URISyntaxException, IOException {
 		// in a case of new individual, we need to compute it as a new axiom
-		double f = 0;
+		double f;
 		// instance of axiom
-		Entity axiom = null;
+		Axiom axiom = null;
 		if (individual.isMapped()) {
 			axiom = AxiomFactory.create(individual, individual.getPhenotype(),
 					new CoreseEndpoint(Global.CORESE_IP, Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES));
-			assert axiom != null;
-			f = axiom.fitness;
+			// compute fitness
+			axiom.computeFitness();
+			f = axiom.individual.getFitness().getDouble();
 		} else {
 			logger.warn(individual.getPhenotype() + " is not mapped !");
 			f = 0;
 		}
-		BasicFitness fit = new BasicFitness(f, individual);
-		fit.setIndividual(individual);
-		fit.getIndividual().setValid(true);
-		individual.setFitness(fit);
+		individual.setFitness(new BasicFitness(f, individual));
 		return axiom;
 	}
 

@@ -68,10 +68,11 @@ public class ProportionalRouletteWheel extends RouletteWheel implements Stochast
      * @param operands Individuals to take into account
      ***/
     protected void calculateAccumulatedFitnessProbabilities(List<GEIndividual> operands) {
+        this.accProbs = new double[operands.size()];
+        Arrays.fill(this.accProbs, 0);
         if (this.sumFit == 0) {
             return;
         }
-        this.accProbs = new double[operands.size()];
         double[] tmpA = new double[accProbs.length];
         double tmp;
         double tmpSum = 0;

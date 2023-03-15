@@ -39,6 +39,7 @@ package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 import java.util.Properties;
@@ -50,6 +51,8 @@ import java.util.Properties;
  * @author Conor
  */
 public class IntFlipByteMutation extends MutationOperation {
+
+    private static final Logger logger = Logger.getLogger(IntFlipByteMutation.class.getName());
 
     public IntFlipByteMutation() { super(); }
 
@@ -101,6 +104,7 @@ public class IntFlipByteMutation extends MutationOperation {
                 //this is where the integer is turned into a byte array
                 for(int j=0; j<Byte.SIZE; j++) {
                     if(this.rng.nextBoolean(this.probability)) {
+                        logger.info("~ perform mutation");
                         mut = mut + (int)Math.pow(2,j*(ii+1));
                     }
                 }

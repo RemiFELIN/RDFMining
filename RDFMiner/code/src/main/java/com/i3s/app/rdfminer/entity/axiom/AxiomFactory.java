@@ -106,9 +106,10 @@ public class AxiomFactory extends DLFactory {
 
 		Axiom axiom = null;
 		List<List<Symbol>> arguments = parseArguments(syntax);
-		// set timeout
-		if(RDFMiner.parameters.sparqlTimeOut != 0)
+		if(RDFMiner.parameters.sparqlTimeOut != 0) {
+			// set timeout
 			endpoint.setTimeout(RDFMiner.parameters.sparqlTimeOut);
+		}
 		// check syntax
 		if (syntax.get(0).equals(OWLAxiom.SUBCLASSOF)) {
 			require(arguments.size() == 2);

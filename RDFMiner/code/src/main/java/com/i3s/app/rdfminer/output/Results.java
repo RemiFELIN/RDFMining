@@ -32,7 +32,7 @@ public class Results {
     public JSONObject toJSON() {
         JSONObject json = new JSONObject();
         json.put("statistics", stats);
-        json.put("axioms", new JSONArray(content));
+        json.put("entities", new JSONArray(content));
         return json;
     }
 

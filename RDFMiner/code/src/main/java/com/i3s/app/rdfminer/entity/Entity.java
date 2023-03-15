@@ -63,7 +63,7 @@ public class Entity {
     /**
      * The fitness of the axiom correspond to its value evaluated by a function
      */
-    public double fitness = 0.0;
+//    public double fitness = 0.0;
 
     /**
      * In the GE applied with Novelty Search context, it contains the similarity values
@@ -167,20 +167,20 @@ public class Entity {
         this.entityAsString = entityAsString;
     }
 
-    public void setEntityAsString() {
-        this.entityAsString = individual.getPhenotype().getStringNoSpace();
-    }
-
     public JSONObject toJSON() {
         JSONObject json = new JSONObject();
-        json.put("entity", this.entityAsString);
+        if(this.individual != null) {
+            json.put("phenotype", this.individual.getPhenotype().getStringNoSpace());
+            json.put("fitness", this.individual.getFitness().getDouble());
+            json.put("generation", this.generation);
+        } else {
+            json.put("phenotype", this.entityAsString);
+        }
         json.put("referenceCardinality", this.referenceCardinality);
         json.put("numConfirmations", this.numConfirmations);
         json.put("numExceptions", this.numExceptions);
         json.put("exceptions", new JSONArray(this.exceptions));
         json.put("confirmations", new JSONArray(this.confirmations));
-        json.put("generation", this.generation);
-        json.put("fitness", this.fitness);
         if(RDFMiner.parameters.useProbabilisticShaclMode || RDFMiner.parameters.useClassicShaclMode) {
             json.put("likelihood", this.likelihood.doubleValue());
         } else {

@@ -54,17 +54,17 @@ public class GEIndividual extends AbstractIndividual {
 
     private Genotype genotype;
     private Phenotype phenotype;
-    private GEGrammar grammar;
+    protected GEGrammar grammar;
     private boolean mapped;
     private boolean valid;
     private int usedCodons;
     private int usedWraps;
     private int previouslyUsedCodons;
-    private boolean previouslyValid;
+    protected boolean previouslyValid;
 
     int[] mutationPoints;
     int[] crossoverPoints;
-    ArrayList<Fitness> parentsFitness;
+    protected ArrayList<Fitness> parentsFitness;
 
     /**
      * Creates a new instance of GEIndividual

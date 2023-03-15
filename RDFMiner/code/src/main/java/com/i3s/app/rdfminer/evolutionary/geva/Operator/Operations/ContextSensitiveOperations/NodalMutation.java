@@ -35,6 +35,7 @@ import com.i3s.app.rdfminer.evolutionary.geva.Mapper.ContextualDerivationTree;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.GEGrammar;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.MutationOperation;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,8 @@ import java.util.Properties;
  * and will mutate it depending on the mutation probability
  */
 public class NodalMutation extends MutationOperation {
+
+    private static final Logger logger = Logger.getLogger(NodalMutation.class.getName());
 
     public NodalMutation() { super(); }
 
@@ -71,6 +74,7 @@ public class NodalMutation extends MutationOperation {
         //iterate through the leaf Node codons and mutate depending on probability
         for (int codonIndex : nodeCodonList) {
             if (this.rng.nextBoolean(this.probability)) {
+                logger.info("~ perform mutation");
                 chromosome.set(codonIndex-1, Math.abs(rng.nextInt()));
             }
         }

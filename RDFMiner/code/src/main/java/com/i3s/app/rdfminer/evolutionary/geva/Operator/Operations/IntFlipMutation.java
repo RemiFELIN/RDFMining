@@ -40,6 +40,7 @@ package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 import java.util.Properties;
@@ -49,6 +50,8 @@ import java.util.Properties;
  * @author Conor
  */
 public class IntFlipMutation extends MutationOperation {
+
+    private static final Logger logger = Logger.getLogger(IntFlipMutation.class.getName());
 
     public IntFlipMutation() { super(); }
 
@@ -96,6 +99,7 @@ public class IntFlipMutation extends MutationOperation {
     private void doMutation(final GEChromosome c) {
         for(int i=0;i<c.getLength();i++) {
             if(this.rng.nextBoolean(this.probability)) {
+                logger.info("~ perform mutation");
                 final int nextInt = Math.abs(rng.nextInt());
                 c.set(i, nextInt);
             }

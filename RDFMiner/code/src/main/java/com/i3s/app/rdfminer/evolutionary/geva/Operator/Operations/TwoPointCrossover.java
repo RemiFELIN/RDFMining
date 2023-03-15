@@ -33,6 +33,7 @@ import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 import java.util.Properties;
@@ -45,6 +46,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author NGUYEN Thu Huong
  */
 public class TwoPointCrossover extends CrossoverOperation {
+
+	private static final Logger logger = Logger.getLogger(TwoPointCrossover.class.getName());
 
 	protected boolean fixedCrossoverPoint = false;
 	protected boolean codonsUsedSensitive = true;
@@ -137,6 +140,8 @@ public class TwoPointCrossover extends CrossoverOperation {
 		int p1maxXOPoint = 0;
 		int p2maxXOPoint = 0;
 		if (this.rand.nextDouble() < this.probability) {
+			logger.info("~ perform crossover between " + operands.get(0).getGenotype() + " and " +
+					operands.get(1).getGenotype());
 			p1 = operands.get(0);
 			p2 = operands.get(1);
 			chrom1 = (GEChromosome) p1.getGenotype().get(0);

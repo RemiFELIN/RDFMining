@@ -127,10 +127,6 @@ public class CmdLineParameters {
 			"--max-codon" }, usage = "use as this value as the max value of codon", metaVar = "MAX_CODON")
 	public int maxValCodon = Integer.MAX_VALUE;
 
-	@Option(name = "-tinit", aliases = {
-			"--type-init" }, usage = "use as this value as the type of initialization", metaVar = "TYPE_INITIALIZATION")
-	public int typeInitialization = 1; // 1- random initialization ; 2 - ....... - TODO
-
 	@Option(name = "-pc", aliases = {
 			"--prob-cross" }, usage = "use as this value as the probability of crossover operation", metaVar = "PROB_CROSSOVER")
 	public double proCrossover = 0.8;
@@ -140,32 +136,24 @@ public class CmdLineParameters {
 	public double proMutation = 0.01;
 
 	@Option(name = "-se", aliases = {
-			"--type-select" }, usage = "use as this value as the type of parent selection operation", metaVar = "TYPE_SELECTION")
-	public int typeSelect = 2; // 1- Roulette wheel; 2- truncation; 3- Tournament ; other numbers- normal way
+			"--type-select" }, usage = "use as this value as the type of parent selection operation (1: Elite Operation; 2: Proportional Roulette Wheel; 3: Scaled Roulette Wheel; 4: Tournament)", metaVar = "TYPE_SELECTION")
+	public int typeSelection = 1;
 
 	@Option(name = "-cr", aliases = {
-			"--type-crossover" }, usage = "use as this value as the type of crossover operation", metaVar = "TYPE_CROSSOVER")
-	public int typeCrossover = 0;
+			"--type-crossover" }, usage = "use as this value as the type of crossover operation (1: Single Point; 2: Two Point; 3: Sub tree)", metaVar = "TYPE_CROSSOVER")
+	public int typeCrossover = 1;
 
 	@Option(name = "-mu", aliases = {
-			"--type-mutation" }, usage = "use as this value as the type of mutation operation", metaVar = "TYPE_MUTATION")
-	public int typeMutation = 0;
+			"--type-mutation" }, usage = "use as this value as the type of mutation operation (1: Int Flip; 2: Int Flip Byte; 3: Nodal; 4: Sub tree)", metaVar = "TYPE_MUTATION")
+	public int typeMutation = 1;
 
 	@Option(name = "-sez", aliases = {
 			"--size-select" }, usage = "use as this value as the size of parent selection operation", metaVar = "SIZE_SELECTION")
-	public double sizeSelection = 0.7;
+	public double sizeSelection = 0.2;
 
 //	@Option(name = "-sezm", aliases = {
 //			"--sizeMutationselect" }, usage = "use as this value as the size of mutation selection operation", metaVar = "SIZE_MUTATIONSELECTIOn")
 //	public double sizeMutationSelection = 0.4;
-
-	@Option(name = "-el", aliases = {
-			"--elitism" }, usage = "use as this value as the choose of elitism selection", metaVar = "ELITISM_SELECTION")
-	public int elitism = 1; // 0- not applying elitism method; 1- applying elitism method
-
-	@Option(name = "-seez", aliases = {
-			"--size-elite" }, usage = "use as this value as the size of elitism selection", metaVar = "SIZE_ELITE")
-	public double sizeElite = 0.02;
 
 	@Option(name = "-div", aliases = {
 			"--diversity" }, usage = "use as this value as the chose of diversity method", metaVar = "DIVER_METHOD")

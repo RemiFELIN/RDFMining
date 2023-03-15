@@ -68,8 +68,7 @@ public class NoveltySearch {
         logger.info("updating the fitness ...");
         ArrayList<Entity> updatedEntities = new ArrayList<>();
         for (Entity e : simEntities) {
-            e.fitness = updateFitness(e);
-            e.individual.setFitness(new BasicFitness(e.fitness, e.individual));
+            e.individual.setFitness(new BasicFitness(updateFitness(e), e.individual));
             updatedEntities.add(e);
         }
         logger.info("Done !");
@@ -94,7 +93,7 @@ public class NoveltySearch {
      * @return the value of based novelty fitness <var>f</var>(&phi)
      */
     public static double updateFitness(Entity phi) {
-        return phi.fitness * (1 / (1 + phi.similarities.stream().mapToDouble(x -> x).sum()));
+        return phi.individual.getFitness().getDouble() * (1 / (1 + phi.similarities.stream().mapToDouble(x -> x).sum()));
     }
 
     public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException, ExecutionException, TimeoutException {

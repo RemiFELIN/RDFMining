@@ -15,13 +15,11 @@ public class Statistics {
 	private static final Logger logger = Logger.getLogger(Statistics.class.getName());
 
 	public double computeAverageFitness(ArrayList<Entity> entities) {
-		logger.debug("entities.size = " + entities.size());
+//		logger.debug("entities.size = " + entities.size());
 		double sumFitness = 0;
 		for (Entity entity : entities) {
-			logger.debug(entity.individual.getPhenotype().getStringNoSpace() + " #fitness = " + entity.fitness);
-//			System.out.println("Individual: " + entity.individual.getPhenotype());
-//			System.out.println("Fitness: " + entity.fitness);
-			sumFitness += entity.fitness;
+			logger.debug("i: " + entity.individual.getGenotype() + " ~ F(i)= " + entity.individual.getFitness().getDouble());
+			sumFitness += entity.individual.getFitness().getDouble();
 		}
 		if (entities.size() != 0) {
 			return sumFitness / entities.size();

@@ -4,6 +4,7 @@ import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.entity.shacl.vocabulary.Shacl;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.sparql.RequestBuilder;
 import org.apache.log4j.Logger;
@@ -36,6 +37,8 @@ public class Shape extends Entity {
      * The URI of the SHACL Shape
      */
     public String uri;
+
+    public String fullUri;
 
     /**
      * The content of SHACL Shape
@@ -86,7 +89,7 @@ public class Shape extends Entity {
         this.individual = individual;
         this.content = individual.getPhenotype().getStringNoSpace();
         // get shape uri subject
-        this.uri = getShapeUri(this.content);
+        setIdentifier(this.content);
         // init model
         try {
             this.model = Rio.parse(new StringReader(Global.PREFIXES + this.uri + this.content), "", RDFFormat.TURTLE);
@@ -120,6 +123,7 @@ public class Shape extends Entity {
         // Create a new Repository. Here, we choose a database implementation
         // that simply stores everything in main memory.
         this.db = new SailRepository(new MemoryStore());
+        setIdentifierWithQuery();
 //        System.out.println("uri: " + this.uri);
         // get the targetted class(es) if it provides
         this.targetClasses = getValuesFromProperty(Shacl.TARGETCLASS);
@@ -153,9 +157,25 @@ public class Shape extends Entity {
         return results;
     }
 
-    public String getShapeUri(String content) {
-        // return a random shape uri as subject
-        return ":" + (content.hashCode() & 0xfffffff);
+    public void setIdentifier(String content) {
+        String generated = String.valueOf((content.hashCode() & 0xfffffff));
+        this.uri = ":" + generated;
+        this.fullUri = "http://www.example.com/myDataGraph#" + generated;
+    }
+
+    public void setIdentifierWithQuery() {
+        try(RepositoryConnection con = db.getConnection()) {
+            con.add(this.model);
+            String request = RequestBuilder.select("?x", "?x a sh:NodeShape .", true);
+            TupleQuery query = con.prepareTupleQuery(request);
+            try (TupleQueryResult result = query.evaluate()) {
+                for (BindingSet solution : result) {
+                    this.uri = this.fullUri = "<" + solution.getValue("x") + ">";
+                }
+            }
+        } finally {
+            db.shutDown();
+        }
     }
 
     /**
@@ -192,16 +212,17 @@ public class Shape extends Entity {
 //    }
 
     public void fillParamFromReport(ValidationReport report) {
-        String fullUri = this.uri.replace(":", "http://www.example.com/myDataGraph#");
 //        System.out.println(fullUri);
-        this.referenceCardinality = report.referenceCardinalityByShape.get(fullUri).intValue();
-        this.numConfirmations = report.numConfirmationsByShape.get(fullUri).intValue();
-        this.numExceptions = report.numExceptionsByShape.get(fullUri).intValue();
-        this.likelihood = report.likelihoodByShape.get(fullUri);
+        this.referenceCardinality = report.referenceCardinalityByShape.get(this.fullUri).intValue();
+        this.numConfirmations = report.numConfirmationsByShape.get(this.fullUri).intValue();
+        this.numExceptions = report.numExceptionsByShape.get(this.fullUri).intValue();
+        this.likelihood = report.likelihoodByShape.get(this.fullUri);
 //        this.generality = report.generalityByShape.get(parsedUri);
-        this.fitness = computeFitness();
-        if(report.exceptionsByShape.get(fullUri) != null) {
-            this.exceptions = new ArrayList<>(report.exceptionsByShape.get(fullUri));
+        if(this.individual != null) {
+            this.individual.setFitness(new BasicFitness(computeFitness(), this.individual));
+        }
+        if(report.exceptionsByShape.get(this.fullUri) != null) {
+            this.exceptions = new ArrayList<>(report.exceptionsByShape.get(this.fullUri));
         }
     }
 
@@ -218,11 +239,11 @@ public class Shape extends Entity {
         return this.numConfirmations * this.likelihood.doubleValue();
     }
 
-//    public static void main(String[] args) {
-//        String s = " a sh:NodeShape ; sh:targetClass <http://www.wikidata.org/entity/Q14875321>, <http://www.wikidata.org/entity/Q348> ; sh:property [" +
-//                " sh:path rdf:type ; sh:hasValue <http://www.wikidata.org/entity/Q14863991>; ] .";
-//        Shape shape = new Shape(s);
-//        System.out.println(shape);
-//    }
+    public static void main(String[] args) {
+        String s = " a sh:NodeShape ; sh:targetClass <http://www.wikidata.org/entity/Q14875321>, <http://www.wikidata.org/entity/Q348> ; sh:property [" +
+                " sh:path rdf:type ; sh:hasValue <http://www.wikidata.org/entity/Q14863991>; ] .";
+        Shape shape = new Shape(s);
+        System.out.println(shape);
+    }
 
 }

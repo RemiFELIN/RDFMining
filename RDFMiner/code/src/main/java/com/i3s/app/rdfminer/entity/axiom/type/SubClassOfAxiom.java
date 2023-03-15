@@ -12,7 +12,6 @@ import com.i3s.app.rdfminer.expression.complement.ComplementClassExpression;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import com.i3s.app.rdfminer.sparql.corese.Format;
 import com.i3s.app.rdfminer.sparql.corese.ResultParser;
-import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -65,6 +64,7 @@ public class SubClassOfAxiom extends Axiom {
 	 */
 	public SubClassOfAxiom(List<Symbol> subClassExpression, List<Symbol> superClassExpression,
 						   CoreseEndpoint endpoint) {
+		super();
 		// set a t0 using the CPU time
 		long t0 = getProcessCPUTime();
 		subClass = ExpressionFactory.createClass(subClassExpression);
@@ -93,8 +93,6 @@ public class SubClassOfAxiom extends Axiom {
 		// set elapsedTime as a CPU usage time
 		logger.info("ARI = " + ari);
 		elapsedTime = getProcessCPUTime() - t0;
-		// set fitness
-		computeFitness();
 		logger.info("elapsed time = " + elapsedTime + " ms.");
 	}
 

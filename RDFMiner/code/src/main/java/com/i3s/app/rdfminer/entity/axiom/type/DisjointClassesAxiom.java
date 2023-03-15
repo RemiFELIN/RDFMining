@@ -60,8 +60,6 @@ public class DisjointClassesAxiom extends Axiom {
 		// set elapsedTime as a CPU usage time
 		elapsedTime = getProcessCPUTime() - t0;
 		logger.info("elapsed time = " + elapsedTime + " ms.");
-		// set fitness
-		computeFitness();
 	}
 
 	/**

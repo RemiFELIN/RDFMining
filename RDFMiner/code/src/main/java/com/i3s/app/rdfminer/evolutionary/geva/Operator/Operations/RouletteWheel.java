@@ -36,6 +36,7 @@ package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
+import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.Stochastic;
 
@@ -68,6 +69,7 @@ public abstract class RouletteWheel extends SelectionOperation implements Stocha
      */
     public RouletteWheel() {
         super();
+        this.rng = new MersenneTwisterFast();
     }
 
     @Override
@@ -81,6 +83,7 @@ public abstract class RouletteWheel extends SelectionOperation implements Stocha
 
 
     public void doOperation(List<GEIndividual> operands) {
+//        System.out.println("operants.size in doOperation= " + operands.size());
         rankPopulation(operands);
         calculateFitnessSum(operands);
         calculateAccumulatedFitnessProbabilities(operands);
@@ -103,13 +106,13 @@ public abstract class RouletteWheel extends SelectionOperation implements Stocha
      * @param operands Individuals to be chosen form
      **/
     protected void spinRoulette(List<GEIndividual> operands) {
+//        System.out.println("operands.size= " + operands.size());
         double prob;
         Individual selected;
         this.selectedPopulation.clear();
 
         while (this.selectedPopulation.size() < super.getSize()) {
             prob = rng.nextDouble();
-
             int cnt = 0;
             while (cnt < operands.size() && this.accProbs[cnt] < prob) {
                 cnt++;
@@ -118,7 +121,9 @@ public abstract class RouletteWheel extends SelectionOperation implements Stocha
                 //                System.out.println("Doh:"+cnt);
                 cnt = operands.size() - 1; //If the selection with the roulette fails, take the last individual
             }
+//            System.out.println("cnt= " + cnt);
             selected = operands.get(cnt);
+
             this.selectedPopulation.add(selected);
 
         }
