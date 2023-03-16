@@ -323,7 +323,6 @@ function sh:coreboolean(shape, cst) {
 
 # Optimized pow (n po)
 # function sh:pow(a, b) {
-#     # sh:log("core.rq", "sh:pow", concat("pow(", n, ", ", po, ")"));
 #     # Not scalable :
 #     # if (po = 0, 1, return (?n * sh:pow(?n, ?po - 1)))
 #     # Exponentiation by Squaring
@@ -334,8 +333,29 @@ function sh:coreboolean(shape, cst) {
 #         return (?a * sh:pow(?a, ?b - 1))
 #     };
 #     set(tmp_exp = sh:pow(?a, ?b / 2));
+#     sh:log("core.rq", "sh:pow", concat("pow(", a, ", ", b, ")= ", (tmp_exp * tmp_exp)));
 #     return (tmp_exp * tmp_exp)
 # }
+
+function sh:exponential(x) {
+    set(exp_result = 1);
+    set(exp_term = 1);
+    for (i in xt:iota(1, 100)) {
+        set(exp_term = exp_term * (?x / i));
+        set(exp_result = exp_result + exp_term);
+    };
+    sh:log("core.rq", "sh:exponential", concat("exp(", ?x, ")= ", exp_result));
+    return (exp_result)
+}
+
+function sh:normDensity(x, mu, sigma) {
+    sh:log("core.rq", "sh:normDensity", concat("[", ?x, ", ", ?mu, ", ", ?sigma, "]"));
+    set(normDensity_exponent = -0.5 * power(((?x - ?mu) / ?sigma), 2));
+    set(normDensity_coefficient = 1 / (?sigma * power(2 * 3.14159265358979323846, 0.5)));
+    set(normDensity_res = normDensity_coefficient * exp(normDensity_exponent));
+    sh:log("core.rq", "sh:normDensity", concat("norm(", ?x, ")= ", normDensity_res));
+    return (normDensity_res)
+}
 
 # Optimized combinaison (n k)
 function sh:comb(n, k) {
@@ -368,6 +388,10 @@ function sh:comb(n, k) {
 
 # P(X = k)
 function sh:binomial(n, p, k) {
+    if(?n>=30 && ?n*?p>5 && ?n*(1-?p)>5) {
+        sh:log("core.rq", "sh:binomial", "Approximation with a normal distribution");
+        return (sh:normDensity(?k, ?n*?p, power(?n*?p*(1-?p), 0.5)))
+    };
     # sh:log("core.rq", "sh:binomial", concat("bin(", n, ", ", p, ", ", k, ") = ", sh:comb(?n, ?k)));
     return (sh:comb(?n, ?k) * power(?p, ?k) * power(1 - ?p, ?n - ?k))
 }

@@ -447,6 +447,7 @@ public interface ExprType {
         public static int XT_NODE_FIRST_CHILD=616;
         
         public static int XT_XSLT        = 650;
-        
+
+		public static int EXPONENTIAL = 651;
 
 }

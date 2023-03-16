@@ -45,6 +45,7 @@ public class UnaryFunction extends TermEval {
             case ExprType.ABS:          return abs(dt);
             case ExprType.ROUND:        return round(dt);
             case ExprType.FLOOR:        return floor(dt);
+            case ExprType.EXPONENTIAL:          return exp(dt);
                 
             case ExprType.DATATYPE:     return dt.getDatatype();
             case ExprType.LANG:         return dt.getDataLang();
@@ -87,6 +88,10 @@ public class UnaryFunction extends TermEval {
      
     IDatatype floor(IDatatype dt) {
         return DatatypeMap.newInstance(Math.floor(dt.doubleValue()), dt.getDatatypeURI());
+    }
+
+    IDatatype exp(IDatatype dt) {
+        return DatatypeMap.newInstance(Math.exp(dt.doubleValue()), dt.getDatatypeURI());
     }
 
     IDatatype round(IDatatype dt) {

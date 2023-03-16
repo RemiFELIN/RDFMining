@@ -373,6 +373,7 @@ public class Processor {
 	static final String FLOOR 	= "floor"; 
 	static final String ROUND 	= "round";
 	static final String POWER 	= "power";
+	static final String EXPONENTIAL = "exp";
         
 
 	static final String NOW 	= "now"; 
@@ -1077,6 +1078,7 @@ public class Processor {
 		defoper(RANDOM, ExprType.RANDOM);
 		defoper(ABS, 	ExprType.ABS);
 		defoper(FLOOR, 	ExprType.FLOOR);
+		defoper(EXPONENTIAL, 	ExprType.EXPONENTIAL);
 		defoper(ROUND, 	ExprType.ROUND);
 		defoper(CEILING, ExprType.CEILING);
 
