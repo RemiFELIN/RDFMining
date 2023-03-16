@@ -286,7 +286,6 @@ public class Term extends Expression {
             case ExprType.CAST:
             case ExprType.CEILING:
             case ExprType.FLOOR:
-            case ExprType.EXPONENTIAL:
             case ExprType.ABS:
             case ExprType.ROUND:
             case ExprType.DATATYPE:

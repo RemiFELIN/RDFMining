@@ -427,7 +427,7 @@ public class Access {
         deny(SUPER_WRITE);
         deny(READ_FILE);
         deny(LOAD_FILE);
-        deny(JAVA_FUNCTION);
+        authorize(JAVA_FUNCTION);
         // user query on protected server have USER access level
         // user query with parameter access=key 
         // is granted RESTRICTED access level instead of USER level

@@ -255,7 +255,6 @@ public interface SparqlCoreseConstants {
     int VARNAME = 254;
     int LOCAL_ESC = 255;
     int PERCENT = 256;
-    int EXPONENTIAL = 257;
 
     int DEFAULT = 0;
 
@@ -516,8 +515,7 @@ public interface SparqlCoreseConstants {
             "<BLANKNAME>",
             "<VARNAME>",
             "<LOCAL_ESC>",
-            "<PERCENT>",
-            "\"exp\""
+            "<PERCENT>"
     };
 
 }
