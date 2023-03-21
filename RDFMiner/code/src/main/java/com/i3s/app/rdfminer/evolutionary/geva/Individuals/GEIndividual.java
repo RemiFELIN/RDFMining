@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.i3s.app.rdfminer.evolutionary.geva.Individuals;
 
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.Fitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.GEGrammar;
@@ -118,13 +119,13 @@ public class GEIndividual extends AbstractIndividual {
         //Check the grammar type
         this.grammar = GEGrammar.getGrammar(i.grammar);
         this.phenotype = new Phenotype(i.phenotype);
-        if (i.getGenotype() != null) {
-            // FIXME this hack allows NGram inds to work with no genotype
-            this.genotype = new Genotype(1);
-            this.genotype.add(new GEChromosome((GEChromosome) i.getGenotype().get(0)));
-            this.grammar.setGenotype(this.genotype.get(0));
-        }
-
+        this.setGenotype(i.getGenotype());
+//        if (i.getGenotype() != null) {
+//            // FIXME this hack allows NGram inds to work with no genotype
+//            this.genotype = new Genotype(1);
+//            this.genotype.add(new GEChromosome((GEChromosome) i.getGenotype().get(0)));
+//            this.grammar.setGenotype(this.genotype.get(0));
+//        }
         this.crossoverPoints = null;
         this.mutationPoints = null;
         if (i.parentsFitness != null) {
@@ -293,6 +294,19 @@ public class GEIndividual extends AbstractIndividual {
 
     public Phenotype getPhenotype() {
         return this.phenotype;
+    }
+
+    public GEChromosome getChromosomes() {
+        GEChromosome chromosome = new GEChromosome(RDFMiner.parameters.initLenChromosome);
+        chromosome.setMaxCodonValue(RDFMiner.parameters.maxValCodon);
+        chromosome.setMaxChromosomeLength(1000);
+        String genotype = this.genotype.get(0).toString().replace("Chromosome Contents: ", "");
+//        System.out.println("genotype: " + genotype);
+        for(String i : genotype.split(",")) {
+//            System.out.println("adding " + i + " ...");
+            chromosome.add(Integer.parseInt(i));
+        }
+        return chromosome;
     }
 
     /**

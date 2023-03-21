@@ -36,6 +36,7 @@ package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.selection.SelectionOperation;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.Stochastic;

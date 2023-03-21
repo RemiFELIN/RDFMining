@@ -27,14 +27,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 />.
 */
 
-package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations;
+package com.i3s.app.rdfminer.evolutionary.geva.Operator.mutation;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.ContextualDerivationTree;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.MutationOperation;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.GenotypeHelper;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
+import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +70,8 @@ public class StructuralMutation extends MutationOperation {
             //iterate through the structural codons and mutate depending on probability
             for (int codonIndex : structCodonList) {
                 if (this.rng.nextBoolean(this.probability)) {
+                    // increase mutation counter
+                    GrammaticalEvolution.nMutation++;
 //                    if(tree!=null) // this is to check that the individual is not invalid
 //                    {
 //                    System.out.println("The old tree was:");

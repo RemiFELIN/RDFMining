@@ -194,4 +194,8 @@ public class Entity {
         return json;
     }
 
+    public void setIndividual(GEIndividual individual) {
+        this.individual = individual;
+    }
+
 }

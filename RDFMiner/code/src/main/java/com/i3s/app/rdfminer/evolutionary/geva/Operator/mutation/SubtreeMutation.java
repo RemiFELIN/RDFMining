@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 />.
 */
 
-package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations;
+package com.i3s.app.rdfminer.evolutionary.geva.Operator.mutation;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Exceptions.BadParameterException;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
@@ -40,6 +40,7 @@ import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.GenotypeHelper;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Structures.TreeNode;
+import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
 import org.apache.log4j.Logger;
 
 import java.util.*;
@@ -96,7 +97,9 @@ public class SubtreeMutation extends MutationOperation {
         // Only mutate based on a probability that a mutate should occur
         if (super.rng.nextDouble() >= this.probability)
             return;
-        logger.info("~ perform mutation");
+        // increase mutation counter
+        GrammaticalEvolution.nMutation++;
+//        logger.info("~ perform mutation");
 //        DerivationTree tree = GenotypeHelper.buildDerivationTree(operand);
         DerivationTree tree = new DerivationTree((GEGrammar) operand.getMapper(), (GEChromosome) operand.getGenotype().get(0));
         tree.buildDerivationTree();

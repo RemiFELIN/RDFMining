@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 />.
 */
 
-package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
+package com.i3s.app.rdfminer.evolutionary.geva.Operator.selection;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.Fitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
@@ -112,25 +112,25 @@ public class EliteOperationSelection extends SelectionOperation {
         while (cnt < this.size) {
 //            System.out.println("cnt in doOperation: " + cnt);
             //Avoid duplicates
-            final boolean valid = fA[cnt].getIndividual().isValid();
+//            final boolean valid = fA[cnt].getIndividual().isValid();
             Individual ind = fA[cnt].getIndividual();
 //            System.out.println(ind.getGenotype());
-            if (!this.selectedPopulation.contains(ind) && valid) { // !duplicate && valid
-                //Set individual as valid
-                if (!this.evaluateElites) {
-                    ind.setEvaluated(fA[cnt].getIndividual().isEvaluated());
-                    ind.setValid(fA[cnt].getIndividual().isValid());
-                    ind.setAge(fA[cnt].getIndividual().getAge());
-                    ind.setFitness(fA[cnt].getIndividual().getFitness());
-                    ((GEIndividual) ind).setMapped(((GEIndividual) (fA[cnt].getIndividual())).isMapped());
-                    ((GEIndividual) ind).setUsedCodons(((GEIndividual) (fA[cnt].getIndividual())).getUsedCodons());
-                }
-                this.selectedPopulation.add(ind);
+            // not distinct individuals in the selected population
+//            if (valid) { // !this.selectedPopulation.contains(ind) && valid
+            //Set individual as valid
+            if (!this.evaluateElites) {
+                ind.setEvaluated(fA[cnt].getIndividual().isEvaluated());
+                ind.setValid(fA[cnt].getIndividual().isValid());
+                ind.setAge(fA[cnt].getIndividual().getAge());
+                ind.setFitness(fA[cnt].getIndividual().getFitness());
+                ((GEIndividual) ind).setMapped(((GEIndividual) (fA[cnt].getIndividual())).isMapped());
+                ((GEIndividual) ind).setUsedCodons(((GEIndividual) (fA[cnt].getIndividual())).getUsedCodons());
             }
+            this.selectedPopulation.add(ind);
+//            }
             cnt++;
         }
         //System.out.println("E:"+this.selectedPopulation);
-
     }
 
     public void setEvaluateElites(boolean evaluateElites) {

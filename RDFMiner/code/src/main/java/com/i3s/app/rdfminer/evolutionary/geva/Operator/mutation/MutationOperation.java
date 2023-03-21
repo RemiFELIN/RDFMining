@@ -36,12 +36,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * and open the template in the editor.
  */
 
-package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
+package com.i3s.app.rdfminer.evolutionary.geva.Operator.mutation;
 
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.evolutionary.geva.Exceptions.BadParameterException;
 import com.i3s.app.rdfminer.evolutionary.geva.FitnessEvaluation.FitnessFunction;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.Operation;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;

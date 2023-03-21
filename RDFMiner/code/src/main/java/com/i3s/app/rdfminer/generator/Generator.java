@@ -93,7 +93,7 @@ public abstract class Generator {
 
         individual = new GEIndividual();
         individual.setMapper(grammar);
-        individual.setGenotype(new Genotype(1, chromosome));
+        individual.setGenotype(new Genotype(chromosome.getLength(), chromosome));
         individual.setPhenotype(grammar.getPhenotype());
         individual.setValid(true);
         individual.setUsedCodons(chromosome.getUsedGenes());

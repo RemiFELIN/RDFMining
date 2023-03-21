@@ -27,12 +27,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 />.
 */
 
-package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
+package com.i3s.app.rdfminer.evolutionary.geva.Operator.crossover;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
+import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -140,8 +141,9 @@ public class TwoPointCrossover extends CrossoverOperation {
 		int p1maxXOPoint = 0;
 		int p2maxXOPoint = 0;
 		if (this.rand.nextDouble() < this.probability) {
-			logger.info("~ perform crossover between " + operands.get(0).getGenotype() + " and " +
-					operands.get(1).getGenotype());
+			// increase crossover counter
+			GrammaticalEvolution.nCrossover++;
+//			logger.info("~ perform crossover between " + operands.get(0).getGenotype() + " and " + operands.get(1).getGenotype());
 			p1 = operands.get(0);
 			p2 = operands.get(1);
 			chrom1 = (GEChromosome) p1.getGenotype().get(0);

@@ -66,6 +66,7 @@ package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.mutation.MutationOperation;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 
 import java.io.BufferedWriter;

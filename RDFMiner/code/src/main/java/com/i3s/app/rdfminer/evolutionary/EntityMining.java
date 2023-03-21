@@ -6,10 +6,10 @@ import com.i3s.app.rdfminer.evolutionary.fitness.Fitness;
 import com.i3s.app.rdfminer.evolutionary.generation.Generation;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.EliteOperationSelection;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ProportionalRouletteWheel;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ScaledRouletteWheel;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.TournamentSelect;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.selection.EliteOperationSelection;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.selection.ProportionalRouletteWheel;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.selection.ScaledRouletteWheel;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.selection.TournamentSelect;
 import com.i3s.app.rdfminer.evolutionary.tools.EATools;
 import com.i3s.app.rdfminer.evolutionary.types.TypeSelection;
 import com.i3s.app.rdfminer.generator.Generator;
@@ -63,6 +63,7 @@ public class EntityMining {
             }
         }
         // STEP 3 - SELECTION OPERATION
+        logger.debug("entities.size= " + entities.size());
         ArrayList<GEIndividual> entitiesAsIndividuals = new ArrayList<>();
         ArrayList<GEIndividual> selectedIndividuals = new ArrayList<>();
         // Use list of individuals instead of list of entities
@@ -76,6 +77,7 @@ public class EntityMining {
             case TypeSelection.ELITE_OPERATION_SELECTION:
                 EliteOperationSelection eos = new EliteOperationSelection();
                 eos.doOperation(entitiesAsIndividuals);
+                logger.debug("getSelectedPop.size= " + eos.getSelectedPopulation().size());
                 for(Individual selected : eos.getSelectedPopulation().getAll()) {
                     selectedIndividuals.add((GEIndividual) selected);
                     entitiesAsIndividuals.remove((GEIndividual) selected);
@@ -107,11 +109,12 @@ public class EntityMining {
                 break;
         }
         /* STEP 4 - CROSSOVER & MUTATION OPERATION */
-//        logger.debug("entitiesAsIndividuals.size= " + entitiesAsIndividuals.size());
+        logger.debug("selectedIndividuals.size= " + selectedIndividuals.size());
+        logger.debug("entitiesAsIndividuals.size= " + entitiesAsIndividuals.size());
         ArrayList<Entity> selectedEntities = EATools.bindIndividualsWithEntities(selectedIndividuals, entities);
         ArrayList<Entity> toCompute = EATools.bindIndividualsWithEntities(entitiesAsIndividuals, entities);
-//        logger.debug("selectedEntities.size= " + selectedEntities.size());
-//        logger.debug("toCompute.size= " + toCompute.size());
+        logger.debug("selectedEntities.size= " + selectedEntities.size());
+        logger.debug("toCompute.size= " + toCompute.size());
         // Compute GE and add new population on a new list of individuals
         ArrayList<Entity> computedPopulation = Generation.compute(toCompute, curGeneration, generator);
 //        logger.debug("size computed pop = " + computedPopulation.size());
@@ -120,6 +123,7 @@ public class EntityMining {
 //        logger.debug("size new pop = " + newPopulation.size());
         // stats
         setStats(originalPopulation, newPopulation, curGeneration);
+//        logger.debug("size new pop= " + newPopulation.size());
         // renew population
         return newPopulation;
     }

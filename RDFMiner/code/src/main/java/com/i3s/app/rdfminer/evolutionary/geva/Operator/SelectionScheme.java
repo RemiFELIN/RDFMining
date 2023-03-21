@@ -35,8 +35,8 @@ import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.Population
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.SimplePopulation;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.GEGrammar;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.Operation;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.SelectionOperation;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.TournamentSelect;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.selection.SelectionOperation;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.selection.TournamentSelect;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 

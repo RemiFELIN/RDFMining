@@ -4,7 +4,7 @@ import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.entity.shacl.vocabulary.Shacl;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Phenotype;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Genotype;
 import com.i3s.app.rdfminer.sparql.RequestBuilder;
 import org.apache.log4j.Logger;
 import org.eclipse.rdf4j.model.Model;
@@ -76,6 +76,16 @@ public class ShapesManager {
 //        logger.info(population.size() + " SHACL Shapes ready to be evaluated !");
     }
 
+    public ShapesManager(GEIndividual individual) {
+        this.content += Global.PREFIXES;
+        Shape s = new Shape(individual);
+        population.add(s);
+        this.content += s + "\n";
+        // set the file content to evaluate this SHACL Shapes on server
+//        this.path = editShapesTmpFile(this.population);
+//        logger.info(population.size() + " SHACL Shapes ready to be evaluated !");
+    }
+
     public void fillPopulation(Model model) {
         // Create a new Repository. Here, we choose a database implementation
         // that simply stores everything in main memory.
@@ -134,10 +144,10 @@ public class ShapesManager {
     }
 
     public void setDistinctPopulationFromEntities(ArrayList<Entity> entities) {
-        ArrayList<Phenotype> distinctPhenotypes = new ArrayList<>();
+        ArrayList<Genotype> distinctGenotypes = new ArrayList<>();
         for(Entity entity : entities) {
-            if(!distinctPhenotypes.contains(entity.individual.getPhenotype())) {
-                distinctPhenotypes.add(entity.individual.getPhenotype());
+            if(!distinctGenotypes.contains(entity.individual.getGenotype())) {
+                distinctGenotypes.add(entity.individual.getGenotype());
                 this.population.add(new Shape(entity.individual));
             }
         }

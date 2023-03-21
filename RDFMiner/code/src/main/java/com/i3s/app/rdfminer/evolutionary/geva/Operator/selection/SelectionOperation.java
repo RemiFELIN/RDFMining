@@ -27,12 +27,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 />.
 */
 
-package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
+package com.i3s.app.rdfminer.evolutionary.geva.Operator.selection;
 
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.Population;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.SimplePopulation;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.Operation;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
 import org.apache.log4j.Logger;
 

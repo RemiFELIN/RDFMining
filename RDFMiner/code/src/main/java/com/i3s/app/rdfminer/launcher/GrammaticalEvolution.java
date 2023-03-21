@@ -26,6 +26,10 @@ public class GrammaticalEvolution {
 
     private static final Logger logger = Logger.getLogger(GrammaticalEvolution.class.getName());
 
+    public static int nBetterIndividual;
+    public static int nCrossover;
+    public static int nMutation;
+
     /**
      * The second version of RDFMiner launcher, with Grammar Evolutionary
      * @param parameters all parameters given in the execution of JAR
@@ -136,6 +140,10 @@ public class GrammaticalEvolution {
             }
             // Turn to the next generation
             curGeneration++;
+            // reset crossover and mutation counter
+            nCrossover = 0;
+            nMutation = 0;
+            nBetterIndividual = 0;
         }
         logger.info("Evolutionary process is done...");
         System.exit(0);
@@ -145,8 +153,8 @@ public class GrammaticalEvolution {
         PrintWriter writer = new PrintWriter(cachePath, StandardCharsets.UTF_8);
         ArrayList<String> genotypes = new ArrayList<>();
         for(Entity entity : entities) {
-            genotypes.add(entity.individual.getGenotype().toString().substring(22,
-                    entity.individual.getGenotype().toString().length() - 1));
+            // fix chromosome content
+            genotypes.add(entity.individual.getGenotype().get(0).toString().replace("Chromosome Contents: ", ""));
         }
         Cache cache = new Cache(curGeneration, curCheckpoint, RDFMiner.parameters.initLenChromosome, genotypes);
         writer.println(cache.toJSON().toString(2));

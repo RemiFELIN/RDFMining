@@ -6,6 +6,7 @@ import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.entity.shacl.vocabulary.Shacl;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+import com.i3s.app.rdfminer.ht.HypothesisTesting;
 import com.i3s.app.rdfminer.sparql.RequestBuilder;
 import org.apache.log4j.Logger;
 import org.eclipse.rdf4j.model.Model;
@@ -87,7 +88,7 @@ public class Shape extends Entity {
      */
     public Shape(GEIndividual individual) {
         this.individual = individual;
-        this.content = individual.getPhenotype().getStringNoSpace();
+        this.content = this.individual.getPhenotype().getStringNoSpace();
         // get shape uri subject
         setIdentifier(this.content);
         // init model
@@ -218,11 +219,11 @@ public class Shape extends Entity {
         this.numExceptions = report.numExceptionsByShape.get(this.fullUri).intValue();
         this.likelihood = report.likelihoodByShape.get(this.fullUri);
 //        this.generality = report.generalityByShape.get(parsedUri);
-        if(this.individual != null) {
-            this.individual.setFitness(new BasicFitness(computeFitness(), this.individual));
-        }
         if(report.exceptionsByShape.get(this.fullUri) != null) {
             this.exceptions = new ArrayList<>(report.exceptionsByShape.get(this.fullUri));
+        }
+        if(this.individual != null) {
+            this.individual.setFitness(new BasicFitness(computeFitness(), this.individual));
         }
     }
 
@@ -236,14 +237,21 @@ public class Shape extends Entity {
      * {@link Axiom#necessity() necessity} values.
      */
     public double computeFitness() {
-        return this.numConfirmations * this.likelihood.doubleValue();
+        // compute a hypothesis testing
+        HypothesisTesting ht = new HypothesisTesting(this);
+//        System.out.println("is accepted? " + ht.isAccepted);
+        if(ht.isAccepted) {
+            return this.numConfirmations;
+        } else {
+            return this.numConfirmations * this.likelihood.doubleValue();
+        }
     }
 
     public static void main(String[] args) {
-        String s = " a sh:NodeShape ; sh:targetClass <http://www.wikidata.org/entity/Q14875321>, <http://www.wikidata.org/entity/Q348> ; sh:property [" +
+        String s = Global.PREFIXES + "<http://test/1> a sh:NodeShape ; sh:targetClass <http://www.wikidata.org/entity/Q14875321>, <http://www.wikidata.org/entity/Q348> ; sh:property [" +
                 " sh:path rdf:type ; sh:hasValue <http://www.wikidata.org/entity/Q14863991>; ] .";
         Shape shape = new Shape(s);
-        System.out.println(shape);
+        System.out.println(shape.fullUri);
     }
 
 }

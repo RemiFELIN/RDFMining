@@ -27,15 +27,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 />.
 */
 
-package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations;
+package com.i3s.app.rdfminer.evolutionary.geva.Operator.crossover;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.DerivationNode;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.DerivationTree;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.CrossoverOperation;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.GenotypeHelper;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
+import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -79,7 +79,9 @@ public class SubtreeCrossover extends CrossoverOperation {
         if (this.rand.nextDouble() >= this.probability)
             return;
 
-        logger.info("~ perform crossover between " + i1.getGenotype() + " and " + i2.getGenotype());
+        // increase crossover counter
+        GrammaticalEvolution.nCrossover++;
+//        logger.info("~ perform crossover between " + i1.getGenotype() + " and " + i2.getGenotype());
         // Turn the genotype into a tree. The tree nodes will state which
         //  codons each branch used to determine its child production
         DerivationTree tree1 = GenotypeHelper.buildDerivationTree(i1);

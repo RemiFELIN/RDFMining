@@ -13,6 +13,9 @@ public class HypothesisTesting {
     public HypothesisTesting(Shape shape) {
         this.shape = shape;
         this.X2 = null;
+//        System.out.println("refc= " + shape.referenceCardinality);
+//        System.out.println("numExc= " + shape.numExceptions);
+//        System.out.println("numConf= " + shape.numConfirmations);
         // X^2 computation
         double nExcTheo = shape.referenceCardinality * Double.parseDouble(RDFMiner.parameters.probShaclP);
         double nConfTheo = shape.referenceCardinality - nExcTheo;
@@ -30,6 +33,7 @@ public class HypothesisTesting {
             // rejected !
             this.isAccepted = false;
         }
+//        System.out.println("is accepted? " + isAccepted);
     }
 
     public String getAcceptanceTriple() {

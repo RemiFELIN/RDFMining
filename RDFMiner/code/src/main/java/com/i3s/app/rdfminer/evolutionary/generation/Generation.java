@@ -3,20 +3,23 @@ package com.i3s.app.rdfminer.evolutionary.generation;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
-import com.i3s.app.rdfminer.evolutionary.tools.Offspring;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.crossover.SwapCrossover;
+import com.i3s.app.rdfminer.evolutionary.offspring.Offspring;
 import com.i3s.app.rdfminer.evolutionary.types.TypeCrossover;
 import com.i3s.app.rdfminer.evolutionary.types.TypeMutation;
 import com.i3s.app.rdfminer.evolutionary.fitness.novelty.NoveltySearch;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.NodalMutation;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.SubtreeCrossover;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.SubtreeMutation;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.IntFlipByteMutation;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.IntFlipMutation;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.SinglePointCrossover;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.TwoPointCrossover;
-import com.i3s.app.rdfminer.evolutionary.tools.Crowding;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.mutation.NodalMutation;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.crossover.SubtreeCrossover;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.mutation.SubtreeMutation;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.mutation.IntFlipByteMutation;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.mutation.IntFlipMutation;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.crossover.SinglePointCrossover;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.crossover.TwoPointCrossover;
+import com.i3s.app.rdfminer.evolutionary.offspring.Crowding;
 import com.i3s.app.rdfminer.generator.Generator;
+import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
 
@@ -58,9 +61,12 @@ public class Generation {
         while (m < canEntities.size() - even) {
             // get the two individuals which are neighbours
 //            ArrayList<GEIndividual> parents = new ArrayList<>(List.of(canEntities.get(m).individual, canEntities.get(m + 1).individual));
-            GEIndividual parent1 = new GEIndividual(canEntities.get(m).individual);
-            GEIndividual parent2 = new GEIndividual(canEntities.get(m + 1).individual);
-            ArrayList<GEIndividual> futureOffsprings = new ArrayList<>(List.of(parent1, parent2));
+            GEChromosome chromParent1 = canEntities.get(m).individual.getChromosomes();
+            GEChromosome chromParent2 = canEntities.get(m + 1).individual.getChromosomes();
+            ArrayList<GEIndividual> futureOffsprings = new ArrayList<>(List.of(
+                    generator.getIndividualFromChromosome(chromParent1, curGeneration),
+                    generator.getIndividualFromChromosome(chromParent2, curGeneration)
+            ));
             /* CROSSOVER PHASIS */
             switch (RDFMiner.parameters.typeCrossover) {
                 default:
@@ -82,6 +88,12 @@ public class Generation {
                     SubtreeCrossover stc = new SubtreeCrossover();
                     stc.doOperation(futureOffsprings);
                     break;
+                case TypeCrossover.SWAP:
+                    // Swap crossover
+                    // contribution testing for ShaMPA
+                    SwapCrossover swp = new SwapCrossover();
+                    swp.doOperation(futureOffsprings);
+                    break;
             }
             /* MUTATION PHASIS */
             switch (RDFMiner.parameters.typeMutation) {
@@ -98,10 +110,6 @@ public class Generation {
                     SubtreeMutation sm = new SubtreeMutation();
                     sm.doOperation(futureOffsprings);
                     break;
-//                case TypeMutation.STRUCTURAL:
-//                    StructuralMutation stm = new StructuralMutation(new MersenneTwisterFast(), RDFMiner.parameters.proMutation);
-//                    stm.doOperation(parents);
-//                    break;
                 case TypeMutation.INT_FLIP_BYTE:
                     IntFlipByteMutation ifbm = new IntFlipByteMutation();
                     ifbm.doOperation(futureOffsprings);
@@ -131,6 +139,7 @@ public class Generation {
             evaluatedIndividuals.add(selectedEntities.get(0));
         }
         logger.info("Crossover & Mutation done");
+        logger.info(GrammaticalEvolution.nCrossover + " crossover and " + GrammaticalEvolution.nMutation + " mutation has been perform");
         logger.info(entitiesCallables.size() + " tasks ready to be launched !");
         // Submit tasks
         List<Future<ArrayList<Entity>>> futureEntities = new ArrayList<>();
@@ -157,6 +166,11 @@ public class Generation {
         }
         // Log how many axioms has been evaluated
         logger.info(evaluatedIndividuals.size() + " entities has been computed after crossover-mutation !");
+        if(GrammaticalEvolution.nBetterIndividual != 0) {
+            logger.info(GrammaticalEvolution.nBetterIndividual + " better (or equivalent fitness) individuals has been found !");
+        } else {
+            logger.info("no better individual has been found ...");
+        }
         executor.shutdown();
         try {
             if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {

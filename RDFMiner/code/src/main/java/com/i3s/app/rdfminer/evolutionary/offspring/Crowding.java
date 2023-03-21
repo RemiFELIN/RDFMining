@@ -1,4 +1,4 @@
-package com.i3s.app.rdfminer.evolutionary.tools;
+package com.i3s.app.rdfminer.evolutionary.offspring;
 
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
@@ -9,6 +9,7 @@ import com.i3s.app.rdfminer.evolutionary.fitness.novelty.Similarity;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.generator.Generator;
+import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
 
@@ -149,6 +150,8 @@ public class Crowding {
 			logger.info("A better offspring has been found !");
 		}
 		// compare their fitness
+		if(parent.individual.getFitness().getDouble() < child.individual.getFitness().getDouble())
+			GrammaticalEvolution.nBetterIndividual++;
 		if(parent.individual.getFitness().getDouble() <= child.individual.getFitness().getDouble()) {
 			return child;
 		} else {

@@ -27,11 +27,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 />.
 */
 
-package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
+package com.i3s.app.rdfminer.evolutionary.geva.Operator.selection;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.*;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.GEGrammar;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.RouletteWheel;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.Stochastic;
@@ -39,25 +40,25 @@ import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.Stochastic;
 import java.util.*;
 
 /**
- * Scaled Roulette wheel selection based on weighted selection,
- * The likelyhood of an individual getting picked is:
- * total sum of the fitness - fitness of the individual
+ * Roulette wheel selection based on fitness proprtional selection.
+ * it uses assigns probabilities as 1/(1-fitness) where the smaller the
+ * value the more likely it is to be selected
  **/
-public class ScaledRouletteWheel extends RouletteWheel implements Stochastic {
+public class ProportionalRouletteWheel extends RouletteWheel implements Stochastic {
 
     /**
      * New instance
      * @param size size of selection
      * @param rng random number generator
      */
-    public ScaledRouletteWheel(int size, RandomNumberGenerator rng) {
+    public ProportionalRouletteWheel(int size, RandomNumberGenerator rng) {
         super(size, rng);
     }
 
     /**
      * New instance
      */
-    public ScaledRouletteWheel() {
+    public ProportionalRouletteWheel() {
         super();
     }
 
@@ -68,20 +69,26 @@ public class ScaledRouletteWheel extends RouletteWheel implements Stochastic {
      * @param operands Individuals to take into account
      ***/
     protected void calculateAccumulatedFitnessProbabilities(List<GEIndividual> operands) {
+        this.accProbs = new double[operands.size()];
+        Arrays.fill(this.accProbs, 0);
         if (this.sumFit == 0) {
             return;
         }
-        this.accProbs = new double[operands.size()];
         double[] tmpA = new double[accProbs.length];
         double tmp;
         double tmpSum = 0;
         for (int cnt = 0; cnt < operands.size(); cnt++) {
-            tmp = operands.get(cnt).getFitness().getDouble(); 
-            tmp = this.sumFit - tmp;
+            tmp = operands.get(cnt).getFitness().getDouble();
+            //this is to lessen any distortions for very small fitness values
+            if(this.smallFit)
+            {
+                tmp= tmp * 1000;
+            }
+            tmp = 1/(tmp+1);
             tmpA[cnt] = tmp;
             tmpSum += tmp;
         }
-
+  
         for (int cnt = 0; cnt < operands.size(); cnt++) {
             tmp = tmpA[cnt];
             tmp /= tmpSum;
@@ -95,16 +102,16 @@ public class ScaledRouletteWheel extends RouletteWheel implements Stochastic {
                 accProbs[cnt] = 1;
             }
         }
+//        System.out.println("acc. Probs: " + Arrays.toString(accProbs));
     }
 
-    //main method for testing the code
     public static void main(String[] args) {
         int runs = 1;
         ArrayList<Double> aL = new ArrayList<Double>(runs * 2);
         for (int ii = 0; ii < runs; ii++) {
             int size = 2;
             MersenneTwisterFast rng = new MersenneTwisterFast();
-            ScaledRouletteWheel rws = new ScaledRouletteWheel(size, rng);
+            ProportionalRouletteWheel rws = new ProportionalRouletteWheel(size, rng);
             int popSize = 5;
             ArrayList<GEIndividual> alI = new ArrayList<>(popSize);
             GEIndividual ind;
@@ -122,7 +129,7 @@ public class ScaledRouletteWheel extends RouletteWheel implements Stochastic {
             for (int i = 1; i < popSize; i++) {
                 ind = new GEIndividual();
                 //bf = new BasicFitness((double)rws.getRNG().nextInt(10), ind);
-                bf = new BasicFitness(i, ind);
+                bf = new BasicFitness((double) i, ind);
                 ind.setFitness(bf);
                 ind.setMapper(gram);
                 ind.setGenotype(genotype);
@@ -134,13 +141,16 @@ public class ScaledRouletteWheel extends RouletteWheel implements Stochastic {
                 aL.add(rws.selectedPopulation.get(k).getFitness().getDouble());
             }
             rws.selectedPopulation.clear();
+
+
         }
-        StringBuilder s = new StringBuilder();
+        StringBuffer s = new StringBuffer();
         for (Double anAL : aL) {
             s.append(anAL);
             s.append(" ");
         }
         s.append("\n");
-        System.out.println(s);
+        System.out.println(s.toString());
+
     }
 }

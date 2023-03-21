@@ -34,12 +34,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
-package com.i3s.app.rdfminer.evolutionary.geva.Operator;
+package com.i3s.app.rdfminer.evolutionary.geva.Operator.crossover;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.CrossoverOperation;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.Operation;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.OperatorModule;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 
 import java.util.ArrayList;

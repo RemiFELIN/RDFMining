@@ -27,7 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 />.
 */
 
-
 /*
  * IntFlipMutation.java
  *
@@ -35,35 +34,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
-package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
+package com.i3s.app.rdfminer.evolutionary.geva.Operator.mutation;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
+import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
 import org.apache.log4j.Logger;
 
 import java.util.List;
 import java.util.Properties;
 
 /**
- * IntFlipMutation does integer mutation
+ * IntFlipMutation does integer mutation. This method
+ * changes the integer into a byte before mutation so as to show the 
+ * effects of locality on the mutation operation
  * @author Conor
  */
-public class IntFlipMutation extends MutationOperation {
+public class IntFlipByteMutation extends MutationOperation {
 
-    private static final Logger logger = Logger.getLogger(IntFlipMutation.class.getName());
+    private static final Logger logger = Logger.getLogger(IntFlipByteMutation.class.getName());
 
-    public IntFlipMutation() { super(); }
+    public IntFlipByteMutation() { super(); }
 
     /** Creates a new instance of IntFlipMutation
      * @param prob mutation probability
      * @param rng random number generator
      */
-    public IntFlipMutation(double prob, RandomNumberGenerator rng) {
+    public IntFlipByteMutation(double prob, RandomNumberGenerator rng) {
         super(prob, rng);
     }
 
-    public IntFlipMutation(RandomNumberGenerator rng, double prob) {
+    public IntFlipByteMutation(RandomNumberGenerator rng, double prob) {
         super(prob, rng);
     }
 
@@ -72,7 +74,7 @@ public class IntFlipMutation extends MutationOperation {
      * @param rng random number generator
      * @param p properties
      */
-    public IntFlipMutation(RandomNumberGenerator rng, Properties p) {
+    public IntFlipByteMutation(RandomNumberGenerator rng, Properties p) {
         super(rng, p);
     }
     
@@ -86,7 +88,7 @@ public class IntFlipMutation extends MutationOperation {
      * Calls doMutation(GEIndividual c) and then calls Individual.invalidate()
      * @param operand operand to operate on
      */
-    public void doOperation(final GEIndividual operand) {
+    public void doOperation(GEIndividual operand) {
         doMutation((GEChromosome)operand.getGenotype().get(0));
         operand.invalidate();
     }
@@ -96,15 +98,21 @@ public class IntFlipMutation extends MutationOperation {
      * replaced with a new randomly chosen integer
      * @param c input to mutate
      */
-    private void doMutation(final GEChromosome c) {
+    private void doMutation(GEChromosome c) {
         for(int i=0;i<c.getLength();i++) {
-            if(this.rng.nextBoolean(this.probability)) {
-                logger.info("~ perform mutation");
-                final int nextInt = Math.abs(rng.nextInt());
-                c.set(i, nextInt);
+            int mut = 0;
+            for(int ii=0; ii<c.getCodonSize(); ii++) {
+                //this is where the integer is turned into a byte array
+                for(int j=0; j<Byte.SIZE; j++) {
+                    if(this.rng.nextBoolean(this.probability)) {
+//                        logger.info("~ perform mutation");
+                        // increase mutation counter
+                        GrammaticalEvolution.nMutation++;
+                        mut = mut + (int)Math.pow(2,j*(ii+1));
+                    }
+                }
             }
+            c.set(i,c.get(i)^mut);
         }
     }
-    
-    
 }

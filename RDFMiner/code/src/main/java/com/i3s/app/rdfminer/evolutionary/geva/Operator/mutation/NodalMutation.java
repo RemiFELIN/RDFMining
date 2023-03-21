@@ -27,14 +27,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 />.
 */
 
-package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations;
+package com.i3s.app.rdfminer.evolutionary.geva.Operator.mutation;
 
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.ContextualDerivationTree;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.GEGrammar;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.MutationOperation;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
+import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -74,7 +74,9 @@ public class NodalMutation extends MutationOperation {
         //iterate through the leaf Node codons and mutate depending on probability
         for (int codonIndex : nodeCodonList) {
             if (this.rng.nextBoolean(this.probability)) {
-                logger.info("~ perform mutation");
+//                logger.info("~ perform mutation");
+                // increase mutation counter
+                GrammaticalEvolution.nMutation++;
                 chromosome.set(codonIndex-1, Math.abs(rng.nextInt()));
             }
         }

@@ -1,6 +1,5 @@
 package com.i3s.app.rdfminer.evolutionary.tools;
 
-import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
@@ -8,10 +7,7 @@ import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.grammar.DLFactory;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class is used to deployed all EA tools like crossover, mutation, ...
@@ -59,13 +55,13 @@ public class EATools {
 	}
 
 	public static double getPopulationDevelopmentRate(ArrayList<Entity> originalPopulation, ArrayList<Entity> newPopulation) {
-		ArrayList<String> genotypes = new ArrayList<>();
+		ArrayList<String> phenotypes = new ArrayList<>();
 		for (Entity entity : originalPopulation) {
-			genotypes.add(entity.individual.getGenotype().toString());
+			phenotypes.add(entity.individual.getPhenotype().getStringNoSpace());
 		}
 		int count = 0;
 		for (Entity entity : newPopulation) {
-			if (!genotypes.contains(entity.individual.getGenotype().toString())) {
+			if (!phenotypes.contains(entity.individual.getPhenotype().getStringNoSpace())) {
 				count++;
 			}
 		}
@@ -110,7 +106,7 @@ public class EATools {
 //			logger.debug("# individual: " + individual);
 			for(Entity entity : entities) {
 //				logger.debug("### Entity: " + entity.individual);
-				if(individual == entity.individual) {
+				if(Objects.equals(individual.getPhenotype().getStringNoSpace(), entity.individual.getPhenotype().getStringNoSpace())) {
 					newEntities.add(entity);
 					break;
 				}
@@ -120,14 +116,14 @@ public class EATools {
 		// common case at the beginning of GE.
 		// Since they are "bad" candidates, we just remove last entities from new entities to return
 		// in order to do not unbalance the not selected candidates population
-		int notSelectedPopSize = (int) ( (1 - RDFMiner.parameters.sizeSelection) * RDFMiner.parameters.populationSize);
-		int i = 0;
-		while(newEntities.size() > notSelectedPopSize) {
-			newEntities.remove(newEntities.size() - 1);
-			i++;
-		}
-		if (i != 0)
-			logger.debug(i + " entities has been removed due to duplicates individuals into selected population");
+//		int notSelectedPopSize = (int) ( (1 - RDFMiner.parameters.sizeSelection) * RDFMiner.parameters.populationSize);
+//		int i = 0;
+//		while(newEntities.size() > notSelectedPopSize) {
+//			newEntities.remove(newEntities.size() - 1);
+//			i++;
+//		}
+//		if (i != 0)
+//			logger.debug(i + " entities has been removed due to duplicates individuals into selected population");
 		return newEntities;
 	}
 

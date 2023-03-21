@@ -10,16 +10,14 @@ import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Genotype;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.SimplePopulation;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.GEGrammar;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.CrossoverModule;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.NodalMutation;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.StructuralMutation;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.SubtreeCrossover;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.ContextSensitiveOperations.SubtreeMutation;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.*;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.crossover.*;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.mutation.*;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.selection.ProportionalRouletteWheel;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 import com.i3s.app.rdfminer.evolutionary.individual.CandidatePopulation;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
+import com.i3s.app.rdfminer.generator.shacl.RandomShapeGenerator;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -120,8 +118,8 @@ public class Test {
      * Just a test ...
      */
     public static void testSubtreeCrossover() {
-        RDFMiner.parameters.initLenChromosome = 6;
-        RDFMiner.parameters.populationSize = 5;
+        RDFMiner.parameters.initLenChromosome = 2;
+        RDFMiner.parameters.populationSize = 2;
         Generator generator = null;
         try {
             generator = new RandomAxiomGenerator("/user/rfelin/home/projects/RDFMining/IO/OWL2Axiom-complex-subclassof.bnf", true);
@@ -333,7 +331,7 @@ public class Test {
         Global.TARGET_SPARQL_ENDPOINT = Global.TRAINING_SPARQL_ENDPOINT;
         RDFMiner.parameters.initLenChromosome = 2;
 //        RDFMiner.parameters.sizeSelection = 0.3;
-        RDFMiner.parameters.populationSize = 10;
+        RDFMiner.parameters.populationSize = 2;
         Generator generator = null;
         try {
             generator = new RandomAxiomGenerator("/user/rfelin/home/projects/RDFMining/IO/OWL2Axiom-subclassof.bnf", true);
@@ -373,11 +371,80 @@ public class Test {
         }
     }
 
+    public static void testSwapCrossover() {
+        // Create individuals
+        GEChromosome c1 = new GEChromosome(10);
+        GEChromosome c2 = new GEChromosome(10);
+        c1.add(1);
+        c1.add(2);
+        c1.add(3);
+        c1.add(4);
+        c2.add(5);
+        c2.add(6);
+        c2.add(7);
+        c2.add(8);
+        Genotype g1 = new Genotype();
+        Genotype g2 = new Genotype();
+        g1.add(c1);
+        g2.add(c2);
+        GEIndividual i1 = new GEIndividual();
+        GEIndividual i2 = new GEIndividual();
+        GEGrammar grammar = new GEGrammar();
+        i1.setMapper(grammar);
+        i1.setGenotype(g1);
+        i2.setMapper(grammar);
+        i2.setGenotype(g2);
+        // create population
+        ArrayList<GEIndividual> aI = new ArrayList<>(2);
+        aI.add(i1);
+        aI.add(i2);
+        for(Individual i : aI) {
+            System.out.println("individual before -> " + i.getGenotype());
+        }
+        System.out.println("--------\nSINGLE CROSSOVER");
+        SwapCrossover cop = new SwapCrossover(new MersenneTwisterFast(), 1);
+        cop.doOperation(aI);
+        for(GEIndividual i : aI) {
+            System.out.println("individual after two point crossover -> " + i.getGenotype());
+        }
+    }
+
+    public static void testSwapCrossoverOnRealData() {
+        RDFMiner.parameters.initLenChromosome = 2;
+        RDFMiner.parameters.populationSize = 2;
+        RDFMiner.parameters.proCrossover = 1.0;
+        Generator generator = null;
+        try {
+            generator = new RandomShapeGenerator("/user/rfelin/home/projects/RDFMining/IO/shacl-shapes-test.bnf");
+        } catch (URISyntaxException | IOException e) {
+            e.printStackTrace();
+        };
+        CandidatePopulation canPop = new CandidatePopulation(generator);
+        ArrayList<GEIndividual> population = canPop.initialize(null, 1);
+        ArrayList<GEIndividual> saveOriginalPop = new ArrayList<>();
+        for(GEIndividual ind : population) {
+            System.out.println("original pop: " + ind.getGenotype());
+            assert generator != null;
+            saveOriginalPop.add(generator.getIndividualFromChromosome(ind.getChromosomes(), 1));
+        }
+        SwapCrossover swp = new SwapCrossover();
+        swp.doOperation(population);
+        for(GEIndividual ind : saveOriginalPop) {
+            System.out.println("saved pop: " + ind.getGenotype());
+        }
+        for(GEIndividual ind : population) {
+            System.out.println("new pop: " + ind.getGenotype());
+        }
+    }
+
     public static void main(String[] args) {
-//        testCrossoverMutation();
+//        testSwapCrossover();
+        testSwapCrossoverOnRealData();
+//        testSubtreeCrossover();
 //        testSelection();
 //        testSinglePointCrossoverOnRealPopulation();
-        testCollectionCopy();
+//        testCollectionCopy();
+//        testSinglePointCrossoverRapide();
     }
 
 }
