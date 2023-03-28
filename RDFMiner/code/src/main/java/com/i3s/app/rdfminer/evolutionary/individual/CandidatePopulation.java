@@ -1,13 +1,16 @@
 package com.i3s.app.rdfminer.evolutionary.individual;
 
 import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.output.Cache;
+import com.i3s.app.rdfminer.output.IndividualJSON;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -39,16 +42,22 @@ public class CandidatePopulation {
 			throws NumberFormatException, IndexOutOfBoundsException {
 		GEChromosome chromosome;
 		GEIndividual individual;
+		ArrayList<Double> fitnessList = new ArrayList<>(RDFMiner.parameters.populationSize);
 		// TODO developed only in the case of random initialization -
 		// typeInitialization=1 ... Later need to develop other type of initialization.
 		if (cache != null) {
-			// for each chromosomes, we will set an GEInidividual
-			for(String genotype : cache.genotypes) {
+			int i = 0;
+			// for each individuals, we will set an GEInidividual
+			for(JSONObject ind : cache.individualsJSON) {
 				chromosome = new GEChromosome(cache.lenChromosomes);
 				chromosome.setMaxCodonValue(RDFMiner.parameters.maxValCodon);
 				chromosome.setMaxChromosomeLength(1000);
-				for(String integer : genotype.split(",")) chromosome.add(Integer.parseInt(integer));
-				chromosomes.add(chromosome);
+				for(String integer : ind.getString(IndividualJSON.GENOTYPE).split(",")) {
+					chromosome.add(Integer.parseInt(integer));
+				}
+				chromosomes.add(i, chromosome);
+				fitnessList.add(i, ind.getDouble(IndividualJSON.FITNESS));
+				i++;
 			}
 		} else {
 			logger.info("Buffer file does not exists, initializing chromosomes ...");
@@ -56,10 +65,14 @@ public class CandidatePopulation {
 		}
 		logger.info("Number of chromosomes created: " + chromosomes.size());
 		ArrayList<GEIndividual> population = new ArrayList<>(RDFMiner.parameters.populationSize);
-
-		for(GEChromosome chrom : chromosomes) {
+		for(int i=0; i<chromosomes.size(); i++) {
 			if (generator != null) {
-				individual = generator.getIndividualFromChromosome(chrom, curGeneration);
+				// init individual
+				individual = generator.getIndividualFromChromosome(chromosomes.get(i), curGeneration);
+				// set its fitness
+				if(cache != null) {
+					individual.setFitness(new BasicFitness(fitnessList.get(i), individual));
+				}
 				population.add(individual);
 			} else {
 				logger.error("Generator is null");

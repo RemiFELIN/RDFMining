@@ -437,9 +437,50 @@ public class Test {
         }
     }
 
+    public static void test() {
+        RDFMiner.parameters.initLenChromosome = 2;
+        RDFMiner.parameters.populationSize = 1;
+        Generator generator = null;
+        try {
+            generator = new RandomShapeGenerator("/user/rfelin/home/projects/RDFMining/IO/shacl-shapes-test.bnf");
+        } catch (URISyntaxException | IOException e) {
+            e.printStackTrace();
+        };
+        CandidatePopulation canPop = new CandidatePopulation(generator);
+        ArrayList<GEIndividual> population = canPop.initialize(null, 1);
+        GEIndividual individual = population.get(0);
+        System.out.println("individuals: " + individual.getChromosomes());
+        System.out.println("phenotype: " + individual.getPhenotype().getStringNoSpace());
+        System.out.println("0: " + individual.getChromosomes().get(0));
+        System.out.println("1: " + individual.getChromosomes().get(1));
+        System.out.println(individual.getDistinctPhenotypes());
+    }
+
+    public static void test2() {
+        RDFMiner.parameters.initLenChromosome = 2;
+        RDFMiner.parameters.populationSize = 1;
+        Generator generator = null;
+        try {
+            generator = new RandomShapeGenerator("/user/rfelin/home/projects/RDFMining/IO/shacl-shapes-test.bnf");
+        } catch (URISyntaxException | IOException e) {
+            e.printStackTrace();
+        };
+        GEChromosome chrom = new GEChromosome(2);
+        chrom.setMaxChromosomeLength(1000);
+        // 1000427925,1741643077,
+        // 1000427925,1620996495,
+        chrom.add(1000427925);
+        chrom.add(1620996495);
+        // a sh:NodeShape ; sh:targetClass <http://www.wikidata.org/entity/Q837783>  ;
+        // sh:property [  sh:path rdf:type ; sh:hasValue <http://www.wikidata.org/entity/Q5380903>  ;  ]
+        GEIndividual ind = generator.getIndividualFromChromosome(chrom, 1);
+        System.out.println(ind.getPhenotype().getStringNoSpace());
+    }
+
     public static void main(String[] args) {
+        test2();
 //        testSwapCrossover();
-        testSwapCrossoverOnRealData();
+//        testSwapCrossoverOnRealData();
 //        testSubtreeCrossover();
 //        testSelection();
 //        testSinglePointCrossoverOnRealPopulation();

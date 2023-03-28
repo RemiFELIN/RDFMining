@@ -48,7 +48,6 @@ public class Generation {
         // We have a set of threads to compute each tasks
         ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
         Set<Callable<ArrayList<Entity>>> entitiesCallables = new HashSet<>();
-        logger.info("The entities will be evaluated using the following SPARQL Endpoint : " + Global.TRAINING_SPARQL_ENDPOINT);
         logger.info("Performing crossover and mutation ...");
 //		List<Crowding> shapesToEvaluate = new ArrayList<>();
         int m = 0;
@@ -138,8 +137,6 @@ public class Generation {
             logger.debug("The last entity will be added directly on population");
             evaluatedIndividuals.add(selectedEntities.get(0));
         }
-        logger.info("Crossover & Mutation done");
-        logger.info(GrammaticalEvolution.nCrossover + " crossover and " + GrammaticalEvolution.nMutation + " mutation has been perform");
         logger.info(entitiesCallables.size() + " tasks ready to be launched !");
         // Submit tasks
         List<Future<ArrayList<Entity>>> futureEntities = new ArrayList<>();
@@ -166,6 +163,7 @@ public class Generation {
         }
         // Log how many axioms has been evaluated
         logger.info(evaluatedIndividuals.size() + " entities has been computed after crossover-mutation !");
+        logger.info(GrammaticalEvolution.nCrossover + " crossover and " + GrammaticalEvolution.nMutation + " mutation has been perform");
         if(GrammaticalEvolution.nBetterIndividual != 0) {
             logger.info(GrammaticalEvolution.nBetterIndividual + " better (or equivalent fitness) individuals has been found !");
         } else {

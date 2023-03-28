@@ -23,6 +23,8 @@ public class ExtendedShacl {
     public static void runWithEval(ShapesManager shapesManager) throws URISyntaxException, IOException {
         // launch evaluation
         CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, Global.PREFIXES);
+        // get the original number of triples into Corese triplestore
+        int originalNTriples = endpoint.countAllFromCoreseTripleStore();
         // Launch SHACL evaluation from the Corese server and get the result in turtle
         String report = endpoint.getValidationReportFromServer(shapesManager.content);
         endpoint.sendFileToServer(new File(RDFMiner.parameters.shapeFile), Global.SHACL_SHAPES_FILENAME);
@@ -45,22 +47,19 @@ public class ExtendedShacl {
         // perform STTL transformation
         STTL.perform(endpoint, Global.PROBABILISTIC_STTL_TEMPLATE, Global.PROBABILISTIC_STTL_RESULT_AS_HTML);
         // remove imported data
-        removeImportedData(endpoint);
+        removeImportedData(originalNTriples, endpoint);
     }
 
-    public static void runWithoutEval(String report, ShapesManager shapesManager) throws URISyntaxException, IOException {
+    public static void runWithoutEval(ValidationReport validationReport, ShapesManager shapesManager) throws URISyntaxException, IOException {
         CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, Global.PREFIXES);
+        // get the original number of triples into Corese triplestore
+        int originalNTriples = endpoint.countAllFromCoreseTripleStore();
+        logger.info("Original number of RDF triples into Corese triplestore: " + originalNTriples);
         // write shapes from population
         createShapesFile(shapesManager.content);
         endpoint.sendFileToServer(new File(Global.SHACL_SHAPES_FILENAME), Global.SHACL_SHAPES_FILENAME);
-        logger.info("Writting validation report in " + RDFMiner.outputFolder + Global.SHACL_VALIDATION_REPORT_FILENAME + " ...");
-        ValidationReport validationReport = new ValidationReport(report);
-        // write SHACL report in output file
-        FileWriter validationReportFw = new FileWriter(Global.SHACL_VALIDATION_REPORT_FILENAME);
-        validationReportFw.write(validationReport.prettifyPrint());
-        validationReportFw.close();
         // perform hypothesis testing
-        performHypothesisTesting(new ValidationReport(report), shapesManager);
+        performHypothesisTesting(validationReport, shapesManager);
         // send hypothesis result to Corese graph
         endpoint.sendFileToServer(new File(RDFMiner.outputFolder + Global.SHACL_HYPOTHESIS_TEST_FILENAME), Global.SHACL_HYPOTHESIS_TEST_FILENAME);
         endpoint.sendRDFDataToDB(endpoint.getFilePathFromServer(Global.SHACL_HYPOTHESIS_TEST_FILENAME));
@@ -70,10 +69,12 @@ public class ExtendedShacl {
         endpoint.sendRDFDataToDB(endpoint.getFilePathFromServer(Global.SHACL_VALIDATION_REPORT_FILENAME));
         // load shapes graph in corese DB
         endpoint.sendRDFDataToDB(endpoint.getFilePathFromServer(Global.SHACL_SHAPES_FILENAME));
+        // log number of RDF triples
+        logger.info("Observed number of RDF triples after process: " + endpoint.countAllFromCoreseTripleStore());
         // perform STTL transformation
         STTL.perform(endpoint, Global.PROBABILISTIC_STTL_TEMPLATE, Global.PROBABILISTIC_STTL_RESULT_AS_HTML);
         // remove imported data
-        removeImportedData(endpoint);
+        removeImportedData(originalNTriples, endpoint);
     }
 
     public static void performHypothesisTesting(ValidationReport validationReport, ShapesManager shapesManager) throws IOException {
@@ -83,7 +84,6 @@ public class ExtendedShacl {
         logger.info("Writting hypothesis test results in " + Global.SHACL_HYPOTHESIS_TEST_FILENAME);
         FileWriter hypothesisTestFw = new FileWriter(RDFMiner.outputFolder + Global.SHACL_HYPOTHESIS_TEST_FILENAME);
         hypothesisTestFw.write(Global.PREFIXES + "\n");
-        logger.info(validationReport.reportedShapes.size() + " shapes has been evaluated !");
         for(Shape shape : shapesManager.getPopulation()) {
             if(validationReport.reportedShapes.contains(shape.fullUri.replace("<", "").replace(">", ""))) {
                 // get shapes with metrics
@@ -98,16 +98,22 @@ public class ExtendedShacl {
         hypothesisTestFw.close();
     }
 
-    public static void removeImportedData(CoreseEndpoint endpoint) throws URISyntaxException, IOException {
-        logger.info("remove imported data ...");
+    public static void removeImportedData(int original, CoreseEndpoint endpoint) throws URISyntaxException, IOException {
+        logger.info("remove " + (endpoint.countAllFromCoreseTripleStore() - original) + " imported RDF triples into " +
+                "Corese triplestore");
         // reset Corese endpoint: remove shapes; SHACL val. report and hypothesis testing results
-        String constraints = "?x ?p ?o . FILTER( contains(str(?p), str(sh:)) || " +
+        String constraints = "?s ?p ?o . FILTER( contains(str(?p), str(sh:)) || " +
                 "contains(str(?p), str(psh:)) || contains(str(?o), str(sh:)) || contains(str(?o), str(psh:)) || " +
                 "contains(str(?p), str(ex:)) ) .";
-        String query = "DELETE { ?x ?p ?o . } WHERE { " + constraints + "}";
+        String query = Global.PREFIXES + "DELETE { ?s ?p ?o } WHERE { " + constraints + "}";
         // remove data in GET service
         endpoint.query(Format.JSON, query);
-        logger.info("Done !");
+        if(endpoint.countAllFromCoreseTripleStore() == original) {
+            logger.info("All imported data has been deleted");
+        } else {
+            logger.warn((endpoint.countAllFromCoreseTripleStore() - original) + " RDF triples has not been removed !");
+            logger.warn("It can lead to undesirable behaviors ...");
+        }
     }
 
     public static void createShapesFile(String shapes) throws IOException {

@@ -5,6 +5,7 @@ import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.entity.shacl.vocabulary.Shacl;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.ht.HypothesisTesting;
 import com.i3s.app.rdfminer.sparql.RequestBuilder;
@@ -237,14 +238,28 @@ public class Shape extends Entity {
      * {@link Axiom#necessity() necessity} values.
      */
     public double computeFitness() {
-        // compute a hypothesis testing
-        HypothesisTesting ht = new HypothesisTesting(this);
-//        System.out.println("is accepted? " + ht.isAccepted);
-        if(ht.isAccepted) {
-            return this.numConfirmations;
+        // test if the current shape is trivial or not
+        if(!isTrivial()) {
+            // compute a hypothesis testing
+            HypothesisTesting ht = new HypothesisTesting(this);
+            // if the ht gives a success
+            if(ht.isAccepted) {
+                return this.numConfirmations;
+            } else {
+                return this.numConfirmations * (this.likelihood.doubleValue() / ht.getMaxMassFunction());
+            }
         } else {
-            return this.numConfirmations * this.likelihood.doubleValue();
+            return 0;
         }
+    }
+
+    public boolean isTrivial() {
+        if(this.individual != null) {
+            GEChromosome chrom = this.individual.getChromosomes();
+            return chrom.size() == 2 &&
+                    (this.individual.getDistinctPhenotypes().size() == 1 || chrom.get(0) == chrom.get(1));
+        }
+        return false;
     }
 
     public static void main(String[] args) {

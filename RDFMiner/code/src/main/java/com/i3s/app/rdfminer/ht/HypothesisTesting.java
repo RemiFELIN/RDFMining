@@ -2,6 +2,7 @@ package com.i3s.app.rdfminer.ht;
 
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.shacl.Shape;
+import org.apache.commons.math3.distribution.BinomialDistribution;
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 
 public class HypothesisTesting {
@@ -13,9 +14,6 @@ public class HypothesisTesting {
     public HypothesisTesting(Shape shape) {
         this.shape = shape;
         this.X2 = null;
-//        System.out.println("refc= " + shape.referenceCardinality);
-//        System.out.println("numExc= " + shape.numExceptions);
-//        System.out.println("numConf= " + shape.numConfirmations);
         // X^2 computation
         double nExcTheo = shape.referenceCardinality * Double.parseDouble(RDFMiner.parameters.probShaclP);
         double nConfTheo = shape.referenceCardinality - nExcTheo;
@@ -33,7 +31,6 @@ public class HypothesisTesting {
             // rejected !
             this.isAccepted = false;
         }
-//        System.out.println("is accepted? " + isAccepted);
     }
 
     public String getAcceptanceTriple() {
@@ -46,5 +43,20 @@ public class HypothesisTesting {
 
     public Double getX2() {
         return X2;
+    }
+
+    public double getMaxMassFunction() {
+        BinomialDistribution bd = new BinomialDistribution(
+                this.shape.referenceCardinality,
+                Double.parseDouble(RDFMiner.parameters.probShaclP));
+        return bd.probability((int) Math.floor(bd.getNumericalMean()));
+    }
+
+    public static void main(String[] args) {
+        System.out.println((int) Math.floor(2.2));
+        System.out.println((int) Math.floor(2.9));
+        BinomialDistribution bd = new BinomialDistribution(310, 0.5);
+        System.out.println(bd.getNumericalMean());
+        System.out.println(bd.probability(155));
     }
 }

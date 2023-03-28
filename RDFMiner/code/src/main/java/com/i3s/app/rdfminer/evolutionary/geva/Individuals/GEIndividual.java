@@ -42,6 +42,10 @@ import com.i3s.app.rdfminer.evolutionary.geva.Mapper.GEGrammar;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Mapper;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * GEIndividual. Has a genotype, Phenotype and a GEGrammar.
@@ -307,6 +311,17 @@ public class GEIndividual extends AbstractIndividual {
             chromosome.add(Integer.parseInt(i));
         }
         return chromosome;
+    }
+
+    public ArrayList<String> getDistinctPhenotypes() {
+        Set<String> phenotypes = new HashSet<>();
+        // regex to catch every entities
+        Pattern pattern = Pattern.compile("<([^>]+)>");
+        Matcher matcher = pattern.matcher(this.phenotype.getStringNoSpace());
+        while (matcher.find()) {
+            phenotypes.add(matcher.group(1));
+        }
+        return new ArrayList<>(phenotypes);
     }
 
     /**

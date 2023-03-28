@@ -4,10 +4,8 @@ import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.sparql.RequestBuilder;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
@@ -18,10 +16,15 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Sparql endpoint to manage and request the Corese server
@@ -94,6 +97,12 @@ public class CoreseEndpoint {
         return RequestBuilder.select("*", sparql, this.timeout, true);// "\nSELECT * WHERE { " + sparql + " }";
     }
 
+    public String buildQuery(String basis, String sparql) {
+//        System.out.println("sparql: " + RequestBuilder.select("*", sparql, this.timeout, true));
+        return RequestBuilder.select(basis, sparql, this.timeout, true);// "\nSELECT * WHERE { " + sparql + " }";
+    }
+
+
     public boolean askFederatedQuery(String sparql) throws URISyntaxException, IOException {
         String request = RequestBuilder.ask(addFederatedQuery(sparql), true);// "\nASK WHERE { " + addFederatedQuery(sparql) + " }";
         String resultAsJSON = query(Format.JSON, request);
@@ -118,6 +127,28 @@ public class CoreseEndpoint {
     public int count(String sparql) throws URISyntaxException, IOException {
         // "SELECT (count(distinct ?x) as ?n) WHERE { " + sparql + " }"));
         String request = buildSelectAllQuery(addFederatedQuery(RequestBuilder.select("(count(distinct ?x) as ?n)", sparql, this.timeout, false)));
+        String resultAsJSON = query(Format.JSON, request);
+        if(resultAsJSON.contains("Read timed out") || resultAsJSON.contains("connect timed out")) {
+            // time out
+            // i.e. SocketTimeoutException from Corese server
+            return -1;
+        }
+        try {
+            return Integer.parseInt(Objects.requireNonNull(ResultParser.getResultsFromVariable("n", resultAsJSON)).get(0));
+        } catch (NullPointerException e) {
+            logger.error("Error during the counting ...");
+            logger.error("Result as JSON: " + resultAsJSON);
+        }
+        // return an error
+        return -1;
+    }
+
+    /**
+     * <i>SELECT (count(distinct ?x) as ?n) WHERE { ... }</i> in SERVICE clause
+     */
+    public int countAllFromCoreseTripleStore() throws URISyntaxException, IOException {
+        // "SELECT (count(distinct ?x) as ?n) WHERE { " + sparql + " }"));
+        String request = buildQuery("(count(*) as ?n)", "?s ?p ?o");
         String resultAsJSON = query(Format.JSON, request);
         if(resultAsJSON.contains("Read timed out") || resultAsJSON.contains("connect timed out")) {
             // time out
@@ -260,12 +291,12 @@ public class CoreseEndpoint {
                 ContentType.APPLICATION_FORM_URLENCODED);
         post.setEntity(entity);
         // launch service
-        logger.info("save " + datapath + " into Corese graph ...");
+//        logger.info("save " + datapath + " into Corese graph ...");
         HttpResponse response = httpClient.execute(post);
         if(response.getStatusLine().getStatusCode() != HttpURLConnection.HTTP_OK)
             logger.error("Error " + response.getStatusLine().getStatusCode() + " while loading " + datapath + " on server ...");
         else
-            logger.info("The RDF data file " + datapath + " has been loaded in Corese server !");
+            logger.info("A RDF data file has been loaded in Corese server !");
         return response.getStatusLine().getStatusCode();
     }
 

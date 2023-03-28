@@ -19,7 +19,7 @@ public class Statistics {
 		double sumFitness = 0;
 		for (Entity entity : entities) {
 			if(entity.individual.getFitness().getDouble() != 0) {
-				logger.debug("i: " + entity.individual.getGenotype() + " ~ F(i)= " + entity.individual.getFitness().getDouble());
+//				logger.debug("i: " + entity.individual.getGenotype() + " ~ F(i)= " + entity.individual.getFitness().getDouble());
 				sumFitness += entity.individual.getFitness().getDouble();
 			}
 		}

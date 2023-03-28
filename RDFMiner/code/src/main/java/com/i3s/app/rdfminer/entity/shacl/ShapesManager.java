@@ -81,9 +81,6 @@ public class ShapesManager {
         Shape s = new Shape(individual);
         population.add(s);
         this.content += s + "\n";
-        // set the file content to evaluate this SHACL Shapes on server
-//        this.path = editShapesTmpFile(this.population);
-//        logger.info(population.size() + " SHACL Shapes ready to be evaluated !");
     }
 
     public void fillPopulation(Model model) {
@@ -151,7 +148,6 @@ public class ShapesManager {
                 this.population.add(new Shape(entity.individual));
             }
         }
-//        logger.info(population.size() + " distinct SHACL shapes ready to be evaluated !");
         // set whole content
         setContent();
     }
@@ -166,30 +162,5 @@ public class ShapesManager {
             logger.warn("Population is empty !");
         }
     }
-
-//    public File getFile() {
-//        logger.info("Path: " + this.path);
-//        return this.path.toFile();
-//    }
-
-//    public Path editShapesTmpFile(ArrayList<Shape> population) throws IOException {
-//        Path tmpPath = Files.createTempFile(Paths.get(Global.HOME), "shapes", ".ttl");
-//        // edit this file
-//        FileWriter fw = new FileWriter(tmpPath.toFile());
-//        // edit turtle file which will contains shapes
-//        // set prefixes
-//        fw.write(Global.PREFIXES);
-//        for(Shape shape : population) {
-//            logger.info(shape.content);
-//            // write phenotype individuals
-//            fw.write(shape.content);
-//        }
-//        fw.close();
-//        return tmpPath;
-//    }
-
-//    public static void main(String[] args) {
-//        ShapesManager man = new ShapesManager(Path.of("/user/rfelin/home/projects/RDFMining/IO/shapes_to_evaluate.txt"));
-//    }
 
 }

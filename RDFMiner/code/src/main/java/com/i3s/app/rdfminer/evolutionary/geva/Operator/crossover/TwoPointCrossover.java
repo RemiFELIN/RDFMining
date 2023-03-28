@@ -138,8 +138,7 @@ public class TwoPointCrossover extends CrossoverOperation {
 	public void doOperation(List<GEIndividual> operands) {
 		GEIndividual p1, p2;
 		GEChromosome chrom1, chrom2;
-		int p1maxXOPoint = 0;
-		int p2maxXOPoint = 0;
+		int p1maxXOPoint, p2maxXOPoint;
 		if (this.rand.nextDouble() < this.probability) {
 			// increase crossover counter
 			GrammaticalEvolution.nCrossover++;

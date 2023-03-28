@@ -14,9 +14,11 @@ import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.generator.shacl.RandomShapeGenerator;
 import com.i3s.app.rdfminer.output.Cache;
+import com.i3s.app.rdfminer.output.IndividualJSON;
 import com.i3s.app.rdfminer.output.Results;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -96,12 +98,16 @@ public class GrammaticalEvolution {
         logger.info("TYPE MUTATION: " + TypeMutation.getLabel(parameters.typeMutation));
         logger.info("MUTATION PROBABILITY: " + parameters.proMutation);
         logger.info("========================================================");
-        if(parameters.checkpoint != 1)
-            logger.info("# CHECKPOINT: " + parameters.checkpoint);
+        logger.info("TARGET SPARQL ENDPOINT: " + Global.TARGET_SPARQL_ENDPOINT);
+        logger.info("TRAINING SPARQL ENDPOINT: " + Global.TRAINING_SPARQL_ENDPOINT);
         logger.info("SPARQL TIMEOUT: " + (parameters.sparqlTimeOut == 0 ? "Not used" : parameters.sparqlTimeOut + " ms."));
         logger.info("TIME-CAP: " + (parameters.timeCap == 0 ? "Not used" : parameters.timeCap + " min."));
         logger.info("NUMBER OF THREAD(S) USED: " + Global.NB_THREADS);
         logger.info("========================================================");
+        if(parameters.checkpoint != 1) {
+            logger.info("# CHECKPOINT: " + parameters.checkpoint);
+            logger.info("========================================================");
+        }
 
 //        GEChromosome[] chromosomes = new GEChromosome[parameters.populationSize];
         ArrayList<GEIndividual> candidatePopulation;
@@ -151,12 +157,14 @@ public class GrammaticalEvolution {
 
     public static void editCache(String cachePath, ArrayList<Entity> entities, int curGeneration, int curCheckpoint) throws IOException {
         PrintWriter writer = new PrintWriter(cachePath, StandardCharsets.UTF_8);
-        ArrayList<String> genotypes = new ArrayList<>();
+        ArrayList<JSONObject> individualsJSON = new ArrayList<>();
         for(Entity entity : entities) {
             // fix chromosome content
-            genotypes.add(entity.individual.getGenotype().get(0).toString().replace("Chromosome Contents: ", ""));
+            String genotype = entity.individual.getGenotype().get(0).toString().replace("Chromosome Contents: ", "");
+            double fitness = entity.individual.getFitness().getDouble();
+            individualsJSON.add(new IndividualJSON(genotype, fitness).toJSON());
         }
-        Cache cache = new Cache(curGeneration, curCheckpoint, RDFMiner.parameters.initLenChromosome, genotypes);
+        Cache cache = new Cache(curGeneration, curCheckpoint, RDFMiner.parameters.initLenChromosome, individualsJSON);
         writer.println(cache.toJSON().toString(2));
         writer.close();
     }

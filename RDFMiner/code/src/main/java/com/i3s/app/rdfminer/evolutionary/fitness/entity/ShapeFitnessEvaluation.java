@@ -51,9 +51,10 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
 //                fit.getIndividual().setValid(true);
 //                shape.setFitness(fit);
                 newPopulation.add(shape);
-                if(shape.individual.getFitness().getDouble() != 0)
-                    logger.debug("i: " + shape.individual.getGenotype() + " ~ F(i)= " + shape.individual.getFitness().getDouble());
+//                if(shape.individual.getFitness().getDouble() != 0)
+//                    logger.debug("i: " + shape.individual.getGenotype() + " ~ F(i)= " + shape.individual.getFitness().getDouble());
             }
+            logger.info("Done");
             // return new population
             return newPopulation;
         } catch (IOException e) {
@@ -100,7 +101,7 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
             fw.write(validationReport.prettifyPrint());
             fw.close();
             // run extended shacl
-            ExtendedShacl.runWithoutEval(report, shapesManager);
+            ExtendedShacl.runWithoutEval(validationReport, shapesManager);
             // return new population
             return newPop;
         } catch (IOException e) {
@@ -140,8 +141,6 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
 //            logger.debug("refCard: " + shape.referenceCardinality);
 //            logger.debug("numConf: " + shape.numConfirmations);
 //            logger.debug("fitness: " + shape.individual.getFitness().getDouble());
-//            if(shape.individual.getFitness().getDouble() != 0)
-//                logger.debug("new(i): " + shape.individual.getGenotype() + " ~ F(i)= " + shape.individual.getFitness().getDouble());
             return shape;
         } catch (IOException e) {
             logger.error("I/O exceptions while evaluating SHACL Shapes ...");
@@ -175,16 +174,9 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
         GEChromosome chrom = new GEChromosome(2);
         chrom.setMaxCodonValue(RDFMiner.parameters.maxValCodon);
         chrom.setMaxChromosomeLength(1000);
-        chrom.add(1030584807);
-        chrom.add(1030584807);
+        chrom.add(537439393);
+        chrom.add(537439393);
         GEIndividual individual = generator.getIndividualFromChromosome(chrom, 1);
-        System.out.println("test new GEIndividual for genotype:");
-        System.out.println("original: " + individual.getGenotype());
-        System.out.println("new: " + new GEIndividual(individual).getGenotype());
-        System.out.println("new: " + new GEIndividual(individual).getGenotype());
-        System.out.println("new: " + new GEIndividual(individual).getGenotype());
-        System.out.println("new: " + new GEIndividual(individual).getGenotype());
-        System.out.println("new: " + new GEIndividual(individual).getGenotype());
         ShapesManager shapesManager1 = new ShapesManager(new ArrayList<>(List.of(individual)));
         CoreseEndpoint endpoint1 = new CoreseEndpoint(Global.CORESE_IP, Global.PREFIXES);
 //        System.out.println(shapesManager1.content);
@@ -201,6 +193,7 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
         logger.debug("shape.genotype: " +  shape.individual.getGenotype().toString());
         logger.debug("fitness: " + individual.getFitness().getDouble());
         logger.debug("shape.fitness: " + shape.individual.getFitness().getDouble());
+        logger.debug("is trivial ? " + shape.isTrivial());
     }
 
 }
