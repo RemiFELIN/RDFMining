@@ -85,7 +85,19 @@ function sh:pathcore(report, sh, vis, nodeList, present) {
     # sh:log("core.rq", "sh:pathcore", "start...");
     let (res = true, cstList = sh:getShapeConstraint(sh:pathcore, sh)) {
         if (sh:trace(), xt:print("core path:", sh, cstList, present), true);
+        # sh:log("core.rq", "sh:pathcore", concat("size(cstList): ", xt:size(cstList)));
+        if (extended) { # && !isComplexShape && xt:size(cstList)) {
+            if(xt:size(cstList) > 1 && !isComplexShape) {
+                # update shape complexity status
+                set(isComplexShape = true);
+                # multiply the number of triples considered by 
+                # the number of sh:property from shapes (= #triples tested !)
+                set(referenceCardinality = referenceCardinality * xt:size(cstList));
+                sh:log("core.rq", "sh:pathcore", concat("referenceCardinality= ", referenceCardinality));
+            }
+        } ;
         for ((cst path) in cstList) {
+            # sh:log("core.rq", "sh:pathcore", concat("cst: ", cst, " and path: ", path));
             if (sh:trace(), xt:print("core path:", sh, nodeList), true); 
             let (suc = coalesce(sh:path(report, cst, vis, nodeList, path, present), false)) {
                 if (suc, true, set(res = false))
