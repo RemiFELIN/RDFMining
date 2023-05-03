@@ -28,6 +28,7 @@ function sh:core(report, sh, vis, nodeList, present) {
         for (node in dt:list(nodeList)) {
             if (sh:contains(sh, node)) {}
             else {
+                # sh:log("core.rq", "sh:core", concat("xt:size(nodeList)=", xt:size(nodeList)));
                 # sh:log("core.rq", "sh:core", concat(node," ~> ",sh));
                 # push the node on the stack
                 sh:push(sh, node);
@@ -86,16 +87,16 @@ function sh:pathcore(report, sh, vis, nodeList, present) {
     let (res = true, cstList = sh:getShapeConstraint(sh:pathcore, sh)) {
         if (sh:trace(), xt:print("core path:", sh, cstList, present), true);
         # sh:log("core.rq", "sh:pathcore", concat("size(cstList): ", xt:size(cstList)));
-        if (extended) { # && !isComplexShape && xt:size(cstList)) {
-            if(xt:size(cstList) > 1 && !isComplexShape) {
-                # update shape complexity status
-                set(isComplexShape = true);
-                # multiply the number of triples considered by 
-                # the number of sh:property from shapes (= #triples tested !)
-                set(referenceCardinality = referenceCardinality * xt:size(cstList));
-                sh:log("core.rq", "sh:pathcore", concat("referenceCardinality= ", referenceCardinality));
-            }
-        } ;
+        # if (extended) { # && !isComplexShape && xt:size(cstList)) {
+        #     if(xt:size(cstList) > 1 && !isComplexShape) {
+        #         # update shape complexity status
+        #         set(isComplexShape = true);
+        #         # multiply the number of triples considered by 
+        #         # the number of sh:property from shapes (= #triples tested !)
+        #         set(referenceCardinality = referenceCardinality * xt:size(cstList));
+        #         sh:log("core.rq", "sh:pathcore", concat("referenceCardinality= ", referenceCardinality));
+        #     }
+        # } ;
         for ((cst path) in cstList) {
             # sh:log("core.rq", "sh:pathcore", concat("cst: ", cst, " and path: ", path));
             if (sh:trace(), xt:print("core path:", sh, nodeList), true); 

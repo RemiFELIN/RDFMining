@@ -32,9 +32,9 @@ function xsd:boolean sh:report(report, subReport, name, sh, cst, s, p, o, suc, v
     # sh:log("report.rq", "sh:report", "start...");
     sh:record(name,  sh, cst, sh:shaclGraph(), s, p, o, suc, vis);
     # increase reference cardinality 
-    # if(extended == true) {
-    #     set(referenceCardinality = referenceCardinality + 1);
-    # } ;
+    if(extended == true) {
+        set(referenceCardinality = referenceCardinality + 1);
+    } ;
     if (vis && ! suc) { 
         sh:visit(name, s, suc) ;
         # sh:log("report.rq", "sh:report", "fill the report ...");

@@ -214,14 +214,14 @@ public class Shape extends Entity {
 //    }
 
     public void fillParamFromReport(ValidationReport report) {
-        String key = this.fullUri.replace("<", "").replace(">", "");
-        this.referenceCardinality = report.referenceCardinalityByShape.get(key).intValue();
-        this.numConfirmations = report.numConfirmationsByShape.get(key).intValue();
-        this.numExceptions = report.numExceptionsByShape.get(key).intValue();
-        this.likelihood = report.likelihoodByShape.get(key);
+//        System.out.println(fullUri);
+        this.referenceCardinality = report.referenceCardinalityByShape.get(this.fullUri).intValue();
+        this.numConfirmations = report.numConfirmationsByShape.get(this.fullUri).intValue();
+        this.numExceptions = report.numExceptionsByShape.get(this.fullUri).intValue();
+        this.likelihood = report.likelihoodByShape.get(this.fullUri);
 //        this.generality = report.generalityByShape.get(parsedUri);
-        if(report.exceptionsByShape.get(key) != null) {
-            this.exceptions = new ArrayList<>(report.exceptionsByShape.get(key));
+        if(report.exceptionsByShape.get(this.fullUri) != null) {
+            this.exceptions = new ArrayList<>(report.exceptionsByShape.get(this.fullUri));
         }
         if(this.individual != null) {
             this.individual.setFitness(new BasicFitness(computeFitness(), this.individual));
