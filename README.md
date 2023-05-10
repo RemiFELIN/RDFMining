@@ -1,4 +1,4 @@
-# ISWC Conference - ShaMPA: Shapes Mining using a Probabilistic Assessment
+# ISWC Conference - Probabilistic SHACL Shape Mining Using Evolutionary Algorithms
 
 ## Requirements
 
@@ -19,12 +19,17 @@
 1. Clone this repository
 2. Execute the *install* shell file such as: ```cd install && ./install.sh```
 > It will take some time !
-3. Once the build phase is completed, we need to create and start **rdfminer** service : ```sudo docker-compose up -d rdfminer```
-> You can check if it's correctly launched with the following command : ```sudo docker-compose ps```
+<!-- 3. Once the build phase is completed, we need to create and start **rdfminer** service : ```sudo docker-compose up -d rdfminer```
+> You can check if it's correctly launched with the following command : ```sudo docker-compose ps``` -->
+
 ## How to launch experiments (on Linux/MAC)
 
-4. Put all the files you need (containing SHACL Shapes) in the **/IO** folder.
+### On CovidOnTheWeb dataset
+
+4. Put *covidontheweb_data.ttl* (stored in **datasets/**) in the **Corese/data/** folder.
 5. Launch the following script : ```cd experiments & sudo ./run.sh```
+
+### On SURE-KG dataset
 
 ## CovidOnTheWeb dataset
 

@@ -1,1 +1,0 @@
-SPARQL select count(*) from <http://dbpedia.org> where { ?s ?p ?o };
