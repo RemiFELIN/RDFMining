@@ -1,0 +1,1246 @@
+@prefix psh: <http://ns.inria.fr/probabilistic-shacl/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix xsh: <http://www.w3.org/ns/shacl#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+<urn:uuid:baf76819-13e6-454f-bfcc-dd0871fc3235> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Mer_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#31157278> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Village> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#31157278> ;
+sh:value <https://ns.inria.fr/sure#Mer_06018> .
+
+<urn:uuid:630bc709-3207-434f-9a41-09a598d25473> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Commodites_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#149733901> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Ecoles> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#149733901> ;
+sh:value <https://ns.inria.fr/sure#Commodites_06018> .
+
+<urn:uuid:f6360e0a-f344-4ca8-bf40-59c0e10a694b> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Autoroute_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#149733901> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Ecoles> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#149733901> ;
+sh:value <https://ns.inria.fr/sure#Autoroute_06018> .
+
+<urn:uuid:f445de93-f615-4e58-8d52-51e599e4796d> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Mer_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#149733901> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Ecoles> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#149733901> ;
+sh:value <https://ns.inria.fr/sure#Mer_06018> .
+
+<urn:uuid:85825ddd-b1f5-4a1e-8cd3-153d5eb5ee47> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Ecoles_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#31157278> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Village> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#31157278> ;
+sh:value <https://ns.inria.fr/sure#Ecoles_06018> .
+
+<urn:uuid:9f59fe39-f158-4d0e-bb54-b4bfef3e0f56> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Commodites_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#31157278> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Village> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#31157278> ;
+sh:value <https://ns.inria.fr/sure#Commodites_06018> .
+
+<urn:uuid:86f64d91-ea4f-4265-925e-5a45e75186a9> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Montagnes_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#31157278> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Village> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#31157278> ;
+sh:value <https://ns.inria.fr/sure#Montagnes_06018> .
+
+<urn:uuid:e989eec8-6527-4aa9-8be7-06adb2ba6833> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Collines_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#149733901> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Ecoles> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#149733901> ;
+sh:value <https://ns.inria.fr/sure#Collines_06018> .
+
+<urn:uuid:6489bbc5-8eb8-4173-b5f2-3af03a22bb0d> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Collines_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#31157278> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Village> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#31157278> ;
+sh:value <https://ns.inria.fr/sure#Collines_06018> .
+
+<urn:uuid:4507800b-0b66-49e4-b25d-8bf9215caa14> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Golf_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#149733901> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Ecoles> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#149733901> ;
+sh:value <https://ns.inria.fr/sure#Golf_06018> .
+
+<urn:uuid:17fc309e-5aec-40c3-9204-be8f2d3b2ef0> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Golf_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#31157278> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Village> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#31157278> ;
+sh:value <https://ns.inria.fr/sure#Golf_06018> .
+
+<urn:uuid:4b3b3682-440e-487b-8326-e483cffc5dfe> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Ecoles_Internationales_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#149733901> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Ecoles> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#149733901> ;
+sh:value <https://ns.inria.fr/sure#Ecoles_Internationales_06018> .
+
+<urn:uuid:ee925a90-c972-459a-b408-b421b46a0106> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Commerces_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#31157278> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Village> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#31157278> ;
+sh:value <https://ns.inria.fr/sure#Commerces_06018> .
+
+<urn:uuid:0253c987-0a74-4f49-ac61-3a27c762209f> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Transports_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#31157278> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Village> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#31157278> ;
+sh:value <https://ns.inria.fr/sure#Transports_06018> .
+
+<urn:uuid:e8e160c6-dd34-4749-a01a-5237aa51b792> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Village_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#149733901> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Ecoles> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#149733901> ;
+sh:value <https://ns.inria.fr/sure#Village_06018> .
+
+<urn:uuid:93ce84ad-1654-4a77-91c7-89f302259ef2> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Sophia_Antipolis_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#149733901> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Ecoles> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#149733901> ;
+sh:value <https://ns.inria.fr/sure#Sophia_Antipolis_06018> .
+
+<urn:uuid:2f3fcd37-f60e-4517-996c-de693871d46a> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Montagnes_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#149733901> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Ecoles> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#149733901> ;
+sh:value <https://ns.inria.fr/sure#Montagnes_06018> .
+
+<urn:uuid:04a84fdf-138f-47b0-a466-10a3b95c359a> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Sophia_Antipolis_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#31157278> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Village> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#31157278> ;
+sh:value <https://ns.inria.fr/sure#Sophia_Antipolis_06018> .
+
+<urn:uuid:0a99d953-146e-49b4-9311-54ea0a443eb2> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Transports_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#149733901> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Ecoles> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#149733901> ;
+sh:value <https://ns.inria.fr/sure#Transports_06018> .
+
+<urn:uuid:9c9fadf7-ccb7-4d62-8ef1-e6839f77f169> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Village_Biot_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#149733901> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Ecoles> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#149733901> ;
+sh:value <https://ns.inria.fr/sure#Village_Biot_06018> .
+
+<urn:uuid:bf871242-74c7-4f9c-ae90-90e5c3ae1b29> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Commerces_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#149733901> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Ecoles> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#149733901> ;
+sh:value <https://ns.inria.fr/sure#Commerces_06018> .
+
+<urn:uuid:e1f9efa7-5385-433e-9c1d-6dad63a1a653> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Autoroute_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#31157278> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Village> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#31157278> ;
+sh:value <https://ns.inria.fr/sure#Autoroute_06018> .
+
+<urn:uuid:8332b892-dc19-4eb0-9b02-88477de533fa> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Ecoles_Internationales_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#31157278> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Village> ;\n  sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#31157278> ;
+sh:value <https://ns.inria.fr/sure#Ecoles_Internationales_06018> .
+
+_:bb89105992 psh:focusShape <http://www.example.com/myDataGraph#261072318> ;
+psh:generality "0.010412437608960427"^^xsd:decimal ;
+psh:likelihood "1.0234286396942765E-25"^^xsd:double ;
+psh:numConfirmation 436 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 436 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89105991 psh:focusShape <http://www.example.com/myDataGraph#257985269> ;
+psh:generality "0.04938743342965634"^^xsd:decimal ;
+psh:likelihood "1.1911082570575754E-114"^^xsd:double ;
+psh:numConfirmation 2068 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2068 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89103793 psh:focusShape <http://www.example.com/myDataGraph#236528367> ;
+psh:generality "0.013684235664986985"^^xsd:decimal ;
+psh:likelihood "3.261598488551098E-33"^^xsd:double ;
+psh:numConfirmation 573 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 573 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89086859 psh:focusShape <http://www.example.com/myDataGraph#173714098> ;
+psh:generality "0.0068779404389463375"^^xsd:decimal ;
+psh:likelihood "1.3631777287756683E-17"^^xsd:double ;
+psh:numConfirmation 288 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 288 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89066425 psh:focusShape <http://www.example.com/myDataGraph#10149863> ;
+psh:generality "0.00004776347527046068"^^xsd:decimal ;
+psh:likelihood "0.6400000000000001"^^xsd:double ;
+psh:numConfirmation 2 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89085264 psh:focusShape <http://www.example.com/myDataGraph#141529884> ;
+psh:generality "0.07109593294008072"^^xsd:decimal ;
+psh:likelihood "4.468138009617449E-164"^^xsd:double ;
+psh:numConfirmation 2977 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2977 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89058630 psh:summary _:bb89066425 ;
+psh:summary _:bb89066785 ;
+psh:summary _:bb89066786 ;
+psh:summary _:bb89066787 ;
+psh:summary _:bb89067365 ;
+psh:summary _:bb89067366 ;
+psh:summary _:bb89067373 ;
+psh:summary _:bb89067374 ;
+psh:summary _:bb89067375 ;
+psh:summary _:bb89070353 ;
+psh:summary _:bb89070931 ;
+psh:summary _:bb89070932 ;
+psh:summary _:bb89070933 ;
+psh:summary _:bb89071511 ;
+psh:summary _:bb89071512 ;
+psh:summary _:bb89074490 ;
+psh:summary _:bb89074491 ;
+psh:summary _:bb89077469 ;
+psh:summary _:bb89085264 ;
+psh:summary _:bb89085624 ;
+psh:summary _:bb89085625 ;
+psh:summary _:bb89085626 ;
+psh:summary _:bb89085628 ;
+psh:summary _:bb89085629 ;
+psh:summary _:bb89085797 ;
+psh:summary _:bb89085798 ;
+psh:summary _:bb89085799 ;
+psh:summary _:bb89085800 ;
+psh:summary _:bb89085801 ;
+psh:summary _:bb89086379 ;
+psh:summary _:bb89086569 ;
+psh:summary _:bb89086570 ;
+psh:summary _:bb89086859 ;
+psh:summary _:bb89086860 ;
+psh:summary _:bb89086894 ;
+psh:summary _:bb89089872 ;
+psh:summary _:bb89089873 ;
+psh:summary _:bb89089874 ;
+psh:summary _:bb89089875 ;
+psh:summary _:bb89090453 ;
+psh:summary _:bb89090487 ;
+psh:summary _:bb89090488 ;
+psh:summary _:bb89091066 ;
+psh:summary _:bb89091217 ;
+psh:summary _:bb89091825 ;
+psh:summary _:bb89092403 ;
+psh:summary _:bb89092404 ;
+psh:summary _:bb89092405 ;
+psh:summary _:bb89092406 ;
+psh:summary _:bb89092984 ;
+psh:summary _:bb89092985 ;
+psh:summary _:bb89095963 ;
+psh:summary _:bb89096541 ;
+psh:summary _:bb89099519 ;
+psh:summary _:bb89100097 ;
+psh:summary _:bb89100675 ;
+psh:summary _:bb89101283 ;
+psh:summary _:bb89101861 ;
+psh:summary _:bb89102029 ;
+psh:summary _:bb89102030 ;
+psh:summary _:bb89102638 ;
+psh:summary _:bb89102639 ;
+psh:summary _:bb89102640 ;
+psh:summary _:bb89102641 ;
+psh:summary _:bb89103219 ;
+psh:summary _:bb89103793 ;
+psh:summary _:bb89103836 ;
+psh:summary _:bb89104444 ;
+psh:summary _:bb89104445 ;
+psh:summary _:bb89104446 ;
+psh:summary _:bb89105024 ;
+psh:summary _:bb89105413 ;
+psh:summary _:bb89105991 ;
+psh:summary _:bb89105992 ;
+psh:summary _:bb89106479 ;
+psh:summary _:bb89106480 ;
+psh:summary _:bb89106481 ;
+psh:summary _:bb89106483 ;
+psh:summary _:bb89106484 ;
+psh:summary _:bb89106485 ;
+psh:summary _:bb89106486 ;
+psh:summary _:bb89106487 ;
+psh:summary _:bb89106488 ;
+psh:summary _:bb89106489 ;
+psh:summary _:bb89106490 ;
+psh:summary _:bb89107068 ;
+psh:summary _:bb89107069 ;
+psh:summary _:bb89110047 ;
+psh:summary _:bb89110048 ;
+psh:summary _:bb89110066 ;
+psh:summary _:bb89110067 ;
+psh:summary _:bb89110068 ;
+psh:summary _:bb89110070 ;
+psh:summary _:bb89110071 ;
+psh:summary _:bb89117866 ;
+psh:summary _:bb89117867 ;
+psh:summary _:bb89117868 ;
+psh:summary _:bb89117869 ;
+psh:summary _:bb89117870 ;
+psh:summary _:bb89125665 ;
+psh:summary _:bb89125666 ;
+psh:summary _:bb89125667 ;
+psh:summary _:bb89125701 ;
+psh:summary _:bb89126309 ;
+psh:summary _:bb89126310 ;
+psh:summary _:bb89129288 ;
+psh:summary _:bb89129289 ;
+psh:summary _:bb89129290 ;
+psh:summary _:bb89129291 ;
+psh:summary _:bb89129334 ;
+psh:summary _:bb89129694 ;
+psh:summary _:bb89129695 ;
+rdf:type sh:ValidationReport ;
+sh:conforms false ;
+sh:result <urn:uuid:e8e160c6-dd34-4749-a01a-5237aa51b792> ;
+sh:result <urn:uuid:bf871242-74c7-4f9c-ae90-90e5c3ae1b29> ;
+sh:result <urn:uuid:4507800b-0b66-49e4-b25d-8bf9215caa14> ;
+sh:result <urn:uuid:9c9fadf7-ccb7-4d62-8ef1-e6839f77f169> ;
+sh:result <urn:uuid:4b3b3682-440e-487b-8326-e483cffc5dfe> ;
+sh:result <urn:uuid:0a99d953-146e-49b4-9311-54ea0a443eb2> ;
+sh:result <urn:uuid:f445de93-f615-4e58-8d52-51e599e4796d> ;
+sh:result <urn:uuid:630bc709-3207-434f-9a41-09a598d25473> ;
+sh:result <urn:uuid:93ce84ad-1654-4a77-91c7-89f302259ef2> ;
+sh:result <urn:uuid:f6360e0a-f344-4ca8-bf40-59c0e10a694b> ;
+sh:result <urn:uuid:e989eec8-6527-4aa9-8be7-06adb2ba6833> ;
+sh:result <urn:uuid:2f3fcd37-f60e-4517-996c-de693871d46a> ;
+sh:result <urn:uuid:ee925a90-c972-459a-b408-b421b46a0106> ;
+sh:result <urn:uuid:85825ddd-b1f5-4a1e-8cd3-153d5eb5ee47> ;
+sh:result <urn:uuid:17fc309e-5aec-40c3-9204-be8f2d3b2ef0> ;
+sh:result <urn:uuid:8332b892-dc19-4eb0-9b02-88477de533fa> ;
+sh:result <urn:uuid:0253c987-0a74-4f49-ac61-3a27c762209f> ;
+sh:result <urn:uuid:baf76819-13e6-454f-bfcc-dd0871fc3235> ;
+sh:result <urn:uuid:9f59fe39-f158-4d0e-bb54-b4bfef3e0f56> ;
+sh:result <urn:uuid:04a84fdf-138f-47b0-a466-10a3b95c359a> ;
+sh:result <urn:uuid:e1f9efa7-5385-433e-9c1d-6dad63a1a653> ;
+sh:result <urn:uuid:6489bbc5-8eb8-4173-b5f2-3af03a22bb0d> ;
+sh:result <urn:uuid:86f64d91-ea4f-4265-925e-5a45e75186a9> .
+
+_:bb89129289 psh:focusShape <http://www.example.com/myDataGraph#91739654> ;
+psh:generality "0.007307811716380484"^^xsd:decimal ;
+psh:likelihood "1.393880134045174E-18"^^xsd:double ;
+psh:numConfirmation 306 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 306 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89129288 psh:focusShape <http://www.example.com/myDataGraph#8919877> ;
+psh:generality "0.07109593294008072"^^xsd:decimal ;
+psh:likelihood "4.468138009617449E-164"^^xsd:double ;
+psh:numConfirmation 2977 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2977 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89096541 psh:focusShape <http://www.example.com/myDataGraph#216682566> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89100097 psh:focusShape <http://www.example.com/myDataGraph#222408832> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89126310 psh:focusShape <http://www.example.com/myDataGraph#86264254> ;
+psh:generality "0.00002388173763523034"^^xsd:decimal ;
+psh:likelihood "0.8"^^xsd:double ;
+psh:numConfirmation 1 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 1 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89125701 psh:focusShape <http://www.example.com/myDataGraph#83912842> ;
+psh:generality "0.0007880973419626012"^^xsd:decimal ;
+psh:likelihood "0.0028062629772804336"^^xsd:double ;
+psh:numConfirmation 33 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 33 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89125667 psh:focusShape <http://www.example.com/myDataGraph#83243039> ;
+psh:generality "0.00140902252047859"^^xsd:decimal ;
+psh:likelihood "8.137711041899807E-5"^^xsd:double ;
+psh:numConfirmation 59 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 59 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89125666 psh:focusShape <http://www.example.com/myDataGraph#82610293> ;
+psh:generality "0.013588708714446063"^^xsd:decimal ;
+psh:likelihood "5.396335167107897E-33"^^xsd:double ;
+psh:numConfirmation 569 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 569 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89077469 psh:focusShape <http://www.example.com/myDataGraph#140348224> ;
+psh:generality "0.07109593294008072"^^xsd:decimal ;
+psh:likelihood "4.468138009617449E-164"^^xsd:double ;
+psh:numConfirmation 2977 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2977 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89125665 psh:focusShape <http://www.example.com/myDataGraph#82177549> ;
+psh:generality "0.011630406228357175"^^xsd:decimal ;
+psh:likelihood "1.6497153220916834E-28"^^xsd:double ;
+psh:numConfirmation 487 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 487 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89102030 psh:focusShape <http://www.example.com/myDataGraph#22957317> ;
+psh:generality "0.017362023260812456"^^xsd:decimal ;
+psh:likelihood "1.2634900497397536E-41"^^xsd:double ;
+psh:numConfirmation 727 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 727 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89106490 psh:focusShape <http://www.example.com/myDataGraph#49636214> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89091825 psh:focusShape <http://www.example.com/myDataGraph#191827063> ;
+psh:generality "0.0004059895397989158"^^xsd:decimal ;
+psh:likelihood "0.022517998136852502"^^xsd:double ;
+psh:numConfirmation 17 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 17 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89092985 psh:focusShape <http://www.example.com/myDataGraph#215859668> ;
+psh:generality "0.011534879277816254"^^xsd:decimal ;
+psh:likelihood "2.731160131922458E-28"^^xsd:double ;
+psh:numConfirmation 483 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 483 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89092984 psh:focusShape <http://www.example.com/myDataGraph#214717152> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89070353 psh:focusShape <http://www.example.com/myDataGraph#126844916> ;
+psh:generality "0.07109593294008072"^^xsd:decimal ;
+psh:likelihood "4.468138009617449E-164"^^xsd:double ;
+psh:numConfirmation 2977 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2977 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89117870 psh:focusShape <http://www.example.com/myDataGraph#7540906> ;
+psh:generality "0.013588708714446063"^^xsd:decimal ;
+psh:likelihood "5.396335167107897E-33"^^xsd:double ;
+psh:numConfirmation 569 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 569 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89126309 psh:focusShape <http://www.example.com/myDataGraph#84817117> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89067375 psh:focusShape <http://www.example.com/myDataGraph#126265617> ;
+psh:generality "0.010412437608960427"^^xsd:decimal ;
+psh:likelihood "1.0234286396942765E-25"^^xsd:double ;
+psh:numConfirmation 436 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 436 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89067374 psh:focusShape <http://www.example.com/myDataGraph#122403944> ;
+psh:generality "0.00016717216344661238"^^xsd:decimal ;
+psh:likelihood "0.20971520000000007"^^xsd:double ;
+psh:numConfirmation 7 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 7 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89101283 psh:focusShape <http://www.example.com/myDataGraph#225427981> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89067373 psh:focusShape <http://www.example.com/myDataGraph#118737447> ;
+psh:generality "0.00014329042581138202"^^xsd:decimal ;
+psh:likelihood "0.2621440000000001"^^xsd:double ;
+psh:numConfirmation 6 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 6 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89100675 psh:focusShape <http://www.example.com/myDataGraph#224744867> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89110071 psh:focusShape <http://www.example.com/myDataGraph#65718564> ;
+psh:generality "0.00140902252047859"^^xsd:decimal ;
+psh:likelihood "8.137711041899807E-5"^^xsd:double ;
+psh:numConfirmation 59 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 59 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89110070 psh:focusShape <http://www.example.com/myDataGraph#65613523> ;
+psh:generality "0.00011940868817615169"^^xsd:decimal ;
+psh:likelihood "0.3276800000000001"^^xsd:double ;
+psh:numConfirmation 5 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 5 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89102029 psh:focusShape <http://www.example.com/myDataGraph#227709323> ;
+psh:generality "0.003988250185083466"^^xsd:decimal ;
+psh:likelihood "6.631236684565829E-11"^^xsd:double ;
+psh:numConfirmation 167 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 167 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89090488 psh:focusShape <http://www.example.com/myDataGraph#185222755> ;
+psh:generality "0.015714183363981563"^^xsd:decimal ;
+psh:likelihood "7.396325085423354E-38"^^xsd:double ;
+psh:numConfirmation 658 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 658 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89106489 psh:focusShape <http://www.example.com/myDataGraph#42376196> ;
+psh:generality "0.015714183363981563"^^xsd:decimal ;
+psh:likelihood "7.396325085423354E-38"^^xsd:double ;
+psh:numConfirmation 658 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 658 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89090487 psh:focusShape <http://www.example.com/myDataGraph#184976212> ;
+psh:generality "0.003653905858190242"^^xsd:decimal ;
+psh:likelihood "3.9867811177727646E-10"^^xsd:double ;
+psh:numConfirmation 153 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 153 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89106488 psh:focusShape <http://www.example.com/myDataGraph#36329903> ;
+psh:generality "0.011534879277816254"^^xsd:decimal ;
+psh:likelihood "2.731160131922458E-28"^^xsd:double ;
+psh:numConfirmation 483 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 483 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89106487 psh:focusShape <http://www.example.com/myDataGraph#34801439> ;
+psh:generality "0.007212284765839562"^^xsd:decimal ;
+psh:likelihood "2.3132890982523694E-18"^^xsd:double ;
+psh:numConfirmation 302 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 302 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89106486 psh:focusShape <http://www.example.com/myDataGraph#34399338> ;
+psh:generality "0.00035822606452845507"^^xsd:decimal ;
+psh:likelihood "0.03518437208883203"^^xsd:double ;
+psh:numConfirmation 15 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 15 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89106485 psh:focusShape <http://www.example.com/myDataGraph#33597826> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89106484 psh:focusShape <http://www.example.com/myDataGraph#31157278> ;
+psh:generality "0.0003104625892579944"^^xsd:decimal ;
+psh:likelihood "1.0223616000000008E-6"^^xsd:double ;
+psh:numConfirmation 2 ;
+psh:numViolation 11 ;
+psh:referenceCardinality 13 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89106483 psh:focusShape <http://www.example.com/myDataGraph#27812136> ;
+psh:generality "0.00004776347527046068"^^xsd:decimal ;
+psh:likelihood "0.6400000000000001"^^xsd:double ;
+psh:numConfirmation 2 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89117869 psh:focusShape <http://www.example.com/myDataGraph#71187205> ;
+psh:generality "0.011534879277816254"^^xsd:decimal ;
+psh:likelihood "2.731160131922458E-28"^^xsd:double ;
+psh:numConfirmation 483 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 483 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89117868 psh:focusShape <http://www.example.com/myDataGraph#68580539> ;
+psh:generality "0.010412437608960427"^^xsd:decimal ;
+psh:likelihood "1.0234286396942765E-25"^^xsd:double ;
+psh:numConfirmation 436 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 436 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89106481 psh:focusShape <http://www.example.com/myDataGraph#264902576> ;
+psh:generality "0.0003104625892579944"^^xsd:decimal ;
+psh:likelihood "0.054975581388800036"^^xsd:double ;
+psh:numConfirmation 13 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 13 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89117867 psh:focusShape <http://www.example.com/myDataGraph#66266956> ;
+psh:generality "0.010412437608960427"^^xsd:decimal ;
+psh:likelihood "1.0234286396942765E-25"^^xsd:double ;
+psh:numConfirmation 436 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 436 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89106480 psh:focusShape <http://www.example.com/myDataGraph#263392650> ;
+psh:generality "0.00002388173763523034"^^xsd:decimal ;
+psh:likelihood "0.8"^^xsd:double ;
+psh:numConfirmation 1 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 1 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89117866 psh:focusShape <http://www.example.com/myDataGraph#65779928> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89070933 psh:focusShape <http://www.example.com/myDataGraph#135022365> ;
+psh:generality "0.007307811716380484"^^xsd:decimal ;
+psh:likelihood "1.393880134045174E-18"^^xsd:double ;
+psh:numConfirmation 306 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 306 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89085799 psh:focusShape <http://www.example.com/myDataGraph#15406197> ;
+psh:generality "0.007212284765839562"^^xsd:decimal ;
+psh:likelihood "2.3132890982523694E-18"^^xsd:double ;
+psh:numConfirmation 302 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 302 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89070932 psh:focusShape <http://www.example.com/myDataGraph#134748431> ;
+psh:generality "0.013588708714446063"^^xsd:decimal ;
+psh:likelihood "5.396335167107897E-33"^^xsd:double ;
+psh:numConfirmation 569 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 569 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89085798 psh:focusShape <http://www.example.com/myDataGraph#152487909> ;
+psh:generality "0.00009552695054092136"^^xsd:decimal ;
+psh:likelihood "0.4096000000000001"^^xsd:double ;
+psh:numConfirmation 4 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 4 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89070931 psh:focusShape <http://www.example.com/myDataGraph#13326168> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89085797 psh:focusShape <http://www.example.com/myDataGraph#152401068> ;
+psh:generality "0.003940486709813006"^^xsd:decimal ;
+psh:likelihood "8.566125111288426E-11"^^xsd:double ;
+psh:numConfirmation 165 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 165 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89086894 psh:focusShape <http://www.example.com/myDataGraph#175560110> ;
+psh:generality "0.0007880973419626012"^^xsd:decimal ;
+psh:likelihood "0.0028062629772804336"^^xsd:double ;
+psh:numConfirmation 33 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 33 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89105024 psh:focusShape <http://www.example.com/myDataGraph#256470471> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89110068 psh:focusShape <http://www.example.com/myDataGraph#65591951> ;
+psh:generality "0.00004776347527046068"^^xsd:decimal ;
+psh:likelihood "0.6400000000000001"^^xsd:double ;
+psh:numConfirmation 2 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89101861 psh:focusShape <http://www.example.com/myDataGraph#225469320> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89067366 psh:focusShape <http://www.example.com/myDataGraph#116289883> ;
+psh:generality "0.14219186588016144"^^xsd:decimal ;
+psh:likelihood "0.0"^^xsd:double ;
+psh:numConfirmation 5954 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 5954 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89110067 psh:focusShape <http://www.example.com/myDataGraph#58052145> ;
+psh:generality "0.0008836242925035226"^^xsd:decimal ;
+psh:likelihood "0.0016074491141067132"^^xsd:double ;
+psh:numConfirmation 37 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 37 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89067365 psh:focusShape <http://www.example.com/myDataGraph#113942665> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89110066 psh:focusShape <http://www.example.com/myDataGraph#57070866> ;
+psh:generality "0.0004059895397989158"^^xsd:decimal ;
+psh:likelihood "0.022517998136852502"^^xsd:double ;
+psh:numConfirmation 17 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 17 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89103219 psh:focusShape <http://www.example.com/myDataGraph#23641728> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89105413 psh:focusShape <http://www.example.com/myDataGraph#257142569> ;
+psh:generality "0.009266114202469372"^^xsd:decimal ;
+psh:likelihood "4.376750997417666E-23"^^xsd:double ;
+psh:numConfirmation 388 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 388 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89106479 psh:focusShape <http://www.example.com/myDataGraph#263257469> ;
+psh:generality "0.02321304898144389"^^xsd:decimal ;
+psh:likelihood "5.473150503822659E-55"^^xsd:double ;
+psh:numConfirmation 972 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 972 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89085629 psh:focusShape <http://www.example.com/myDataGraph#149733901> ;
+psh:generality "0.0003104625892579944"^^xsd:decimal ;
+psh:likelihood "4.2598400000000024E-8"^^xsd:double ;
+psh:numConfirmation 1 ;
+psh:numViolation 12 ;
+psh:referenceCardinality 13 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89085628 psh:focusShape <http://www.example.com/myDataGraph#149270116> ;
+psh:generality "0.00004776347527046068"^^xsd:decimal ;
+psh:likelihood "0.6400000000000001"^^xsd:double ;
+psh:numConfirmation 2 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89091217 psh:focusShape <http://www.example.com/myDataGraph#190109805> ;
+psh:generality "0.003582260645284551"^^xsd:decimal ;
+psh:likelihood "5.858452449301226E-10"^^xsd:double ;
+psh:numConfirmation 150 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 150 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89085626 psh:focusShape <http://www.example.com/myDataGraph#146611436> ;
+psh:generality "0.010412437608960427"^^xsd:decimal ;
+psh:likelihood "1.0234286396942765E-25"^^xsd:double ;
+psh:numConfirmation 436 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 436 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89085625 psh:focusShape <http://www.example.com/myDataGraph#146594332> ;
+psh:generality "0.007307811716380484"^^xsd:decimal ;
+psh:likelihood "1.393880134045174E-18"^^xsd:double ;
+psh:numConfirmation 306 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 306 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89085624 psh:focusShape <http://www.example.com/myDataGraph#144874437> ;
+psh:generality "0.03446134740763738"^^xsd:decimal ;
+psh:likelihood "1.2115734161341554E-80"^^xsd:double ;
+psh:numConfirmation 1443 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 1443 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89095963 psh:focusShape <http://www.example.com/myDataGraph#216467466> ;
+psh:generality "0.07109593294008072"^^xsd:decimal ;
+psh:likelihood "4.468138009617449E-164"^^xsd:double ;
+psh:numConfirmation 2977 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2977 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89099519 psh:focusShape <http://www.example.com/myDataGraph#218906073> ;
+psh:generality "0.07109593294008072"^^xsd:decimal ;
+psh:likelihood "4.468138009617449E-164"^^xsd:double ;
+psh:numConfirmation 2977 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2977 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89074491 psh:focusShape <http://www.example.com/myDataGraph#138502482> ;
+psh:generality "0.00016717216344661238"^^xsd:decimal ;
+psh:likelihood "0.20971520000000007"^^xsd:double ;
+psh:numConfirmation 7 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 7 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89092406 psh:focusShape <http://www.example.com/myDataGraph#203360164> ;
+psh:generality "0.004059895397989158"^^xsd:decimal ;
+psh:likelihood "4.517184958704305E-11"^^xsd:double ;
+psh:numConfirmation 170 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 170 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89074490 psh:focusShape <http://www.example.com/myDataGraph#137959566> ;
+psh:generality "0.07109593294008072"^^xsd:decimal ;
+psh:likelihood "4.468138009617449E-164"^^xsd:double ;
+psh:numConfirmation 2977 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2977 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89092405 psh:focusShape <http://www.example.com/myDataGraph#200037900> ;
+psh:generality "0.14219186588016144"^^xsd:decimal ;
+psh:likelihood "0.0"^^xsd:double ;
+psh:numConfirmation 5954 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 5954 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89092404 psh:focusShape <http://www.example.com/myDataGraph#196427993> ;
+psh:generality "0.00002388173763523034"^^xsd:decimal ;
+psh:likelihood "0.8"^^xsd:double ;
+psh:numConfirmation 1 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 1 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89092403 psh:focusShape <http://www.example.com/myDataGraph#193223868> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89110048 psh:focusShape <http://www.example.com/myDataGraph#56318015> ;
+psh:generality "0.00002388173763523034"^^xsd:decimal ;
+psh:likelihood "0.8"^^xsd:double ;
+psh:numConfirmation 1 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 1 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89110047 psh:focusShape <http://www.example.com/myDataGraph#5621906> ;
+psh:generality "0.14219186588016144"^^xsd:decimal ;
+psh:likelihood "0.0"^^xsd:double ;
+psh:numConfirmation 5954 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 5954 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89089875 psh:focusShape <http://www.example.com/myDataGraph#183702323> ;
+psh:generality "0.00011940868817615169"^^xsd:decimal ;
+psh:likelihood "0.3276800000000001"^^xsd:double ;
+psh:numConfirmation 5 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 5 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89107069 psh:focusShape <http://www.example.com/myDataGraph#51957777> ;
+psh:generality "0.00016717216344661238"^^xsd:decimal ;
+psh:likelihood "0.20971520000000007"^^xsd:double ;
+psh:numConfirmation 7 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 7 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89089874 psh:focusShape <http://www.example.com/myDataGraph#183409774> ;
+psh:generality "0.0016000764215604328"^^xsd:decimal ;
+psh:likelihood "2.8092887963990594E-5"^^xsd:double ;
+psh:numConfirmation 67 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 67 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89107068 psh:focusShape <http://www.example.com/myDataGraph#51897299> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89091066 psh:focusShape <http://www.example.com/myDataGraph#188886337> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89089873 psh:focusShape <http://www.example.com/myDataGraph#179499795> ;
+psh:generality "0.017362023260812456"^^xsd:decimal ;
+psh:likelihood "1.2634900497397536E-41"^^xsd:double ;
+psh:numConfirmation 727 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 727 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89089872 psh:focusShape <http://www.example.com/myDataGraph#178592377> ;
+psh:generality "0.07109593294008072"^^xsd:decimal ;
+psh:likelihood "4.468138009617449E-164"^^xsd:double ;
+psh:numConfirmation 2977 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2977 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89129695 psh:focusShape <http://www.example.com/myDataGraph#96662412> ;
+psh:generality "0.00002388173763523034"^^xsd:decimal ;
+psh:likelihood "0.8"^^xsd:double ;
+psh:numConfirmation 1 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 1 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89129694 psh:focusShape <http://www.example.com/myDataGraph#95509735> ;
+psh:generality "0.008573543811047692"^^xsd:decimal ;
+psh:likelihood "1.7074106059001754E-21"^^xsd:double ;
+psh:numConfirmation 359 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 359 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89090453 psh:focusShape <http://www.example.com/myDataGraph#184821432> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89086570 psh:focusShape <http://www.example.com/myDataGraph#168631340> ;
+psh:generality "0.006376423948606501"^^xsd:decimal ;
+psh:likelihood "1.9544119539535286E-16"^^xsd:double ;
+psh:numConfirmation 267 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 267 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89085801 psh:focusShape <http://www.example.com/myDataGraph#157560420> ;
+psh:generality "0.007212284765839562"^^xsd:decimal ;
+psh:likelihood "2.3132890982523694E-18"^^xsd:double ;
+psh:numConfirmation 302 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 302 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89102641 psh:focusShape <http://www.example.com/myDataGraph#236210426> ;
+psh:generality "0.011534879277816254"^^xsd:decimal ;
+psh:likelihood "2.731160131922458E-28"^^xsd:double ;
+psh:numConfirmation 483 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 483 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89085800 psh:focusShape <http://www.example.com/myDataGraph#154120619> ;
+psh:generality "0.0003104625892579944"^^xsd:decimal ;
+psh:likelihood "0.054975581388800036"^^xsd:double ;
+psh:numConfirmation 13 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 13 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89086379 psh:focusShape <http://www.example.com/myDataGraph#160935301> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89102640 psh:focusShape <http://www.example.com/myDataGraph#235597358> ;
+psh:generality "0.00004776347527046068"^^xsd:decimal ;
+psh:likelihood "0.6400000000000001"^^xsd:double ;
+psh:numConfirmation 2 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89071512 psh:focusShape <http://www.example.com/myDataGraph#136928928> ;
+psh:generality "0.00002388173763523034"^^xsd:decimal ;
+psh:likelihood "0.8"^^xsd:double ;
+psh:numConfirmation 1 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 1 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89071511 psh:focusShape <http://www.example.com/myDataGraph#136892775> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89129334 psh:focusShape <http://www.example.com/myDataGraph#94174512> ;
+psh:generality "0.00014329042581138202"^^xsd:decimal ;
+psh:likelihood "0.2621440000000001"^^xsd:double ;
+psh:numConfirmation 6 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 6 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89086860 psh:focusShape <http://www.example.com/myDataGraph#17418103> ;
+psh:generality "0.00016717216344661238"^^xsd:decimal ;
+psh:likelihood "0.20971520000000007"^^xsd:double ;
+psh:numConfirmation 7 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 7 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89104446 psh:focusShape <http://www.example.com/myDataGraph#250249915> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89104445 psh:focusShape <http://www.example.com/myDataGraph#249991505> ;
+psh:generality "0.00002388173763523034"^^xsd:decimal ;
+psh:likelihood "0.8"^^xsd:double ;
+psh:numConfirmation 1 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 1 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89103836 psh:focusShape <http://www.example.com/myDataGraph#246641109> ;
+psh:generality "0.0004059895397989158"^^xsd:decimal ;
+psh:likelihood "0.022517998136852502"^^xsd:double ;
+psh:numConfirmation 17 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 17 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89104444 psh:focusShape <http://www.example.com/myDataGraph#247722059> ;
+psh:generality "0.050294939459795095"^^xsd:decimal ;
+psh:likelihood "1.0211711343994284E-116"^^xsd:double ;
+psh:numConfirmation 2106 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2106 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89086569 psh:focusShape <http://www.example.com/myDataGraph#162497658> ;
+psh:generality "0.004513648413058534"^^xsd:decimal ;
+psh:likelihood "3.984850544684425E-12"^^xsd:double ;
+psh:numConfirmation 189 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 189 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89066787 psh:focusShape <http://www.example.com/myDataGraph#10629699> ;
+psh:generality "0.007307811716380484"^^xsd:decimal ;
+psh:likelihood "1.393880134045174E-18"^^xsd:double ;
+psh:numConfirmation 306 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 306 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89066786 psh:focusShape <http://www.example.com/myDataGraph#105388461> ;
+psh:generality "0.006376423948606501"^^xsd:decimal ;
+psh:likelihood "1.9544119539535286E-16"^^xsd:double ;
+psh:numConfirmation 267 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 267 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89066785 psh:focusShape <http://www.example.com/myDataGraph#103424511> ;
+psh:generality "0.008549662073412461"^^xsd:decimal ;
+psh:likelihood "1.9374499668372974E-21"^^xsd:double ;
+psh:numConfirmation 358 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 358 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89129291 psh:focusShape <http://www.example.com/myDataGraph#93298762> ;
+psh:generality "0.00004776347527046068"^^xsd:decimal ;
+psh:likelihood "0.6400000000000001"^^xsd:double ;
+psh:numConfirmation 2 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89102639 psh:focusShape <http://www.example.com/myDataGraph#235558487> ;
+psh:generality "0.006376423948606501"^^xsd:decimal ;
+psh:likelihood "1.9544119539535286E-16"^^xsd:double ;
+psh:numConfirmation 267 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 267 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89129290 psh:focusShape <http://www.example.com/myDataGraph#92638996> ;
+psh:generality "0.013588708714446063"^^xsd:decimal ;
+psh:likelihood "5.396335167107897E-33"^^xsd:double ;
+psh:numConfirmation 569 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 569 ;
+rdf:type psh:ValidationSummary .
+
+_:bb89102638 psh:focusShape <http://www.example.com/myDataGraph#231908548> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .

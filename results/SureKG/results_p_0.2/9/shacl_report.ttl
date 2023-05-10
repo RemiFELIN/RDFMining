@@ -1,0 +1,3035 @@
+@prefix psh: <http://ns.inria.fr/probabilistic-shacl/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsh: <http://www.w3.org/ns/shacl#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+<urn:uuid:f9beede5-5ee4-4458-ac7c-04c05f6dae14> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut23_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut23_1> .
+
+<urn:uuid:81d48919-f59c-40f5-9bdd-7cee186254c6> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#CityRoquefort-les-pins> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#101718219> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Place> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#101718219> ;
+sh:value <https://ns.inria.fr/sure#CityRoquefort-les-pins> .
+
+<urn:uuid:2ec86005-525d-4583-b191-49f30f0fee2f> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut19_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut19_0.6> .
+
+<urn:uuid:752d3b87-8b39-4076-8600-cf0beb3d1369> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut23_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut23_0.8> .
+
+<urn:uuid:11a55fde-796e-4af4-ad69-221f438dbd08> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut18_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut18_0.4> .
+
+<urn:uuid:891b840c-1a36-4a45-b4ce-ff88c510f060> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Valbonne_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Valbonne_06018> .
+
+<urn:uuid:6e3aea11-98b3-4a2d-b8d6-1b649d20a813> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut8_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut8_1> .
+
+<urn:uuid:0609a932-d6e9-4689-a772-24074a89235f> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut9_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut9_0.2> .
+
+<urn:uuid:80c37f8d-dd65-47fa-8c4b-92b76bd7a60f> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Panoramique_Vue_Mer_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Panoramique_Vue_Mer_06018> .
+
+<urn:uuid:1786f441-9cd5-487f-ae4e-a43f2eefa5bf> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Vue_Montagnes_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Vue_Montagnes_06018> .
+
+<urn:uuid:d0538f33-c649-4815-84d3-ab0bbcba451c> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut28_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut28_0.6> .
+
+<urn:uuid:2b3f3956-ab27-4a64-a3fa-7fb795c4053a> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut24_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut24_0.8> .
+
+<urn:uuid:d67f3013-4dd4-4e1e-9f6a-03f2a3b9a18a> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut24_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut24_0.4> .
+
+<urn:uuid:02e26ad9-f3f2-4739-8b4b-130f73f0162d> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut10_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut10_0.8> .
+
+<urn:uuid:52ee2dc1-439b-4ae9-a738-98c7c272935b> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut21_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut21_0.4> .
+
+<urn:uuid:5b9888ec-180f-4cae-9eac-d8ec70c3b460> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Quiet> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#261922146> a sh:NodeShape ;\n  sh:class skos:Concept ;\n  sh:targetObjectsOf rdf:type" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#261922146> ;
+sh:value <https://ns.inria.fr/sure#Quiet> .
+
+<urn:uuid:8a4b1b1d-5aa4-4fff-9be4-4f77808a75a5> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut1_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut1_0.6> .
+
+<urn:uuid:7ebba1f2-f523-422c-af2d-a717ce32d8d3> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Cadre_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Cadre_06018> .
+
+<urn:uuid:55020187-b3d1-40b5-a2da-3129756e31a7> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut27_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut27_0.2> .
+
+<urn:uuid:4c7fbfda-121e-41d8-812d-d15191c4a1b8> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut1_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut1_1> .
+
+<urn:uuid:75d73ef7-aa04-438b-aeca-77886f3fd399> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut8_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut8_0.4> .
+
+<urn:uuid:5487e6f8-7972-4465-827a-9b22c12eb33c> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut6_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut6_1> .
+
+<urn:uuid:06ac4bf8-0036-4bfd-8130-cc4586440ecb> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Proche_Commerces_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Proche_Commerces_06018> .
+
+<urn:uuid:58f85feb-3b07-4612-b638-1d2ecfaed515> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut14_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut14_0.6> .
+
+<urn:uuid:fa60f930-372b-4116-a6ee-51d990d3628b> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut3_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut3_0.4> .
+
+<urn:uuid:148f546d-3aeb-4ee9-bf4d-2160f2f25eea> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Proche_Commodites_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Proche_Commodites_06018> .
+
+<urn:uuid:99d3a92b-0768-4944-a970-894f635005c7> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut3_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut3_0.6> .
+
+<urn:uuid:e5bd361c-bedd-4c95-90ea-b75bf1719993> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut16_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut16_1> .
+
+<urn:uuid:b9b4b559-d127-475e-8a04-aa137ec39339> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut19_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut19_0.8> .
+
+<urn:uuid:ab8825f3-3610-4037-b152-e95629fc0064> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut3_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut3_1> .
+
+<urn:uuid:16de00c3-cb55-49a4-9f3b-cc42ced5dbe9> rdf:type sh:ValidationResult ;
+sh:focusNode skos:Concept ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#261922146> a sh:NodeShape ;\n  sh:class skos:Concept ;\n  sh:targetObjectsOf rdf:type" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#261922146> ;
+sh:value skos:Concept .
+
+<urn:uuid:198eba76-cb49-4330-ab2b-add2920eaf36> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut14_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut14_0.2> .
+
+<urn:uuid:43570f95-6236-45da-a936-433b2d77e4de> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut17_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut17_0.6> .
+
+<urn:uuid:5b3c98af-ee88-42f7-87da-8514937f52ec> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut20_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut20_1> .
+
+<urn:uuid:ca33dd16-bb59-430b-a86f-a02533839dfe> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut23_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut23_0.2> .
+
+<urn:uuid:8d4552d2-4bde-4aa5-86a8-9e8dc93a5bee> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut18_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut18_1> .
+
+<urn:uuid:2dd0f250-52e7-4e77-a627-d599640a71a6> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut14_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut14_0.4> .
+
+<urn:uuid:a412ab14-9139-441a-83bb-a22e17455707> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Parking> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#261922146> a sh:NodeShape ;\n  sh:class skos:Concept ;\n  sh:targetObjectsOf rdf:type" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#261922146> ;
+sh:value <https://ns.inria.fr/sure#Parking> .
+
+<urn:uuid:256638f6-7a09-40b2-8bce-9ea3872f1a11> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut26_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut26_0.2> .
+
+<urn:uuid:ace17703-9803-4121-9abb-2cec08f79fa8> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut6_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut6_0.2> .
+
+<urn:uuid:80847cb5-9b2b-4d8f-a755-014a2f328acc> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Quartier_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Quartier_06018> .
+
+<urn:uuid:658f50d0-9ebf-4d7b-8f77-b548c54b7251> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Proche_Ecoles_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Proche_Ecoles_06018> .
+
+<urn:uuid:1698c1cb-8c66-482a-9cef-ebb851596b9b> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut11_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut11_0.4> .
+
+<urn:uuid:c0ae5790-4987-4a61-9c7c-8789a4d2e415> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut27_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut27_0.6> .
+
+<urn:uuid:7ae0be84-0ee2-4444-9ddc-5937656c4d23> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Coeur_Village_Biot_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Coeur_Village_Biot_06018> .
+
+<urn:uuid:9e2ffa8c-df94-40f3-a56c-ba9cf7938b97> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut11_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut11_1> .
+
+<urn:uuid:6801fb73-478a-458b-a3cd-04b6ad516bcb> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut27_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut27_1> .
+
+<urn:uuid:4be6c762-b9ce-42cd-94cf-9bf57da58769> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut0_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut0_0.4> .
+
+<urn:uuid:0cbd8e0e-35f1-4d94-af99-07c419be621f> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Degagee_Vue_Collines_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Degagee_Vue_Collines_06018> .
+
+<urn:uuid:b54fb442-cafd-47e0-adff-c5b6db3a47f5> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut20_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut20_0.6> .
+
+<urn:uuid:a010fcac-4553-4002-b2c1-fc231ea616de> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut12_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut12_0.2> .
+
+<urn:uuid:5bc5d000-4d9b-442b-bf78-afd0783fda74> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut19_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut19_0.4> .
+
+<urn:uuid:513b598e-d49d-40e4-abd4-a7a565657737> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#CityBiot> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#101718219> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Place> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#101718219> ;
+sh:value <https://ns.inria.fr/sure#CityBiot> .
+
+<urn:uuid:899fcdc5-f8c9-4718-b57c-0e41ec1e79e4> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut6_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut6_0.6> .
+
+<urn:uuid:f338389b-0639-4bdf-b67e-9bd61ebf769f> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut10_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut10_0.2> .
+
+<urn:uuid:7e910af7-3e33-4189-af5e-da0932e378df> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut24_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut24_0.2> .
+
+<urn:uuid:87d7c858-6f24-4b23-a86b-452f21a566da> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Vue_Mer_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Vue_Mer_06018> .
+
+<urn:uuid:f18747a0-4f3e-41e9-acc8-875388fc4a82> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut20_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut20_0.8> .
+
+<urn:uuid:67c4bb08-6811-4474-b159-8a587e8dc105> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut26_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut26_0.4> .
+
+<urn:uuid:62538c5c-ea72-4c18-94a7-8807b5f5d0fa> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut10_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut10_0.4> .
+
+<urn:uuid:9802bdfa-2bb7-48e1-a213-360c7810406f> rdf:type sh:ValidationResult ;
+sh:focusNode <http://schema.org/Apartment> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#261922146> a sh:NodeShape ;\n  sh:class skos:Concept ;\n  sh:targetObjectsOf rdf:type" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#261922146> ;
+sh:value <http://schema.org/Apartment> .
+
+<urn:uuid:e6cb7e37-d036-4f10-929e-31a3f43254b6> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut0_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut0_1> .
+
+<urn:uuid:e6913406-dd17-4d19-b5a6-00f830207871> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#CityRoquefort-les-pins> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#CityRoquefort-les-pins> .
+
+<urn:uuid:1ef7b194-562c-4561-b1b4-531bb65ba6be> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut7_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut7_0.2> .
+
+<urn:uuid:6297d55c-9623-4099-b6ba-d14e148f0268> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut11_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut11_0.6> .
+
+<urn:uuid:9675e411-cbfe-41cb-a180-6fa910ad88fa> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut1_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut1_0.8> .
+
+<urn:uuid:4e201339-8397-4bd0-ac94-ac9c2a92c5b0> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut10_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut10_0.6> .
+
+<urn:uuid:3ad06fcc-38fd-44d1-ba65-1344dd08d010> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut2_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut2_0.2> .
+
+<urn:uuid:0d4e10ca-e4e8-4d3a-9f92-10c130c4451c> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut27_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut27_0.4> .
+
+<urn:uuid:c1c319a9-b8d5-4831-920b-3b744278a037> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut7_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut7_0.4> .
+
+<urn:uuid:00e77f64-6606-483e-822b-229a5e695e2e> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#CityValbonne> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#101718219> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Place> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#101718219> ;
+sh:value <https://ns.inria.fr/sure#CityValbonne> .
+
+<urn:uuid:5a0ec9b4-ac6e-4021-a270-e6768b0a2383> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut19_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut19_1> .
+
+<urn:uuid:a4f08571-395d-4224-837b-0d27432e72d0> rdf:type sh:ValidationResult ;
+sh:focusNode <http://www.opengis.net/ont/sf#Point> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#261922146> a sh:NodeShape ;\n  sh:class skos:Concept ;\n  sh:targetObjectsOf rdf:type" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#261922146> ;
+sh:value <http://www.opengis.net/ont/sf#Point> .
+
+<urn:uuid:22435c99-c93a-46aa-b38b-6e9d4e6e8f94> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut16_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut16_0.6> .
+
+<urn:uuid:e83271dc-52b1-4e3e-ae0a-699866cfc8be> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut10_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut10_1> .
+
+<urn:uuid:28c03086-1fff-4b60-929c-e110ab9e77b2> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut22_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut22_0.2> .
+
+<urn:uuid:73f9720f-8941-429b-bdbb-8bb446960a89> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut18_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut18_0.8> .
+
+<urn:uuid:d6241f49-b912-47b2-9287-18ae9020320c> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut14_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut14_0.8> .
+
+<urn:uuid:aa1d3e86-8178-4c3c-b2c3-96879f3b4b5e> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut24_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut24_0.6> .
+
+<urn:uuid:689fe6da-33a1-4351-9a1b-525214c1182a> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut22_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut22_0.6> .
+
+<urn:uuid:ed738203-cea2-4cc3-b78e-66b98279b193> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut5_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut5_0.4> .
+
+<urn:uuid:b3f00a09-faa6-43d1-aafe-412b0c58fcf1> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut13_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut13_1> .
+
+<urn:uuid:612eff42-3b79-4118-aa34-450d51a975a8> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut19_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut19_0.2> .
+
+<urn:uuid:41d80419-f955-48e1-9933-37849244f435> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut29_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut29_0.8> .
+
+<urn:uuid:f34f50b9-2810-4d1e-9dbd-5200beefeb78> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut9_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut9_1> .
+
+<urn:uuid:7335580b-e53d-4f8a-96bc-0d5bf0d31f71> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut21_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut21_1> .
+
+<urn:uuid:466c2bd6-8169-42e1-99b9-7ea045d631f1> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#CityBiot> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#CityBiot> .
+
+<urn:uuid:be5e2b48-3273-4759-a96d-a0d6d61d9660> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut23_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut23_0.4> .
+
+<urn:uuid:6dfdb7f5-c938-47d6-9a44-71c04d2878ed> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut9_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut9_0.4> .
+
+<urn:uuid:7e9ca142-7f3c-4120-bae0-0c9e32e08d34> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut0_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut0_0.8> .
+
+<urn:uuid:79204327-5860-4095-979f-671946df1e15> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut7_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut7_0.8> .
+
+<urn:uuid:d1b24e21-0d98-4031-9274-f3fd9c2714ef> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Sophia_Antipolis_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Sophia_Antipolis_06018> .
+
+<urn:uuid:9d12d413-8efb-4d8d-9e89-776120b17924> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Vue_Collines_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Vue_Collines_06018> .
+
+<urn:uuid:3beb91b0-dc81-44e9-9393-bb573057f7e8> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Position_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Position_06018> .
+
+<urn:uuid:e0785ece-68fc-4675-9006-4cb1a1e4bd2f> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut7_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut7_1> .
+
+<urn:uuid:6ed6b5e9-71ef-4c52-bde8-dbd4e4cc12c9> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Bright> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#261922146> a sh:NodeShape ;\n  sh:class skos:Concept ;\n  sh:targetObjectsOf rdf:type" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#261922146> ;
+sh:value <https://ns.inria.fr/sure#Bright> .
+
+<urn:uuid:fb361933-008e-4c14-b9af-841ec0f355f7> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut4_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut4_0.4> .
+
+<urn:uuid:6a02a3fd-a9ae-4b7d-b688-ad5630aaf261> rdf:type sh:ValidationResult ;
+sh:focusNode <http://www.w3.org/ns/oa#TextPositionSelector> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#261922146> a sh:NodeShape ;\n  sh:class skos:Concept ;\n  sh:targetObjectsOf rdf:type" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#261922146> ;
+sh:value <http://www.w3.org/ns/oa#TextPositionSelector> .
+
+<urn:uuid:bf07be89-447b-419f-93e6-abb7aa1bc442> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut0_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut0_0.2> .
+
+<urn:uuid:d0f568ef-2e0e-4f45-ae39-65ec2f68f035> rdf:type sh:ValidationResult ;
+sh:focusNode <http://www.w3.org/ns/oa#Annotation> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#261922146> a sh:NodeShape ;\n  sh:class skos:Concept ;\n  sh:targetObjectsOf rdf:type" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#261922146> ;
+sh:value <http://www.w3.org/ns/oa#Annotation> .
+
+<urn:uuid:4ffc7e8f-6931-4886-b5bf-e1b7f4fd9e0d> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut29_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut29_1> .
+
+<urn:uuid:c3282929-a168-4dc9-b271-c1891113e344> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut2_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut2_1> .
+
+<urn:uuid:9e97d6a9-32ef-4954-bd64-0b5c6d414e96> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut28_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut28_1> .
+
+<urn:uuid:7c1ed324-2af9-4070-9b2c-c186227c083f> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut4_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut4_0.2> .
+
+<urn:uuid:26a254cb-82ba-40ff-93c4-aefe0e26f45f> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Proche_Ecoles_Internationales_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Proche_Ecoles_Internationales_06018> .
+
+<urn:uuid:a61decb5-66fb-4ac8-a065-8e8221939e33> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut17_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut17_1> .
+
+<urn:uuid:86ada69e-2831-4841-8a5c-b9201e4768c0> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut8_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut8_0.6> .
+
+<urn:uuid:54b1537e-60b2-4879-826f-d623717d6b70> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#CityVilleneuve-loubet> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#101718219> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Place> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#101718219> ;
+sh:value <https://ns.inria.fr/sure#CityVilleneuve-loubet> .
+
+<urn:uuid:305fc327-8b45-454a-81ab-1ab7c3df7fa3> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut22_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut22_0.4> .
+
+<urn:uuid:b3778bc0-d369-4e2a-a018-1412a5ff5978> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut28_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut28_0.4> .
+
+<urn:uuid:0ee0d928-40dc-48cb-8c9d-075c71cd6ec8> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut22_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut22_1> .
+
+<urn:uuid:9a31be83-74b7-4c4e-9ee4-3572c7f965d2> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut20_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut20_0.2> .
+
+<urn:uuid:b7d5b296-0b12-4377-a021-ba70dba6708c> rdf:type sh:ValidationResult ;
+sh:focusNode rdf:Property ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#261922146> a sh:NodeShape ;\n  sh:class skos:Concept ;\n  sh:targetObjectsOf rdf:type" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#261922146> ;
+sh:value rdf:Property .
+
+<urn:uuid:71facef5-e466-4001-b91a-2d1301149a00> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut29_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut29_0.6> .
+
+<urn:uuid:09a6290b-4ca9-426f-9ea8-571070f80f5b> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut28_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut28_0.2> .
+
+<urn:uuid:9b9e48e7-f349-4df2-afb8-3de0b7402ee2> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Lycee_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Lycee_06018> .
+
+<urn:uuid:89f0f515-8304-4855-8cb6-72b709700d48> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut16_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut16_0.4> .
+
+<urn:uuid:f61fcfcd-b2e4-44f7-b56e-eaf530c38c7e> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut25_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut25_0.2> .
+
+<urn:uuid:e1a7bd6a-2b96-446e-bf2a-59a8030c29d2> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut12_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut12_0.4> .
+
+<urn:uuid:7492736e-5a73-41fb-acbb-315a6d4fa064> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Refurbished> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#261922146> a sh:NodeShape ;\n  sh:class skos:Concept ;\n  sh:targetObjectsOf rdf:type" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#261922146> ;
+sh:value <https://ns.inria.fr/sure#Refurbished> .
+
+<urn:uuid:6f41ddc4-adf9-4867-85ad-9e4988924b2b> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut7_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut7_0.6> .
+
+<urn:uuid:ed265db9-558d-46b3-8820-9139806160a0> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut15_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut15_0.8> .
+
+<urn:uuid:72a5364d-70aa-4bd1-9c62-53fa13ebd691> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut26_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut26_1> .
+
+<urn:uuid:40239a6a-5d4f-4593-9439-092884f0a7f2> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut9_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut9_0.8> .
+
+<urn:uuid:a52b0dbe-3bc8-4ddd-b834-cc2f71644998> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#CityVilleneuveLoubet> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#CityVilleneuveLoubet> .
+
+<urn:uuid:c1af1a98-906b-4c23-8f0e-ac2f5ee733bb> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut26_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut26_0.6> .
+
+<urn:uuid:7f794602-6299-4cd1-a77f-dda2dc4f9479> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut3_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut3_0.8> .
+
+<urn:uuid:3c29434f-1b32-4101-870b-3072b9f49c17> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#261922146> a sh:NodeShape ;\n  sh:class skos:Concept ;\n  sh:targetObjectsOf rdf:type" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#261922146> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut> .
+
+<urn:uuid:d05698f1-b605-432e-8cd8-b51e0ecef050> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut2_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut2_0.4> .
+
+<urn:uuid:49169402-07b2-42c7-a3b7-91674ef908b5> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut4_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut4_0.8> .
+
+<urn:uuid:f7c3f0bb-2dc9-4a1e-b76c-34c20186fd43> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#CityVilleneuve-loubet> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#CityVilleneuve-loubet> .
+
+<urn:uuid:b8aa3be8-4659-4c4a-883c-a2003c60c5fc> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut25_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut25_0.8> .
+
+<urn:uuid:3772aca2-1d5a-4726-b2a2-ef08ed52ca2a> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut5_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut5_0.2> .
+
+<urn:uuid:8b0a64a9-6645-4adc-b6e3-6fa831bf0758> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Emplacement_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Emplacement_06018> .
+
+<urn:uuid:88a3a21a-5c8f-44cb-87aa-9e39d6322022> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut16_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut16_0.8> .
+
+<urn:uuid:2a67dad2-57bb-4103-9bbb-4d8c8954d65d> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut12_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut12_0.8> .
+
+<urn:uuid:44e3d6f0-0a7f-4805-895c-7960429bde4e> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut17_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut17_0.2> .
+
+<urn:uuid:98383050-7489-465d-aeb8-266cc7ca8be5> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut2_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut2_0.6> .
+
+<urn:uuid:735e2ce0-fabb-4dc5-be41-4009bdcb8f66> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Proche_Transports_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Proche_Transports_06018> .
+
+<urn:uuid:60002dc9-1f45-4b78-94c5-41f6ffed98ca> rdf:type sh:ValidationResult ;
+sh:focusNode <http://schema.org/House> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#261922146> a sh:NodeShape ;\n  sh:class skos:Concept ;\n  sh:targetObjectsOf rdf:type" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#261922146> ;
+sh:value <http://schema.org/House> .
+
+<urn:uuid:0cbf13c3-8c9e-4aad-9379-3317c7dd9391> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#CityVilleneuveLoubet> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#101718219> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Place> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#101718219> ;
+sh:value <https://ns.inria.fr/sure#CityVilleneuveLoubet> .
+
+<urn:uuid:67f2079c-1e2e-450b-b78e-7c709e8d5fec> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut13_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut13_0.4> .
+
+<urn:uuid:9046e52a-f416-4b6f-815d-2dfc45a5b72c> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut27_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut27_0.8> .
+
+<urn:uuid:a975b455-bb68-4341-a9ed-de05d02db1fe> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut25_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut25_1> .
+
+<urn:uuid:27d03dd6-ddd9-4acd-b436-2b898fd3a750> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut15_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut15_0.6> .
+
+<urn:uuid:26d71259-d4ef-4db0-8a94-6f5e852ead8e> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut2_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut2_0.8> .
+
+<urn:uuid:e937db7f-8750-4e89-8a7c-3984231b40b9> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut16_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut16_0.2> .
+
+<urn:uuid:5ed19576-e181-49eb-b9bc-537f02c9e661> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Acces_Autoroute_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Acces_Autoroute_06018> .
+
+<urn:uuid:9b975aa4-8c3b-4d9e-b9e2-187e241b6371> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut29_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut29_0.4> .
+
+<urn:uuid:d0805cee-5162-4580-a232-e4fcc1b5e8ab> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#CityGrasse> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#CityGrasse> .
+
+<urn:uuid:f4cb4f0c-a9ec-4f3e-9350-0e0c0d4a9bed> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut28_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut28_0.8> .
+
+<urn:uuid:eb012942-38e0-473c-84b4-4ca543c7d7df> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Proche_Village_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Proche_Village_06018> .
+
+<urn:uuid:69a0ffa9-a40c-4d38-92e4-fb5a6b1d24ce> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut22_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut22_0.8> .
+
+<urn:uuid:c8938173-b5df-46e2-8e4b-d65706f33e8a> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut18_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut18_0.6> .
+
+<urn:uuid:5d6f704f-8104-4c76-802a-fa7e820d99ac> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut15_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut15_1> .
+
+<urn:uuid:031f4c28-06f9-4ae8-b498-176caf447b25> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut25_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut25_0.4> .
+
+<urn:uuid:ece5872a-d3b5-4b85-8507-ee9912b866ff> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut4_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut4_1> .
+
+<urn:uuid:b186fe59-044b-4592-8005-2deb068b7192> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut8_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut8_0.2> .
+
+<urn:uuid:bd55b651-6e9a-470d-a455-9945ede10750> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut24_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut24_1> .
+
+<urn:uuid:3a6a8174-0111-4ee3-ac74-5fa4df7c0358> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut5_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut5_0.6> .
+
+<urn:uuid:74ce8ba2-d06c-46b2-9ae3-cd85d343f396> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut1_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut1_0.2> .
+
+<urn:uuid:0612e7aa-a9b5-4c65-9880-6506249cc8ce> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut6_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut6_0.4> .
+
+<urn:uuid:6abf6ccf-ca89-4f43-bf4e-e3e17469b525> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut11_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut11_0.2> .
+
+<urn:uuid:b78bfced-f0e2-4d4d-a96f-0f926fbb5fb7> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut29_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut29_0.2> .
+
+<urn:uuid:ef9e7257-3ce0-498e-8495-9dd7e9830aa6> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut0_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut0_0.6> .
+
+<urn:uuid:909f6d58-f7ed-402e-9322-1eb7593b3d87> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut21_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut21_0.2> .
+
+<urn:uuid:0162b3c1-6e25-4618-8251-21bc88c110cb> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut23_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut23_0.6> .
+
+<urn:uuid:b2cfdbb3-54ea-46e8-b648-e1cb5a466d66> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#College_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#College_06018> .
+
+<urn:uuid:3508065c-62e4-409b-867b-eb6aeadc9c28> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut25_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut25_0.6> .
+
+<urn:uuid:f587d9dd-237a-464b-84b7-17701477cca8> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Coeur_Village_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Coeur_Village_06018> .
+
+<urn:uuid:3a83b40a-c28e-4be6-bce3-bd99e91a680f> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut5_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut5_0.8> .
+
+<urn:uuid:78f00d6e-818f-4b91-828f-a786182d48c5> rdf:type sh:ValidationResult ;
+sh:focusNode owl:Class ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#261922146> a sh:NodeShape ;\n  sh:class skos:Concept ;\n  sh:targetObjectsOf rdf:type" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#261922146> ;
+sh:value owl:Class .
+
+<urn:uuid:c6514dcd-bd82-44fb-a0b1-a94af59b2275> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut14_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut14_1> .
+
+<urn:uuid:51ac1204-5dd4-47eb-9598-76875df8b231> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Luxury> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#261922146> a sh:NodeShape ;\n  sh:class skos:Concept ;\n  sh:targetObjectsOf rdf:type" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#261922146> ;
+sh:value <https://ns.inria.fr/sure#Luxury> .
+
+<urn:uuid:9cc26d71-22f4-408e-8e66-e1ec8d427e02> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut21_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut21_0.6> .
+
+<urn:uuid:797bf87c-c2ca-444a-b3c2-0603d9fac2a0> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut11_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut11_0.8> .
+
+<urn:uuid:3cdef9e2-f669-4c45-9c0d-6f2ab4f188fd> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Secteur_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Secteur_06018> .
+
+<urn:uuid:389bf7d1-3c5d-490e-a00f-1f123a426c8d> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut17_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut17_0.4> .
+
+<urn:uuid:273e3893-2460-415e-b9cd-0aabeb140429> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut13_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut13_0.8> .
+
+<urn:uuid:6890319c-88cd-4b5f-8394-1271d949c10b> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Proche_Golf_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Proche_Golf_06018> .
+
+<urn:uuid:360eeb65-9891-43f1-ab5d-fb80dd1af171> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#City> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#261922146> a sh:NodeShape ;\n  sh:class skos:Concept ;\n  sh:targetObjectsOf rdf:type" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#261922146> ;
+sh:value <https://ns.inria.fr/sure#City> .
+
+<urn:uuid:14895a75-d6fd-4f10-9374-a8e696d397b1> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut15_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut15_0.4> .
+
+<urn:uuid:8f3e30f1-77c4-4ad0-a6bc-b33eb91d9698> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut6_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut6_0.8> .
+
+<urn:uuid:46ad82cd-82b2-4472-8082-f0614a0fce28> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Proche_Sophia_Antipolis_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Proche_Sophia_Antipolis_06018> .
+
+<urn:uuid:a7252863-eed0-4318-9b09-4ce6a8e5f2c0> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut12_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut12_0.6> .
+
+<urn:uuid:a9364987-474f-4fd0-80c9-52e70715d0cc> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut9_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut9_0.6> .
+
+<urn:uuid:ee048fa3-454f-4101-a885-2d9f488c9ec6> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut18_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut18_0.2> .
+
+<urn:uuid:99edf61d-22a7-4e27-ae4b-eebc010d6935> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#CityGrasse> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#101718219> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Place> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#101718219> ;
+sh:value <https://ns.inria.fr/sure#CityGrasse> .
+
+<urn:uuid:811bd540-11bc-4ada-8a70-8ab5e61d6d62> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Proximite_Commerces_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Proximite_Commerces_06018> .
+
+<urn:uuid:15a9b559-36b5-4f36-8cb7-289aa1d793e1> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#RelativePlace> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#261922146> a sh:NodeShape ;\n  sh:class skos:Concept ;\n  sh:targetObjectsOf rdf:type" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#261922146> ;
+sh:value <https://ns.inria.fr/sure#RelativePlace> .
+
+<urn:uuid:8b44f0cf-9004-4bcd-aa51-7b207ac48ee3> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut20_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut20_0.4> .
+
+<urn:uuid:bd62dd50-fa1a-4b63-8109-9daacf29da42> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Antibes_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Antibes_06018> .
+
+<urn:uuid:40639186-5ce8-4814-93c3-90d8c6753b03> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut15_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut15_0.2> .
+
+<urn:uuid:86d57d3f-77ab-4040-a159-ed7d0cea4d70> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Biot_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Biot_06018> .
+
+<urn:uuid:eae7e06e-8528-411f-8ce3-8005dd1b6feb> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut3_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut3_0.2> .
+
+<urn:uuid:ef693581-d348-45fd-a8aa-4e27f27a8076> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut12_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut12_1> .
+
+<urn:uuid:ff651dee-a86f-4a23-9d1b-6533dfb69951> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut26_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut26_0.8> .
+
+<urn:uuid:c24bab29-37bf-4037-9169-3aa476c004ab> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#CityValbonne> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#CityValbonne> .
+
+<urn:uuid:29586f86-92d2-4927-bdf8-9b732d1b7d35> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut4_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut4_0.6> .
+
+<urn:uuid:1865f012-fccd-4cf4-96a5-f2c196a72bf6> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut21_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut21_0.8> .
+
+<urn:uuid:c70a5b04-2c9b-439a-9e72-e4ad4225a927> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut5_1> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut5_1> .
+
+<urn:uuid:6e1bb7a5-0fb0-4636-9f5b-a9e7a628abdd> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut13_0.2> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut13_0.2> .
+
+<urn:uuid:bf3e0b17-68f8-4ab9-a105-2b62c8c5d889> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut17_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut17_0.8> .
+
+<urn:uuid:ba5ffb28-3e43-4b05-86a5-4ad31f1b0db8> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#RealEstate> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#261922146> a sh:NodeShape ;\n  sh:class skos:Concept ;\n  sh:targetObjectsOf rdf:type" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#261922146> ;
+sh:value <https://ns.inria.fr/sure#RealEstate> .
+
+<urn:uuid:6ba2b24c-683a-4d31-9e88-df093d68b86a> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut1_0.4> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut1_0.4> .
+
+<urn:uuid:d3abc88f-f3f1-4a2d-a030-4911da46a2c0> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut13_0.6> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut13_0.6> .
+
+<urn:uuid:bbcf5bfb-6f2a-4a7f-9403-6c51357f19c1> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#AlphaCut8_0.8> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#165026818> a sh:NodeShape ;\n  sh:class <http://www.opengis.net/ont/sf#Point> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#165026818> ;
+sh:value <https://ns.inria.fr/sure#AlphaCut8_0.8> .
+
+<urn:uuid:b83d4a6b-7d8c-4139-b37c-be617b82b48a> rdf:type sh:ValidationResult ;
+sh:focusNode <https://ns.inria.fr/sure#Saint_Philippe_06018> ;
+sh:resultMessage "Fail at: <http://www.example.com/myDataGraph#127461032> a sh:NodeShape ;\n  sh:class <https://ns.inria.fr/sure#Environnement> ;\n  sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>" ;
+sh:resultPath rdf:type ;
+sh:resultSeverity sh:Violation ;
+sh:sourceConstraintComponent sh:ClassConstraintComponent ;
+sh:sourceShape <http://www.example.com/myDataGraph#127461032> ;
+sh:value <https://ns.inria.fr/sure#Saint_Philippe_06018> .
+
+_:bb145341377 psh:focusShape <http://www.example.com/myDataGraph#29670730> ;
+psh:generality "0.003988250185083466"^^xsd:decimal ;
+psh:likelihood "6.631236684565829E-11"^^xsd:double ;
+psh:numConfirmation 167 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 167 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341960 psh:focusShape <http://www.example.com/myDataGraph#39591258> ;
+psh:generality "0.0"^^xsd:decimal ;
+psh:likelihood "1.0"^^xsd:double ;
+psh:numConfirmation 0 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 0 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145304107 psh:focusShape <http://www.example.com/myDataGraph#10629699> ;
+psh:generality "0.007307811716380484"^^xsd:decimal ;
+psh:likelihood "1.393880134045174E-18"^^xsd:double ;
+psh:numConfirmation 306 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 306 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145304106 psh:focusShape <http://www.example.com/myDataGraph#104859441> ;
+psh:generality "0.013684235664986985"^^xsd:decimal ;
+psh:likelihood "3.261598488551098E-33"^^xsd:double ;
+psh:numConfirmation 573 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 573 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145313057 psh:focusShape <http://www.example.com/myDataGraph#113819650> ;
+psh:generality "0.032049291906479115"^^xsd:decimal ;
+psh:likelihood "3.8200977620745533E-75"^^xsd:double ;
+psh:numConfirmation 1342 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 1342 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145317645 psh:focusShape <http://www.example.com/myDataGraph#142112412> ;
+psh:generality "0.0016000764215604328"^^xsd:decimal ;
+psh:likelihood "2.8092887963990594E-5"^^xsd:double ;
+psh:numConfirmation 67 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 67 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341958 psh:focusShape <http://www.example.com/myDataGraph#38045546> ;
+psh:generality "0.00009552695054092136"^^xsd:decimal ;
+psh:likelihood "0.4096000000000001"^^xsd:double ;
+psh:numConfirmation 4 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 4 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341957 psh:focusShape <http://www.example.com/myDataGraph#34801439> ;
+psh:generality "0.007212284765839562"^^xsd:decimal ;
+psh:likelihood "2.3132890982523694E-18"^^xsd:double ;
+psh:numConfirmation 302 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 302 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341956 psh:focusShape <http://www.example.com/myDataGraph#34462197> ;
+psh:generality "0.00011940868817615169"^^xsd:decimal ;
+psh:likelihood "0.3276800000000001"^^xsd:double ;
+psh:numConfirmation 5 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 5 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341955 psh:focusShape <http://www.example.com/myDataGraph#32407731> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341209 psh:focusShape <http://www.example.com/myDataGraph#27072384> ;
+psh:generality "0.003988250185083466"^^xsd:decimal ;
+psh:likelihood "6.631236684565829E-11"^^xsd:double ;
+psh:numConfirmation 167 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 167 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145313635 psh:focusShape <http://www.example.com/myDataGraph#113942665> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145316994 psh:focusShape <http://www.example.com/myDataGraph#127461032> ;
+psh:generality "0.0008597425548682922"^^xsd:decimal ;
+psh:likelihood "1.2169405506392408E-30"^^xsd:double ;
+psh:numConfirmation 1 ;
+psh:numViolation 35 ;
+psh:referenceCardinality 36 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145316993 psh:focusShape <http://www.example.com/myDataGraph#126265617> ;
+psh:generality "0.010412437608960427"^^xsd:decimal ;
+psh:likelihood "1.0234286396942765E-25"^^xsd:double ;
+psh:numConfirmation 436 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 436 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145339328 psh:focusShape <http://www.example.com/myDataGraph#236210426> ;
+psh:generality "0.011534879277816254"^^xsd:decimal ;
+psh:likelihood "2.731160131922458E-28"^^xsd:double ;
+psh:numConfirmation 483 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 483 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145316992 psh:focusShape <http://www.example.com/myDataGraph#124327083> ;
+psh:generality "0.008573543811047692"^^xsd:decimal ;
+psh:likelihood "1.7074106059001754E-21"^^xsd:double ;
+psh:numConfirmation 359 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 359 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145339327 psh:focusShape <http://www.example.com/myDataGraph#227709323> ;
+psh:generality "0.003988250185083466"^^xsd:decimal ;
+psh:likelihood "6.631236684565829E-11"^^xsd:double ;
+psh:numConfirmation 167 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 167 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145346408 psh:focusShape <http://www.example.com/myDataGraph#96662412> ;
+psh:generality "0.00002388173763523034"^^xsd:decimal ;
+psh:likelihood "0.8"^^xsd:double ;
+psh:numConfirmation 1 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 1 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145346407 psh:focusShape <http://www.example.com/myDataGraph#91739654> ;
+psh:generality "0.007307811716380484"^^xsd:decimal ;
+psh:likelihood "1.393880134045174E-18"^^xsd:double ;
+psh:numConfirmation 306 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 306 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145346406 psh:focusShape <http://www.example.com/myDataGraph#91098901> ;
+psh:generality "0.008573543811047692"^^xsd:decimal ;
+psh:likelihood "1.7074106059001754E-21"^^xsd:double ;
+psh:numConfirmation 359 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 359 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145335573 psh:focusShape <http://www.example.com/myDataGraph#185222755> ;
+psh:generality "0.015714183363981563"^^xsd:decimal ;
+psh:likelihood "7.396325085423354E-38"^^xsd:double ;
+psh:numConfirmation 658 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 658 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145335572 psh:focusShape <http://www.example.com/myDataGraph#183702323> ;
+psh:generality "0.00011940868817615169"^^xsd:decimal ;
+psh:likelihood "0.3276800000000001"^^xsd:double ;
+psh:numConfirmation 5 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 5 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145335571 psh:focusShape <http://www.example.com/myDataGraph#183409774> ;
+psh:generality "0.0016000764215604328"^^xsd:decimal ;
+psh:likelihood "2.8092887963990594E-5"^^xsd:double ;
+psh:numConfirmation 67 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 67 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145335570 psh:focusShape <http://www.example.com/myDataGraph#181514968> ;
+psh:generality "0.07109593294008072"^^xsd:decimal ;
+psh:likelihood "4.468138009617449E-164"^^xsd:double ;
+psh:numConfirmation 2977 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2977 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145316632 psh:focusShape <http://www.example.com/myDataGraph#120699077> ;
+psh:generality "0.0004059895397989158"^^xsd:decimal ;
+psh:likelihood "0.022517998136852502"^^xsd:double ;
+psh:numConfirmation 17 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 17 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145338089 psh:focusShape <http://www.example.com/myDataGraph#219099780> ;
+psh:generality "0.0016000764215604328"^^xsd:decimal ;
+psh:likelihood "2.8092887963990594E-5"^^xsd:double ;
+psh:numConfirmation 67 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 67 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145338088 psh:focusShape <http://www.example.com/myDataGraph#215859668> ;
+psh:generality "0.011534879277816254"^^xsd:decimal ;
+psh:likelihood "2.731160131922458E-28"^^xsd:double ;
+psh:numConfirmation 483 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 483 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145343068 psh:focusShape <http://www.example.com/myDataGraph#86264254> ;
+psh:generality "0.00002388173763523034"^^xsd:decimal ;
+psh:likelihood "0.8"^^xsd:double ;
+psh:numConfirmation 1 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 1 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145338087 psh:focusShape <http://www.example.com/myDataGraph#213570274> ;
+psh:generality "0.013684235664986985"^^xsd:decimal ;
+psh:likelihood "3.261598488551098E-33"^^xsd:double ;
+psh:numConfirmation 573 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 573 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145343067 psh:focusShape <http://www.example.com/myDataGraph#85551677> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145324188 psh:focusShape <http://www.example.com/myDataGraph#165026818> ;
+psh:generality "0.017362023260812456"^^xsd:decimal ;
+psh:likelihood "0.0337738979919037"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 150 ;
+psh:referenceCardinality 727 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145324187 psh:focusShape <http://www.example.com/myDataGraph#158646197> ;
+psh:generality "0.0016000764215604328"^^xsd:decimal ;
+psh:likelihood "2.8092887963990594E-5"^^xsd:double ;
+psh:numConfirmation 67 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 67 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145324186 psh:focusShape <http://www.example.com/myDataGraph#158112685> ;
+psh:generality "0.0003104625892579944"^^xsd:decimal ;
+psh:likelihood "0.054975581388800036"^^xsd:double ;
+psh:numConfirmation 13 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 13 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145324185 psh:focusShape <http://www.example.com/myDataGraph#157560420> ;
+psh:generality "0.007212284765839562"^^xsd:decimal ;
+psh:likelihood "2.3132890982523694E-18"^^xsd:double ;
+psh:numConfirmation 302 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 302 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145324184 psh:focusShape <http://www.example.com/myDataGraph#157339338> ;
+psh:generality "0.004059895397989158"^^xsd:decimal ;
+psh:likelihood "4.517184958704305E-11"^^xsd:double ;
+psh:numConfirmation 170 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 170 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145339902 psh:focusShape <http://www.example.com/myDataGraph#236528367> ;
+psh:generality "0.013684235664986985"^^xsd:decimal ;
+psh:likelihood "3.261598488551098E-33"^^xsd:double ;
+psh:numConfirmation 573 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 573 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145324183 psh:focusShape <http://www.example.com/myDataGraph#154609265> ;
+psh:generality "0.07109593294008072"^^xsd:decimal ;
+psh:likelihood "4.468138009617449E-164"^^xsd:double ;
+psh:numConfirmation 2977 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2977 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145336762 psh:focusShape <http://www.example.com/myDataGraph#203360164> ;
+psh:generality "0.004059895397989158"^^xsd:decimal ;
+psh:likelihood "4.517184958704305E-11"^^xsd:double ;
+psh:numConfirmation 170 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 170 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145336761 psh:focusShape <http://www.example.com/myDataGraph#199459746> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145337509 psh:focusShape <http://www.example.com/myDataGraph#213054261> ;
+psh:generality "0.004059895397989158"^^xsd:decimal ;
+psh:likelihood "4.517184958704305E-11"^^xsd:double ;
+psh:numConfirmation 170 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 170 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145337508 psh:focusShape <http://www.example.com/myDataGraph#212390111> ;
+psh:generality "0.003940486709813006"^^xsd:decimal ;
+psh:likelihood "8.566125111288426E-11"^^xsd:double ;
+psh:numConfirmation 165 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 165 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145327775 psh:focusShape <http://www.example.com/myDataGraph#170463897> ;
+psh:generality "0.00011940868817615169"^^xsd:decimal ;
+psh:likelihood "0.3276800000000001"^^xsd:double ;
+psh:numConfirmation 5 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 5 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145327774 psh:focusShape <http://www.example.com/myDataGraph#16997967> ;
+psh:generality "0.0004059895397989158"^^xsd:decimal ;
+psh:likelihood "0.022517998136852502"^^xsd:double ;
+psh:numConfirmation 17 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 17 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145338667 psh:focusShape <http://www.example.com/myDataGraph#222317927> ;
+psh:generality "0.013684235664986985"^^xsd:decimal ;
+psh:likelihood "3.261598488551098E-33"^^xsd:double ;
+psh:numConfirmation 573 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 573 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145303494 psh:focusShape <http://www.example.com/myDataGraph#101718219> ;
+psh:generality "0.0008597425548682922"^^xsd:decimal ;
+psh:likelihood "0.14669388615179144"^^xsd:double ;
+psh:numConfirmation 30 ;
+psh:numViolation 6 ;
+psh:referenceCardinality 36 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145303493 psh:focusShape <http://www.example.com/myDataGraph#101579301> ;
+psh:generality "0.032049291906479115"^^xsd:decimal ;
+psh:likelihood "3.8200977620745533E-75"^^xsd:double ;
+psh:numConfirmation 1342 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 1342 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145340992 psh:focusShape <http://www.example.com/myDataGraph#25676424> ;
+psh:generality "0.002029947698994579"^^xsd:decimal ;
+psh:likelihood "2.6288253945612857E-6"^^xsd:double ;
+psh:numConfirmation 85 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 85 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341994 psh:focusShape <http://www.example.com/myDataGraph#71187205> ;
+psh:generality "0.011534879277816254"^^xsd:decimal ;
+psh:likelihood "2.731160131922458E-28"^^xsd:double ;
+psh:numConfirmation 483 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 483 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341993 psh:focusShape <http://www.example.com/myDataGraph#69588103> ;
+psh:generality "0.00002388173763523034"^^xsd:decimal ;
+psh:likelihood "0.8"^^xsd:double ;
+psh:numConfirmation 1 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 1 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341992 psh:focusShape <http://www.example.com/myDataGraph#68580539> ;
+psh:generality "0.010412437608960427"^^xsd:decimal ;
+psh:likelihood "1.0234286396942765E-25"^^xsd:double ;
+psh:numConfirmation 436 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 436 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341991 psh:focusShape <http://www.example.com/myDataGraph#66266956> ;
+psh:generality "0.010412437608960427"^^xsd:decimal ;
+psh:likelihood "1.0234286396942765E-25"^^xsd:double ;
+psh:numConfirmation 436 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 436 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341990 psh:focusShape <http://www.example.com/myDataGraph#65718564> ;
+psh:generality "0.00140902252047859"^^xsd:decimal ;
+psh:likelihood "8.137711041899807E-5"^^xsd:double ;
+psh:numConfirmation 59 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 59 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145311904 psh:focusShape <http://www.example.com/myDataGraph#108210988> ;
+psh:generality "0.00011940868817615169"^^xsd:decimal ;
+psh:likelihood "0.3276800000000001"^^xsd:double ;
+psh:numConfirmation 5 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 5 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145311902 psh:focusShape <http://www.example.com/myDataGraph#107072932> ;
+psh:generality "0.0004059895397989158"^^xsd:decimal ;
+psh:likelihood "0.022517998136852502"^^xsd:double ;
+psh:numConfirmation 17 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 17 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145312479 psh:focusShape <http://www.example.com/myDataGraph#113596815> ;
+psh:generality "0.00035822606452845507"^^xsd:decimal ;
+psh:likelihood "0.03518437208883203"^^xsd:double ;
+psh:numConfirmation 15 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 15 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145303528 psh:focusShape <http://www.example.com/myDataGraph#104604901> ;
+psh:generality "0.0007880973419626012"^^xsd:decimal ;
+psh:likelihood "0.0028062629772804336"^^xsd:double ;
+psh:numConfirmation 33 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 33 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145312478 psh:focusShape <http://www.example.com/myDataGraph#112504241> ;
+psh:generality "0.013684235664986985"^^xsd:decimal ;
+psh:likelihood "3.261598488551098E-33"^^xsd:double ;
+psh:numConfirmation 573 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 573 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145321205 psh:focusShape <http://www.example.com/myDataGraph#154242229> ;
+psh:generality "0.00035822606452845507"^^xsd:decimal ;
+psh:likelihood "0.03518437208883203"^^xsd:double ;
+psh:numConfirmation 15 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 15 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145321204 psh:focusShape <http://www.example.com/myDataGraph#151138860> ;
+psh:generality "0.14219186588016144"^^xsd:decimal ;
+psh:likelihood "0.0"^^xsd:double ;
+psh:numConfirmation 5954 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 5954 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145321203 psh:focusShape <http://www.example.com/myDataGraph#148728922> ;
+psh:generality "0.07109593294008072"^^xsd:decimal ;
+psh:likelihood "4.468138009617449E-164"^^xsd:double ;
+psh:numConfirmation 2977 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2977 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145302915 psh:summary _:bb145303493 ;
+psh:summary _:bb145303494 ;
+psh:summary _:bb145303528 ;
+psh:summary _:bb145304106 ;
+psh:summary _:bb145304107 ;
+psh:summary _:bb145311902 ;
+psh:summary _:bb145311904 ;
+psh:summary _:bb145312478 ;
+psh:summary _:bb145312479 ;
+psh:summary _:bb145313057 ;
+psh:summary _:bb145313635 ;
+psh:summary _:bb145316613 ;
+psh:summary _:bb145316614 ;
+psh:summary _:bb145316632 ;
+psh:summary _:bb145316992 ;
+psh:summary _:bb145316993 ;
+psh:summary _:bb145316994 ;
+psh:summary _:bb145317572 ;
+psh:summary _:bb145317573 ;
+psh:summary _:bb145317574 ;
+psh:summary _:bb145317575 ;
+psh:summary _:bb145317576 ;
+psh:summary _:bb145317577 ;
+psh:summary _:bb145317645 ;
+psh:summary _:bb145318223 ;
+psh:summary _:bb145318224 ;
+psh:summary _:bb145318225 ;
+psh:summary _:bb145321203 ;
+psh:summary _:bb145321204 ;
+psh:summary _:bb145321205 ;
+psh:summary _:bb145324183 ;
+psh:summary _:bb145324184 ;
+psh:summary _:bb145324185 ;
+psh:summary _:bb145324186 ;
+psh:summary _:bb145324187 ;
+psh:summary _:bb145324188 ;
+psh:summary _:bb145327166 ;
+psh:summary _:bb145327774 ;
+psh:summary _:bb145327775 ;
+psh:summary _:bb145335570 ;
+psh:summary _:bb145335571 ;
+psh:summary _:bb145335572 ;
+psh:summary _:bb145335573 ;
+psh:summary _:bb145336151 ;
+psh:summary _:bb145336153 ;
+psh:summary _:bb145336761 ;
+psh:summary _:bb145336762 ;
+psh:summary _:bb145337340 ;
+psh:summary _:bb145337508 ;
+psh:summary _:bb145337509 ;
+psh:summary _:bb145338087 ;
+psh:summary _:bb145338088 ;
+psh:summary _:bb145338089 ;
+psh:summary _:bb145338667 ;
+psh:summary _:bb145339159 ;
+psh:summary _:bb145339327 ;
+psh:summary _:bb145339328 ;
+psh:summary _:bb145339902 ;
+psh:summary _:bb145340394 ;
+psh:summary _:bb145340395 ;
+psh:summary _:bb145340396 ;
+psh:summary _:bb145340974 ;
+psh:summary _:bb145340992 ;
+psh:summary _:bb145341035 ;
+psh:summary _:bb145341036 ;
+psh:summary _:bb145341037 ;
+psh:summary _:bb145341038 ;
+psh:summary _:bb145341039 ;
+psh:summary _:bb145341040 ;
+psh:summary _:bb145341041 ;
+psh:summary _:bb145341209 ;
+psh:summary _:bb145341377 ;
+psh:summary _:bb145341955 ;
+psh:summary _:bb145341956 ;
+psh:summary _:bb145341957 ;
+psh:summary _:bb145341958 ;
+psh:summary _:bb145341960 ;
+psh:summary _:bb145341978 ;
+psh:summary _:bb145341979 ;
+psh:summary _:bb145341980 ;
+psh:summary _:bb145341981 ;
+psh:summary _:bb145341982 ;
+psh:summary _:bb145341983 ;
+psh:summary _:bb145341985 ;
+psh:summary _:bb145341986 ;
+psh:summary _:bb145341987 ;
+psh:summary _:bb145341988 ;
+psh:summary _:bb145341989 ;
+psh:summary _:bb145341990 ;
+psh:summary _:bb145341991 ;
+psh:summary _:bb145341992 ;
+psh:summary _:bb145341993 ;
+psh:summary _:bb145341994 ;
+psh:summary _:bb145342486 ;
+psh:summary _:bb145342487 ;
+psh:summary _:bb145342488 ;
+psh:summary _:bb145342489 ;
+psh:summary _:bb145343067 ;
+psh:summary _:bb145343068 ;
+psh:summary _:bb145346046 ;
+psh:summary _:bb145346406 ;
+psh:summary _:bb145346407 ;
+psh:summary _:bb145346408 ;
+psh:summary _:bb145346986 ;
+psh:summary _:bb145346987 ;
+rdf:type sh:ValidationReport ;
+sh:conforms false ;
+sh:result <urn:uuid:513b598e-d49d-40e4-abd4-a7a565657737> ;
+sh:result <urn:uuid:99edf61d-22a7-4e27-ae4b-eebc010d6935> ;
+sh:result <urn:uuid:81d48919-f59c-40f5-9bdd-7cee186254c6> ;
+sh:result <urn:uuid:54b1537e-60b2-4879-826f-d623717d6b70> ;
+sh:result <urn:uuid:0cbf13c3-8c9e-4aad-9379-3317c7dd9391> ;
+sh:result <urn:uuid:00e77f64-6606-483e-822b-229a5e695e2e> ;
+sh:result <urn:uuid:466c2bd6-8169-42e1-99b9-7ea045d631f1> ;
+sh:result <urn:uuid:86d57d3f-77ab-4040-a159-ed7d0cea4d70> ;
+sh:result <urn:uuid:d1b24e21-0d98-4031-9274-f3fd9c2714ef> ;
+sh:result <urn:uuid:eb012942-38e0-473c-84b4-4ca543c7d7df> ;
+sh:result <urn:uuid:06ac4bf8-0036-4bfd-8130-cc4586440ecb> ;
+sh:result <urn:uuid:658f50d0-9ebf-4d7b-8f77-b548c54b7251> ;
+sh:result <urn:uuid:80847cb5-9b2b-4d8f-a755-014a2f328acc> ;
+sh:result <urn:uuid:b83d4a6b-7d8c-4139-b37c-be617b82b48a> ;
+sh:result <urn:uuid:f587d9dd-237a-464b-84b7-17701477cca8> ;
+sh:result <urn:uuid:6890319c-88cd-4b5f-8394-1271d949c10b> ;
+sh:result <urn:uuid:811bd540-11bc-4ada-8a70-8ab5e61d6d62> ;
+sh:result <urn:uuid:7ae0be84-0ee2-4444-9ddc-5937656c4d23> ;
+sh:result <urn:uuid:26a254cb-82ba-40ff-93c4-aefe0e26f45f> ;
+sh:result <urn:uuid:735e2ce0-fabb-4dc5-be41-4009bdcb8f66> ;
+sh:result <urn:uuid:3cdef9e2-f669-4c45-9c0d-6f2ab4f188fd> ;
+sh:result <urn:uuid:80c37f8d-dd65-47fa-8c4b-92b76bd7a60f> ;
+sh:result <urn:uuid:148f546d-3aeb-4ee9-bf4d-2160f2f25eea> ;
+sh:result <urn:uuid:b2cfdbb3-54ea-46e8-b648-e1cb5a466d66> ;
+sh:result <urn:uuid:46ad82cd-82b2-4472-8082-f0614a0fce28> ;
+sh:result <urn:uuid:7ebba1f2-f523-422c-af2d-a717ce32d8d3> ;
+sh:result <urn:uuid:5ed19576-e181-49eb-b9bc-537f02c9e661> ;
+sh:result <urn:uuid:3beb91b0-dc81-44e9-9393-bb573057f7e8> ;
+sh:result <urn:uuid:87d7c858-6f24-4b23-a86b-452f21a566da> ;
+sh:result <urn:uuid:8b0a64a9-6645-4adc-b6e3-6fa831bf0758> ;
+sh:result <urn:uuid:9d12d413-8efb-4d8d-9e89-776120b17924> ;
+sh:result <urn:uuid:0cbd8e0e-35f1-4d94-af99-07c419be621f> ;
+sh:result <urn:uuid:891b840c-1a36-4a45-b4ce-ff88c510f060> ;
+sh:result <urn:uuid:bd62dd50-fa1a-4b63-8109-9daacf29da42> ;
+sh:result <urn:uuid:d0805cee-5162-4580-a232-e4fcc1b5e8ab> ;
+sh:result <urn:uuid:9b9e48e7-f349-4df2-afb8-3de0b7402ee2> ;
+sh:result <urn:uuid:e6913406-dd17-4d19-b5a6-00f830207871> ;
+sh:result <urn:uuid:f7c3f0bb-2dc9-4a1e-b76c-34c20186fd43> ;
+sh:result <urn:uuid:a52b0dbe-3bc8-4ddd-b834-cc2f71644998> ;
+sh:result <urn:uuid:1786f441-9cd5-487f-ae4e-a43f2eefa5bf> ;
+sh:result <urn:uuid:c24bab29-37bf-4037-9169-3aa476c004ab> ;
+sh:result <urn:uuid:bf07be89-447b-419f-93e6-abb7aa1bc442> ;
+sh:result <urn:uuid:4be6c762-b9ce-42cd-94cf-9bf57da58769> ;
+sh:result <urn:uuid:ef9e7257-3ce0-498e-8495-9dd7e9830aa6> ;
+sh:result <urn:uuid:7e9ca142-7f3c-4120-bae0-0c9e32e08d34> ;
+sh:result <urn:uuid:e6cb7e37-d036-4f10-929e-31a3f43254b6> ;
+sh:result <urn:uuid:6abf6ccf-ca89-4f43-bf4e-e3e17469b525> ;
+sh:result <urn:uuid:1698c1cb-8c66-482a-9cef-ebb851596b9b> ;
+sh:result <urn:uuid:6297d55c-9623-4099-b6ba-d14e148f0268> ;
+sh:result <urn:uuid:797bf87c-c2ca-444a-b3c2-0603d9fac2a0> ;
+sh:result <urn:uuid:9e2ffa8c-df94-40f3-a56c-ba9cf7938b97> ;
+sh:result <urn:uuid:6e1bb7a5-0fb0-4636-9f5b-a9e7a628abdd> ;
+sh:result <urn:uuid:67f2079c-1e2e-450b-b78e-7c709e8d5fec> ;
+sh:result <urn:uuid:d3abc88f-f3f1-4a2d-a030-4911da46a2c0> ;
+sh:result <urn:uuid:273e3893-2460-415e-b9cd-0aabeb140429> ;
+sh:result <urn:uuid:b3f00a09-faa6-43d1-aafe-412b0c58fcf1> ;
+sh:result <urn:uuid:74ce8ba2-d06c-46b2-9ae3-cd85d343f396> ;
+sh:result <urn:uuid:6ba2b24c-683a-4d31-9e88-df093d68b86a> ;
+sh:result <urn:uuid:8a4b1b1d-5aa4-4fff-9be4-4f77808a75a5> ;
+sh:result <urn:uuid:9675e411-cbfe-41cb-a180-6fa910ad88fa> ;
+sh:result <urn:uuid:4c7fbfda-121e-41d8-812d-d15191c4a1b8> ;
+sh:result <urn:uuid:3ad06fcc-38fd-44d1-ba65-1344dd08d010> ;
+sh:result <urn:uuid:d05698f1-b605-432e-8cd8-b51e0ecef050> ;
+sh:result <urn:uuid:98383050-7489-465d-aeb8-266cc7ca8be5> ;
+sh:result <urn:uuid:26d71259-d4ef-4db0-8a94-6f5e852ead8e> ;
+sh:result <urn:uuid:c3282929-a168-4dc9-b271-c1891113e344> ;
+sh:result <urn:uuid:ace17703-9803-4121-9abb-2cec08f79fa8> ;
+sh:result <urn:uuid:0612e7aa-a9b5-4c65-9880-6506249cc8ce> ;
+sh:result <urn:uuid:899fcdc5-f8c9-4718-b57c-0e41ec1e79e4> ;
+sh:result <urn:uuid:8f3e30f1-77c4-4ad0-a6bc-b33eb91d9698> ;
+sh:result <urn:uuid:5487e6f8-7972-4465-827a-9b22c12eb33c> ;
+sh:result <urn:uuid:a010fcac-4553-4002-b2c1-fc231ea616de> ;
+sh:result <urn:uuid:e1a7bd6a-2b96-446e-bf2a-59a8030c29d2> ;
+sh:result <urn:uuid:a7252863-eed0-4318-9b09-4ce6a8e5f2c0> ;
+sh:result <urn:uuid:2a67dad2-57bb-4103-9bbb-4d8c8954d65d> ;
+sh:result <urn:uuid:ef693581-d348-45fd-a8aa-4e27f27a8076> ;
+sh:result <urn:uuid:eae7e06e-8528-411f-8ce3-8005dd1b6feb> ;
+sh:result <urn:uuid:fa60f930-372b-4116-a6ee-51d990d3628b> ;
+sh:result <urn:uuid:99d3a92b-0768-4944-a970-894f635005c7> ;
+sh:result <urn:uuid:7f794602-6299-4cd1-a77f-dda2dc4f9479> ;
+sh:result <urn:uuid:ab8825f3-3610-4037-b152-e95629fc0064> ;
+sh:result <urn:uuid:9a31be83-74b7-4c4e-9ee4-3572c7f965d2> ;
+sh:result <urn:uuid:8b44f0cf-9004-4bcd-aa51-7b207ac48ee3> ;
+sh:result <urn:uuid:b54fb442-cafd-47e0-adff-c5b6db3a47f5> ;
+sh:result <urn:uuid:f18747a0-4f3e-41e9-acc8-875388fc4a82> ;
+sh:result <urn:uuid:5b3c98af-ee88-42f7-87da-8514937f52ec> ;
+sh:result <urn:uuid:40639186-5ce8-4814-93c3-90d8c6753b03> ;
+sh:result <urn:uuid:14895a75-d6fd-4f10-9374-a8e696d397b1> ;
+sh:result <urn:uuid:27d03dd6-ddd9-4acd-b436-2b898fd3a750> ;
+sh:result <urn:uuid:ed265db9-558d-46b3-8820-9139806160a0> ;
+sh:result <urn:uuid:5d6f704f-8104-4c76-802a-fa7e820d99ac> ;
+sh:result <urn:uuid:f338389b-0639-4bdf-b67e-9bd61ebf769f> ;
+sh:result <urn:uuid:62538c5c-ea72-4c18-94a7-8807b5f5d0fa> ;
+sh:result <urn:uuid:4e201339-8397-4bd0-ac94-ac9c2a92c5b0> ;
+sh:result <urn:uuid:02e26ad9-f3f2-4739-8b4b-130f73f0162d> ;
+sh:result <urn:uuid:e83271dc-52b1-4e3e-ae0a-699866cfc8be> ;
+sh:result <urn:uuid:55020187-b3d1-40b5-a2da-3129756e31a7> ;
+sh:result <urn:uuid:0d4e10ca-e4e8-4d3a-9f92-10c130c4451c> ;
+sh:result <urn:uuid:c0ae5790-4987-4a61-9c7c-8789a4d2e415> ;
+sh:result <urn:uuid:9046e52a-f416-4b6f-815d-2dfc45a5b72c> ;
+sh:result <urn:uuid:6801fb73-478a-458b-a3cd-04b6ad516bcb> ;
+sh:result <urn:uuid:09a6290b-4ca9-426f-9ea8-571070f80f5b> ;
+sh:result <urn:uuid:b3778bc0-d369-4e2a-a018-1412a5ff5978> ;
+sh:result <urn:uuid:d0538f33-c649-4815-84d3-ab0bbcba451c> ;
+sh:result <urn:uuid:f4cb4f0c-a9ec-4f3e-9350-0e0c0d4a9bed> ;
+sh:result <urn:uuid:9e97d6a9-32ef-4954-bd64-0b5c6d414e96> ;
+sh:result <urn:uuid:0609a932-d6e9-4689-a772-24074a89235f> ;
+sh:result <urn:uuid:6dfdb7f5-c938-47d6-9a44-71c04d2878ed> ;
+sh:result <urn:uuid:a9364987-474f-4fd0-80c9-52e70715d0cc> ;
+sh:result <urn:uuid:40239a6a-5d4f-4593-9439-092884f0a7f2> ;
+sh:result <urn:uuid:f34f50b9-2810-4d1e-9dbd-5200beefeb78> ;
+sh:result <urn:uuid:256638f6-7a09-40b2-8bce-9ea3872f1a11> ;
+sh:result <urn:uuid:67c4bb08-6811-4474-b159-8a587e8dc105> ;
+sh:result <urn:uuid:c1af1a98-906b-4c23-8f0e-ac2f5ee733bb> ;
+sh:result <urn:uuid:ff651dee-a86f-4a23-9d1b-6533dfb69951> ;
+sh:result <urn:uuid:72a5364d-70aa-4bd1-9c62-53fa13ebd691> ;
+sh:result <urn:uuid:7c1ed324-2af9-4070-9b2c-c186227c083f> ;
+sh:result <urn:uuid:fb361933-008e-4c14-b9af-841ec0f355f7> ;
+sh:result <urn:uuid:29586f86-92d2-4927-bdf8-9b732d1b7d35> ;
+sh:result <urn:uuid:49169402-07b2-42c7-a3b7-91674ef908b5> ;
+sh:result <urn:uuid:ece5872a-d3b5-4b85-8507-ee9912b866ff> ;
+sh:result <urn:uuid:198eba76-cb49-4330-ab2b-add2920eaf36> ;
+sh:result <urn:uuid:2dd0f250-52e7-4e77-a627-d599640a71a6> ;
+sh:result <urn:uuid:58f85feb-3b07-4612-b638-1d2ecfaed515> ;
+sh:result <urn:uuid:d6241f49-b912-47b2-9287-18ae9020320c> ;
+sh:result <urn:uuid:c6514dcd-bd82-44fb-a0b1-a94af59b2275> ;
+sh:result <urn:uuid:28c03086-1fff-4b60-929c-e110ab9e77b2> ;
+sh:result <urn:uuid:305fc327-8b45-454a-81ab-1ab7c3df7fa3> ;
+sh:result <urn:uuid:689fe6da-33a1-4351-9a1b-525214c1182a> ;
+sh:result <urn:uuid:69a0ffa9-a40c-4d38-92e4-fb5a6b1d24ce> ;
+sh:result <urn:uuid:0ee0d928-40dc-48cb-8c9d-075c71cd6ec8> ;
+sh:result <urn:uuid:ee048fa3-454f-4101-a885-2d9f488c9ec6> ;
+sh:result <urn:uuid:11a55fde-796e-4af4-ad69-221f438dbd08> ;
+sh:result <urn:uuid:c8938173-b5df-46e2-8e4b-d65706f33e8a> ;
+sh:result <urn:uuid:73f9720f-8941-429b-bdbb-8bb446960a89> ;
+sh:result <urn:uuid:8d4552d2-4bde-4aa5-86a8-9e8dc93a5bee> ;
+sh:result <urn:uuid:612eff42-3b79-4118-aa34-450d51a975a8> ;
+sh:result <urn:uuid:5bc5d000-4d9b-442b-bf78-afd0783fda74> ;
+sh:result <urn:uuid:2ec86005-525d-4583-b191-49f30f0fee2f> ;
+sh:result <urn:uuid:b9b4b559-d127-475e-8a04-aa137ec39339> ;
+sh:result <urn:uuid:5a0ec9b4-ac6e-4021-a270-e6768b0a2383> ;
+sh:result <urn:uuid:44e3d6f0-0a7f-4805-895c-7960429bde4e> ;
+sh:result <urn:uuid:389bf7d1-3c5d-490e-a00f-1f123a426c8d> ;
+sh:result <urn:uuid:43570f95-6236-45da-a936-433b2d77e4de> ;
+sh:result <urn:uuid:bf3e0b17-68f8-4ab9-a105-2b62c8c5d889> ;
+sh:result <urn:uuid:a61decb5-66fb-4ac8-a065-8e8221939e33> ;
+sh:result <urn:uuid:1ef7b194-562c-4561-b1b4-531bb65ba6be> ;
+sh:result <urn:uuid:c1c319a9-b8d5-4831-920b-3b744278a037> ;
+sh:result <urn:uuid:6f41ddc4-adf9-4867-85ad-9e4988924b2b> ;
+sh:result <urn:uuid:79204327-5860-4095-979f-671946df1e15> ;
+sh:result <urn:uuid:e0785ece-68fc-4675-9006-4cb1a1e4bd2f> ;
+sh:result <urn:uuid:3772aca2-1d5a-4726-b2a2-ef08ed52ca2a> ;
+sh:result <urn:uuid:ed738203-cea2-4cc3-b78e-66b98279b193> ;
+sh:result <urn:uuid:3a6a8174-0111-4ee3-ac74-5fa4df7c0358> ;
+sh:result <urn:uuid:3a83b40a-c28e-4be6-bce3-bd99e91a680f> ;
+sh:result <urn:uuid:c70a5b04-2c9b-439a-9e72-e4ad4225a927> ;
+sh:result <urn:uuid:f61fcfcd-b2e4-44f7-b56e-eaf530c38c7e> ;
+sh:result <urn:uuid:031f4c28-06f9-4ae8-b498-176caf447b25> ;
+sh:result <urn:uuid:3508065c-62e4-409b-867b-eb6aeadc9c28> ;
+sh:result <urn:uuid:b8aa3be8-4659-4c4a-883c-a2003c60c5fc> ;
+sh:result <urn:uuid:a975b455-bb68-4341-a9ed-de05d02db1fe> ;
+sh:result <urn:uuid:e937db7f-8750-4e89-8a7c-3984231b40b9> ;
+sh:result <urn:uuid:89f0f515-8304-4855-8cb6-72b709700d48> ;
+sh:result <urn:uuid:22435c99-c93a-46aa-b38b-6e9d4e6e8f94> ;
+sh:result <urn:uuid:88a3a21a-5c8f-44cb-87aa-9e39d6322022> ;
+sh:result <urn:uuid:e5bd361c-bedd-4c95-90ea-b75bf1719993> ;
+sh:result <urn:uuid:b186fe59-044b-4592-8005-2deb068b7192> ;
+sh:result <urn:uuid:75d73ef7-aa04-438b-aeca-77886f3fd399> ;
+sh:result <urn:uuid:86ada69e-2831-4841-8a5c-b9201e4768c0> ;
+sh:result <urn:uuid:bbcf5bfb-6f2a-4a7f-9403-6c51357f19c1> ;
+sh:result <urn:uuid:6e3aea11-98b3-4a2d-b8d6-1b649d20a813> ;
+sh:result <urn:uuid:909f6d58-f7ed-402e-9322-1eb7593b3d87> ;
+sh:result <urn:uuid:52ee2dc1-439b-4ae9-a738-98c7c272935b> ;
+sh:result <urn:uuid:9cc26d71-22f4-408e-8e66-e1ec8d427e02> ;
+sh:result <urn:uuid:1865f012-fccd-4cf4-96a5-f2c196a72bf6> ;
+sh:result <urn:uuid:7335580b-e53d-4f8a-96bc-0d5bf0d31f71> ;
+sh:result <urn:uuid:b78bfced-f0e2-4d4d-a96f-0f926fbb5fb7> ;
+sh:result <urn:uuid:9b975aa4-8c3b-4d9e-b9e2-187e241b6371> ;
+sh:result <urn:uuid:71facef5-e466-4001-b91a-2d1301149a00> ;
+sh:result <urn:uuid:41d80419-f955-48e1-9933-37849244f435> ;
+sh:result <urn:uuid:4ffc7e8f-6931-4886-b5bf-e1b7f4fd9e0d> ;
+sh:result <urn:uuid:7e910af7-3e33-4189-af5e-da0932e378df> ;
+sh:result <urn:uuid:d67f3013-4dd4-4e1e-9f6a-03f2a3b9a18a> ;
+sh:result <urn:uuid:aa1d3e86-8178-4c3c-b2c3-96879f3b4b5e> ;
+sh:result <urn:uuid:2b3f3956-ab27-4a64-a3fa-7fb795c4053a> ;
+sh:result <urn:uuid:bd55b651-6e9a-470d-a455-9945ede10750> ;
+sh:result <urn:uuid:ca33dd16-bb59-430b-a86f-a02533839dfe> ;
+sh:result <urn:uuid:be5e2b48-3273-4759-a96d-a0d6d61d9660> ;
+sh:result <urn:uuid:0162b3c1-6e25-4618-8251-21bc88c110cb> ;
+sh:result <urn:uuid:752d3b87-8b39-4076-8600-cf0beb3d1369> ;
+sh:result <urn:uuid:f9beede5-5ee4-4458-ac7c-04c05f6dae14> ;
+sh:result <urn:uuid:78f00d6e-818f-4b91-828f-a786182d48c5> ;
+sh:result <urn:uuid:16de00c3-cb55-49a4-9f3b-cc42ced5dbe9> ;
+sh:result <urn:uuid:d0f568ef-2e0e-4f45-ae39-65ec2f68f035> ;
+sh:result <urn:uuid:6a02a3fd-a9ae-4b7d-b688-ad5630aaf261> ;
+sh:result <urn:uuid:60002dc9-1f45-4b78-94c5-41f6ffed98ca> ;
+sh:result <urn:uuid:a412ab14-9139-441a-83bb-a22e17455707> ;
+sh:result <urn:uuid:5b9888ec-180f-4cae-9eac-d8ec70c3b460> ;
+sh:result <urn:uuid:ba5ffb28-3e43-4b05-86a5-4ad31f1b0db8> ;
+sh:result <urn:uuid:a4f08571-395d-4224-837b-0d27432e72d0> ;
+sh:result <urn:uuid:360eeb65-9891-43f1-ab5d-fb80dd1af171> ;
+sh:result <urn:uuid:6ed6b5e9-71ef-4c52-bde8-dbd4e4cc12c9> ;
+sh:result <urn:uuid:15a9b559-36b5-4f36-8cb7-289aa1d793e1> ;
+sh:result <urn:uuid:9802bdfa-2bb7-48e1-a213-360c7810406f> ;
+sh:result <urn:uuid:7492736e-5a73-41fb-acbb-315a6d4fa064> ;
+sh:result <urn:uuid:51ac1204-5dd4-47eb-9598-76875df8b231> ;
+sh:result <urn:uuid:b7d5b296-0b12-4377-a021-ba70dba6708c> ;
+sh:result <urn:uuid:3c29434f-1b32-4101-870b-3072b9f49c17> .
+
+_:bb145316614 psh:focusShape <http://www.example.com/myDataGraph#116289883> ;
+psh:generality "0.14219186588016144"^^xsd:decimal ;
+psh:likelihood "0.0"^^xsd:double ;
+psh:numConfirmation 5954 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 5954 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145316613 psh:focusShape <http://www.example.com/myDataGraph#115831989> ;
+psh:generality "0.07109593294008072"^^xsd:decimal ;
+psh:likelihood "4.468138009617449E-164"^^xsd:double ;
+psh:numConfirmation 2977 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2977 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145318225 psh:focusShape <http://www.example.com/myDataGraph#146611436> ;
+psh:generality "0.010412437608960427"^^xsd:decimal ;
+psh:likelihood "1.0234286396942765E-25"^^xsd:double ;
+psh:numConfirmation 436 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 436 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145318224 psh:focusShape <http://www.example.com/myDataGraph#146594332> ;
+psh:generality "0.007307811716380484"^^xsd:decimal ;
+psh:likelihood "1.393880134045174E-18"^^xsd:double ;
+psh:numConfirmation 306 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 306 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145318223 psh:focusShape <http://www.example.com/myDataGraph#145538828> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341041 psh:focusShape <http://www.example.com/myDataGraph#268286832> ;
+psh:generality "0.00011940868817615169"^^xsd:decimal ;
+psh:likelihood "0.3276800000000001"^^xsd:double ;
+psh:numConfirmation 5 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 5 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341040 psh:focusShape <http://www.example.com/myDataGraph#267063097> ;
+psh:generality "0.00002388173763523034"^^xsd:decimal ;
+psh:likelihood "0.8"^^xsd:double ;
+psh:numConfirmation 1 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 1 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341989 psh:focusShape <http://www.example.com/myDataGraph#65591951> ;
+psh:generality "0.00004776347527046068"^^xsd:decimal ;
+psh:likelihood "0.6400000000000001"^^xsd:double ;
+psh:numConfirmation 2 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341988 psh:focusShape <http://www.example.com/myDataGraph#56318015> ;
+psh:generality "0.00002388173763523034"^^xsd:decimal ;
+psh:likelihood "0.8"^^xsd:double ;
+psh:numConfirmation 1 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 1 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341987 psh:focusShape <http://www.example.com/myDataGraph#56252385> ;
+psh:generality "0.010412437608960427"^^xsd:decimal ;
+psh:likelihood "1.0234286396942765E-25"^^xsd:double ;
+psh:numConfirmation 436 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 436 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341986 psh:focusShape <http://www.example.com/myDataGraph#55773915> ;
+psh:generality "0.0016000764215604328"^^xsd:decimal ;
+psh:likelihood "2.8092887963990594E-5"^^xsd:double ;
+psh:numConfirmation 67 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 67 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145340396 psh:focusShape <http://www.example.com/myDataGraph#250249915> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341985 psh:focusShape <http://www.example.com/myDataGraph#54524405> ;
+psh:generality "0.00004776347527046068"^^xsd:decimal ;
+psh:likelihood "0.6400000000000001"^^xsd:double ;
+psh:numConfirmation 2 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145317577 psh:focusShape <http://www.example.com/myDataGraph#138502482> ;
+psh:generality "0.00016717216344661238"^^xsd:decimal ;
+psh:likelihood "0.20971520000000007"^^xsd:double ;
+psh:numConfirmation 7 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 7 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145340395 psh:focusShape <http://www.example.com/myDataGraph#248686495> ;
+psh:generality "0.00011940868817615169"^^xsd:decimal ;
+psh:likelihood "0.3276800000000001"^^xsd:double ;
+psh:numConfirmation 5 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 5 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145317576 psh:focusShape <http://www.example.com/myDataGraph#136928928> ;
+psh:generality "0.00002388173763523034"^^xsd:decimal ;
+psh:likelihood "0.8"^^xsd:double ;
+psh:numConfirmation 1 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 1 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145340394 psh:focusShape <http://www.example.com/myDataGraph#238066744> ;
+psh:generality "0.02321304898144389"^^xsd:decimal ;
+psh:likelihood "5.473150503822659E-55"^^xsd:double ;
+psh:numConfirmation 972 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 972 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341983 psh:focusShape <http://www.example.com/myDataGraph#51957777> ;
+psh:generality "0.00016717216344661238"^^xsd:decimal ;
+psh:likelihood "0.20971520000000007"^^xsd:double ;
+psh:numConfirmation 7 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 7 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145317575 psh:focusShape <http://www.example.com/myDataGraph#135022365> ;
+psh:generality "0.007307811716380484"^^xsd:decimal ;
+psh:likelihood "1.393880134045174E-18"^^xsd:double ;
+psh:numConfirmation 306 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 306 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341982 psh:focusShape <http://www.example.com/myDataGraph#4999865> ;
+psh:generality "0.00140902252047859"^^xsd:decimal ;
+psh:likelihood "8.137711041899807E-5"^^xsd:double ;
+psh:numConfirmation 59 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 59 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145317574 psh:focusShape <http://www.example.com/myDataGraph#134748431> ;
+psh:generality "0.013588708714446063"^^xsd:decimal ;
+psh:likelihood "5.396335167107897E-33"^^xsd:double ;
+psh:numConfirmation 569 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 569 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341981 psh:focusShape <http://www.example.com/myDataGraph#49636214> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145317573 psh:focusShape <http://www.example.com/myDataGraph#133901716> ;
+psh:generality "0.00011940868817615169"^^xsd:decimal ;
+psh:likelihood "0.3276800000000001"^^xsd:double ;
+psh:numConfirmation 5 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 5 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341980 psh:focusShape <http://www.example.com/myDataGraph#42376196> ;
+psh:generality "0.015714183363981563"^^xsd:decimal ;
+psh:likelihood "7.396325085423354E-38"^^xsd:double ;
+psh:numConfirmation 658 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 658 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145317572 psh:focusShape <http://www.example.com/myDataGraph#130549650> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145346046 psh:focusShape <http://www.example.com/myDataGraph#8919877> ;
+psh:generality "0.07109593294008072"^^xsd:decimal ;
+psh:likelihood "4.468138009617449E-164"^^xsd:double ;
+psh:numConfirmation 2977 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2977 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145336153 psh:focusShape <http://www.example.com/myDataGraph#193663441> ;
+psh:generality "0.0"^^xsd:decimal ;
+psh:likelihood "1.0"^^xsd:double ;
+psh:numConfirmation 0 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 0 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341039 psh:focusShape <http://www.example.com/myDataGraph#264902576> ;
+psh:generality "0.0003104625892579944"^^xsd:decimal ;
+psh:likelihood "0.054975581388800036"^^xsd:double ;
+psh:numConfirmation 13 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 13 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341038 psh:focusShape <http://www.example.com/myDataGraph#263392650> ;
+psh:generality "0.00002388173763523034"^^xsd:decimal ;
+psh:likelihood "0.8"^^xsd:double ;
+psh:numConfirmation 1 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 1 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145336151 psh:focusShape <http://www.example.com/myDataGraph#193223868> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341037 psh:focusShape <http://www.example.com/myDataGraph#261922146> ;
+psh:generality "0.0008836242925035226"^^xsd:decimal ;
+psh:likelihood "6.828021293845078E-5"^^xsd:double ;
+psh:numConfirmation 20 ;
+psh:numViolation 17 ;
+psh:referenceCardinality 37 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341036 psh:focusShape <http://www.example.com/myDataGraph#261072318> ;
+psh:generality "0.010412437608960427"^^xsd:decimal ;
+psh:likelihood "1.0234286396942765E-25"^^xsd:double ;
+psh:numConfirmation 436 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 436 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341035 psh:focusShape <http://www.example.com/myDataGraph#257034096> ;
+psh:generality "0.0004059895397989158"^^xsd:decimal ;
+psh:likelihood "0.022517998136852502"^^xsd:double ;
+psh:numConfirmation 17 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 17 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145327166 psh:focusShape <http://www.example.com/myDataGraph#167462371> ;
+psh:generality "0.07109593294008072"^^xsd:decimal ;
+psh:likelihood "4.468138009617449E-164"^^xsd:double ;
+psh:numConfirmation 2977 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 2977 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145339159 psh:focusShape <http://www.example.com/myDataGraph#226367201> ;
+psh:generality "0.004107658873259618"^^xsd:decimal ;
+psh:likelihood "3.497473963446983E-11"^^xsd:double ;
+psh:numConfirmation 172 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 172 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145346987 psh:focusShape <http://www.example.com/myDataGraph#98011142> ;
+psh:generality "0.00011940868817615169"^^xsd:decimal ;
+psh:likelihood "0.3276800000000001"^^xsd:double ;
+psh:numConfirmation 5 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 5 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145346986 psh:focusShape <http://www.example.com/myDataGraph#97234458> ;
+psh:generality "0.013684235664986985"^^xsd:decimal ;
+psh:likelihood "3.261598488551098E-33"^^xsd:double ;
+psh:numConfirmation 573 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 573 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341979 psh:focusShape <http://www.example.com/myDataGraph#42140498> ;
+psh:generality "0.006376423948606501"^^xsd:decimal ;
+psh:likelihood "1.9544119539535286E-16"^^xsd:double ;
+psh:numConfirmation 267 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 267 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145340974 psh:focusShape <http://www.example.com/myDataGraph#254362721> ;
+psh:generality "0.032049291906479115"^^xsd:decimal ;
+psh:likelihood "3.8200977620745533E-75"^^xsd:double ;
+psh:numConfirmation 1342 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 1342 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145341978 psh:focusShape <http://www.example.com/myDataGraph#39807524> ;
+psh:generality "0.002029947698994579"^^xsd:decimal ;
+psh:likelihood "2.6288253945612857E-6"^^xsd:double ;
+psh:numConfirmation 85 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 85 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145342489 psh:focusShape <http://www.example.com/myDataGraph#83440340> ;
+psh:generality "0.00035822606452845507"^^xsd:decimal ;
+psh:likelihood "0.03518437208883203"^^xsd:double ;
+psh:numConfirmation 15 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 15 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145342488 psh:focusShape <http://www.example.com/myDataGraph#83243039> ;
+psh:generality "0.00140902252047859"^^xsd:decimal ;
+psh:likelihood "8.137711041899807E-5"^^xsd:double ;
+psh:numConfirmation 59 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 59 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145342487 psh:focusShape <http://www.example.com/myDataGraph#82610293> ;
+psh:generality "0.013588708714446063"^^xsd:decimal ;
+psh:likelihood "5.396335167107897E-33"^^xsd:double ;
+psh:numConfirmation 569 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 569 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145342486 psh:focusShape <http://www.example.com/myDataGraph#79253771> ;
+psh:generality "0.004107658873259618"^^xsd:decimal ;
+psh:likelihood "3.497473963446983E-11"^^xsd:double ;
+psh:numConfirmation 172 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 172 ;
+rdf:type psh:ValidationSummary .
+
+_:bb145337340 psh:focusShape <http://www.example.com/myDataGraph#204988561> ;
+psh:generality "0.013779762615527906"^^xsd:decimal ;
+psh:likelihood "1.9713905057007775E-33"^^xsd:double ;
+psh:numConfirmation 577 ;
+psh:numViolation 0 ;
+psh:referenceCardinality 577 ;
+rdf:type psh:ValidationSummary .

@@ -26,7 +26,7 @@ do
 	do 
     		docker-compose exec -T rdfminer ./rdfminer/scripts/run.sh -ge -rs \
     			-shacl-p $p -psh -g /rdfminer/io/shacl-shapes-grammar.bnf \
-    			-dir /surekg/results_p_$p/$i/ \
+    			-dir /results_p_$p/$i/ \
     			-ps 200 -kb 20000 -cr 4 -pc 0.75 -pm 0.05 -div 0 -mxw 1 -se 1 -init 6 \
     		> ./log/surekg_$p_$i.log
 	done

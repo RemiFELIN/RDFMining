@@ -1,0 +1,1 @@
+docker-compose exec -T rdfminer ./rdfminer/scripts/run.sh -psh -shacl-p 0.5 -sf /rdfminer/io/shapes_to_assess.ttl -dir solution_space_analysis/

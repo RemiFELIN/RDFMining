@@ -1,0 +1,1997 @@
+{
+  "entities": [
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/ns/oa#hasTarget>  ; sh:nodeKind sh:BlankNode . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0,
+      "fitness": 5954,
+      "confirmations": [],
+      "numConfirmations": 5954,
+      "referenceCardinality": 5954,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/ns/oa#hasTarget>  ; sh:nodeKind sh:BlankNodeOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0,
+      "fitness": 5954,
+      "confirmations": [],
+      "numConfirmations": 5954,
+      "referenceCardinality": 5954,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/ns/oa#hasTarget>  ; sh:nodeKind sh:BlankNodeOrIRI . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0,
+      "fitness": 5954,
+      "confirmations": [],
+      "numConfirmations": 5954,
+      "referenceCardinality": 5954,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <http://www.w3.org/ns/oa#motivatedBy>  ; sh:property [ sh:path <http://www.w3.org/ns/oa#hasTarget>  ; sh:nodeKind sh:BlankNodeOrLiteral ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0,
+      "fitness": 5954,
+      "confirmations": [],
+      "numConfirmations": 5954,
+      "referenceCardinality": 5954,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <http://www.w3.org/ns/oa#motivatedBy>  ; sh:property [ sh:path <http://www.w3.org/ns/oa#hasTarget>  ; sh:nodeKind sh:BlankNode ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0,
+      "fitness": 5954,
+      "confirmations": [],
+      "numConfirmations": 5954,
+      "referenceCardinality": 5954,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <http://www.w3.org/ns/oa#end>  ; sh:property [ sh:path <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  ; sh:nodeKind sh:IRIOrLiteral ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 4.468138009617449E-164,
+      "fitness": 2977,
+      "confirmations": [],
+      "numConfirmations": 2977,
+      "referenceCardinality": 2977,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetClass <http://www.w3.org/ns/oa#Annotation>  ; sh:property [ sh:path <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  ; sh:nodeKind sh:BlankNodeOrIRI ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 4.468138009617449E-164,
+      "fitness": 2977,
+      "confirmations": [],
+      "numConfirmations": 2977,
+      "referenceCardinality": 2977,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  ; sh:property [ sh:path <http://www.w3.org/ns/oa#start>  ; sh:nodeKind sh:BlankNodeOrLiteral ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 4.468138009617449E-164,
+      "fitness": 2977,
+      "confirmations": [],
+      "numConfirmations": 2977,
+      "referenceCardinality": 2977,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetClass <http://www.w3.org/ns/oa#Annotation>  ; sh:property [ sh:path <https://ns.inria.fr/sure#confidence>  ; sh:nodeKind sh:IRIOrLiteral ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 4.468138009617449E-164,
+      "fitness": 2977,
+      "confirmations": [],
+      "numConfirmations": 2977,
+      "referenceCardinality": 2977,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetClass <http://www.w3.org/ns/oa#TextPositionSelector>  ; sh:property [ sh:path <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  ; sh:nodeKind sh:IRIOrLiteral ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 4.468138009617449E-164,
+      "fitness": 2977,
+      "confirmations": [],
+      "numConfirmations": 2977,
+      "referenceCardinality": 2977,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetClass <http://www.w3.org/ns/oa#Annotation>  ; sh:property [ sh:path <http://www.w3.org/ns/oa#motivatedBy>  ; sh:nodeKind sh:IRI ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 4.468138009617449E-164,
+      "fitness": 2977,
+      "confirmations": [],
+      "numConfirmations": 2977,
+      "referenceCardinality": 2977,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <http://www.w3.org/ns/oa#end>  ; sh:property [ sh:path <http://www.w3.org/ns/oa#end>  ; sh:nodeKind sh:Literal ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 4.468138009617449E-164,
+      "fitness": 2977,
+      "confirmations": [],
+      "numConfirmations": 2977,
+      "referenceCardinality": 2977,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetClass <https://ns.inria.fr/sure#RealEstate>  ; sh:property [ sh:path <http://www.opengis.net/ont/geosparql#sfWithin>  ; sh:nodeKind sh:IRI ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 3.8200977620745533E-75,
+      "fitness": 1342,
+      "confirmations": [],
+      "numConfirmations": 1342,
+      "referenceCardinality": 1342,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>  ; sh:nodeKind sh:BlankNodeOrIRI . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.2634900497397536E-41,
+      "fitness": 727,
+      "confirmations": [],
+      "numConfirmations": 727,
+      "referenceCardinality": 727,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#hasGeometry>  ; sh:nodeKind sh:IRIOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.2634900497397536E-41,
+      "fitness": 727,
+      "confirmations": [],
+      "numConfirmations": 727,
+      "referenceCardinality": 727,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#asWKT>  ; sh:nodeKind sh:BlankNodeOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 7.396325085423354E-38,
+      "fitness": 658,
+      "confirmations": [],
+      "numConfirmations": 658,
+      "referenceCardinality": 658,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#asWKT>  ; sh:nodeKind sh:Literal . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 7.396325085423354E-38,
+      "fitness": 658,
+      "confirmations": [],
+      "numConfirmations": 658,
+      "referenceCardinality": 658,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <http://schema.org/floorSize>  ; sh:property [ sh:path <http://www.w3.org/2003/01/geo/wgs84_pos#long>  ; sh:datatype <http://www.w3.org/2001/XMLSchema#double>  ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.9713905057007775E-33,
+      "fitness": 577,
+      "confirmations": [],
+      "numConfirmations": 577,
+      "referenceCardinality": 577,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <https://ns.inria.fr/sure#hasDescription>  ; sh:property [ sh:path <https://ns.inria.fr/sure#hasDescription>  ; sh:nodeKind sh:IRIOrLiteral ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.9713905057007775E-33,
+      "fitness": 577,
+      "confirmations": [],
+      "numConfirmations": 577,
+      "referenceCardinality": 577,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <https://ns.inria.fr/sure#hasDescription>  ; sh:nodeKind sh:BlankNodeOrIRI . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.9713905057007775E-33,
+      "fitness": 577,
+      "confirmations": [],
+      "numConfirmations": 577,
+      "referenceCardinality": 577,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <https://ns.inria.fr/sure#hasDescription>  ; sh:nodeKind sh:IRIOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.9713905057007775E-33,
+      "fitness": 577,
+      "confirmations": [],
+      "numConfirmations": 577,
+      "referenceCardinality": 577,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <http://schema.org/hasPrice>  ; sh:property [ sh:path <https://ns.inria.fr/sure#hasDescription>  ; sh:nodeKind sh:BlankNodeOrIRI ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.9713905057007775E-33,
+      "fitness": 577,
+      "confirmations": [],
+      "numConfirmations": 577,
+      "referenceCardinality": 577,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <http://schema.org/hasPrice>  ; sh:property [ sh:path <http://www.opengis.net/ont/geosparql#hasGeometry>  ; sh:nodeKind sh:IRI ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.9713905057007775E-33,
+      "fitness": 577,
+      "confirmations": [],
+      "numConfirmations": 577,
+      "referenceCardinality": 577,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <http://schema.org/hasPrice>  ; sh:property [ sh:path <https://ns.inria.fr/sure#hasDescription>  ; sh:nodeKind sh:IRI ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.9713905057007775E-33,
+      "fitness": 577,
+      "confirmations": [],
+      "numConfirmations": 577,
+      "referenceCardinality": 577,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <https://ns.inria.fr/sure#hasDescription>  ; sh:property [ sh:path <http://schema.org/hasPrice>  ; sh:datatype <http://www.w3.org/2001/XMLSchema#double>  ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.9713905057007775E-33,
+      "fitness": 577,
+      "confirmations": [],
+      "numConfirmations": 577,
+      "referenceCardinality": 577,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <https://ns.inria.fr/sure#hasDescription>  ; sh:property [ sh:path <http://schema.org/floorSize>  ; sh:datatype <http://www.w3.org/2001/XMLSchema#double>  ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.9713905057007775E-33,
+      "fitness": 577,
+      "confirmations": [],
+      "numConfirmations": 577,
+      "referenceCardinality": 577,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <http://www.w3.org/2003/01/geo/wgs84_pos#long>  ; sh:property [ sh:path <http://www.opengis.net/ont/geosparql#hasGeometry>  ; sh:nodeKind sh:IRI ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.9713905057007775E-33,
+      "fitness": 577,
+      "confirmations": [],
+      "numConfirmations": 577,
+      "referenceCardinality": 577,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <https://ns.inria.fr/sure#hasDescription>  ; sh:nodeKind sh:IRI . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.9713905057007775E-33,
+      "fitness": 577,
+      "confirmations": [],
+      "numConfirmations": 577,
+      "referenceCardinality": 577,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetClass <https://ns.inria.fr/sure#Parking>  ; sh:property [ sh:path <http://schema.org/numberOfRooms>  ; sh:nodeKind sh:Literal ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.9374499668372974E-21,
+      "fitness": 358,
+      "confirmations": [],
+      "numConfirmations": 358,
+      "referenceCardinality": 358,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/2003/01/geo/wgs84_pos#long>  ; sh:nodeKind sh:Literal . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 2.731160131922458E-28,
+      "fitness": 483,
+      "confirmations": [],
+      "numConfirmations": 483,
+      "referenceCardinality": 483,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/ns/oa#hasBody>  ; sh:nodeKind sh:IRIOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.4096000000000001,
+      "fitness": 4,
+      "confirmations": [],
+      "numConfirmations": 4,
+      "referenceCardinality": 4,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://schema.org/floorSize>  ; sh:datatype <http://www.w3.org/2001/XMLSchema#double>  . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 4.517184958704305E-11,
+      "fitness": 170,
+      "confirmations": [],
+      "numConfirmations": 170,
+      "referenceCardinality": 170,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <https://ns.inria.fr/sure#hasAlpha>  ; sh:datatype <http://www.w3.org/2001/XMLSchema#double>  . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.3276800000000001,
+      "fitness": 5,
+      "confirmations": [],
+      "numConfirmations": 5,
+      "referenceCardinality": 5,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/ns/oa#hasBody>  ; sh:nodeKind sh:BlankNodeOrIRI . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.4096000000000001,
+      "fitness": 4,
+      "confirmations": [],
+      "numConfirmations": 4,
+      "referenceCardinality": 4,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <http://www.w3.org/2003/01/geo/wgs84_pos#long>  ; sh:property [ sh:path <http://www.w3.org/2003/01/geo/wgs84_pos#lat>  ; sh:nodeKind sh:IRIOrLiteral ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.9713905057007775E-33,
+      "fitness": 577,
+      "confirmations": [],
+      "numConfirmations": 577,
+      "referenceCardinality": 577,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://purl.org/dc/elements/1.1description>  ; sh:datatype <http://www.w3.org/2001/XMLSchema#string>  . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 5.396335167107897E-33,
+      "fitness": 569,
+      "confirmations": [],
+      "numConfirmations": 569,
+      "referenceCardinality": 569,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://schema.org/floorSize>  ; sh:nodeKind sh:Literal . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 4.517184958704305E-11,
+      "fitness": 170,
+      "confirmations": [],
+      "numConfirmations": 170,
+      "referenceCardinality": 170,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/2000/01/rdf-schema#label>  ; sh:datatype <http://www.w3.org/2001/XMLSchema#string>  . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.3276800000000001,
+      "fitness": 5,
+      "confirmations": [],
+      "numConfirmations": 5,
+      "referenceCardinality": 5,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/ns/oa#end>  ; sh:nodeKind sh:BlankNodeOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.393880134045174E-18,
+      "fitness": 306,
+      "confirmations": [],
+      "numConfirmations": 306,
+      "referenceCardinality": 306,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/2003/01/geo/wgs84_pos#lat>  ; sh:datatype <http://www.w3.org/2001/XMLSchema#double>  . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.0234286396942765E-25,
+      "fitness": 436,
+      "confirmations": [],
+      "numConfirmations": 436,
+      "referenceCardinality": 436,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <https://ns.inria.fr/sure#confidence>  ; sh:nodeKind sh:BlankNodeOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 2.8092887963990594E-5,
+      "fitness": 67,
+      "confirmations": [],
+      "numConfirmations": 67,
+      "referenceCardinality": 67,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/2003/01/geo/wgs84_pos#lat>  ; sh:nodeKind sh:BlankNodeOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.0234286396942765E-25,
+      "fitness": 436,
+      "confirmations": [],
+      "numConfirmations": 436,
+      "referenceCardinality": 436,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetClass <https://ns.inria.fr/sure#Refurbished>  ; sh:property [ sh:path <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  ; sh:nodeKind sh:IRI ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 3.9867811177727646E-10,
+      "fitness": 153,
+      "confirmations": [],
+      "numConfirmations": 153,
+      "referenceCardinality": 153,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/ns/oa#start>  ; sh:nodeKind sh:IRIOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 2.3132890982523694E-18,
+      "fitness": 302,
+      "confirmations": [],
+      "numConfirmations": 302,
+      "referenceCardinality": 302,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetClass <http://www.w3.org/2002/07/owl#Class>  ; sh:property [ sh:path <http://www.w3.org/2004/02/skos/core#narrower>  ; sh:nodeKind sh:BlankNodeOrIRI ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 3.497473963446983E-11,
+      "fitness": 172,
+      "confirmations": [],
+      "numConfirmations": 172,
+      "referenceCardinality": 172,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <https://ns.inria.fr/sure#hasAlpha>  ; sh:nodeKind sh:Literal . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.3276800000000001,
+      "fitness": 5,
+      "confirmations": [],
+      "numConfirmations": 5,
+      "referenceCardinality": 5,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  ; sh:nodeKind sh:IRIOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.0016074491141067132,
+      "fitness": 37,
+      "confirmations": [],
+      "numConfirmations": 37,
+      "referenceCardinality": 37,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/ns/oa#start>  ; sh:datatype <http://www.w3.org/2001/XMLSchema#double>  . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 2.3132890982523694E-18,
+      "fitness": 302,
+      "confirmations": [],
+      "numConfirmations": 302,
+      "referenceCardinality": 302,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/ns/oa#start>  ; sh:nodeKind sh:BlankNodeOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 2.3132890982523694E-18,
+      "fitness": 302,
+      "confirmations": [],
+      "numConfirmations": 302,
+      "referenceCardinality": 302,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://purl.org/dc/elements/1.1language>  ; sh:nodeKind sh:IRIOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.8,
+      "fitness": 1,
+      "confirmations": [],
+      "numConfirmations": 1,
+      "referenceCardinality": 1,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://schema.org/numberOfRooms>  ; sh:nodeKind sh:Literal . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.03518437208883203,
+      "fitness": 15,
+      "confirmations": [],
+      "numConfirmations": 15,
+      "referenceCardinality": 15,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/ns/oa#start>  ; sh:nodeKind sh:Literal . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 2.3132890982523694E-18,
+      "fitness": 302,
+      "confirmations": [],
+      "numConfirmations": 302,
+      "referenceCardinality": 302,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/2000/01/rdf-schema#label>  ; sh:nodeKind sh:Literal . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.3276800000000001,
+      "fitness": 5,
+      "confirmations": [],
+      "numConfirmations": 5,
+      "referenceCardinality": 5,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://purl.org/dc/elements/1.1language>  ; sh:nodeKind sh:Literal . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.8,
+      "fitness": 1,
+      "confirmations": [],
+      "numConfirmations": 1,
+      "referenceCardinality": 1,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <https://ns.inria.fr/sure#confidence>  ; sh:nodeKind sh:Literal . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 2.8092887963990594E-5,
+      "fitness": 67,
+      "confirmations": [],
+      "numConfirmations": 67,
+      "referenceCardinality": 67,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <http://www.w3.org/2000/01/rdf-schema#label>  ; sh:property [ sh:path <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  ; sh:nodeKind sh:IRIOrLiteral ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.20971520000000007,
+      "fitness": 7,
+      "confirmations": [],
+      "numConfirmations": 7,
+      "referenceCardinality": 7,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>  ; sh:nodeKind sh:BlankNodeOrIRI . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.054975581388800036,
+      "fitness": 13,
+      "confirmations": [],
+      "numConfirmations": 13,
+      "referenceCardinality": 13,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/2000/01/rdf-schema#label>  ; sh:nodeKind sh:BlankNodeOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.3276800000000001,
+      "fitness": 5,
+      "confirmations": [],
+      "numConfirmations": 5,
+      "referenceCardinality": 5,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/ns/oa#hasSource>  ; sh:nodeKind sh:IRI . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.0234286396942765E-25,
+      "fitness": 436,
+      "confirmations": [],
+      "numConfirmations": 436,
+      "referenceCardinality": 436,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/2003/01/geo/wgs84_pos#long>  ; sh:nodeKind sh:BlankNodeOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 2.731160131922458E-28,
+      "fitness": 483,
+      "confirmations": [],
+      "numConfirmations": 483,
+      "referenceCardinality": 483,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  ; sh:nodeKind sh:BlankNodeOrIRI . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.0016074491141067132,
+      "fitness": 37,
+      "confirmations": [],
+      "numConfirmations": 37,
+      "referenceCardinality": 37,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://schema.org/hasPrice>  ; sh:nodeKind sh:BlankNodeOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.9544119539535286E-16,
+      "fitness": 267,
+      "confirmations": [],
+      "numConfirmations": 267,
+      "referenceCardinality": 267,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetClass <https://ns.inria.fr/sure#Parking>  ; sh:property [ sh:path <https://ns.inria.fr/sure#hasDescription>  ; sh:nodeKind sh:IRI ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.7074106059001754E-21,
+      "fitness": 359,
+      "confirmations": [],
+      "numConfirmations": 359,
+      "referenceCardinality": 359,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/2004/02/skos/core#narrower>  ; sh:nodeKind sh:IRI . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 8.137711041899807E-5,
+      "fitness": 59,
+      "confirmations": [],
+      "numConfirmations": 59,
+      "referenceCardinality": 59,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://schema.org/numberOfRooms>  ; sh:datatype <http://www.w3.org/2001/XMLSchema#double>  . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.03518437208883203,
+      "fitness": 15,
+      "confirmations": [],
+      "numConfirmations": 15,
+      "referenceCardinality": 15,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/ns/oa#end>  ; sh:datatype <http://www.w3.org/2001/XMLSchema#double>  . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.393880134045174E-18,
+      "fitness": 306,
+      "confirmations": [],
+      "numConfirmations": 306,
+      "referenceCardinality": 306,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <https://ns.inria.fr/sure#hasSpatialRelation>  ; sh:nodeKind sh:BlankNodeOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.20971520000000007,
+      "fitness": 7,
+      "confirmations": [],
+      "numConfirmations": 7,
+      "referenceCardinality": 7,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <http://schema.org/hasPrice>  ; sh:property [ sh:path <http://schema.org/numberOfRooms>  ; sh:nodeKind sh:IRIOrLiteral ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 3.261598488551098E-33,
+      "fitness": 573,
+      "confirmations": [],
+      "numConfirmations": 573,
+      "referenceCardinality": 573,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetClass <https://ns.inria.fr/sure#Secteur>  ; sh:property [ sh:path <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  ; sh:nodeKind sh:IRI ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.6400000000000001,
+      "fitness": 2,
+      "confirmations": [],
+      "numConfirmations": 2,
+      "referenceCardinality": 2,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <https://ns.inria.fr/sure#hasDescription>  ; sh:property [ sh:path <http://schema.org/numberOfRooms>  ; sh:nodeKind sh:Literal ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 3.261598488551098E-33,
+      "fitness": 573,
+      "confirmations": [],
+      "numConfirmations": 573,
+      "referenceCardinality": 573,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/2003/01/geo/wgs84_pos#lat>  ; sh:nodeKind sh:Literal . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.0234286396942765E-25,
+      "fitness": 436,
+      "confirmations": [],
+      "numConfirmations": 436,
+      "referenceCardinality": 436,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetClass <https://ns.inria.fr/sure#Quiet>  ; sh:property [ sh:path <http://www.w3.org/2003/01/geo/wgs84_pos#lat>  ; sh:nodeKind sh:Literal ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.3631777287756683E-17,
+      "fitness": 288,
+      "confirmations": [],
+      "numConfirmations": 288,
+      "referenceCardinality": 288,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/2000/01/rdf-schema#subClassOf>  ; sh:nodeKind sh:IRIOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.3276800000000001,
+      "fitness": 5,
+      "confirmations": [],
+      "numConfirmations": 5,
+      "referenceCardinality": 5,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://purl.org/dc/elements/1.1language>  ; sh:datatype <http://www.w3.org/2001/XMLSchema#string>  . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.8,
+      "fitness": 1,
+      "confirmations": [],
+      "numConfirmations": 1,
+      "referenceCardinality": 1,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/2003/01/geo/wgs84_pos#lat>  ; sh:nodeKind sh:IRIOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.0234286396942765E-25,
+      "fitness": 436,
+      "confirmations": [],
+      "numConfirmations": 436,
+      "referenceCardinality": 436,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetClass <http://schema.org/House>  ; sh:property [ sh:path <http://schema.org/hasPrice>  ; sh:nodeKind sh:BlankNodeOrLiteral ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 4.376750997417666E-23,
+      "fitness": 388,
+      "confirmations": [],
+      "numConfirmations": 388,
+      "referenceCardinality": 388,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://schema.org/floorSize>  ; sh:nodeKind sh:BlankNodeOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 4.517184958704305E-11,
+      "fitness": 170,
+      "confirmations": [],
+      "numConfirmations": 170,
+      "referenceCardinality": 170,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/2000/01/rdf-schema#range>  ; sh:nodeKind sh:IRI . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.8,
+      "fitness": 1,
+      "confirmations": [],
+      "numConfirmations": 1,
+      "referenceCardinality": 1,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <http://www.w3.org/2004/02/skos/core#narrower>  ; sh:property [ sh:path <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  ; sh:nodeKind sh:IRIOrLiteral ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.1373866628952391E-20,
+      "fitness": 344,
+      "confirmations": [],
+      "numConfirmations": 344,
+      "referenceCardinality": 344,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetClass <https://ns.inria.fr/sure#Place>  ; sh:property [ sh:path <http://www.opengis.net/ont/geosparql#hasGeometry>  ; sh:nodeKind sh:IRI ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 5.858452449301226E-10,
+      "fitness": 150,
+      "confirmations": [],
+      "numConfirmations": 150,
+      "referenceCardinality": 150,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <https://ns.inria.fr/sure#hasAnchor>  ; sh:class <https://ns.inria.fr/sure#Commerces>  . ",
+      "generation": 0,
+      "numExceptions": 12,
+      "likelihood": 4.2598400000000024E-8,
+      "fitness": 1.5894571940104174E-7,
+      "confirmations": [],
+      "numConfirmations": 1,
+      "referenceCardinality": 13,
+      "exceptions": [
+        "https://ns.inria.fr/sure#Ecoles_Internationales_06018",
+        "https://ns.inria.fr/sure#Proche_Ecoles_06018",
+        "https://ns.inria.fr/sure#Golf_06018",
+        "https://ns.inria.fr/sure#Collines_06018",
+        "https://ns.inria.fr/sure#Secteur_06018",
+        "https://ns.inria.fr/sure#Village_06018",
+        "https://ns.inria.fr/sure#Vue_Montagnes_06018",
+        "https://ns.inria.fr/sure#CityBiot",
+        "https://ns.inria.fr/sure#Lycee_06018",
+        "https://ns.inria.fr/sure#Mer_06018",
+        "https://ns.inria.fr/sure#Environnement_06018",
+        "https://ns.inria.fr/sure#Proche_Commodites_06018",
+        "https://ns.inria.fr/sure#Quartier_06018",
+        "https://ns.inria.fr/sure#Biot_06018",
+        "https://ns.inria.fr/sure#Proche_Ecoles_Internationales_06018",
+        "https://ns.inria.fr/sure#Commodites_06018",
+        "https://ns.inria.fr/sure#CityValbonne",
+        "https://ns.inria.fr/sure#Proche_Commerces_06018",
+        "https://ns.inria.fr/sure#Emplacement_06018",
+        "https://ns.inria.fr/sure#Cadre_06018",
+        "https://ns.inria.fr/sure#Proximite_Commerces_06018",
+        "https://ns.inria.fr/sure#Ecoles_06018",
+        "https://ns.inria.fr/sure#Vue_Mer_06018",
+        "https://ns.inria.fr/sure#CityVilleneuve-loubet",
+        "https://ns.inria.fr/sure#Autoroute_06018",
+        "https://ns.inria.fr/sure#Montagnes_06018",
+        "https://ns.inria.fr/sure#Village_Biot_06018",
+        "https://ns.inria.fr/sure#CityVilleneuveLoubet",
+        "https://ns.inria.fr/sure#Degagee_Vue_Collines_06018",
+        "https://ns.inria.fr/sure#Proche_Village_06018",
+        "https://ns.inria.fr/sure#Sophia_Antipolis_06018",
+        "https://ns.inria.fr/sure#Panoramique_Vue_Mer_06018",
+        "https://ns.inria.fr/sure#Vue_Collines_06018",
+        "https://ns.inria.fr/sure#Proche_Transports_06018",
+        "https://ns.inria.fr/sure#Saint_Philippe_06018",
+        "https://ns.inria.fr/sure#CityGrasse",
+        "https://ns.inria.fr/sure#Transports_06018",
+        "https://ns.inria.fr/sure#College_06018"
+      ]
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://schema.org/hasPrice>  ; sh:datatype <http://www.w3.org/2001/XMLSchema#double>  . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.9544119539535286E-16,
+      "fitness": 267,
+      "confirmations": [],
+      "numConfirmations": 267,
+      "referenceCardinality": 267,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <https://ns.inria.fr/sure#hasSpatialRelation>  ; sh:nodeKind sh:Literal . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.20971520000000007,
+      "fitness": 7,
+      "confirmations": [],
+      "numConfirmations": 7,
+      "referenceCardinality": 7,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/ns/oa#hasBody>  ; sh:nodeKind sh:IRI . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.4096000000000001,
+      "fitness": 4,
+      "confirmations": [],
+      "numConfirmations": 4,
+      "referenceCardinality": 4,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/ns/oa#motivatedBy>  ; sh:nodeKind sh:BlankNodeOrIRI . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.8,
+      "fitness": 1,
+      "confirmations": [],
+      "numConfirmations": 1,
+      "referenceCardinality": 1,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <https://ns.inria.fr/sure#hasSpatialRelation>  ; sh:nodeKind sh:IRIOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.20971520000000007,
+      "fitness": 7,
+      "confirmations": [],
+      "numConfirmations": 7,
+      "referenceCardinality": 7,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <https://ns.inria.fr/sure#hasSpatialRelation>  ; sh:property [ sh:path <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  ; sh:nodeKind sh:IRIOrLiteral ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.022517998136852502,
+      "fitness": 17,
+      "confirmations": [],
+      "numConfirmations": 17,
+      "referenceCardinality": 17,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://schema.org/hasPrice>  ; sh:nodeKind sh:Literal . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.9544119539535286E-16,
+      "fitness": 267,
+      "confirmations": [],
+      "numConfirmations": 267,
+      "referenceCardinality": 267,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <https://ns.inria.fr/sure#hasAnchor>  ; sh:property [ sh:path <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  ; sh:nodeKind sh:IRI ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.022517998136852502,
+      "fitness": 17,
+      "confirmations": [],
+      "numConfirmations": 17,
+      "referenceCardinality": 17,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/ns/oa#end>  ; sh:nodeKind sh:Literal . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.393880134045174E-18,
+      "fitness": 306,
+      "confirmations": [],
+      "numConfirmations": 306,
+      "referenceCardinality": 306,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/ns/oa#end>  ; sh:nodeKind sh:IRIOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.393880134045174E-18,
+      "fitness": 306,
+      "confirmations": [],
+      "numConfirmations": 306,
+      "referenceCardinality": 306,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <https://ns.inria.fr/sure#hasDescription>  ; sh:nodeKind sh:IRIOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.9713905057007775E-33,
+      "fitness": 577,
+      "confirmations": [],
+      "numConfirmations": 577,
+      "referenceCardinality": 577,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://schema.org/floorSize>  ; sh:nodeKind sh:IRIOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 4.517184958704305E-11,
+      "fitness": 170,
+      "confirmations": [],
+      "numConfirmations": 170,
+      "referenceCardinality": 170,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.opengis.net/ont/geosparql#sfWithin>  ; sh:class <https://ns.inria.fr/sure#Position>  . ",
+      "generation": 0,
+      "numExceptions": 35,
+      "likelihood": 1.2169405506392408E-30,
+      "fitness": 7.36010445538825E-30,
+      "confirmations": [],
+      "numConfirmations": 1,
+      "referenceCardinality": 36,
+      "exceptions": [
+        "https://ns.inria.fr/sure#Ecoles_Internationales_06018",
+        "https://ns.inria.fr/sure#Proche_Ecoles_06018",
+        "https://ns.inria.fr/sure#Golf_06018",
+        "https://ns.inria.fr/sure#Collines_06018",
+        "https://ns.inria.fr/sure#Secteur_06018",
+        "https://ns.inria.fr/sure#Village_06018",
+        "https://ns.inria.fr/sure#Vue_Montagnes_06018",
+        "https://ns.inria.fr/sure#CityBiot",
+        "https://ns.inria.fr/sure#Lycee_06018",
+        "https://ns.inria.fr/sure#Mer_06018",
+        "https://ns.inria.fr/sure#Environnement_06018",
+        "https://ns.inria.fr/sure#Proche_Commodites_06018",
+        "https://ns.inria.fr/sure#Quartier_06018",
+        "https://ns.inria.fr/sure#Biot_06018",
+        "https://ns.inria.fr/sure#Proche_Ecoles_Internationales_06018",
+        "https://ns.inria.fr/sure#Commodites_06018",
+        "https://ns.inria.fr/sure#CityValbonne",
+        "https://ns.inria.fr/sure#Proche_Commerces_06018",
+        "https://ns.inria.fr/sure#Emplacement_06018",
+        "https://ns.inria.fr/sure#Cadre_06018",
+        "https://ns.inria.fr/sure#Proximite_Commerces_06018",
+        "https://ns.inria.fr/sure#Ecoles_06018",
+        "https://ns.inria.fr/sure#Vue_Mer_06018",
+        "https://ns.inria.fr/sure#CityVilleneuve-loubet",
+        "https://ns.inria.fr/sure#Autoroute_06018",
+        "https://ns.inria.fr/sure#Montagnes_06018",
+        "https://ns.inria.fr/sure#Village_Biot_06018",
+        "https://ns.inria.fr/sure#CityVilleneuveLoubet",
+        "https://ns.inria.fr/sure#Degagee_Vue_Collines_06018",
+        "https://ns.inria.fr/sure#Proche_Village_06018",
+        "https://ns.inria.fr/sure#Sophia_Antipolis_06018",
+        "https://ns.inria.fr/sure#Panoramique_Vue_Mer_06018",
+        "https://ns.inria.fr/sure#Vue_Collines_06018",
+        "https://ns.inria.fr/sure#Proche_Transports_06018",
+        "https://ns.inria.fr/sure#Saint_Philippe_06018",
+        "https://ns.inria.fr/sure#CityGrasse",
+        "https://ns.inria.fr/sure#Transports_06018",
+        "https://ns.inria.fr/sure#College_06018"
+      ]
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <http://www.w3.org/2003/01/geo/wgs84_pos#lat>  ; sh:property [ sh:path <http://schema.org/numberOfRooms>  ; sh:nodeKind sh:BlankNodeOrLiteral ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 3.261598488551098E-33,
+      "fitness": 573,
+      "confirmations": [],
+      "numConfirmations": 573,
+      "referenceCardinality": 573,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/2000/01/rdf-schema#range>  ; sh:nodeKind sh:IRIOrLiteral . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.8,
+      "fitness": 1,
+      "confirmations": [],
+      "numConfirmations": 1,
+      "referenceCardinality": 1,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/2000/01/rdf-schema#subClassOf>  ; sh:nodeKind sh:IRI . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.3276800000000001,
+      "fitness": 5,
+      "confirmations": [],
+      "numConfirmations": 5,
+      "referenceCardinality": 5,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetObjectsOf <http://www.w3.org/2000/01/rdf-schema#domain>  ; sh:nodeKind sh:IRI . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 0.6400000000000001,
+      "fitness": 2,
+      "confirmations": [],
+      "numConfirmations": 2,
+      "referenceCardinality": 2,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetClass <https://ns.inria.fr/sure#Luxury>  ; sh:property [ sh:path <http://schema.org/floorSize>  ; sh:datatype <http://www.w3.org/2001/XMLSchema#double>  ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 2.8092887963990594E-5,
+      "fitness": 67,
+      "confirmations": [],
+      "numConfirmations": 67,
+      "referenceCardinality": 67,
+      "exceptions": []
+    },
+    {
+      "phenotype": " a sh:NodeShape ; sh:targetSubjectsOf <http://www.w3.org/2004/02/skos/core#narrower>  ; sh:property [ sh:path <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  ; sh:nodeKind sh:BlankNodeOrIRI ;  ] . ",
+      "generation": 0,
+      "numExceptions": 0,
+      "likelihood": 1.1373866628952391E-20,
+      "fitness": 344,
+      "confirmations": [],
+      "numConfirmations": 344,
+      "referenceCardinality": 344,
+      "exceptions": []
+    }
+  ],
+  "statistics": {
+    "mutationMethod": "Int Flip",
+    "sparqlTimeout": null,
+    "crossoverProbability": 0.75,
+    "mutationProbability": 0.05,
+    "crossoverMethod": "Swap",
+    "generations": [
+      {
+        "generation": 1,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 14,
+        "populationDevelopmentRate": 0,
+        "diversityCoefficient": 0.995,
+        "averageFitness": 53.285
+      },
+      {
+        "generation": 2,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 25,
+        "populationDevelopmentRate": 0.48,
+        "diversityCoefficient": 0.995,
+        "averageFitness": 98.42000000079472
+      },
+      {
+        "generation": 3,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 31,
+        "populationDevelopmentRate": 0.365,
+        "diversityCoefficient": 0.985,
+        "averageFitness": 105.60500000079473
+      },
+      {
+        "generation": 4,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 36,
+        "populationDevelopmentRate": 0.31,
+        "diversityCoefficient": 0.98,
+        "averageFitness": 147.11500000079474
+      },
+      {
+        "generation": 5,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 43,
+        "populationDevelopmentRate": 0.495,
+        "diversityCoefficient": 0.975,
+        "averageFitness": 150.97500000079472
+      },
+      {
+        "generation": 6,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 49,
+        "populationDevelopmentRate": 0.37,
+        "diversityCoefficient": 0.945,
+        "averageFitness": 157.00000000079473
+      },
+      {
+        "generation": 7,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 56,
+        "populationDevelopmentRate": 0.39,
+        "diversityCoefficient": 0.95,
+        "averageFitness": 166.66000000079475
+      },
+      {
+        "generation": 8,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 62,
+        "populationDevelopmentRate": 0.24,
+        "diversityCoefficient": 0.905,
+        "averageFitness": 174.29500000079472
+      },
+      {
+        "generation": 9,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 76,
+        "populationDevelopmentRate": 0.37,
+        "diversityCoefficient": 0.93,
+        "averageFitness": 188.4900000007947
+      },
+      {
+        "generation": 10,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 78,
+        "populationDevelopmentRate": 0.465,
+        "diversityCoefficient": 0.885,
+        "averageFitness": 191.20000000079472
+      },
+      {
+        "generation": 11,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 89,
+        "populationDevelopmentRate": 0.33,
+        "diversityCoefficient": 0.865,
+        "averageFitness": 227.8000000007947
+      },
+      {
+        "generation": 12,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 93,
+        "populationDevelopmentRate": 0.23,
+        "diversityCoefficient": 0.825,
+        "averageFitness": 232.90500000079473
+      },
+      {
+        "generation": 13,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 95,
+        "populationDevelopmentRate": 0.21,
+        "diversityCoefficient": 0.79,
+        "averageFitness": 234.2750000007947
+      },
+      {
+        "generation": 14,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 95,
+        "populationDevelopmentRate": 0.14,
+        "diversityCoefficient": 0.83,
+        "averageFitness": 234.2750000007947
+      },
+      {
+        "generation": 15,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 97,
+        "populationDevelopmentRate": 0.25,
+        "diversityCoefficient": 0.835,
+        "averageFitness": 235.16000000079472
+      },
+      {
+        "generation": 16,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 101,
+        "populationDevelopmentRate": 0.345,
+        "diversityCoefficient": 0.825,
+        "averageFitness": 240.0500000007947
+      },
+      {
+        "generation": 17,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 105,
+        "populationDevelopmentRate": 0.15,
+        "diversityCoefficient": 0.79,
+        "averageFitness": 285.11500000079474
+      },
+      {
+        "generation": 18,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 117,
+        "populationDevelopmentRate": 0.215,
+        "diversityCoefficient": 0.795,
+        "averageFitness": 314.80000000079474
+      },
+      {
+        "generation": 19,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 128,
+        "populationDevelopmentRate": 0.24,
+        "diversityCoefficient": 0.8,
+        "averageFitness": 323.1500000007947
+      },
+      {
+        "generation": 20,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 133,
+        "populationDevelopmentRate": 0.185,
+        "diversityCoefficient": 0.785,
+        "averageFitness": 325.3350000007947
+      },
+      {
+        "generation": 21,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 136,
+        "populationDevelopmentRate": 0.23,
+        "diversityCoefficient": 0.725,
+        "averageFitness": 329.0950000007947
+      },
+      {
+        "generation": 22,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 139,
+        "populationDevelopmentRate": 0.195,
+        "diversityCoefficient": 0.71,
+        "averageFitness": 334.3050000007947
+      },
+      {
+        "generation": 23,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 140,
+        "populationDevelopmentRate": 0.125,
+        "diversityCoefficient": 0.67,
+        "averageFitness": 335.1550000007947
+      },
+      {
+        "generation": 24,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 141,
+        "populationDevelopmentRate": 0.1,
+        "diversityCoefficient": 0.67,
+        "averageFitness": 336.6650000007947
+      },
+      {
+        "generation": 25,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 147,
+        "populationDevelopmentRate": 0.22,
+        "diversityCoefficient": 0.69,
+        "averageFitness": 346.52000000079465
+      },
+      {
+        "generation": 26,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 147,
+        "populationDevelopmentRate": 0.155,
+        "diversityCoefficient": 0.655,
+        "averageFitness": 346.52000000079465
+      },
+      {
+        "generation": 27,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 152,
+        "populationDevelopmentRate": 0.2,
+        "diversityCoefficient": 0.665,
+        "averageFitness": 366.2900000007947
+      },
+      {
+        "generation": 28,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 154,
+        "populationDevelopmentRate": 0.15,
+        "diversityCoefficient": 0.655,
+        "averageFitness": 370.6850000007947
+      },
+      {
+        "generation": 29,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 159,
+        "populationDevelopmentRate": 0.155,
+        "diversityCoefficient": 0.655,
+        "averageFitness": 376.0750000007948
+      },
+      {
+        "generation": 30,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 162,
+        "populationDevelopmentRate": 0.09,
+        "diversityCoefficient": 0.635,
+        "averageFitness": 393.14500000079465
+      },
+      {
+        "generation": 31,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 162,
+        "populationDevelopmentRate": 0.14,
+        "diversityCoefficient": 0.6,
+        "averageFitness": 393.14500000079477
+      },
+      {
+        "generation": 32,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 164,
+        "populationDevelopmentRate": 0.13,
+        "diversityCoefficient": 0.6,
+        "averageFitness": 395.34500000079476
+      },
+      {
+        "generation": 33,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 165,
+        "populationDevelopmentRate": 0.145,
+        "diversityCoefficient": 0.595,
+        "averageFitness": 395.35500000079475
+      },
+      {
+        "generation": 34,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 167,
+        "populationDevelopmentRate": 0.15,
+        "diversityCoefficient": 0.595,
+        "averageFitness": 398.24500000079473
+      },
+      {
+        "generation": 35,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 167,
+        "populationDevelopmentRate": 0.13,
+        "diversityCoefficient": 0.58,
+        "averageFitness": 398.3200000007948
+      },
+      {
+        "generation": 36,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 168,
+        "populationDevelopmentRate": 0.04,
+        "diversityCoefficient": 0.575,
+        "averageFitness": 398.39500000079465
+      },
+      {
+        "generation": 37,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 168,
+        "populationDevelopmentRate": 0.11,
+        "diversityCoefficient": 0.58,
+        "averageFitness": 398.39500000079465
+      },
+      {
+        "generation": 38,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 168,
+        "populationDevelopmentRate": 0.05,
+        "diversityCoefficient": 0.57,
+        "averageFitness": 398.39500000079477
+      },
+      {
+        "generation": 39,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 170,
+        "populationDevelopmentRate": 0.07,
+        "diversityCoefficient": 0.575,
+        "averageFitness": 398.66500000079475
+      },
+      {
+        "generation": 40,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 170,
+        "populationDevelopmentRate": 0.07,
+        "diversityCoefficient": 0.575,
+        "averageFitness": 398.66500000079475
+      },
+      {
+        "generation": 41,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 170,
+        "populationDevelopmentRate": 0.09,
+        "diversityCoefficient": 0.565,
+        "averageFitness": 401.46500000079476
+      },
+      {
+        "generation": 42,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 170,
+        "populationDevelopmentRate": 0.045,
+        "diversityCoefficient": 0.57,
+        "averageFitness": 401.4650000007947
+      },
+      {
+        "generation": 43,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 170,
+        "populationDevelopmentRate": 0.075,
+        "diversityCoefficient": 0.57,
+        "averageFitness": 401.46500000079476
+      },
+      {
+        "generation": 44,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 171,
+        "populationDevelopmentRate": 0.09,
+        "diversityCoefficient": 0.565,
+        "averageFitness": 404.31000000079473
+      },
+      {
+        "generation": 45,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 172,
+        "populationDevelopmentRate": 0.13,
+        "diversityCoefficient": 0.565,
+        "averageFitness": 405.16000000079475
+      },
+      {
+        "generation": 46,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 173,
+        "populationDevelopmentRate": 0.12,
+        "diversityCoefficient": 0.565,
+        "averageFitness": 406.6700000007947
+      },
+      {
+        "generation": 47,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 173,
+        "populationDevelopmentRate": 0.125,
+        "diversityCoefficient": 0.555,
+        "averageFitness": 406.67000000079474
+      },
+      {
+        "generation": 48,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 173,
+        "populationDevelopmentRate": 0.115,
+        "diversityCoefficient": 0.555,
+        "averageFitness": 406.67000000079474
+      },
+      {
+        "generation": 49,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 175,
+        "populationDevelopmentRate": 0.12,
+        "diversityCoefficient": 0.555,
+        "averageFitness": 409.73000000079475
+      },
+      {
+        "generation": 50,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 175,
+        "populationDevelopmentRate": 0.06,
+        "diversityCoefficient": 0.545,
+        "averageFitness": 409.73000000079475
+      },
+      {
+        "generation": 51,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 175,
+        "populationDevelopmentRate": 0.1,
+        "diversityCoefficient": 0.55,
+        "averageFitness": 409.7300000007947
+      },
+      {
+        "generation": 52,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 175,
+        "populationDevelopmentRate": 0.06,
+        "diversityCoefficient": 0.55,
+        "averageFitness": 409.73000000079475
+      },
+      {
+        "generation": 53,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 176,
+        "populationDevelopmentRate": 0.025,
+        "diversityCoefficient": 0.55,
+        "averageFitness": 412.14500000079477
+      },
+      {
+        "generation": 54,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 176,
+        "populationDevelopmentRate": 0.03,
+        "diversityCoefficient": 0.55,
+        "averageFitness": 412.14500000079477
+      },
+      {
+        "generation": 55,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 177,
+        "populationDevelopmentRate": 0.085,
+        "diversityCoefficient": 0.55,
+        "averageFitness": 412.14500000079477
+      },
+      {
+        "generation": 56,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 178,
+        "populationDevelopmentRate": 0.09,
+        "diversityCoefficient": 0.55,
+        "averageFitness": 427.03000000079476
+      },
+      {
+        "generation": 57,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 179,
+        "populationDevelopmentRate": 0.1,
+        "diversityCoefficient": 0.55,
+        "averageFitness": 427.04000000079475
+      },
+      {
+        "generation": 58,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 179,
+        "populationDevelopmentRate": 0.055,
+        "diversityCoefficient": 0.545,
+        "averageFitness": 427.0400000007947
+      },
+      {
+        "generation": 59,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 179,
+        "populationDevelopmentRate": 0.04,
+        "diversityCoefficient": 0.55,
+        "averageFitness": 427.0400000007947
+      },
+      {
+        "generation": 60,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 182,
+        "populationDevelopmentRate": 0.05,
+        "diversityCoefficient": 0.55,
+        "averageFitness": 471.8200000007948
+      },
+      {
+        "generation": 61,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 182,
+        "populationDevelopmentRate": 0.065,
+        "diversityCoefficient": 0.55,
+        "averageFitness": 473.20500000079477
+      },
+      {
+        "generation": 62,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 183,
+        "populationDevelopmentRate": 0.05,
+        "diversityCoefficient": 0.545,
+        "averageFitness": 502.97500000079475
+      },
+      {
+        "generation": 63,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 183,
+        "populationDevelopmentRate": 0.07,
+        "diversityCoefficient": 0.55,
+        "averageFitness": 502.97500000079475
+      },
+      {
+        "generation": 64,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 183,
+        "populationDevelopmentRate": 0.04,
+        "diversityCoefficient": 0.55,
+        "averageFitness": 502.97500000079475
+      },
+      {
+        "generation": 65,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 183,
+        "populationDevelopmentRate": 0.035,
+        "diversityCoefficient": 0.545,
+        "averageFitness": 502.97500000079475
+      },
+      {
+        "generation": 66,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 183,
+        "populationDevelopmentRate": 0.075,
+        "diversityCoefficient": 0.55,
+        "averageFitness": 502.97500000079475
+      },
+      {
+        "generation": 67,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 186,
+        "populationDevelopmentRate": 0.08,
+        "diversityCoefficient": 0.55,
+        "averageFitness": 506.6300000007948
+      },
+      {
+        "generation": 68,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 187,
+        "populationDevelopmentRate": 0.07,
+        "diversityCoefficient": 0.545,
+        "averageFitness": 521.5150000007948
+      },
+      {
+        "generation": 69,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 188,
+        "populationDevelopmentRate": 0.025,
+        "diversityCoefficient": 0.54,
+        "averageFitness": 521.5500000007947
+      },
+      {
+        "generation": 70,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 188,
+        "populationDevelopmentRate": 0.045,
+        "diversityCoefficient": 0.545,
+        "averageFitness": 521.5500000007947
+      },
+      {
+        "generation": 71,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 189,
+        "populationDevelopmentRate": 0.035,
+        "diversityCoefficient": 0.54,
+        "averageFitness": 521.5850000007947
+      },
+      {
+        "generation": 72,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 191,
+        "populationDevelopmentRate": 0.025,
+        "diversityCoefficient": 0.54,
+        "averageFitness": 536.4950000007948
+      },
+      {
+        "generation": 73,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 191,
+        "populationDevelopmentRate": 0.01,
+        "diversityCoefficient": 0.53,
+        "averageFitness": 536.4950000007948
+      },
+      {
+        "generation": 74,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 191,
+        "populationDevelopmentRate": 0.025,
+        "diversityCoefficient": 0.53,
+        "averageFitness": 536.4950000007948
+      },
+      {
+        "generation": 75,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 191,
+        "populationDevelopmentRate": 0.035,
+        "diversityCoefficient": 0.53,
+        "averageFitness": 536.4950000007948
+      },
+      {
+        "generation": 76,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 191,
+        "populationDevelopmentRate": 0.03,
+        "diversityCoefficient": 0.53,
+        "averageFitness": 536.4950000007948
+      },
+      {
+        "generation": 77,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 191,
+        "populationDevelopmentRate": 0.03,
+        "diversityCoefficient": 0.53,
+        "averageFitness": 536.4950000007948
+      },
+      {
+        "generation": 78,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 191,
+        "populationDevelopmentRate": 0.02,
+        "diversityCoefficient": 0.53,
+        "averageFitness": 536.4950000007948
+      },
+      {
+        "generation": 79,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 191,
+        "populationDevelopmentRate": 0.01,
+        "diversityCoefficient": 0.53,
+        "averageFitness": 536.4950000007948
+      },
+      {
+        "generation": 80,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 191,
+        "populationDevelopmentRate": 0.035,
+        "diversityCoefficient": 0.53,
+        "averageFitness": 536.4950000007948
+      },
+      {
+        "generation": 81,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 191,
+        "populationDevelopmentRate": 0.02,
+        "diversityCoefficient": 0.53,
+        "averageFitness": 536.4950000007948
+      },
+      {
+        "generation": 82,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 192,
+        "populationDevelopmentRate": 0.045,
+        "diversityCoefficient": 0.53,
+        "averageFitness": 539.3600000007948
+      },
+      {
+        "generation": 83,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 193,
+        "populationDevelopmentRate": 0.02,
+        "diversityCoefficient": 0.53,
+        "averageFitness": 542.2250000007948
+      },
+      {
+        "generation": 84,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 194,
+        "populationDevelopmentRate": 0.025,
+        "diversityCoefficient": 0.525,
+        "averageFitness": 571.9950000007948
+      },
+      {
+        "generation": 85,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 194,
+        "populationDevelopmentRate": 0.02,
+        "diversityCoefficient": 0.52,
+        "averageFitness": 571.9950000007948
+      },
+      {
+        "generation": 86,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 194,
+        "populationDevelopmentRate": 0.015,
+        "diversityCoefficient": 0.52,
+        "averageFitness": 571.9950000007948
+      },
+      {
+        "generation": 87,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 194,
+        "populationDevelopmentRate": 0,
+        "diversityCoefficient": 0.52,
+        "averageFitness": 571.9950000007948
+      },
+      {
+        "generation": 88,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 195,
+        "populationDevelopmentRate": 0.02,
+        "diversityCoefficient": 0.525,
+        "averageFitness": 574.8400000007947
+      },
+      {
+        "generation": 89,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 195,
+        "populationDevelopmentRate": 0.02,
+        "diversityCoefficient": 0.52,
+        "averageFitness": 574.8400000007947
+      },
+      {
+        "generation": 90,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 195,
+        "populationDevelopmentRate": 0.01,
+        "diversityCoefficient": 0.515,
+        "averageFitness": 574.8400000007947
+      },
+      {
+        "generation": 91,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 196,
+        "populationDevelopmentRate": 0.015,
+        "diversityCoefficient": 0.52,
+        "averageFitness": 577.2550000007948
+      },
+      {
+        "generation": 92,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 196,
+        "populationDevelopmentRate": 0.01,
+        "diversityCoefficient": 0.52,
+        "averageFitness": 577.2550000007948
+      },
+      {
+        "generation": 93,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 196,
+        "populationDevelopmentRate": 0.01,
+        "diversityCoefficient": 0.515,
+        "averageFitness": 577.7250000007948
+      },
+      {
+        "generation": 94,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 196,
+        "populationDevelopmentRate": 0.005,
+        "diversityCoefficient": 0.52,
+        "averageFitness": 577.7250000007948
+      },
+      {
+        "generation": 95,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 196,
+        "populationDevelopmentRate": 0,
+        "diversityCoefficient": 0.515,
+        "averageFitness": 577.7250000007948
+      },
+      {
+        "generation": 96,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 196,
+        "populationDevelopmentRate": 0.01,
+        "diversityCoefficient": 0.52,
+        "averageFitness": 577.7250000007948
+      },
+      {
+        "generation": 97,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 196,
+        "populationDevelopmentRate": 0.01,
+        "diversityCoefficient": 0.515,
+        "averageFitness": 577.7250000007948
+      },
+      {
+        "generation": 98,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 197,
+        "populationDevelopmentRate": 0.01,
+        "diversityCoefficient": 0.52,
+        "averageFitness": 579.2350000007948
+      },
+      {
+        "generation": 99,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 197,
+        "populationDevelopmentRate": 0.005,
+        "diversityCoefficient": 0.515,
+        "averageFitness": 579.2350000007948
+      },
+      {
+        "generation": 100,
+        "averageSumDistance": null,
+        "numIndividualsWithNonNullFitness": 100,
+        "populationDevelopmentRate": 0,
+        "diversityCoefficient": 1,
+        "averageFitness": 724.4757281568831
+      }
+    ],
+    "maxWrapping": 1,
+    "selectionSize": 40,
+    "populationSize": 200,
+    "timeCap": null,
+    "maxLengthChromosome": 6,
+    "selectionMethod": "Elite Operation"
+  }
+}

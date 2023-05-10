@@ -46,7 +46,7 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     addLineToYML 6 "       build:"
     addLineToYML 9 "          context: ./RDFMiner/."
     addLineToYML 6 "       depends_on:"
-    addLineToYML 9 "          - virtuoso"
+    # addLineToYML 9 "          - virtuoso"
     addLineToYML 9 "          - corese"
     addLineToYML 6 "       command: launch"
     addLineToYML 6 "       volumes:"

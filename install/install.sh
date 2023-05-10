@@ -41,23 +41,9 @@ fi
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Create shared folders"
 mkdir -p ./Corese/data/
 mkdir -p ./Corese/log/
-# mkdir -p ./Virtuoso/data/
 mkdir -p ./RDFMiner/caches/
 # Build services
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Build services ..."
-# Read params provided by user
-# if [ $# -eq 0 ]; then 
-#     echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - No parameters provided ..."
-# else
-#     params=("$@")
-#     for index in ${!params[@]}; do
-#         # Set SPARQL Endpoint provided by user to allow federated queries (using SERVICE)
-#         if [ "${params[index]}" == "-e" ] || [ "${params[index]}" == "--endpoints" ]; then 
-#             # Copy the file (which contains SPARQL Endpoints) into config/ folder from Corese
-#             echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - SPARQL Endpoint(s) provided ! Creating endpoints.txt ..."
-#             cp ${params[index + 1]} Corese/config/endpoints.txt
-#         fi
-#     done
-# fi
+
 ./install/services/build_rdfminer.sh
 ./install/services/build_corese.sh

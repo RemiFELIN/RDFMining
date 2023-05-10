@@ -1,0 +1,147 @@
+sh:targetClass value,sh:hasValue value,referenceCardinality,#violation,fitness,likelihood,generality,X2S,A posteriori justification
+primer,polymerase chain reaction,239,109,130,0.02051462421,0.001054503258,,
+dehydration,diarrhea,74,13,61,1.61E-08,0.0003264989168,,
+canine distemper,dog,54,27,27,0.108578336,0.0002382559663,,
+intestinal villus,pig,36,17,19,0.1257944092,0.0001588373109,,
+pathogen-associated molecular pattern,inflammation,29,18,11,0.0644424744,0.0001279522782,1.689655172,Common PAMPs [...] LTAs result in a weaker pro-inflammatory response compared to lipopeptides
+rhabdoviridae,rna virus,28,19,9,0.02573020756,0.0001235401307,3.571428571,Rhabdoviridae is a family of negative-strand RNA viruses
+ace inhibitor,ace2,22,8,14,0.07623910904,9.71E-05,,
+signal transducing adaptor protein,innate immune system,21,14,7,0.05544662476,9.27E-05,2.333333333,"The function of this protein is as an adaptor molecule involved in the downstream signaling of cytokine receptors, which are important in the immune response"
+meninges,inflammation,19,9,10,0.176197052,8.38E-05,,
+dl-glutamic acid,l-aspartic acid,19,13,6,0.05175018311,8.38E-05,2.578947368,Both are amino acids
+diffuse alveolar damage,pathology,18,13,5,0.03268432617,7.94E-05,3.555555556,Diffuse alveolar damage is a histologic term used to describe specific changes that occur to the structure of the lungs during injury or disease
+legionella,polymerase chain reaction,18,13,5,0.03268432617,7.94E-05,3.555555556,The most common diagnostic method to detect Legionella is culture. Polymerase chain reaction (PCR) is a fast and accurate method for this detection in environmental samples
+tmprss2,cell culture,17,8,9,0.1854705811,7.50E-05,,
+lamina propria,epithelium,16,7,9,0.1745605469,7.06E-05,,
+pneumococcal conjugate vaccine,etiology,16,11,5,0.06665039063,7.06E-05,2.25,"Pneumococcal conjugate vaccine is a pneumococcal vaccine and a conjugate vaccine used to protect infants, young children, and adults against disease caused by the bacterium Streptococcus pneumoniae"
+carnivora,canine parvovirus,16,11,5,0.06665039063,7.06E-05,2.25,Canine parvovirus is a contagious virus mainly affecting dogs
+guinea,epidemic,15,6,9,0.1527404785,6.62E-05,,
+nlrp3,interleukin-1 family,15,7,8,0.1963806152,6.62E-05,,
+phosphoramidate,prodrug,15,9,6,0.1527404785,6.62E-05,0.6,Type I prodrugs are bioactivated inside the cells (intracellularly). Examples of these are anti-viral nucleoside analogs that must be phosphorylated
+defensin,inflammation,15,10,5,0.09164428711,6.62E-05,1.666666667,Defensins are found in the human skin during inflammatory conditions
+semliki forest virus,viral infectious disease,14,9,5,0.1221923828,6.18E-05,1.142857143,The Semliki Forest virus [...] is known to cause disease in animals including humans.
+enterococcus,microorganism,14,10,4,0.06109619141,6.18E-05,2.571428571,Enterococcus is a large genus of lactic acid bacteria of the phylum Bacillota.
+arabidopsis thaliana,protein–protein interaction,13,7,6,0.2094726563,5.74E-05,0.07692307692,"A. thaliana has been a powerful tool for the study of the subdiscipline of plant pathology, that is, the interaction between plants and disease-causing pathogens"
+arkansas,reverse transcriptase,13,9,4,0.08728027344,5.74E-05,1.923076923,there is no connection
+adipogenesis,endothelium,13,10,3,0.03491210938,5.74E-05,3.769230769,"Products of endocrine system such as insulin, IGF-1, cAMP, glucocorticoid, and triiodothyronine effectively induce adipogenesis in preadipocytes"
+diagnosis of hiv/aids,tuberculosis,13,10,3,0.03491210938,5.74E-05,3.769230769,"Tuberculosis is a preventable and treatable disease, yet it continues to claim millions of lives each year and remains the leading cause of death among people living with HIV"
+sandfly,dog,13,10,3,0.03491210938,5.74E-05,3.769230769,In the various sorts of sandfly only the female is responsible for biting and sucking the blood of mammals
+response element,wild type,12,8,4,0.1208496094,5.29E-05,1.333333333,"The genetic sequence for wild-type versus ""mutant"" phenotypes and how these genes interact in expression is the subject of much research"
+water supply,microorganism,12,9,3,0.0537109375,5.29E-05,3,"Water supply is the provision of water by public utilities where water can contain various microorganisms, including bacteria, viruses, fungi, and parasites"
+dna-binding domain,transcription factor,11,6,5,0.2255859375,4.85E-05,0.09090909091,proteins that regulate transcription by binding DNA are called transcription factors
+deoxyribonuclease,ribonuclease,11,7,4,0.1611328125,4.85E-05,0.8181818182,Deoxyribonuclease and ribonuclease are two different types of nucleases
+glycosaminoglycan,viral entry,11,7,4,0.1611328125,4.85E-05,0.8181818182,Inhibition of this interaction between the virus and GAGs may provide a potential therapeutic target for COVID-19 treatment
+enoxolone,liquorice,11,7,4,0.1611328125,4.85E-05,0.8181818182,Enoxolone is a pentacyclic triterpenoid [...] which was obtained from the herb liquorice
+bronchodilator,emergency department,11,8,3,0.08056640625,4.85E-05,2.272727273,"patients experience severe breathing difficulties may need to go to the emergency department for treatment, which could include the administration of bronchodilators"
+non-alcoholic fatty liver disease,insulin resistance,11,8,3,0.08056640625,4.85E-05,2.272727273,"NAFLD is strongly associated with or caused by type 2 diabetes, insulin resistance"
+notifiable disease,database,11,8,3,0.08056640625,4.85E-05,2.272727273,databases are commonly used to track and manage cases of notifiable diseases
+biomarker,inflammation,11,8,3,0.08056640625,4.85E-05,2.272727273,"a biomarker is a measurable indicator of some biological state or condition, such as inflammation"
+inositol,apoptotic process,10,6,4,0.205078125,4.41E-05,0.4,"Inositol is a type of sugar alcohol that is involved in various cellular processes, including the regulation of apoptosis "
+plug-in hybrid,people's republic of china,10,6,4,0.205078125,4.41E-05,0.4,China has been one of the biggest markets for plug-in hybrid vehicles in recent years
+ethnic group,fever,10,7,3,0.1171875,4.41E-05,1.6,fever can be a symptom of various diseases that may be more common or prevalent in certain ethnic groups
+prevention of hiv/aids,disease,10,7,3,0.1171875,4.41E-05,1.6,HIV is the virus that causes AIDS which is a disease
+(e)-chlorogenic acid,people's republic of china,10,7,3,0.1171875,4.41E-05,1.6,(E)-chlorogenic acid is found in some traditional Chinese medicinal plants
+eastern europe,asia,10,7,3,0.1171875,4.41E-05,1.6,eastern europe and asia are geographic regions
+serum protein electrophoresis,immunoglobulin g,10,7,3,0.1171875,4.41E-05,1.6,Protein electrophoresis also tests for other proteins and antibodies (immunoglobulins). 
+(+)-catechin,tea,10,8,2,0.0439453125,4.41E-05,3.6,"(+)-catechin is a type of flavan-3-ol, which is found in tea"
+human musculoskeletal system,corticosteroid,10,8,2,0.0439453125,4.41E-05,3.6,corticosteroids can be used to treat musculoskeletal conditions
+protein kinase inhibitor,antigen,10,8,2,0.0439453125,4.41E-05,3.6,Inhibition of protein kinases can affect the activity of immune cells and their ability to respond to antigens
+affymetrix,neurotropic virus,10,8,2,0.0439453125,4.41E-05,3.6,Affymetrix technology may be used in research related to neurotropic viruses
+least squares method,people's republic of china,10,8,2,0.0439453125,4.41E-05,3.6,there is no connection
+cell fractionation,hydrophobe,10,8,2,0.0439453125,4.41E-05,3.6,"cell fractionation is the process used to separate cellular components, such as hydrophobic components"
+(e)-chlorogenic acid,pneumonia,10,8,2,0.0439453125,4.41E-05,3.6,there is no connection
+carbon dioxide,people's republic of china,10,8,2,0.0439453125,4.41E-05,3.6,China is the world's largest emitter of carbon dioxide
+carbon dioxide,microorganism,10,8,2,0.0439453125,4.41E-05,3.6,Carbon dioxide is a crucial source of carbon for microorganisms and plays a vital role in their growth and metabolism
+pulmonary hypertension,ace2,10,8,2,0.0439453125,4.41E-05,3.6,ACE2 is an enzyme that plays a critical role in the renin-angiotensin system and has been implicated in the pathogenesis of pulmonary hypertension
+acetone,bacteria,10,8,2,0.0439453125,4.41E-05,3.6,Acetone can be used as a disinfectant to kill bacteria
+18s ribosomal rna,cryptosporidiosis,10,8,2,0.0439453125,4.41E-05,3.6,18s rRNA sequencing is an important tool for the diagnosis and study of cryptosporidiosis
+graft,steroid,10,8,2,0.0439453125,4.41E-05,3.6,"Steroids are commonly used in organ transplantation, where a graft is transplanted from one individual to another"
+rhabdomyolysis,vaccinia virus,10,8,2,0.0439453125,4.41E-05,3.6,there is no connection
+lymphoproliferative disorders,immunodeficiency,10,8,2,0.0439453125,4.41E-05,3.6,These disorders primarily present in patients who have a compromised immune system
+hemoptysis,respiratory tract infection,10,8,2,0.0439453125,4.41E-05,3.6,"Hemoptysis is the coughing up of blood or blood-stained mucus from the bronchi, larynx, trachea, or lungs. In other words, it is the airway bleeding"
+thermal cycler,nucleic acid test,10,8,2,0.0439453125,4.41E-05,3.6,A PCR machine (or a thermal cycler) is an instrument that amplifies target nucleic acid sequences into millions of copies via polymerase chain reaction
+francisella tularensis,microorganism,10,8,2,0.0439453125,4.41E-05,3.6,"Francisella tularensis is a pathogenic species of Gram-negative coccobacillus, an aerobic bacterium"
+mixed model,inflammation,10,8,2,0.0439453125,4.41E-05,3.6,"In the field of inflammation research, mixed models can be used to analyze longitudinal data"
+consortium,interdisciplinarity,10,8,2,0.0439453125,4.41E-05,3.6,A consortium may be formed to pursue interdisciplinary research or projects
+cos cell lines,cytoplasm,10,8,2,0.0439453125,4.41E-05,3.6,"The cytoplasm is all of the material within a eukaryotic cell, enclosed by the cell membrane"
+cos cell lines,green fluorescent protein,10,8,2,0.0439453125,4.41E-05,3.6,"green fluorescent protein can be expressed in cells, allowing researchers to track the location and movement of proteins within the cell"
+infectious mononucleosis,epstein–barr virus,9,2,7,0.0703125,3.97E-05,,
+intestinal disease,gastrointestinal tract,8,1,7,0.03125,3.53E-05,,
+tunicamycin,host,8,4,4,0.2734375,3.53E-05,,
+gsk3b,signal transduction,6,2,4,0.234375,2.65E-05,,
+palivizumab,monoclonal antibody,6,2,4,0.234375,2.65E-05,,
+world health assembly,public health,6,3,3,0.3125,2.65E-05,,
+green chemistry,nanoparticle,6,3,3,0.3125,2.65E-05,,
+nci-h1299,apoptotic process,5,2,3,0.3125,2.21E-05,,
+serotine bat,bat,5,2,3,0.3125,2.21E-05,,
+cave,bat,4,0,4,0.0625,1.76E-05,,
+rousettus,bat,4,0,4,0.0625,1.76E-05,,
+hyponatremia,correlation,4,1,3,0.25,1.76E-05,,
+copii,endoplasmic reticulum,4,1,3,0.25,1.76E-05,,
+cervix,alkyne,4,2,2,0.375,1.76E-05,,
+gastrointestinal system cancer,gastrointestinal tract,4,2,2,0.375,1.76E-05,,
+intravaginal administration,cytotoxic t cell,4,2,2,0.375,1.76E-05,,
+dog breed,giardia lamblia,4,2,2,0.375,1.76E-05,,
+hyponatremia,fever,4,2,2,0.375,1.76E-05,,
+executive summary,human pregnancy,4,2,2,0.375,1.76E-05,,
+stilbenoid,quinone,4,2,2,0.375,1.76E-05,,
+stilbenoid,secondary metabolite,4,2,2,0.375,1.76E-05,,
+mycoplasma haemofelis,cytotoxic t cell,4,2,2,0.375,1.76E-05,,
+medical cannabis,head of femur,4,2,2,0.375,1.76E-05,,
+ovarian follicle,mitochondrion,4,2,2,0.375,1.76E-05,,
+scrapie,transmissible spongiform encephalopathy,4,2,2,0.375,1.76E-05,,
+stunted growth,reverse transcription polymerase chain reaction,4,2,2,0.375,1.76E-05,,
+greenwich mean time,biochemical receptor,4,2,2,0.375,1.76E-05,,
+inosine,mizoribine,4,2,2,0.375,1.76E-05,,
+urtica dioica,lectin,3,0,3,0.125,1.32E-05,,
+surfactant protein a,lung,3,1,2,0.375,1.32E-05,,
+macro domain,dna repair,3,1,2,0.375,1.32E-05,,
+border gateway protocol,complementary dna,3,1,2,0.375,1.32E-05,,
+balut,herpesviridae,3,1,2,0.375,1.32E-05,,
+cryptococcus,yeast,3,1,2,0.375,1.32E-05,,
+job satisfaction,occupational stress,3,1,2,0.375,1.32E-05,,
+informant,case study,2,0,2,0.25,8.82E-06,,
+informant,universal health care,2,1,1,0.5,8.82E-06,,
+doconexent,pig,2,1,1,0.5,8.82E-06,,
+doconexent,microbiological culture,2,1,1,0.5,8.82E-06,,
+kallikreins,peptidase,2,1,1,0.5,8.82E-06,,
+sftpc,surfactant protein a,2,1,1,0.5,8.82E-06,,
+escherichia,bacteriophage,2,1,1,0.5,8.82E-06,,
+data visualization,research,2,1,1,0.5,8.82E-06,,
+data visualization,interdisciplinarity,2,1,1,0.5,8.82E-06,,
+cestoda,forensic science,2,1,1,0.5,8.82E-06,,
+cestoda,anaphylaxis,2,1,1,0.5,8.82E-06,,
+column chromatography,secretion,2,1,1,0.5,8.82E-06,,
+interferome,transcriptome,2,1,1,0.5,8.82E-06,,
+interferome,transcription,2,1,1,0.5,8.82E-06,,
+propionic acid,blood plasma,2,1,1,0.5,8.82E-06,,
+lacrimal gland,blood plasma,2,1,1,0.5,8.82E-06,,
+inorganic chemistry,nanomaterial,2,1,1,0.5,8.82E-06,,
+strongylida,ruminant,2,1,1,0.5,8.82E-06,,
+thermophile,treatment,2,1,1,0.5,8.82E-06,,
+thoracic cavity,lung volumes,2,1,1,0.5,8.82E-06,,
+goggles,polymerase chain reaction,2,1,1,0.5,8.82E-06,,
+anthrax,carbon,2,1,1,0.5,8.82E-06,,
+time,ministry of health,2,1,1,0.5,8.82E-06,,
+spermatogenesis,large intestine,2,1,1,0.5,8.82E-06,,
+mosaic,statistics,2,1,1,0.5,8.82E-06,,
+about eggs,western blot,2,1,1,0.5,8.82E-06,,
+streptococcus mutans,dental caries,2,1,1,0.5,8.82E-06,,
+erythrocyte sedimentation rate,biomarker,2,1,1,0.5,8.82E-06,,
+sampling,gastrointestinal tract,2,1,1,0.5,8.82E-06,,
+chlamydia,asymptomatic,2,1,1,0.5,8.82E-06,,
+phytohaemagglutinin,emerging infectious disease,2,1,1,0.5,8.82E-06,,
+mononuclear phagocyte system,white blood cell,2,1,1,0.5,8.82E-06,,
+branching,drug delivery,2,1,1,0.5,8.82E-06,,
+duck,sweden,1,0,1,0.5,4.41E-06,,
+primer,16s ribosomal rna,1,0,1,0.5,4.41E-06,,
+acinus,cell nucleus,1,0,1,0.5,4.41E-06,,
+salt bridge,t-lymphocytes,1,0,1,0.5,4.41E-06,,
+adenoiditis,pediatrics,1,0,1,0.5,4.41E-06,,
+sh3 domain,handedness,1,0,1,0.5,4.41E-06,,
+sulfonamide,oxidizing agent,1,0,1,0.5,4.41E-06,,
+sulfonamide,oxygen,1,0,1,0.5,4.41E-06,,
+embryo,quarantine,1,0,1,0.5,4.41E-06,,
+iowa,enterococcus,1,0,1,0.5,4.41E-06,,
+bachelor of civil law,neurological disorder,1,0,1,0.5,4.41E-06,,
+gpcr family 3 metabotropic glutamate receptor,amino acid,1,0,1,0.5,4.41E-06,,

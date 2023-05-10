@@ -1,0 +1,139 @@
+PREFIX :         <http://www.example.com/myDataGraph#>
+PREFIX owl:      <http://www.w3.org/2002/07/owl#>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX foaf:     <http://xmlns.com/foaf/0.1/>
+PREFIX dc:       <http://purl.org/dc/elements/1.1/>
+PREFIX dbr:      <http://dbpedia.org/resource/>
+PREFIX dbp:      <http://dbpedia.org/property/>
+PREFIX dbpedia:  <http://dbpedia.org/>
+PREFIX skos:     <http://www.w3.org/2004/02/skos/core#>
+PREFIX dbo:      <http://dbpedia.org/ontology/>
+PREFIX ex:       <http://example.org/demo#> 
+PREFIX sp:       <http://spinrdf.org/sp#> 
+PREFIX sh:       <http://www.w3.org/ns/shacl#> 
+PREFIX dct:      <http://purl.org/dc/terms/> 
+PREFIX psh:      <http://ns.inria.fr/probabilistic-shacl/> 
+
+:11276152 ex:acceptance "true"^^xsd:boolean .
+:200037900 ex:acceptance "true"^^xsd:boolean .
+:9939413 ex:acceptance "true"^^xsd:boolean .
+:10499717 ex:acceptance "true"^^xsd:boolean .
+:207697711 ex:acceptance "true"^^xsd:boolean .
+:49161100 ex:acceptance "true"^^xsd:boolean .
+:8564314 ex:acceptance "true"^^xsd:boolean .
+:91709455 ex:acceptance "true"^^xsd:boolean .
+:97235734 ex:acceptance "true"^^xsd:boolean .
+:256183973 ex:acceptance "true"^^xsd:boolean .
+:196937999 ex:acceptance "true"^^xsd:boolean .
+:70374620 ex:acceptance "true"^^xsd:boolean .
+:245526955 ex:acceptance "true"^^xsd:boolean .
+:81196628 ex:acceptance "true"^^xsd:boolean .
+:254362721 ex:acceptance "true"^^xsd:boolean .
+:215663472 ex:acceptance "true"^^xsd:boolean .
+:76038441 ex:acceptance "true"^^xsd:boolean .
+:179499795 ex:acceptance "true"^^xsd:boolean .
+:113198218 ex:acceptance "true"^^xsd:boolean .
+:200817606 ex:acceptance "true"^^xsd:boolean .
+:42376196 ex:acceptance "true"^^xsd:boolean .
+:38732911 ex:acceptance "true"^^xsd:boolean .
+:33597826 ex:acceptance "true"^^xsd:boolean .
+:233019450 ex:acceptance "true"^^xsd:boolean .
+:248628801 ex:acceptance "true"^^xsd:boolean .
+:161288898 ex:acceptance "true"^^xsd:boolean .
+:250249915 ex:acceptance "true"^^xsd:boolean .
+:194920095 ex:acceptance "true"^^xsd:boolean .
+:122403944 ex:acceptance "true"^^xsd:boolean .
+:113596815 ex:acceptance "true"^^xsd:boolean .
+:236209576 ex:acceptance "true"^^xsd:boolean .
+:51957777 ex:acceptance "true"^^xsd:boolean .
+:126265617 ex:acceptance "true"^^xsd:boolean .
+:105388461 ex:acceptance "true"^^xsd:boolean .
+:16821065 ex:acceptance "true"^^xsd:boolean .
+:56879027 ex:acceptance "false"^^xsd:boolean .
+:56879027 ex:pvalue "49.11574074074075"^^xsd:double .
+:135022365 ex:acceptance "true"^^xsd:boolean .
+:249991505 ex:acceptance "true"^^xsd:boolean .
+:183702323 ex:acceptance "true"^^xsd:boolean .
+:146594332 ex:acceptance "true"^^xsd:boolean .
+:264902576 ex:acceptance "true"^^xsd:boolean .
+:157560420 ex:acceptance "true"^^xsd:boolean .
+:65591951 ex:acceptance "true"^^xsd:boolean .
+:92314690 ex:acceptance "true"^^xsd:boolean .
+:232322527 ex:acceptance "true"^^xsd:boolean .
+:68580539 ex:acceptance "true"^^xsd:boolean .
+:123614665 ex:acceptance "true"^^xsd:boolean .
+:56252385 ex:acceptance "true"^^xsd:boolean .
+:55773915 ex:acceptance "true"^^xsd:boolean .
+:152487909 ex:acceptance "true"^^xsd:boolean .
+:250672522 ex:acceptance "true"^^xsd:boolean .
+:268286832 ex:acceptance "true"^^xsd:boolean .
+:236210426 ex:acceptance "true"^^xsd:boolean .
+:212428561 ex:acceptance "false"^^xsd:boolean .
+:212428561 ex:pvalue "535.2429210134126"^^xsd:double .
+:148619113 ex:acceptance "true"^^xsd:boolean .
+:63177953 ex:acceptance "true"^^xsd:boolean .
+:136928928 ex:acceptance "true"^^xsd:boolean .
+:235597358 ex:acceptance "true"^^xsd:boolean .
+:267063097 ex:acceptance "true"^^xsd:boolean .
+:203360164 ex:acceptance "true"^^xsd:boolean .
+:42140498 ex:acceptance "true"^^xsd:boolean .
+:91739654 ex:acceptance "true"^^xsd:boolean .
+:196427993 ex:acceptance "true"^^xsd:boolean .
+:218037385 ex:acceptance "true"^^xsd:boolean .
+:34462197 ex:acceptance "true"^^xsd:boolean .
+:140258464 ex:acceptance "true"^^xsd:boolean .
+:231772183 ex:acceptance "false"^^xsd:boolean .
+:231772183 ex:pvalue "14.820512820512818"^^xsd:double .
+:210614191 ex:acceptance "true"^^xsd:boolean .
+:158646197 ex:acceptance "true"^^xsd:boolean .
+:109987126 ex:acceptance "true"^^xsd:boolean .
+:15406197 ex:acceptance "true"^^xsd:boolean .
+:82610293 ex:acceptance "true"^^xsd:boolean .
+:247277151 ex:acceptance "true"^^xsd:boolean .
+:168631340 ex:acceptance "true"^^xsd:boolean .
+:119979932 ex:acceptance "true"^^xsd:boolean .
+:260207809 ex:acceptance "true"^^xsd:boolean .
+:18147086 ex:acceptance "true"^^xsd:boolean .
+:246641109 ex:acceptance "true"^^xsd:boolean .
+:83440340 ex:acceptance "true"^^xsd:boolean .
+:138100852 ex:acceptance "true"^^xsd:boolean .
+:235558487 ex:acceptance "true"^^xsd:boolean .
+:49636214 ex:acceptance "true"^^xsd:boolean .
+:225196010 ex:acceptance "true"^^xsd:boolean .
+:180358588 ex:acceptance "false"^^xsd:boolean .
+:180358588 ex:pvalue "14.820512820512818"^^xsd:double .
+:149733901 ex:acceptance "false"^^xsd:boolean .
+:149733901 ex:pvalue "14.820512820512818"^^xsd:double .
+:213489402 ex:acceptance "true"^^xsd:boolean .
+:38045546 ex:acceptance "true"^^xsd:boolean .
+:34801439 ex:acceptance "true"^^xsd:boolean .
+:36329903 ex:acceptance "true"^^xsd:boolean .
+:143089828 ex:acceptance "true"^^xsd:boolean .
+:134748431 ex:acceptance "true"^^xsd:boolean .
+:54654216 ex:acceptance "true"^^xsd:boolean .
+:38850875 ex:acceptance "true"^^xsd:boolean .
+:101835994 ex:acceptance "true"^^xsd:boolean .
+:152872655 ex:acceptance "true"^^xsd:boolean .
+:83243039 ex:acceptance "true"^^xsd:boolean .
+:258860653 ex:acceptance "true"^^xsd:boolean .
+:183409774 ex:acceptance "true"^^xsd:boolean .
+:131961283 ex:acceptance "true"^^xsd:boolean .
+:197930870 ex:acceptance "true"^^xsd:boolean .
+:2137126 ex:acceptance "true"^^xsd:boolean .
+:93298762 ex:acceptance "true"^^xsd:boolean .
+:1056434 ex:acceptance "true"^^xsd:boolean .
+:71187205 ex:acceptance "true"^^xsd:boolean .
+:145245390 ex:acceptance "true"^^xsd:boolean .
+:215859668 ex:acceptance "true"^^xsd:boolean .
+:42580798 ex:acceptance "false"^^xsd:boolean .
+:42580798 ex:pvalue "1214.595941686367"^^xsd:double .
+:157339338 ex:acceptance "true"^^xsd:boolean .
+:82114832 ex:acceptance "false"^^xsd:boolean .
+:82114832 ex:pvalue "14.820512820512818"^^xsd:double .
+:57512546 ex:acceptance "true"^^xsd:boolean .
+:96662412 ex:acceptance "true"^^xsd:boolean .
+:41657848 ex:acceptance "true"^^xsd:boolean .
+:114420684 ex:acceptance "true"^^xsd:boolean .
+:17418103 ex:acceptance "true"^^xsd:boolean .
