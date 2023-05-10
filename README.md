@@ -28,7 +28,7 @@
 
 > **INFO** Each results of these experiments will be stored in the **IO/** folder
 
-### Solution space analysis
+### Solution space analysis on CovidOnTheWeb dataset
 
 1. Put *covidontheweb_data.ttl* (stored in **datasets/**) in the **Corese/data/** folder.
 2. Start the **Corese** service: ```sudo docker-compose up -d corese```
