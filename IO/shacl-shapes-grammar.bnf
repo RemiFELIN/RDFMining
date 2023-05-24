@@ -59,6 +59,6 @@ NodeKind := 'sh:BlankNode' | 'sh:IRI' | 'sh:Literal' | 'sh:BlankNodeOrIRI' | 'sh
 
 # Primitives : 
 # Node (Where we fix a LIMIT in SPARQL Queries)
-# Class
-# Property
-# DataType
+Class := '[sparql] ?x a ?Class .'
+Property := '[sparql] ?subj ?Property ?obj . FILTER ( isIRI(?Property) ) .'
+DataType := '[sparql] { SELECT distinct ?o WHERE { ?s ?p ?o . FILTER ( isLiteral(?o) ) } } BIND( datatype(?o) as ?DataType ) .'

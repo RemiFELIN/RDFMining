@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,11 +43,27 @@ public abstract class ShapeGenerator extends Generator {
             String h = String.format("\"%x\"", hexDigit);
             logger.warn("Querying with FILTER(strStarts(MD5(?x), " + h + "))...");
             // SPARQL Request
-            generateProductions("Class", "SELECT distinct ?Class WHERE { ?x a ?Class . FILTER( strStarts(MD5(str(?Class)), " + h + ") ) }");
-            generateProductions("Property","SELECT distinct ?Property WHERE { ?subj ?Property ?obj . FILTER ( isIRI(?Property) ) . FILTER( strStarts(MD5(str(?Property)), " + h + ") ) }");
-            generateProductions("Node", "SELECT distinct ?Node WHERE { ?Node ?p ?o . FILTER( strStarts(MD5(str(?Node)), " + h + ") ) } LIMIT 1000");
-            generateProductions("DataType", "SELECT distinct ?DataType WHERE { { SELECT distinct ?o WHERE { ?s ?p ?o . FILTER ( isLiteral(?o) ) } } BIND( datatype(?o) as ?DataType ) . FILTER( strStarts(MD5(str(?DataType)), " + h + ") ) }");
+            for (Rule rule : grammar.getRules()) {
+                if (rule.get(0).toString().contains(sparql)) {
+                    String body = rule.get(0).toString().replace(sparql, "");
+//                    System.out.println("SELECT distinct ?" + rule.getLHS().getSymbolString() + " WHERE { " + body + " FILTER( strStarts(MD5(str(?" + rule.getLHS().getSymbolString() + ")), " + h + ") ) }");
+                    generateProductions(rule.getLHS().getSymbolString(), getSparqlQuery(rule.getLHS().getSymbolString(), body, h));
+                }
+            }
         }
+        ArrayList<Rule> copyRules = new ArrayList<>();
+        for (Rule rule : grammar.getRules()) {
+            copyRules.add((Rule) rule.clone());
+        }
+        for (Rule rule : copyRules) {
+            for(Production prod: rule) {
+                if (prod.toString().contains(sparql)) {
+                    int idRule = grammar.getRules().indexOf(rule);
+                    grammar.getRules().get(idRule).remove(prod);
+                }
+            }
+        }
+//        System.out.println(grammar.getRules());
     }
 
     @Override
@@ -79,15 +96,14 @@ public abstract class ShapeGenerator extends Generator {
             logger.info("Cache for " + symbol + " not found. Querying SPARQL endpoint");
             logger.info("Querying SPARQL endpoint for symbol <" + symbol + "> ...");
             CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, Global.PREFIXES);
-            PrintStream cache = null;
-            try {
-                cache = new PrintStream(cacheName(symbol, sparql));
-            } catch (FileNotFoundException e) {
-                logger.warn("Could not create cache for symbol " + symbol + ".");
-            }
-
             List<String> results = endpoint.select(symbol, sparql);
             if(results.size() > 0) {
+                PrintStream cache = null;
+                try {
+                    cache = new PrintStream(cacheName(symbol, sparql));
+                } catch (FileNotFoundException e) {
+                    logger.warn("Could not create cache for symbol " + symbol + ".");
+                }
                 for(String result : results) {
                     // declare a new production
                     Production prod = new Production();
@@ -101,10 +117,14 @@ public abstract class ShapeGenerator extends Generator {
                     // Adding production founded by SPARQL Request
                     rule.add(prod);
                 }
+                logger.info("Done! " + rule.size() + " productions added.");
+                if (cache != null) cache.close();
             }
-            logger.info("Done! " + rule.size() + " productions added.");
-            if (cache != null) cache.close();
         }
+    }
+
+    public String getSparqlQuery(String symbol, String body, String h) {
+        return "SELECT distinct ?" + symbol + " WHERE { " + body + " FILTER( strStarts(MD5(str(?" + symbol + ")), " + h + ") ) }";
     }
 
 }

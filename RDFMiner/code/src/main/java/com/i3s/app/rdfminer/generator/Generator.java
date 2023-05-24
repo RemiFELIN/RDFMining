@@ -1,6 +1,5 @@
 package com.i3s.app.rdfminer.generator;
 
-import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
@@ -36,6 +35,8 @@ public abstract class Generator {
     public boolean generateShapes = false;
 
     public boolean generateAxioms = false;
+
+    public final String sparql = "[sparql] ";
 
     /**
      * Load a given file path as a grammar to follow for our future rules
@@ -87,7 +88,11 @@ public abstract class Generator {
         do {
             grammar.setGenotype(chromosome);
             grammar.setPhenotype(new Phenotype());
-            valid = grammar.genotype2Phenotype(true);
+            try {
+                valid = grammar.genotype2Phenotype(true);
+            } catch (NullPointerException e) {
+                valid = false;
+            }
             i++;
         } while (!valid && i < grammar.getMaxWraps());
 
@@ -112,8 +117,8 @@ public abstract class Generator {
      * Generate a cache file name from a SPARQL query, so that each file has a different name.
      */
     public static String cacheName(String symbol, String sparql) {
-//        return String.format("/home/rfelin/projects/RDFMining/RDFMiner/caches/%s%08x.cache", symbol, sparql.hashCode());
-        return String.format(Global.CACHE_PATH + "%s%08x.cache", symbol, sparql.hashCode());
+        return String.format("/home/rfelin/projects/RDFMining/RDFMiner/caches/%s%08x.cache", symbol, sparql.hashCode());
+//        return String.format(Global.CACHE_PATH + "%s%08x.cache", symbol, sparql.hashCode());
     }
 
 }

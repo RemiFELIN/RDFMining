@@ -438,22 +438,22 @@ public class Test {
     }
 
     public static void test() {
-        RDFMiner.parameters.initLenChromosome = 2;
-        RDFMiner.parameters.populationSize = 1;
+        RDFMiner.parameters.initLenChromosome = 8;
+        RDFMiner.parameters.populationSize = 10;
         Generator generator = null;
         try {
-            generator = new RandomShapeGenerator("/user/rfelin/home/projects/RDFMining/IO/shacl-shapes-test.bnf");
+            generator = new RandomShapeGenerator("/user/rfelin/home/projects/RDFMining/IO/shacl-shapes-grammar.bnf");
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         };
         CandidatePopulation canPop = new CandidatePopulation(generator);
         ArrayList<GEIndividual> population = canPop.initialize(null, 1);
-        GEIndividual individual = population.get(0);
-        System.out.println("individuals: " + individual.getChromosomes());
-        System.out.println("phenotype: " + individual.getPhenotype().getStringNoSpace());
-        System.out.println("0: " + individual.getChromosomes().get(0));
-        System.out.println("1: " + individual.getChromosomes().get(1));
-        System.out.println(individual.getDistinctPhenotypes());
+        for(GEIndividual individual: population) {
+            System.out.println(individual.getDistinctPhenotypes());
+            System.out.println("individuals: " + individual.getChromosomes());
+            System.out.println("phenotype: " + individual.getPhenotype().getStringNoSpace());
+        }
+
     }
 
     public static void test2() {
@@ -478,7 +478,7 @@ public class Test {
     }
 
     public static void main(String[] args) {
-        test2();
+        test();
 //        testSwapCrossover();
 //        testSwapCrossoverOnRealData();
 //        testSubtreeCrossover();
