@@ -1,6 +1,7 @@
 package com.i3s.app.rdfminer.generator;
 
 import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Genotype;
