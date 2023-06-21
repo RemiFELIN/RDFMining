@@ -141,7 +141,8 @@ public class GrammaticalEvolution {
             entities = EntityMining.run(generator, entities, curGeneration, curCheckpoint);
             editCache(CACHE_PATH, entities, curGeneration, curCheckpoint);
             // update checkpoint
-            if (parameters.populationSize * curGeneration == parameters.kBase * (curCheckpoint + 1)) {
+//            System.out.println(parameters.populationSize * curGeneration + " >= " + Math.round((parameters.kBase * (curCheckpoint + 1)) / parameters.checkpoint) );
+            if (parameters.populationSize * curGeneration >= Math.round((parameters.kBase * (curCheckpoint + 1)) / parameters.checkpoint) ) {
                 curCheckpoint++;
             }
             // Turn to the next generation

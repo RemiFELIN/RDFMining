@@ -18,6 +18,9 @@ NonAtomicIntersectionExpression := ObjectSomeValuesFrom | ObjectAllValuesFrom
 
 ObjectIntersectionOf := 'ObjectIntersectionOf' '(' Class ' ' Class ')'
 
+# tmp
+ObjectUnionOf := 'ObjectUnionOf' '(' Class ' ' Class ')'
+
 ObjectSomeValuesFrom := 'ObjectSomeValuesFrom' '(' ObjectPropertyOf ' ' Class ')'
 
 ObjectAllValuesFrom := 'ObjectAllValuesFrom' '(' ObjectPropertyOf ' ' Class ')'

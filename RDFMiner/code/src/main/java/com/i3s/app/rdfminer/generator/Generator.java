@@ -1,7 +1,7 @@
 package com.i3s.app.rdfminer.generator;
 
-import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Genotype;
@@ -52,7 +52,7 @@ public abstract class Generator {
             grammar = new DLGEGrammar(filePath);
             grammar.setDerivationTreeType(DerivationTree.class.getName());
             // grammar.setDerivationTreeType(ContextualDerivationTree.class.getName());
-            grammar.setMaxDerivationTreeDepth(100);
+            grammar.setMaxDerivationTreeDepth(1000);
             // set max wrapp
             grammar.setMaxWraps(RDFMiner.parameters.maxWrapp);
         }
@@ -87,6 +87,7 @@ public abstract class Generator {
         boolean valid;
         int i = 1;
         do {
+//            System.out.println("Wrap n°1 for chromosome: " + chromosome.toString());
             grammar.setGenotype(chromosome);
             grammar.setPhenotype(new Phenotype());
             try {
@@ -94,6 +95,7 @@ public abstract class Generator {
             } catch (NullPointerException e) {
                 valid = false;
             }
+//            System.out.println("is Valid ? " + valid);
             i++;
         } while (!valid && i < grammar.getMaxWraps());
 
@@ -114,11 +116,15 @@ public abstract class Generator {
         return individual;
     }
 
+    public String getSparqlQuery(String symbol, String body, String h) {
+        return "SELECT distinct ?" + symbol + " WHERE { " + body + " FILTER( strStarts(MD5(str(?" + symbol + ")), " + h + ") ) }";
+    }
+
     /**
      * Generate a cache file name from a SPARQL query, so that each file has a different name.
      */
     public static String cacheName(String symbol, String sparql) {
-        // return String.format("/home/rfelin/projects/RDFMining/RDFMiner/caches/%s%08x.cache", symbol, sparql.hashCode());
+//         return String.format("/home/rfelin/projects/RDFMining/RDFMiner/caches/%s%08x.cache", symbol, sparql.hashCode());
        return String.format(Global.CACHE_PATH + "%s%08x.cache", symbol, sparql.hashCode());
     }
 

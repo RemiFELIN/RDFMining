@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -29,6 +30,8 @@ public class SimilarityMap {
         // create this file
         try {
             Files.createFile(this.file.toPath());
+            // write empty json
+            new FileWriter(this.file).write("{}");
         } catch (IOException e) {
             logger.error("Error during the creation of file " + Global.SIMILARITIES_FILE);
             e.printStackTrace();

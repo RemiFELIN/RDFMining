@@ -194,17 +194,16 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 		// in a case of new individual, we need to compute it as a new axiom
 		double f;
 		// instance of axiom
-		Axiom axiom = null;
-		if (individual.isMapped()) {
-			axiom = AxiomFactory.create(individual, individual.getPhenotype(),
-					new CoreseEndpoint(Global.CORESE_IP, Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES));
-			// compute fitness
-			axiom.computeFitness();
-			f = axiom.individual.getFitness().getDouble();
-		} else {
-			logger.warn(individual.getPhenotype() + " is not mapped !");
-			f = 0;
-		}
+//		if (individual.isMapped()) {
+		Axiom axiom = AxiomFactory.create(individual, individual.getPhenotype(),
+				new CoreseEndpoint(Global.CORESE_IP, Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES));
+		// compute fitness
+		axiom.computeFitness();
+		f = axiom.individual.getFitness().getDouble();
+//		} else {
+//			logger.warn(individual.getPhenotype() + " is not mapped !");
+//			f = 0;
+//		}
 		individual.setFitness(new BasicFitness(f, individual));
 		return axiom;
 	}

@@ -65,12 +65,12 @@ public class Similarity {
                 "{{ " + this.phi2SubClass.graphPattern + "} UNION { " + this.phi2SuperClass.graphPattern + " }}";
         String simDenSparql = "{ " + this.phi1SubClass.graphPattern + " } UNION { " + this.phi1SuperClass.graphPattern + " }" +
                 " UNION { " + this.phi2SubClass.graphPattern + " } UNION { " + this.phi2SuperClass.graphPattern + " }";
-        logger.info("numerator query : " + simNumSparql);
-        double similarityNumerator = endpoint.count(simNumSparql);
-        logger.info("result = " + similarityNumerator);
-        double similarityDenominator = endpoint.count(simDenSparql);
-        logger.info("denominator query : " + simDenSparql);
-        logger.info("result = " + similarityDenominator);
+//        logger.info("numerator query : " + simNumSparql);
+        int similarityNumerator = endpoint.count(simNumSparql);
+//        logger.info("result = " + similarityNumerator);
+        int similarityDenominator = endpoint.count(simDenSparql);
+//        logger.info("denominator query : " + simDenSparql);
+//        logger.info("result = " + similarityDenominator);
         // avoid NaN value returned by a zero-denominator
         if(similarityDenominator == 0)  return 0;
         // else return value

@@ -35,7 +35,8 @@ public class EntityMining {
 //        int sizeElite = RDFMiner.parameters.sizeElite * RDFMiner.parameters.populationSize < 1 ?
 //                1 : (int) (RDFMiner.parameters.sizeElite * RDFMiner.parameters.populationSize);
         // Checkpoint reached, this is a code to evaluate and save axioms in output file
-        if(RDFMiner.parameters.populationSize * curGeneration == RDFMiner.parameters.kBase * (curCheckpoint + 1)) {
+        if(RDFMiner.parameters.populationSize * curGeneration >=
+                Math.round((RDFMiner.parameters.kBase * (curCheckpoint + 1)) / RDFMiner.parameters.checkpoint) ) {
             if(RDFMiner.parameters.checkpoint != 1 && curCheckpoint != RDFMiner.parameters.checkpoint - 1) {
                 // INTERMEDIATE step (i.e. checkpoint)
                 logger.info("Checkpoint n°" + (curCheckpoint + 1) + " reached !");
@@ -47,7 +48,7 @@ public class EntityMining {
                 return newPopulation;
             } else {
                 // FINAL step
-                logger.info("FINAL step");
+                logger.info("Final assessment !");
                 // evaluate distinct genotype and avoid additional useless computation
                 ArrayList<Entity> newPopulation = Fitness.computePopulation(entities, generator);
                 // stats
@@ -125,7 +126,7 @@ public class EntityMining {
 //        logger.debug("size new pop = " + newPopulation.size());
         // stats
         setStats(originalPopulation, newPopulation, curGeneration);
-//        logger.debug("size new pop= " + newPopulation.size());
+        logger.debug("size new pop= " + newPopulation.size());
         // renew population
         return newPopulation;
     }

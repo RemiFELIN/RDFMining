@@ -165,6 +165,7 @@ public class EATools {
 			Entity entity = new Entity();
 			// for SubClassOf axioms, we will set sub and super class
 			entity.argumentClasses = DLFactory.parseArguments(notEval.getPhenotype());
+			entity.setIndividual(notEval);
 			// set fitness
 			entity.individual.setFitness(new BasicFitness(0, entity.individual));
 			toReturn.add(entity);

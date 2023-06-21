@@ -26,10 +26,10 @@ public class Offspring {
     public Offspring(Entity parent1, Entity parent2, GEIndividual child1, GEIndividual child2, Generator generator)
             throws URISyntaxException, IOException {
 //        logger.debug("-----------");
-//        logger.debug("parent1: " + parent1.individual.getGenotype());
-//        logger.debug("parent2: " + parent2.individual.getGenotype());
-//        logger.debug("child1: " + child1.getGenotype());
-//        logger.debug("child2: " + child2.getGenotype());
+//        logger.debug("parent1: " + parent1.individual.getGenotype() + "\nis mapped: " + parent1.individual.isMapped());
+//        logger.debug("parent2: " + parent2.individual.getGenotype() + "\nis mapped: " + parent2.individual.isMapped());
+//        logger.debug("child1: " + child1.getGenotype() + "\nis mapped: " + child1.isMapped());
+//        logger.debug("child2: " + child2.getGenotype() + "\nis mapped: " + child2.isMapped());
 //        logger.debug("-----------");
         this.generator = generator;
         this.parent1 = parent1;

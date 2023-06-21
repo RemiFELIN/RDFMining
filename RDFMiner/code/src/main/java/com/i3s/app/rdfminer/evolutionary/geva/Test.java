@@ -148,7 +148,7 @@ public class Test {
         RDFMiner.parameters.proCrossover = 1;
         Generator generator = null;
         try {
-            generator = new RandomAxiomGenerator("/user/rfelin/home/projects/RDFMining/IO/OWL2Axiom-complex-subclassof.bnf", true);
+            generator = new RandomAxiomGenerator("/user/rfelin/home/projects/RDFMining/IO/OWL2Axiom-subclassof.bnf", true);
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         };
@@ -157,12 +157,12 @@ public class Test {
         System.out.println("--------\nSUBTREE CROSSOVER");
         SinglePointCrossover stc = new SinglePointCrossover();
         stc.setFixedCrossoverPoint(true);
-        for(Individual i : population) {
-            System.out.println("individual before subtree crossover -> " + i.getGenotype());
+        for(GEIndividual i : population) {
+            System.out.println("individual before subtree crossover -> " + i.getGenotype() + " is mapped ? " + i.isMapped());
         }
         stc.doOperation(population);
-        for(Individual i : population) {
-            System.out.println("individual after subtree crossover -> " + i.getGenotype());
+        for(GEIndividual i : population) {
+            System.out.println("individual after subtree crossover -> " + i.getGenotype() + " is mapped ? " + i.isMapped());
         }
     }
 
@@ -437,6 +437,22 @@ public class Test {
         }
     }
 
+    public static void generateRandomPhenotypes() {
+        RDFMiner.parameters.initLenChromosome = 20;
+        RDFMiner.parameters.populationSize = 2000;
+        Generator generator = null;
+        try {
+            generator = new RandomShapeGenerator("/user/rfelin/home/projects/RDFMining/IO/tmp.bnf");
+        } catch (URISyntaxException | IOException e) {
+            e.printStackTrace();
+        };
+        CandidatePopulation canPop = new CandidatePopulation(generator);
+        ArrayList<GEIndividual> population = canPop.initialize(null, 1);
+        for(GEIndividual ind : population) {
+            System.out.println(ind.getPhenotype());
+        }
+    }
+
     public static void test() {
         RDFMiner.parameters.initLenChromosome = 8;
         RDFMiner.parameters.populationSize = 10;
@@ -461,10 +477,10 @@ public class Test {
         RDFMiner.parameters.populationSize = 1;
         Generator generator = null;
         try {
-            generator = new RandomShapeGenerator("/user/rfelin/home/projects/RDFMining/IO/shacl-shapes-test.bnf");
+            generator = new RandomShapeGenerator("/user/rfelin/home/projects/RDFMining/IO/OWL2Axiom-subclassof.bnf");
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
-        };
+        }
         GEChromosome chrom = new GEChromosome(2);
         chrom.setMaxChromosomeLength(1000);
         // 1000427925,1741643077,
@@ -478,7 +494,8 @@ public class Test {
     }
 
     public static void main(String[] args) {
-        test();
+        generateRandomPhenotypes();
+//        testSinglePointCrossoverOnRealPopulation();
 //        testSwapCrossover();
 //        testSwapCrossoverOnRealData();
 //        testSubtreeCrossover();

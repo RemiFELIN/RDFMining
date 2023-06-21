@@ -16,7 +16,7 @@ ShapeBody := 'sh:targetClass ' Class ' ; ' ShapeProperty
 ShapeProperty := ' sh:property [ ' PropertyBody ' ] . '
 PropertyBody := ' sh:path rdf:type ; sh:hasValue ' Class ' ; '
 
-Class := 'sparql:= ?x a ?Class .'
+Class := '[sparql] ?x a ?Class .'
 
 # Example of generated subject: <hcijd94> <cciha942> <bbajd9424> <acijd94249> ... 
 # Subject := ':' Letter Letter Letter Letter Letter Number Number [ Number ] ' '

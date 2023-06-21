@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,8 +55,27 @@ public abstract class AxiomGenerator extends Generator {
 			{
 				String h = String.format("\"%x\"", hexDigit);
 				logger.warn("Querying with FILTER(strStarts(MD5(?x), " + h + "))...");
-				generateProductions("Class", "SELECT distinct ?Class WHERE {?Class a owl:Class . FILTER(contains(str(?Class), \"http://\")). FILTER( strStarts(MD5(str(?Class)), " + h + ") ) }");
-				generateProductions("ObjectPropertyOf","SELECT distinct ?ObjectPropertyOf WHERE { ?subj ?ObjectPropertyOf ?obj . FILTER ( isIRI(?obj) ).FILTER( strStarts(MD5(str(?ObjectPropertyOf)), " + h + ") ) }");
+//				generateProductions("Class", "SELECT distinct ?Class WHERE {?Class a owl:Class . FILTER(contains(str(?Class), \"http://\")). FILTER( strStarts(MD5(str(?Class)), " + h + ") ) }");
+//				generateProductions("ObjectPropertyOf","SELECT distinct ?ObjectPropertyOf WHERE { ?subj ?ObjectPropertyOf ?obj . FILTER ( isIRI(?obj) ).FILTER( strStarts(MD5(str(?ObjectPropertyOf)), " + h + ") ) }");
+				for (Rule rule : grammar.getRules()) {
+					if (rule.get(0).toString().contains(sparql)) {
+						String body = rule.get(0).toString().replace(sparql, "");
+//                    System.out.println("SELECT distinct ?" + rule.getLHS().getSymbolString() + " WHERE { " + body + " FILTER( strStarts(MD5(str(?" + rule.getLHS().getSymbolString() + ")), " + h + ") ) }");
+						generateProductions(rule.getLHS().getSymbolString(), getSparqlQuery(rule.getLHS().getSymbolString(), body, h));
+					}
+				}
+			}
+			ArrayList<Rule> copyRules = new ArrayList<>();
+			for (Rule rule : grammar.getRules()) {
+				copyRules.add((Rule) rule.clone());
+			}
+			for (Rule rule : copyRules) {
+				for(Production prod: rule) {
+					if (prod.toString().contains(sparql)) {
+						int idRule = grammar.getRules().indexOf(rule);
+						grammar.getRules().get(idRule).remove(prod);
+					}
+				}
 			}
 		} else {
 			extract();

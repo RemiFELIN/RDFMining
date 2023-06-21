@@ -121,7 +121,7 @@ public class CmdLineParameters {
 
 	@Option(name = "-mxw", aliases = {
 			"--max-wrapp" }, usage = "use as this value as the max number of wrapping", metaVar = "MAX_WRAPP")
-	public int maxWrapp = 1;
+	public int maxWrapp = 1000;
 
 	@Option(name = "-mxc", aliases = {
 			"--max-codon" }, usage = "use as this value as the max value of codon", metaVar = "MAX_CODON")
@@ -140,7 +140,7 @@ public class CmdLineParameters {
 	public int typeSelection = 1;
 
 	@Option(name = "-cr", aliases = {
-			"--type-crossover" }, usage = "use as this value as the type of crossover operation (1: Single Point; 2: Two Point; 3: Sub tree)", metaVar = "TYPE_CROSSOVER")
+			"--type-crossover" }, usage = "use as this value as the type of crossover operation (1: Single Point; 2: Two Point; 3: Sub tree; 4: Customized Swap)", metaVar = "TYPE_CROSSOVER")
 	public int typeCrossover = 1;
 
 	@Option(name = "-mu", aliases = {

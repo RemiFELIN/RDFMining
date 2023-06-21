@@ -123,8 +123,4 @@ public abstract class ShapeGenerator extends Generator {
         }
     }
 
-    public String getSparqlQuery(String symbol, String body, String h) {
-        return "SELECT distinct ?" + symbol + " WHERE { " + body + " FILTER( strStarts(MD5(str(?" + symbol + ")), " + h + ") ) }";
-    }
-
 }
