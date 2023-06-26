@@ -36,7 +36,7 @@ public class GenerationJSON {
 		Statistics stat = new Statistics();
 		this.generation = curGeneration;
 		this.populationDevelopmentRate = EATools.getPopulationDevelopmentRate(originalPopulation, newPopulation);
-		this.diversityCoefficient = (double) EATools.getDistinctGenotypePopulation(newPopulation).size() / newPopulation.size();
+		this.diversityCoefficient = (double) EATools.getDistinctPhenotypePopulation(newPopulation).size() / newPopulation.size();
 		this.averageFitness = stat.computeAverageFitness(newPopulation);
 		this.numIndividualsWithNonNullFitness = stat.getEntitiesWithNonNullFitness(newPopulation);
 		if(RDFMiner.parameters.useNoveltySearch) {

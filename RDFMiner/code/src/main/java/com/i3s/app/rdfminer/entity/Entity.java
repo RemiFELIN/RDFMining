@@ -161,7 +161,7 @@ public class Entity {
     /**
      * The current ID of generation where this axiom has been found
      */
-    public Integer generation = 0;
+//    public Integer generation = 0;
 
     public void setEntityAsString(String entityAsString) {
         this.entityAsString = entityAsString;
@@ -172,7 +172,7 @@ public class Entity {
         if(this.individual != null) {
             json.put("phenotype", this.individual.getPhenotype().getStringNoSpace());
             json.put("fitness", this.individual.getFitness().getDouble());
-            json.put("generation", this.generation);
+            json.put("generation", this.individual.getAge());
         } else {
             json.put("phenotype", this.entityAsString);
         }

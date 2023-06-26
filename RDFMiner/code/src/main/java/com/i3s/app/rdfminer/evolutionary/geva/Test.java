@@ -438,16 +438,18 @@ public class Test {
     }
 
     public static void generateRandomPhenotypes() {
-        RDFMiner.parameters.initLenChromosome = 20;
-        RDFMiner.parameters.populationSize = 2000;
+        RDFMiner.parameters.initLenChromosome = 100;
+        RDFMiner.parameters.populationSize = 3000;
+//        Global.TRAINING_SPARQL_ENDPOINT = Global.;
         Generator generator = null;
         try {
-            generator = new RandomShapeGenerator("/user/rfelin/home/projects/RDFMining/IO/tmp.bnf");
+            generator = new RandomAxiomGenerator("/user/rfelin/home/projects/RDFMining/IO/tmp.bnf", true);
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         };
         CandidatePopulation canPop = new CandidatePopulation(generator);
         ArrayList<GEIndividual> population = canPop.initialize(null, 1);
+        System.out.println();
         for(GEIndividual ind : population) {
             System.out.println(ind.getPhenotype());
         }

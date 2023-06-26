@@ -128,7 +128,7 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 				// compute fitness
 				axiom.computeFitness();
 				// the generation in which this axiom was discovered
-				axiom.generation = entity.generation;
+//				axiom.generation = entity.generation;
 				return axiom;
 			});
 		}

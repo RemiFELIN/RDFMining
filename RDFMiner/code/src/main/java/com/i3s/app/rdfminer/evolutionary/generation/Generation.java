@@ -37,11 +37,15 @@ public class Generation {
      * genetical algorithm
      *
      * @param canEntities        the candidate population
-     * @param curGeneration the current generation
+     * @param selectedEntities        the selected population
+     * @param curGeneration     the current generation
      * @param generator     an instance of {@link Generator Generator}
      * @return a new population
      */
-    public static ArrayList<Entity> compute(ArrayList<Entity> canEntities, int curGeneration, Generator generator)
+    public static ArrayList<Entity> compute(ArrayList<Entity> canEntities,
+                                            ArrayList<Entity> selectedEntities,
+                                            int curGeneration,
+                                            Generator generator)
             throws InterruptedException, ExecutionException {
 
         ArrayList<Entity> evaluatedIndividuals = new ArrayList<>();
@@ -52,16 +56,22 @@ public class Generation {
 //		List<Crowding> shapesToEvaluate = new ArrayList<>();
         int m = 0;
         // shuffle populations before crossover & mutation
-        Collections.shuffle(canEntities);
+//        Collections.shuffle(canEntities);
+//        Collections.shuffle(selectedEntites);
         // selected entities for crossover-mutation-crowding
-        ArrayList<Entity> selectedEntities = new ArrayList<>(canEntities);
+        ArrayList<Entity> toCompute = new ArrayList<>(canEntities);
+        toCompute.addAll(selectedEntities);
+        Collections.shuffle(toCompute);
+        logger.info("Number of entities into Crossover/Mutation process: " + toCompute.size());
+        ArrayList<Entity> copyToCompute = new ArrayList<>(toCompute);
         // process crossover and mutation 2 by 2
         int even = canEntities.size() % 2;
         while (m < canEntities.size() - even) {
             // get the two individuals which are neighbours
 //            ArrayList<GEIndividual> parents = new ArrayList<>(List.of(canEntities.get(m).individual, canEntities.get(m + 1).individual));
-            GEChromosome chromParent1 = canEntities.get(m).individual.getChromosomes();
-            GEChromosome chromParent2 = canEntities.get(m + 1).individual.getChromosomes();
+            GEChromosome chromParent1 = toCompute.get(0).individual.getChromosomes();
+            GEChromosome chromParent2 = toCompute.get(1).individual.getChromosomes();
+            logger.debug("Testing chromosomes: " + chromParent1 + " and " + chromParent2);
             ArrayList<GEIndividual> futureOffsprings = new ArrayList<>(List.of(
                     generator.getIndividualFromChromosome(chromParent1, curGeneration),
                     generator.getIndividualFromChromosome(chromParent2, curGeneration)
@@ -119,23 +129,24 @@ public class Generation {
             if (RDFMiner.parameters.diversity == 1) {
                 // if crowding is chosen, we need to compute and return the individuals chosen
                 // (between parents and childs) in function of their fitness
-                int idx = m;
-                entitiesCallables.add(() -> new Crowding(canEntities.get(idx), canEntities.get(idx + 1), futureOffsprings.get(0),
+//                int idx = m;
+                entitiesCallables.add(() -> new Crowding(toCompute.get(0), toCompute.get(1), futureOffsprings.get(0),
                         futureOffsprings.get(1), canEntities, generator).getSurvivalSelection());
             } else {
                 // simply return offsprings
-                int idx = m;
-                entitiesCallables.add(() -> new Offspring(canEntities.get(idx), canEntities.get(idx + 1), futureOffsprings.get(0),
+                entitiesCallables.add(() -> new Offspring(toCompute.get(0), toCompute.get(1), futureOffsprings.get(0),
                         futureOffsprings.get(1), generator).get());
             }
-            selectedEntities.remove(canEntities.get(m));
-            selectedEntities.remove(canEntities.get(m + 1));
+            toCompute.remove(copyToCompute.get(m));
+            toCompute.remove(copyToCompute.get(m + 1));
+            logger.debug("Size copyToCompute list: " + copyToCompute.size());
+            logger.debug("Size toCompute list: " + toCompute.size());
             m = m + 2;
         }
         // fill entity that was not choosen for the crossover-mutation process
-        if(!selectedEntities.isEmpty()) {
-            logger.debug("The last entity will be added directly on population");
-            evaluatedIndividuals.add(selectedEntities.get(0));
+        if(even == 1) {
+            logger.debug("A last entity will be added directly on population");
+            evaluatedIndividuals.add(toCompute.get(0));
         }
         logger.info(entitiesCallables.size() + " tasks ready to be launched !");
         // Submit tasks

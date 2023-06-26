@@ -12,7 +12,6 @@ import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -105,7 +104,7 @@ public class NoveltySearch {
         RDFMiner.parameters.loop = false;
         RDFMiner.parameters.sparqlTimeOut = 1000000;
 
-        RDFMiner.similarityMap = new SimilarityMap(new File("/user/rfelin/home/projects/RDFMining/RDFMiner/caches/axioms_similarity.json"));
+        RDFMiner.similarityMap = new SimilarityMap();// new SimilarityMap(new File("/user/rfelin/home/projects/RDFMining/RDFMiner/caches/axioms_similarity.json"));
 
         CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, "http://172.19.0.2:9000/sparql", Global.PREFIXES);
 //        Axiom a = AxiomFactory.create(null, "SubClassOf(<http://dbpedia.org/ontology/InformationAppliance> <http://www.w3.org/2004/02/skos/core#Concept>)",
@@ -116,14 +115,14 @@ public class NoveltySearch {
         List<String> axiomsAsString = Arrays.asList(
 //                "SubClassOf(<http://dbpedia.org/ontology/InformationAppliance> <http://www.w3.org/2004/02/skos/core#Concept>)",
 //                "SubClassOf(<http://dbpedia.org/ontology/Monarch> <http://xmlns.com/foaf/0.1/Person>)",
-                "SubClassOf(<http://schema.org/Airport> <http://dbpedia.org/ontology/Place>)",
+//                "SubClassOf(<http://schema.org/Airport> <http://dbpedia.org/ontology/Place>)",
 //                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://dbpedia.org/ontology/Agent>)"
 //                "SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>)",
-//                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)",
+                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)",
 //                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)"
-//                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://dbpedia.org/ontology/River>)"
+                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://dbpedia.org/ontology/River>)"
 //                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://dbpedia.org/ontology/University>)"
-                "SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>)"
+//                "SubClassOf(<http://dbpedia.org/ontology/Bone> <http://dbpedia.org/ontology/AnatomicalStructure>)"
 //                "SubClassOf(<http://dbpedia.org/ontology/SoccerClub> <http://schema.org/Organization>)"
         );
         ArrayList<Entity> axioms = new ArrayList<>();

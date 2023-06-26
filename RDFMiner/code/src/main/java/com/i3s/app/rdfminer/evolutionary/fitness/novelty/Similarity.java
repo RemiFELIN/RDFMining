@@ -67,14 +67,15 @@ public class Similarity {
                 " UNION { " + this.phi2SubClass.graphPattern + " } UNION { " + this.phi2SuperClass.graphPattern + " }";
 //        logger.info("numerator query : " + simNumSparql);
         int similarityNumerator = endpoint.count(simNumSparql);
-//        logger.info("result = " + similarityNumerator);
+//        logger.info("result numerator = " + similarityNumerator);
         int similarityDenominator = endpoint.count(simDenSparql);
 //        logger.info("denominator query : " + simDenSparql);
-//        logger.info("result = " + similarityDenominator);
+//        logger.info("result denominator = " + similarityDenominator);
+//        System.out.println("final result: " + ((float)similarityNumerator / similarityDenominator));
         // avoid NaN value returned by a zero-denominator
         if(similarityDenominator == 0)  return 0;
         // else return value
-        return similarityNumerator / similarityDenominator;
+        return ((float) similarityNumerator / similarityDenominator);
     }
 
 

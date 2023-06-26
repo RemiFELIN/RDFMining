@@ -42,12 +42,12 @@ public class EATools {
 	 * @param canPop a given list to be filtered
 	 * @return the filtered list
 	 */
-	public static ArrayList<Entity> getDistinctGenotypePopulation(ArrayList<Entity> canPop) {
+	public static ArrayList<Entity> getDistinctPhenotypePopulation(ArrayList<Entity> canPop) {
 		ArrayList<Entity> entities = new ArrayList<>();
-		Set<String> genotypes = new HashSet<>();
+		Set<String> phenotypes = new HashSet<>();
 		for (Entity entity : canPop) {
 //			System.out.println("genotype: " + entity.individual.getGenotype());
-			if (genotypes.add(entity.individual.getGenotype().toString())) {
+			if (phenotypes.add(entity.individual.getPhenotype().getStringNoSpace())) {
 				entities.add(entity);
 			}
 		}
@@ -68,37 +68,37 @@ public class EATools {
 		return (double) count / newPopulation.size();
 	}
 
-	/**
-	 * Renew a given axioms population
-	 * @param entities a given population
-	 * @param curGeneration the current generation
-	 * @param elitismEntities an elitism population
-	 * @return a renewed population
-	 */
-	public static ArrayList<Entity> renew(int curGeneration, ArrayList<Entity> entities, ArrayList<Entity> elitismEntities) {
-		ArrayList<Entity> newEntities = new ArrayList<>();
-		// add elitism entities
-		if (elitismEntities != null) {
-			for (Entity etilism : elitismEntities) {
-				// set generation
-				if (etilism.generation == null) {
-					etilism.generation = curGeneration;
-				}
-				etilism.individual.setAge(etilism.generation);
-				newEntities.add(etilism);
-			}
-		}
-		// add others entities
-		for (Entity entity : entities) {
-			// set generation
-			if (entity.generation == null) {
-				entity.generation = curGeneration;
-			}
-			entity.individual.setAge(entity.generation);
-			newEntities.add(entity);
-		}
-		return newEntities;
-	}
+//	/**
+//	 * Renew a given axioms population
+//	 * @param entities a given population
+//	 * @param curGeneration the current generation
+//	 * @param elitismEntities an elitism population
+//	 * @return a renewed population
+//	 */
+//	public static ArrayList<Entity> renew(int curGeneration, ArrayList<Entity> entities, ArrayList<Entity> elitismEntities) {
+//		ArrayList<Entity> newEntities = new ArrayList<>();
+//		// add elitism entities
+//		if (elitismEntities != null) {
+//			for (Entity etilism : elitismEntities) {
+//				// set generation
+////				if (etilism.generation == null) {
+////					etilism.generation = etilism.;
+////				}
+////				etilism.individual.setAge(etilism.generation);
+////				newEntities.add(etilism);
+//			}
+//		}
+//		// add others entities
+//		for (Entity entity : entities) {
+//			// set generation
+//			if (entity.generation == null) {
+//				entity.generation = curGeneration;
+//			}
+//			entity.individual.setAge(entity.generation);
+//			newEntities.add(entity);
+//		}
+//		return newEntities;
+//	}
 
 	public static ArrayList<Entity> bindIndividualsWithEntities(ArrayList<GEIndividual> individuals, ArrayList<Entity> entities) {
 		ArrayList<Entity> newEntities = new ArrayList<>();

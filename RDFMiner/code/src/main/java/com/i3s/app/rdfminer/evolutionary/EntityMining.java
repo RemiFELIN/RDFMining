@@ -119,19 +119,22 @@ public class EntityMining {
 //        logger.debug("selectedEntities.size= " + selectedEntities.size());
 //        logger.debug("toCompute.size= " + toCompute.size());
         // Compute GE and add new population on a new list of individuals
-        ArrayList<Entity> computedPopulation = Generation.compute(toCompute, curGeneration, generator);
+        ArrayList<Entity> newPopulation = Generation.compute(toCompute, selectedEntities, curGeneration, generator);
 //        logger.debug("size computed pop = " + computedPopulation.size());
         // set new population
-        ArrayList<Entity> newPopulation = EATools.renew(curGeneration, computedPopulation, selectedEntities);
+        newPopulation.addAll(selectedEntities);// EATools.renew(curGeneration, computedPopulation, selectedEntities);
 //        logger.debug("size new pop = " + newPopulation.size());
         // stats
         setStats(originalPopulation, newPopulation, curGeneration);
-        logger.debug("size new pop= " + newPopulation.size());
+//        logger.debug("size new pop= " + newPopulation.size());
         // renew population
         return newPopulation;
     }
 
     public static void setStats(ArrayList<Entity> originalPopulation, ArrayList<Entity> newPopulation, int curGeneration) {
+        for(Entity ent : newPopulation) {
+            logger.debug("newPop(i): " + ent.individual.getPhenotype().getStringNoSpace());
+        }
         // set stats
         GenerationJSON generation = new GenerationJSON();
         generation.setGenerationJSON(originalPopulation, newPopulation, curGeneration);

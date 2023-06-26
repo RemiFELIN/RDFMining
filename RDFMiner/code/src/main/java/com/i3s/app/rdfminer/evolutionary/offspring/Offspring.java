@@ -41,6 +41,7 @@ public class Offspring {
             if(this.child1.individual.getFitness().getDouble() > this.parent1.individual.getFitness().getDouble()) {
                 GrammaticalEvolution.nBetterIndividual++;
                 logger.debug("new(i): " + this.child1.individual.getGenotype() + " ~ F(i)= " + this.child1.individual.getFitness().getDouble());
+                logger.debug("new(i): " + this.child1.individual.getPhenotype());
             }
             // test if the offspring fitness is not worst than its parent
             if(this.child1.individual.getFitness().getDouble() < this.parent1.individual.getFitness().getDouble()) {
@@ -55,6 +56,7 @@ public class Offspring {
             if(this.child2.individual.getFitness().getDouble() > this.parent2.individual.getFitness().getDouble()) {
                 GrammaticalEvolution.nBetterIndividual++;
                 logger.debug("new(i): " + this.child2.individual.getGenotype() + " ~ F(i)= " + this.child2.individual.getFitness().getDouble());
+                logger.debug("new(i): " + this.child2.individual.getPhenotype());
             }
             // test if the offspring fitness is not worst than its parent
             if(this.child2.individual.getFitness().getDouble() < this.parent2.individual.getFitness().getDouble()) {
