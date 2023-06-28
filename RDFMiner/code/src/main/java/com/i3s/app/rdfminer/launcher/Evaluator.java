@@ -240,8 +240,8 @@ public class Evaluator {
 			System.exit(1);
 		}
 
-		ShapesManager shapesManager = new ShapesManager(shapesContent, false);
 		CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, Global.PREFIXES);
+		ShapesManager shapesManager = new ShapesManager(shapesContent, false, endpoint);
 		String report;
 
 		if (RDFMiner.parameters.useProbabilisticShaclMode) {

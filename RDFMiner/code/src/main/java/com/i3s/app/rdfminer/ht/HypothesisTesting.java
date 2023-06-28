@@ -34,11 +34,11 @@ public class HypothesisTesting {
     }
 
     public String getAcceptanceTriple() {
-        return this.shape.uri + " ex:acceptance \""+ this.isAccepted + "\"^^xsd:boolean .\n";
+        return this.shape.relativeIri + " ex:acceptance \""+ this.isAccepted + "\"^^xsd:boolean .\n";
     }
 
     public String getX2ValueTriple() {
-        return this.shape.uri + " ex:pvalue \"" + this.X2 + "\"^^xsd:double .\n";
+        return this.shape.relativeIri + " ex:pvalue \"" + this.X2 + "\"^^xsd:double .\n";
     }
 
     public Double getX2() {

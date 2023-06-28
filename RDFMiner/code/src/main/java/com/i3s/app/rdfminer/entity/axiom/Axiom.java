@@ -5,10 +5,6 @@ package com.i3s.app.rdfminer.entity.axiom;
 
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
-import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
 
 /**
  * An abstract class at the top of the hierarchy of OWL 2 axioms.
@@ -53,36 +49,6 @@ public abstract class Axiom extends Entity {
 			this.individual.setFitness(new BasicFitness(this.referenceCardinality *
 					((this.possibility().doubleValue() + this.necessity().doubleValue()) / 2), this.individual));
 		}
-	}
-
-	/**
-	 * Updates the counts used to compute the possibility and necessity degrees.
-	 * <p>
-	 * According to the model-theoretic semantics, an axiom of the form
-	 * <code>SubClassOf(CE<sub>1</sub> CE<sub>2</sub>)</code> is satisfied if
-	 * <i>(CE<sub>1</sub>)<sup>C</sup></i> &sube;
-	 * <i>(CE<sub>2</sub>)<sup>C</sup></i>.
-	 * </p>
-	 * <p>
-	 * Therefore,
-	 * </p>
-	 * <ul>
-	 * <li>the universe of discourse is the extension of
-	 * <code>CE<sub>1</sub></code>;</li>
-	 * <li>confirmations are RDF nodes <var>x</var> such that <var>x</var> &in;
-	 * (CE<sub>2</sub>)<sup>C</sup>;</li>
-	 * <li>exceptions are RDF nodes <var>x</var> such that <var>x</var> &in;
-	 * (<code>ComplementOf</code>(CE<sub>2</sub>))<sup>C</sup>.</li>
-	 * </ul>
-	 * <p>
-	 * The updating of the counts is performed by issuing three SPARQL queries of
-	 * the form <code>SELECT count(DISTINCT ?x) AS</code> <var>n</var>
-	 * <code>WHERE</code>. If the number of confirmations or exceptions is not too
-	 * large (currently, below 100), they are downloaded from the SPARQL endpoint
-	 * and stored in a list.
-	 * </p>
-	 */
-	public void update(CoreseEndpoint endpoint) throws URISyntaxException, IOException {
 	}
 
 }

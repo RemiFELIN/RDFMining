@@ -4,13 +4,10 @@ import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.entity.shacl.Shape;
-import com.i3s.app.rdfminer.entity.shacl.ShapesManager;
-import com.i3s.app.rdfminer.entity.shacl.ValidationReport;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.generator.shacl.RandomShapeGenerator;
-import com.i3s.app.rdfminer.launcher.evaluator.ExtendedShacl;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -19,7 +16,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * It is the class to setup the fitness value for SHACL Shapes in the
@@ -35,24 +31,14 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
     public ArrayList<Entity> initializePopulation(ArrayList<GEIndividual> individuals) {
         // evaluation of SHACL Shapes
         try {
-            ShapesManager shapesManager = new ShapesManager(individuals);
-            logger.info(shapesManager.getPopulation().size() + " SHACL Shapes ready to be evaluated !");
+//            ShapesManager shapesManager = new ShapesManager(individuals);
+            logger.info(individuals.size() + " SHACL Shapes ready to be evaluated !");
             // launch evaluation
             CoreseEndpoint endpoint = new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
-            String report = endpoint.getValidationReportFromServer(shapesManager.content);
-            // read evaluation report
-            ValidationReport validationReport = new ValidationReport(report);
-            // For each SHACL Shapes individuals, we set all results of them
+            // For each SHACL Shapes individuals, we instanciate SHACL shape
             ArrayList<Entity> newPopulation = new ArrayList<>();
-            for(Shape shape : shapesManager.getPopulation()) {
-                shape.fillParamFromReport(validationReport);
-//                BasicFitness fit = new BasicFitness(shape.fitness, shape);
-//                fit.setIndividual(shape);
-//                fit.getIndividual().setValid(true);
-//                shape.setFitness(fit);
-                newPopulation.add(shape);
-//                if(shape.individual.getFitness().getDouble() != 0)
-//                    logger.debug("i: " + shape.individual.getGenotype() + " ~ F(i)= " + shape.individual.getFitness().getDouble());
+            for(GEIndividual individual : individuals) {
+                newPopulation.add(new Shape(individual, endpoint));
             }
             logger.info("Done");
             // return new population
@@ -72,36 +58,22 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
     public ArrayList<Entity> updatePopulation(ArrayList<Entity> population) {
         // evaluation of SHACL Shapes
         try {
-            // set content in shape manager
-            ShapesManager shapesManager = new ShapesManager();
-            // last population evaluation of shapes mining
-            // we will assess distinct shapes from population (avoid duplication)
-            shapesManager.setDistinctPopulationFromEntities(population);
-            logger.info(shapesManager.getPopulation().size() + " distinct SHACL Shapes ready to be evaluated !");
-            // launch evaluation
+            logger.info(population.size() + " distinct SHACL Shapes ready to be evaluated !");
+            // set endpoint
             CoreseEndpoint endpoint = new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
-//            System.out.println(shapesManager.content);
-            String report = endpoint.getValidationReportFromServer(shapesManager.content);
-            // read evaluation report
-            ValidationReport validationReport = new ValidationReport(report);
-//            System.out.println(validationReport.prettifyPrint());
             // For each SHACL Shapes individuals, we set all results of them
             ArrayList<Entity> newPop = new ArrayList<>();
-            for(Shape shape : shapesManager.getPopulation()) {
-                shape.fillParamFromReport(validationReport);
-                // set the fitness of each individuals provided by the population
-//                BasicFitness fit = new BasicFitness(shape.fitness, shape);
-//                fit.setIndividual(shape);
-//                fit.getIndividual().setValid(true);
-//                shape.setFitness(fit);
-                newPop.add(shape);
+            // iterate on entities
+            for(Entity entity : population) {
+                // add into newPop
+                newPop.add(new Shape(entity.individual, endpoint));
             }
             // write validation report in file
             FileWriter fw = new FileWriter(RDFMiner.outputFolder + Global.SHACL_VALIDATION_REPORT_FILENAME);
-            fw.write(validationReport.prettifyPrint());
+//            fw.write(validationReport.prettifyPrint()); // TODO
             fw.close();
             // run extended shacl
-            ExtendedShacl.runWithoutEval(validationReport, shapesManager);
+//            ExtendedShacl.runWithoutEval(validationReport, shapesManager);
             // return new population
             return newPop;
         } catch (IOException e) {
@@ -123,25 +95,8 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
     public Entity updateIndividual(GEIndividual individual) {
         // evaluation of SHACL Shapes
         try {
-            // fill our population in a tmp file
-            // and init shapes manager
-            ShapesManager shapesManager = new ShapesManager(new ArrayList<>(List.of(individual)));
-            // launch evaluation
             CoreseEndpoint endpoint = new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
-            String report = endpoint.getValidationReportFromServer(shapesManager.content);
-            // read evaluation report
-            ValidationReport validationReport = new ValidationReport(report);
-            Shape shape = shapesManager.getPopulation().get(0);
-            // set all results
-            shape.setIndividual(individual);
-            shape.fillParamFromReport(validationReport);
-//            logger.debug("-----------------------------------------");
-//            logger.debug("phenotype: " + shape.individual.getPhenotype().getStringNoSpace());
-//            logger.debug("genotype: " + shape.individual.getGenotype().toString());
-//            logger.debug("refCard: " + shape.referenceCardinality);
-//            logger.debug("numConf: " + shape.numConfirmations);
-//            logger.debug("fitness: " + shape.individual.getFitness().getDouble());
-            return shape;
+            return new Shape(individual, endpoint);
         } catch (IOException e) {
             logger.error("I/O exceptions while evaluating SHACL Shapes ...");
             logger.error(e.getMessage());
@@ -177,15 +132,16 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
         chrom.add(537439393);
         chrom.add(537439393);
         GEIndividual individual = generator.getIndividualFromChromosome(chrom, 1);
-        ShapesManager shapesManager1 = new ShapesManager(new ArrayList<>(List.of(individual)));
+//        ShapesManager shapesManager1 = new ShapesManager(individual);
         CoreseEndpoint endpoint1 = new CoreseEndpoint(Global.CORESE_IP, Global.PREFIXES);
+        Shape shape = new Shape(individual, endpoint1);
 //        System.out.println(shapesManager1.content);
-        String report1 = endpoint1.getValidationReportFromServer(shapesManager1.content);
+//        String report1 = endpoint1.getValidationReportFromServer(shapesManager1.content);
         // read evaluation report
-        ValidationReport validationReport = new ValidationReport(report1);
-        Shape shape = shapesManager1.getPopulation().get(0);
+//        ValidationReport validationReport = new ValidationReport(report1);
+//        Shape shape = shapesManager1.getPopulation().get(0);
         // set all results
-        shape.fillParamFromReport(validationReport);
+//        shape.fillParamFromReport(validationReport);
         logger.debug("-----------------------------------------");
         logger.debug("phenotype: " + individual.getPhenotype().getStringNoSpace());
         logger.debug("shape.phenotype: " +  shape.individual.getPhenotype().getStringNoSpace());
@@ -193,7 +149,6 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
         logger.debug("shape.genotype: " +  shape.individual.getGenotype().toString());
         logger.debug("fitness: " + individual.getFitness().getDouble());
         logger.debug("shape.fitness: " + shape.individual.getFitness().getDouble());
-        logger.debug("is trivial ? " + shape.isTrivial());
     }
 
 }

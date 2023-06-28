@@ -5,10 +5,10 @@ import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.entity.shacl.vocabulary.Shacl;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.ht.HypothesisTesting;
 import com.i3s.app.rdfminer.sparql.RequestBuilder;
+import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.query.BindingSet;
@@ -21,7 +21,9 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 
+import java.io.IOException;
 import java.io.StringReader;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,11 +38,11 @@ public class Shape extends Entity {
     private static final Logger logger = Logger.getLogger(Shape.class);
 
     /**
-     * The URI of the SHACL Shape
+     * The IRIs (subject) of the SHACL shape
      */
-    public String uri;
+    public String relativeIri;
 
-    public String fullUri;
+    public String absoluteIri;
 
     /**
      * The content of SHACL Shape
@@ -77,24 +79,18 @@ public class Shape extends Entity {
      */
     public ArrayList<String> properties;
 
-//    public Number referenceCardinality;
-//    public Number numConfirmation;
-//    public Number numException;
-//    public Number generality;
-//    public Number fitness;
-//    public List<String> exceptions = new ArrayList<>();
-
     /**
      *
      */
-    public Shape(GEIndividual individual) {
+    public Shape(GEIndividual individual, CoreseEndpoint endpoint) throws URISyntaxException, IOException {
+        long t0 = getProcessCPUTime();
         this.individual = individual;
         this.content = this.individual.getPhenotype().getStringNoSpace();
         // get shape uri subject
         setIdentifier(this.content);
         // init model
         try {
-            this.model = Rio.parse(new StringReader(Global.PREFIXES + this.uri + this.content), "", RDFFormat.TURTLE);
+            this.model = Rio.parse(new StringReader(Global.PREFIXES + this.relativeIri + this.content), "", RDFFormat.TURTLE);
         } catch(Exception e) {
             logger.error("Individual as RDF turtle:\n" + individual.getPhenotype().getStringNoSpace());
             logger.warn("Error during the parsing of Individual: " + e.getMessage());
@@ -111,11 +107,15 @@ public class Shape extends Entity {
         this.targetObjectsOf = getValuesFromProperty(Shacl.TARGETOBJECTSOF);
         // search if it provide a sh:property values
         this.properties = getProperties();
-//        System.out.println(this.properties);
         // @TODO : sh:targetNode ; sh:targetObjectsOf ; sh:message ; sh:severity
+        // update shape: assess it !
+        update(endpoint);
+        elapsedTime = getProcessCPUTime() - t0;
+        logger.info("elapsed time = " + elapsedTime + " ms.");
     }
 
-    public Shape(String content) {
+    public Shape(String content, CoreseEndpoint endpoint) throws URISyntaxException, IOException {
+        long t0 = getProcessCPUTime();
         this.content = content;
         try {
             this.model = Rio.parse(new StringReader(this.content), "", RDFFormat.TURTLE);
@@ -126,18 +126,18 @@ public class Shape extends Entity {
         // that simply stores everything in main memory.
         this.db = new SailRepository(new MemoryStore());
         setIdentifierWithQuery();
-//        System.out.println("uri: " + this.uri);
         // get the targetted class(es) if it provides
         this.targetClasses = getValuesFromProperty(Shacl.TARGETCLASS);
-//        System.out.println("targetClasses: " + this.targetClasses);
         // get the targetSubjectsOf if it provides
         this.targetSubjectsOf = getValuesFromProperty(Shacl.TARGETSUBJECTSOF);
         // get the targetObjectsOf if it provides
         this.targetObjectsOf = getValuesFromProperty(Shacl.TARGETOBJECTSOF);
         // search if it provide a sh:property values
         this.properties = getProperties();
-//        System.out.println("properties: " + this.properties);
-//        System.out.println(this);
+        // update shape: assess it !
+        update(endpoint);
+        elapsedTime = getProcessCPUTime() - t0;
+        logger.info("elapsed time = " + elapsedTime + " ms.");
     }
 
     public ArrayList<String> getProperties() {
@@ -161,8 +161,8 @@ public class Shape extends Entity {
 
     public void setIdentifier(String content) {
         String generated = String.valueOf((content.hashCode() & 0xfffffff));
-        this.uri = ":" + generated;
-        this.fullUri = "http://www.example.com/myDataGraph#" + generated;
+        this.relativeIri = ":" + generated;
+        this.absoluteIri = "http://www.example.com/myDataGraph#" + generated;
     }
 
     public void setIdentifierWithQuery() {
@@ -172,7 +172,7 @@ public class Shape extends Entity {
             TupleQuery query = con.prepareTupleQuery(request);
             try (TupleQueryResult result = query.evaluate()) {
                 for (BindingSet solution : result) {
-                    this.uri = this.fullUri = "<" + solution.getValue("x") + ">";
+                    this.relativeIri = this.absoluteIri = "<" + solution.getValue("x") + ">";
                 }
             }
         } finally {
@@ -201,27 +201,15 @@ public class Shape extends Entity {
         return results;
     }
 
-//    /**
-//     * Generate randomly an unique ID for a given individual.
-//     * @param individual a GEIndividual from population
-//     * @return a unique ID for a given individual. Example: <code>< shape#[random integer] ></code>
-//     */
-//    private String generateIDFromIndividual(GEIndividual individual) {
-//        // the length of the substring depends of the SHACL Shapes ID size such as :
-//        return "<" + String.format("%." + Global.SIZE_ID_SHACL_SHAPES + "s",
-//                Math.abs(individual.getPhenotype().toString().hashCode())) +
-//                RandomStringUtils.randomAlphabetic(4) +  "> ";
-//    }
-
     public void fillParamFromReport(ValidationReport report) {
 //        System.out.println(fullUri);
-        this.referenceCardinality = report.referenceCardinalityByShape.get(this.fullUri).intValue();
-        this.numConfirmations = report.numConfirmationsByShape.get(this.fullUri).intValue();
-        this.numExceptions = report.numExceptionsByShape.get(this.fullUri).intValue();
-        this.likelihood = report.likelihoodByShape.get(this.fullUri);
+        this.referenceCardinality = report.referenceCardinalityByShape.get(this.absoluteIri).intValue();
+        this.numConfirmations = report.numConfirmationsByShape.get(this.absoluteIri).intValue();
+        this.numExceptions = report.numExceptionsByShape.get(this.absoluteIri).intValue();
+        this.likelihood = report.likelihoodByShape.get(this.absoluteIri);
 //        this.generality = report.generalityByShape.get(parsedUri);
-        if(report.exceptionsByShape.get(this.fullUri) != null) {
-            this.exceptions = new ArrayList<>(report.exceptionsByShape.get(this.fullUri));
+        if(report.exceptionsByShape.get(this.absoluteIri) != null) {
+            this.exceptions = new ArrayList<>(report.exceptionsByShape.get(this.absoluteIri));
         }
         if(this.individual != null) {
             this.individual.setFitness(new BasicFitness(computeFitness(), this.individual));
@@ -230,7 +218,7 @@ public class Shape extends Entity {
 
     @Override
     public String toString() {
-        return this.uri + this.content;
+        return this.relativeIri + this.content;
     }
 
     /**
@@ -238,35 +226,23 @@ public class Shape extends Entity {
      * {@link Axiom#necessity() necessity} values.
      */
     public double computeFitness() {
-        // test if the current shape is trivial or not
-        if(!isTrivial()) {
-            // compute a hypothesis testing
-            HypothesisTesting ht = new HypothesisTesting(this);
-            // if the ht gives a success
-            if(ht.isAccepted) {
-                return this.numConfirmations;
-            } else {
-                return this.numConfirmations * (this.likelihood.doubleValue() / ht.getMaxMassFunction());
-            }
+        // compute a hypothesis testing
+        HypothesisTesting ht = new HypothesisTesting(this);
+        // if the ht gives a success
+        if(ht.isAccepted) {
+            return this.numConfirmations;
         } else {
-            return 0;
+            return this.numConfirmations * (this.likelihood.doubleValue() / ht.getMaxMassFunction());
         }
     }
 
-    public boolean isTrivial() {
-        if(this.individual != null) {
-            GEChromosome chrom = this.individual.getChromosomes();
-            return chrom.size() == 2 &&
-                    (this.individual.getDistinctPhenotypes().size() == 1 || chrom.get(0) == chrom.get(1));
-        }
-        return false;
+    @Override
+    public void update(CoreseEndpoint endpoint) throws URISyntaxException, IOException {
+        // launch evaluation
+        String report = endpoint.getValidationReportFromServer(Global.PREFIXES + this);
+        // read evaluation report
+        ValidationReport validationReport = new ValidationReport(report);
+        // add results
+        this.fillParamFromReport(validationReport);
     }
-
-    public static void main(String[] args) {
-        String s = Global.PREFIXES + "<http://test/1> a sh:NodeShape ; sh:targetClass <http://www.wikidata.org/entity/Q14875321>, <http://www.wikidata.org/entity/Q348> ; sh:property [" +
-                " sh:path rdf:type ; sh:hasValue <http://www.wikidata.org/entity/Q14863991>; ] .";
-        Shape shape = new Shape(s);
-        System.out.println(shape.fullUri);
-    }
-
 }

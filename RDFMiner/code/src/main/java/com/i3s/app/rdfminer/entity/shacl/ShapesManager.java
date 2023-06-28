@@ -6,6 +6,7 @@ import com.i3s.app.rdfminer.entity.shacl.vocabulary.Shacl;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Genotype;
 import com.i3s.app.rdfminer.sparql.RequestBuilder;
+import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.query.BindingSet;
@@ -20,6 +21,7 @@ import org.eclipse.rdf4j.sail.memory.MemoryStore;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +44,7 @@ public class ShapesManager {
 
     public ShapesManager() {}
 
-    public ShapesManager(String content, boolean prefix) {
+    public ShapesManager(String content, boolean prefix, CoreseEndpoint endpoint) {
         // set content to submit in http request
         if(prefix)
             this.content += Global.PREFIXES;
@@ -55,7 +57,7 @@ public class ShapesManager {
             System.exit(1);
         }
         // fill population
-        fillPopulation(this.model);
+        fillPopulation(this.model, endpoint);
 //        logger.info(population.size() + " SHACL Shape(s) ready to be evaluated !");
     }
 
@@ -64,10 +66,10 @@ public class ShapesManager {
      *
      * @param individuals individuals generated
      */
-    public ShapesManager(ArrayList<GEIndividual> individuals) throws IOException {
+    public ShapesManager(ArrayList<GEIndividual> individuals, CoreseEndpoint endpoint) throws IOException, URISyntaxException {
         this.content += Global.PREFIXES;
         for (GEIndividual individual : individuals) {
-            Shape s = new Shape(individual);
+            Shape s = new Shape(individual, endpoint);
             population.add(s);
             this.content += s + "\n";
         }
@@ -76,14 +78,14 @@ public class ShapesManager {
 //        logger.info(population.size() + " SHACL Shapes ready to be evaluated !");
     }
 
-    public ShapesManager(GEIndividual individual) {
+    public ShapesManager(GEIndividual individual, CoreseEndpoint endpoint) throws URISyntaxException, IOException {
         this.content += Global.PREFIXES;
-        Shape s = new Shape(individual);
+        Shape s = new Shape(individual, endpoint);
         population.add(s);
         this.content += s + "\n";
     }
 
-    public void fillPopulation(Model model) {
+    public void fillPopulation(Model model, CoreseEndpoint endpoint) {
         // Create a new Repository. Here, we choose a database implementation
         // that simply stores everything in main memory.
         this.db = new SailRepository(new MemoryStore());
@@ -127,8 +129,10 @@ public class ShapesManager {
                             }
                         }
                     }
-                    this.population.add(new Shape(sb.toString()));
+                    this.population.add(new Shape(sb.toString(), endpoint));
                 }
+            } catch (URISyntaxException | IOException e) {
+                e.printStackTrace();
             }
         } finally {
             // shutdown the DB and frees up memory space
@@ -140,12 +144,12 @@ public class ShapesManager {
         return population;
     }
 
-    public void setDistinctPopulationFromEntities(ArrayList<Entity> entities) {
+    public void setDistinctPopulationFromEntities(ArrayList<Entity> entities, CoreseEndpoint endpoint) throws URISyntaxException, IOException {
         ArrayList<Genotype> distinctGenotypes = new ArrayList<>();
         for(Entity entity : entities) {
             if(!distinctGenotypes.contains(entity.individual.getGenotype())) {
                 distinctGenotypes.add(entity.individual.getGenotype());
-                this.population.add(new Shape(entity.individual));
+                this.population.add(new Shape(entity.individual, endpoint));
             }
         }
         // set whole content

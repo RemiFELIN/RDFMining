@@ -1,5 +1,6 @@
 package com.i3s.app.rdfminer.entity.shacl;
 
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.shacl.vocabulary.ProbabilisticShacl;
 import com.i3s.app.rdfminer.entity.shacl.vocabulary.Shacl;
 import com.i3s.app.rdfminer.sparql.RequestBuilder;
@@ -40,17 +41,17 @@ public class ValidationReport {
 
     public final HashMap<String, List<String>> exceptionsByShape;
 
-    public final HashMap<String, Number> numExceptionsByShape;
+    public HashMap<String, Number> numExceptionsByShape = new HashMap<>();
 
-    public final HashMap<String, Number> numConfirmationsByShape;
+    public HashMap<String, Number> numConfirmationsByShape = new HashMap<>();
 
 //    public final HashMap<String, Number> fitnessByShape;
 
-    public final HashMap<String, Number> generalityByShape;
+    public HashMap<String, Number> generalityByShape = new HashMap<>();
 
-    public final HashMap<String, Number> likelihoodByShape;
+    public HashMap<String, Number> likelihoodByShape = new HashMap<>();
 
-    public final HashMap<String, Number> referenceCardinalityByShape;
+    public HashMap<String, Number> referenceCardinalityByShape = new HashMap<>();
 
     public ValidationReport(String content) throws IOException {
         this.content = content;
@@ -65,12 +66,14 @@ public class ValidationReport {
         this.reportedShapes = getShapes();
         // set a Map< str , List<str> > which contains a list of exceptions by Shape
         this.exceptionsByShape = getExceptionsByShape();
-        // set a Map< str , number > which contains the numerical values by Shape
-        this.numExceptionsByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.NUM_VIOLATION);
-        this.numConfirmationsByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.NUM_CONFIRMATION);
-        this.referenceCardinalityByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.REFERENCE_CARDINALITY);
-        this.likelihoodByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.LIKELIHOOD);
-        this.generalityByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.GENERALITY);
+        if(RDFMiner.parameters.useProbabilisticShaclMode) {
+            // set a Map< str , number > which contains the numerical values by Shape
+            this.numExceptionsByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.NUM_VIOLATION);
+            this.numConfirmationsByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.NUM_CONFIRMATION);
+            this.referenceCardinalityByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.REFERENCE_CARDINALITY);
+            this.likelihoodByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.LIKELIHOOD);
+            this.generalityByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.GENERALITY);
+        }
     }
 
     public HashMap<String, Number> getNumericalInValSummaryByShape(String parameter) {

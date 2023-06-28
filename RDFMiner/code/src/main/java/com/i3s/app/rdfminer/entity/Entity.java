@@ -6,9 +6,12 @@ import com.i3s.app.rdfminer.entity.axiom.type.DisjointClassesAxiom;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
 import com.i3s.app.rdfminer.fuzzy.TruthDegree;
+import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -159,6 +162,36 @@ public class Entity {
     public double ari = 0.0;
 
     /**
+     * Updates the counts used to compute the possibility and necessity degrees.
+     * <p>
+     * According to the model-theoretic semantics, an axiom of the form
+     * <code>SubClassOf(CE<sub>1</sub> CE<sub>2</sub>)</code> is satisfied if
+     * <i>(CE<sub>1</sub>)<sup>C</sup></i> &sube;
+     * <i>(CE<sub>2</sub>)<sup>C</sup></i>.
+     * </p>
+     * <p>
+     * Therefore,
+     * </p>
+     * <ul>
+     * <li>the universe of discourse is the extension of
+     * <code>CE<sub>1</sub></code>;</li>
+     * <li>confirmations are RDF nodes <var>x</var> such that <var>x</var> &in;
+     * (CE<sub>2</sub>)<sup>C</sup>;</li>
+     * <li>exceptions are RDF nodes <var>x</var> such that <var>x</var> &in;
+     * (<code>ComplementOf</code>(CE<sub>2</sub>))<sup>C</sup>.</li>
+     * </ul>
+     * <p>
+     * The updating of the counts is performed by issuing three SPARQL queries of
+     * the form <code>SELECT count(DISTINCT ?x) AS</code> <var>n</var>
+     * <code>WHERE</code>. If the number of confirmations or exceptions is not too
+     * large (currently, below 100), they are downloaded from the SPARQL endpoint
+     * and stored in a list.
+     * </p>
+     */
+    public void update(CoreseEndpoint endpoint) throws URISyntaxException, IOException {
+    }
+
+    /**
      * The current ID of generation where this axiom has been found
      */
 //    public Integer generation = 0;
@@ -181,12 +214,12 @@ public class Entity {
         json.put("numExceptions", this.numExceptions);
         json.put("exceptions", new JSONArray(this.exceptions));
         json.put("confirmations", new JSONArray(this.confirmations));
+        json.put("elapsedTime", this.elapsedTime);
         if(RDFMiner.parameters.useProbabilisticShaclMode || RDFMiner.parameters.useClassicShaclMode) {
             json.put("likelihood", this.likelihood.doubleValue());
         } else {
             json.put("possibility", this.possibility().doubleValue());
             json.put("necessity",this.necessity().doubleValue());
-            json.put("elapsedTime", this.elapsedTime);
             json.put("isTimeOut", this.isTimeout);
             json.put("generality", this.generality);
             json.put("ari", this.ari);

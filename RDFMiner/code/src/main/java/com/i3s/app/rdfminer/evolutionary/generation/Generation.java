@@ -139,8 +139,8 @@ public class Generation {
             }
             toCompute.remove(copyToCompute.get(m));
             toCompute.remove(copyToCompute.get(m + 1));
-            logger.debug("Size copyToCompute list: " + copyToCompute.size());
-            logger.debug("Size toCompute list: " + toCompute.size());
+//            logger.debug("Size copyToCompute list: " + copyToCompute.size());
+//            logger.debug("Size toCompute list: " + toCompute.size());
             m = m + 2;
         }
         // fill entity that was not choosen for the crossover-mutation process

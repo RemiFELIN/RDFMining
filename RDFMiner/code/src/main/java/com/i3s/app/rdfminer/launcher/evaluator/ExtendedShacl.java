@@ -85,7 +85,7 @@ public class ExtendedShacl {
         FileWriter hypothesisTestFw = new FileWriter(RDFMiner.outputFolder + Global.SHACL_HYPOTHESIS_TEST_FILENAME);
         hypothesisTestFw.write(Global.PREFIXES + "\n");
         for(Shape shape : shapesManager.getPopulation()) {
-            if(validationReport.reportedShapes.contains(shape.fullUri.replace("<", "").replace(">", ""))) {
+            if(validationReport.reportedShapes.contains(shape.absoluteIri.replace("<", "").replace(">", ""))) {
                 // get shapes with metrics
                 shape.fillParamFromReport(validationReport);
                 // instanciate hypothesis testing with current shape
