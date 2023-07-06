@@ -4,6 +4,7 @@
         <router-link to="/"              class="nav-link">Home</router-link>
         <router-link to="/experience"    class="nav-link">Experience</router-link>
         <router-link to="/visualisation" class="nav-link">Visualisations</router-link>
+        <router-link to="/publications" class="nav-link">Publications</router-link>
       </nav>
     </div>
 </template>
@@ -29,7 +30,7 @@ export default {
   color: white;
   text-decoration: none;
   font-size: 30px;
-  width: 33.3333%; /* Four equal-width links. If you have two links, use 50%, and 33.33% for three links, etc.. */
+  width: 25%; /* Four equal-width links. If you have two links, use 50%, and 33.33% for three links, etc.. */
   text-align: center; /* If you want the text to be centered */
 }
 

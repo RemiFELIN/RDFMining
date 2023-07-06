@@ -5,11 +5,13 @@ import { createRouter, createWebHistory } from 'vue-router';
 import WelcomeHome from './vues/Home.vue'
 import VueVisualisation from './vues/Visualisation.vue'
 import SetupExperience from './vues/Experiences.vue'
+import RDFMinerPublications from './vues/Publications.vue'
 
 const routes = [
     { path: '/', component: WelcomeHome },
     { path: '/experience', component: SetupExperience },
-    { path: '/visualisation', component: VueVisualisation }
+    { path: '/visualisation', component: VueVisualisation },
+    { path: '/publications', component: RDFMinerPublications }
 ]
 
 const router = createRouter({

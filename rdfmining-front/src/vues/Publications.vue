@@ -1,0 +1,287 @@
+<template>
+    <div class="container">
+        <!-- Specific search by key -->
+        <label style="font-size: 1vw;">Filtering results: </label>
+        <select style="font-size: 1vw;" v-model="choosenFilter">
+            <option value="">--Please choose an option--</option>
+            <option value="date_asc">By date (asc)</option>
+            <option value="date_desc">By date (desc)</option>
+            <option value="title">By title</option>
+            <option value="conferenceTitle">By conference</option>
+            <option value="place">By place</option>
+        </select>
+        <div class="row" v-for="paper in sortByFilter(choosenFilter)" :key="paper">
+            <div class="col-md-6 item">
+                <div class="item-in">
+                    <h1>{{ paper.title }}</h1>
+                    <h4>{{ paper.conferenceTitle }} ({{ paper.date }})</h4>
+                    <h5 style="font-style: italic;" v-if="paper.place != ''"> at {{ paper.place }}</h5>
+                    <h4 v-if="paper.distinction.link != ''"><a :href="paper.distinction.link">{{ paper.distinction.type
+                    }}</a></h4>
+                    <div class="seperator"></div>
+                    <h4>Keywords</h4>
+                    <div class="keyword" v-for="keyword in paper.keywords" :key="keyword">
+                        <div>{{ keyword }}</div>
+                    </div>
+                    <div class="seperator"></div>
+                    <h4>Abstract</h4>
+                    <p>{{ paper.abstract }}</p>
+                    <div class="seperator"></div>
+                    <a @click="copyCitation(paper.citation)" class="button">Copy Citation</a>
+                    <a :href="paper.link" class="button">Access to the ressource</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+
+<script>
+import { publications } from '../data/publications.json'
+import _ from 'lodash';
+
+export default {
+    name: 'RDFMinerPublications',
+    data() {
+        return {
+            papers: [],
+            keywords: [],
+            choosenFilter: "",
+        }
+    },
+    mounted() {
+        if (publications) {
+            this.papers = publications;
+            this.papers.forEach((paper) => {
+                paper.keywords.forEach((keyword) => {
+                    if (this.keywords.indexOf(keyword) === -1) {
+                        this.keywords.push(keyword);
+                    }
+                });
+            });
+        }
+    },
+    methods: {
+        async copyCitation(citation) {
+            try {
+                await navigator.clipboard.writeText(citation);
+                alert('Copied');
+            } catch ($e) {
+                alert('Cannot copy');
+            }
+        },
+        sortByFilter(key) {
+            if(key === "date_asc") { 
+                return _.orderBy(this.papers, 'date');
+            } else if (key === "date_desc") {
+                return _.orderBy(this.papers, 'date', 'desc');
+            } else {
+                return _.orderBy(this.papers, key);
+            }   
+        }
+    }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+@import url(https://fonts.googleapis.com/css?family=Merriweather:400,300,700);
+
+@import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
+
+.keyword {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    display: inline-block;
+    background-color: rgb(0, 63, 127);
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    margin-right: 10px;
+    margin-bottom: 30px;
+    font-size: 1vw;
+    text-align: center;
+}
+
+a.button {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    display: inline-block;
+    background-color: #a5a5a5;
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 2px;
+    margin-right: 10px;
+    margin-bottom: 30px;
+    font-size: 1vw;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+body {
+    background: #fbfbfb;
+    font-family: 'Merriweather', serif;
+    font-size: 22vw;
+    color: #777;
+}
+
+h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2vw;
+}
+
+h4 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1vw;
+}
+
+.row {
+    padding: 50px 0;
+}
+
+.seperator {
+    margin-bottom: 30px;
+    width: 35px;
+    height: 3px;
+    background: #777;
+    border: none;
+}
+
+.title {
+    text-align: center;
+
+    .row {
+        padding: 50px 0 0;
+    }
+
+    h1 {
+        text-transform: uppercase;
+    }
+
+    .seperator {
+        margin: 0 auto 10px;
+    }
+}
+
+.item {
+    position: relative;
+    margin-bottom: 30px;
+    min-height: 1px;
+    float: left;
+    -webkit-backface-visibility: hidden;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: 1vw;
+
+    .item-in {
+        background: #fff;
+        padding: 40px;
+        position: relative;
+
+        &:hover:before {
+            width: 100%;
+        }
+
+        &::before {
+            content: "";
+            position: absolute;
+            bottom: 0px;
+            height: 2px;
+            width: 0%;
+            background: #333333;
+            right: 0px;
+            -webkit-transition: width 0.4s;
+            transition: width 0.4s;
+        }
+    }
+
+}
+
+.item {
+
+    h4 {
+        font-size: 18vw;
+        margin-top: 25px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    p {
+        font-size: 12vw;
+    }
+
+    a {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 12px;
+        text-transform: uppercase;
+        color: #666666;
+        margin-top: 10px;
+
+        i {
+            opacity: 0;
+            padding-left: 0px;
+            transition: 0.4s;
+            font-size: 24px;
+            display: inline-block;
+            top: 5px;
+            position: relative;
+        }
+
+        &:hover {
+            text-decoration: none;
+
+            i {
+                padding-left: 10px;
+                opacity: 1;
+                font-weight: 300;
+            }
+        }
+    }
+}
+
+.item .icon {
+    position: absolute;
+    top: 27px;
+    left: -16px;
+    cursor: pointer;
+
+    a {
+        font-family: 'Merriweather', serif;
+        font-size: 14px;
+        font-weight: 400;
+        color: #999;
+        text-transform: none;
+    }
+
+    svg {
+        width: 32px;
+        height: 32px;
+        float: left;
+    }
+
+    .icon-topic {
+        opacity: 0;
+        padding-left: 0px;
+        transition: 0.4s;
+        display: inline-block;
+        top: 0px;
+        position: relative;
+    }
+
+    &:hover .icon-topic {
+        opacity: 1;
+        padding-left: 10px;
+    }
+}
+
+@media only screen and (max-width : 768px) {
+    .item .icon {
+        position: relative;
+        top: 0;
+        left: 0;
+    }
+}
+</style>

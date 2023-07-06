@@ -1,24 +1,22 @@
 <template>
-<div class="container">
-    <!-- #INDIVIDUALS WITH NON-NULL FITNESS -->
-    <GChart type="AreaChart" 
+    <GChart class="container" type="AreaChart" 
         :data="individuals" 
         :options="individuals_options" 
-        :resizeDebounce="500"
     />
     <!-- FITNESS VISUALISATION -->
-    <GChart type="AreaChart" 
+    <GChart class="container" type="AreaChart" 
         :data="fitness" 
         :options="fitness_options" 
-        :resizeDebounce="500"
     />
     <!-- POPULATION EVOLUTION VISUALISATION -->
-    <GChart type="AreaChart" 
+    <GChart class="container" type="AreaChart" 
         :data="popEvol" 
-        :options="popEvol_options" 
-        :resizeDebounce="500"
+        :options="popEvol_options"
     />
-</div>
+    <GChart class="container" type="BubbleChart" 
+        :data="entitiesData" 
+        :options="bubble_options" 
+    />
 </template>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -26,13 +24,21 @@
 .container {
     display: flex;
     justify-content: space-around;
+    width: 100%;
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
 }
 </style>
 
 <script>
 // https://developers.google.com/chart/interactive/docs/gallery/areachart?hl=fr#overview
 import { GChart } from 'vue-google-charts'
-import { statistics } from '../data/results_1.json'
+import { statistics, entities } from '../data/results_1.json'
 
 export default {
     name: 'VueStatistics',
@@ -62,7 +68,7 @@ export default {
                 },
                 colors: [ "#0059FF" ],
                 legend: {position: "top", textStyle: { color: "dark", fontSize: 25 } },
-                width: 1000,
+                // width: 1500,
                 height: 600,
             },
             // FITNESS
@@ -86,7 +92,7 @@ export default {
                 },
                 colors: [ "#E56800" ],
                 legend: {position: "top", textStyle: { color: "dark", fontSize: 25 } },
-                width: 1000,
+                // width: 1500,
                 height: 600,
             },
             // POPULATION EVOLUTION
@@ -111,12 +117,56 @@ export default {
                 },
                 colors: [ "#00FF83", "31BF00" ],
                 legend: {position: "top", textStyle: { color: "dark", fontSize: 25 } },
-                width: 1000,
+                // width: 1500,
                 height: 600,
-            }
+            },
+            // ELAPSED TIME / REFERENCE CARDINALITY (EXCEPTIONS ?)
+            entitiesData: [],
+            bubble_options: {
+                title: "Overview of entities found",
+                titleTextStyle: { fontSize: 30 },
+                backgroundColor: "#ffffff",
+                hAxis: { 
+                    title: "Reference Cardinality",
+                    textStyle: { fontSize: 30 }, 
+                    titleTextStyle: { fontSize: 20, italic: false, bold: true } 
+                },
+                vAxis: { 
+                    title: "CPU Computation time (ms.)",
+                    textStyle: { fontSize: 30 }, 
+                    titleTextStyle: { fontSize: 20, italic: false, bold: true } 
+                },
+                bubble: { textStyle: { auraColor: 'none', fontSize: 1 } },
+                sizeAxis: { minSize: 20,  maxSize: 100 },
+                explorer: {},
+                colorAxis: {colors: ['#15d600', '#ff0000']},
+                // width: 1500,
+                height: 1000,
+            },
         };
     },
     mounted() {
+        if(entities) {
+            // entities data
+            this.entitiesData.push([
+                "phenotype",
+                "referenceCardinality",
+                "elapsedTime",
+                "Violations Ratio",
+                "numExceptions"
+            ]);
+            // iterate on entities found
+            entities.forEach((entity) => {
+                console.log(entity.numExceptions/entity.referenceCardinality)
+                this.entitiesData.push([
+                    entity.phenotype,
+                    entity.referenceCardinality,
+                    entity.elapsedTime,
+                    entity.numExceptions/entity.referenceCardinality,
+                    entity.numExceptions
+                ]);
+            });
+        }
         if(statistics) {
             // individuals values 
             this.individuals.push([
