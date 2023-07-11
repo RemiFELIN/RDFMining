@@ -1,4 +1,4 @@
-package com.i3s.app.rdfminer.launcher;
+package com.i3s.app.rdfminer.launcher.evaluator;
 
 import com.github.jsonldjava.shaded.com.google.common.base.Charsets;
 import com.google.common.io.Files;
@@ -13,7 +13,6 @@ import com.i3s.app.rdfminer.generator.axiom.AxiomGenerator;
 import com.i3s.app.rdfminer.generator.axiom.CandidateAxiomGenerator;
 import com.i3s.app.rdfminer.generator.axiom.IncreasingTimePredictorAxiomGenerator;
 import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
-import com.i3s.app.rdfminer.launcher.evaluator.ExtendedShacl;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 import org.apache.jena.shared.JenaException;

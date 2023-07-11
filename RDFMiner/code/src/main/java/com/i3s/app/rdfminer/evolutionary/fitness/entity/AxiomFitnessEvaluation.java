@@ -166,12 +166,6 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 		} catch (InterruptedException e) {
 			executor.shutdownNow();
 		}
-		// set new population
-		ArrayList<Entity> newPopulation = new ArrayList<>();
-		// manage not evaluated axioms
-		if(RDFMiner.parameters.timeCap != 0) {
-			newPopulation.addAll(EATools.getTimeCappedEntities(population, entities));
-		}
 		// Check if Novelty Search is enabled
 		if(RDFMiner.parameters.useNoveltySearch) {
 			// Compute the similarities of each axiom between them, and update the population
@@ -183,9 +177,14 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 				e.printStackTrace();
 			}
 		}
+		// set new population
+		ArrayList<Entity> newPopulation = new ArrayList<>(entities);
+		// manage not evaluated axioms
+		if(RDFMiner.parameters.timeCap != 0) {
+			newPopulation.addAll(EATools.getTimeCappedEntities(population, entities));
+		}
 		// Update fitness of individuals from a population
 		//			entity.setFitness(new BasicFitness(entity.fitness, entity));
-		newPopulation.addAll(entities);
 		return newPopulation;
 	}
 

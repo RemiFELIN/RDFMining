@@ -12,6 +12,7 @@ import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -92,6 +93,7 @@ public class NoveltySearch {
      * @return the value of based novelty fitness <var>f</var>(&phi)
      */
     public static double updateFitness(Entity phi) {
+        logger.debug(phi.individual.getGenotype() + ": sum(sim)= " + phi.similarities.stream().mapToDouble(x -> x).sum());
         return phi.individual.getFitness().getDouble() * (1 / (1 + phi.similarities.stream().mapToDouble(x -> x).sum()));
     }
 
@@ -101,10 +103,10 @@ public class NoveltySearch {
         // Configure the log4j loggers:
         PropertyConfigurator.configure("/home/rfelin/projects/RDFMining/RDFMiner/code/resources/log4j.properties");
 
-        RDFMiner.parameters.loop = false;
+        RDFMiner.parameters.loop = true;
         RDFMiner.parameters.sparqlTimeOut = 1000000;
 
-        RDFMiner.similarityMap = new SimilarityMap();// new SimilarityMap(new File("/user/rfelin/home/projects/RDFMining/RDFMiner/caches/axioms_similarity.json"));
+        RDFMiner.similarityMap = new SimilarityMap(new File("/user/rfelin/home/projects/RDFMining/RDFMiner/caches/axioms_similarity.json"));
 
         CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, "http://172.19.0.2:9000/sparql", Global.PREFIXES);
 //        Axiom a = AxiomFactory.create(null, "SubClassOf(<http://dbpedia.org/ontology/InformationAppliance> <http://www.w3.org/2004/02/skos/core#Concept>)",

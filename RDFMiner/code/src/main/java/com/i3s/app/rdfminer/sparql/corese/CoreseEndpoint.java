@@ -105,6 +105,7 @@ public class CoreseEndpoint {
 
     public boolean askFederatedQuery(String sparql) throws URISyntaxException, IOException {
         String request = RequestBuilder.ask(addFederatedQuery(sparql), true);// "\nASK WHERE { " + addFederatedQuery(sparql) + " }";
+//        logger.debug("ASK Request: " + request);
         String resultAsJSON = query(Format.JSON, request);
         return ResultParser.getResultFromAskQuery(resultAsJSON);
     }

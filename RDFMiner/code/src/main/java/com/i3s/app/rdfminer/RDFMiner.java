@@ -5,7 +5,7 @@ package com.i3s.app.rdfminer;
 
 import com.i3s.app.rdfminer.evolutionary.tools.CostGP;
 import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
-import com.i3s.app.rdfminer.launcher.Evaluator;
+import com.i3s.app.rdfminer.launcher.evaluator.Evaluator;
 import com.i3s.app.rdfminer.output.Results;
 import com.i3s.app.rdfminer.output.SimilarityMap;
 import com.i3s.app.rdfminer.output.Stat;

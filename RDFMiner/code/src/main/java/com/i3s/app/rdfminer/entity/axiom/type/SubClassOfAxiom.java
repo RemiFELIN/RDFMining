@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A class that represents a <code>SubClassOf</code> axiom.
@@ -125,22 +126,22 @@ public class SubClassOfAxiom extends Axiom {
 	 */
 	@Override
 	public void update(CoreseEndpoint endpoint) throws URISyntaxException, IOException {
+		logger.debug("Candidate axiom: SubClassOf(" + subClass + " " + superClass + ")");
 		// First of all, we verify if a such assumption does not already exists
 		// Only simple OWL 2 subClassOf axioms are considered in this case
 		// This checking part is an temporary solution
 		// TODO: in the future, we will consider all existing axioms as knowledge to improve OWL 2 Axioms mining (in GE, ...)
 		if(!complex && endpoint.askFederatedQuery(subClass + " rdfs:subClassOf " + superClass)) {
 			// in this case, we set pos = nec = 1.0 as consequence to its existance in ontology
-			logger.info("This candidate is already a valid OWL SubClassOf axiom !");
+			logger.debug("This candidate is already a valid OWL SubClassOf axiom !");
 			referenceCardinality = numConfirmations = endpoint.count(subClass.graphPattern);
 			numExceptions = 0;
 			ari = ARI();
 			return;
 		}
 		// eliminate duplicate sub and super classes
-		if (subClass == superClass) {
-			// in this case, we set pos = nec = 1.0 as consequence to its existance in ontology
-			logger.info("This candidate contains the same ressource for its subClass and superClass !");
+		if (Objects.equals(subClass.graphPattern, superClass.graphPattern)) {
+			logger.debug("This candidate contains the same ressource for its subClass and superClass !");
 			ari = ARI();
 			// its fitness will be 0
 			return;

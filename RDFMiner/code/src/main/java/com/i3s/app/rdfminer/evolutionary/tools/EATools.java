@@ -108,22 +108,12 @@ public class EATools {
 //				logger.debug("### Entity: " + entity.individual);
 				if(Objects.equals(individual.getPhenotype().getStringNoSpace(), entity.individual.getPhenotype().getStringNoSpace())) {
 					newEntities.add(entity);
+					// update entities list and reduce interation in it !
+					entities.remove(entity);
 					break;
 				}
 			}
 		}
-		// Special case with duplicates individuals due to their fitness equal to 0
-		// common case at the beginning of GE.
-		// Since they are "bad" candidates, we just remove last entities from new entities to return
-		// in order to do not unbalance the not selected candidates population
-//		int notSelectedPopSize = (int) ( (1 - RDFMiner.parameters.sizeSelection) * RDFMiner.parameters.populationSize);
-//		int i = 0;
-//		while(newEntities.size() > notSelectedPopSize) {
-//			newEntities.remove(newEntities.size() - 1);
-//			i++;
-//		}
-//		if (i != 0)
-//			logger.debug(i + " entities has been removed due to duplicates individuals into selected population");
 		return newEntities;
 	}
 
@@ -139,8 +129,10 @@ public class EATools {
 			}
 		}
 		// for each not evaluated entities, we will set their fitness to 0
+		logger.debug(notEvaluated.size() + " individual(s) have not been evaluated because of time-cap limit");
+		logger.debug("Their fitness score are equal to 0");
 		for(Entity entity : notEvaluated) {
-			logger.warn(entity.individual.getPhenotype().getStringNoSpace() + " will be considered as a candidate to reject");
+//			logger.warn(entity.individual.getPhenotype().getStringNoSpace() + " will be considered as a candidate to reject");
 			// set fitness
 			entity.individual.setFitness(new BasicFitness(0, entity.individual));
 		}

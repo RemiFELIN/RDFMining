@@ -56,9 +56,9 @@ public class EntityMining {
                 // fill content in json output file
                 for(Entity entity : newPopulation) {
                     // add this entity is its fitness is not equal to 0
-                    if(entity.individual.getFitness().getDouble() != 0) {
-                        RDFMiner.content.add(entity.toJSON());
-                    }
+//                    if(entity.individual.getFitness().getDouble() != 0) {
+                    RDFMiner.content.add(entity.toJSON());
+//                    }
                 }
                 logger.info(RDFMiner.content.size() + " entities has been added in " + Global.RESULTS_FILENAME);
                 // return final pop
@@ -115,6 +115,11 @@ public class EntityMining {
 //        logger.debug("selectedIndividuals.size= " + selectedIndividuals.size());
 //        logger.debug("entitiesAsIndividuals.size= " + entitiesAsIndividuals.size());
         ArrayList<Entity> selectedEntities = EATools.bindIndividualsWithEntities(selectedIndividuals, entities);
+        logger.debug("Selected individuals:");
+        for(Entity selected : selectedEntities) {
+            logger.debug(selected.individual.getGenotype() + ": " + selected.individual.getPhenotype().getStringNoSpace());
+        }
+        // individuals to compute
         ArrayList<Entity> toCompute = EATools.bindIndividualsWithEntities(entitiesAsIndividuals, entities);
 //        logger.debug("selectedEntities.size= " + selectedEntities.size());
 //        logger.debug("toCompute.size= " + toCompute.size());

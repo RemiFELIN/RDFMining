@@ -5,4 +5,4 @@ Axiom := ClassAxiom
 ClassAxiom := SubClassOf
 SubClassOf := 'SubClassOf' '(' Class ' ' Class ')' 
 #---------------------------------------------------------------
-Class := '[sparql] ?Class a owl:Class .'
+Class := '[sparql] ?Class a owl:Class . FILTER(contains(str(?class), "http://dbpedia.org/ontology/"))'

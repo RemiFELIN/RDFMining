@@ -124,6 +124,8 @@ public class Generation {
                     ifbm.doOperation(futureOffsprings);
                     break;
             }
+            // overview of generated child
+            logger.debug("Respective offspring: " + futureOffsprings.get(0).getGenotype() + " and " + futureOffsprings.get(1).getGenotype());
             // After crossover and mutation phasis; each parent is directly modified and gives an offspring
             // if using crowding method in survival selection
             if (RDFMiner.parameters.diversity == 1) {

@@ -73,7 +73,7 @@ public abstract class SelectionOperation implements Operation {
     public SelectionOperation() {
         this.size = (int) (RDFMiner.parameters.sizeSelection * RDFMiner.parameters.populationSize);
         this.selectedPopulation = new SimplePopulation(this.size);
-        logger.info("Size selection = " + this.size);
+//        logger.info("Size selection = " + this.size);
     }
 
     /**
