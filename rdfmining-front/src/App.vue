@@ -13,6 +13,11 @@ export default {
   name: 'App',
   components: {
     CHeader,
+  },
+  params: {
+    username: {
+      type: String
+    }
   }
 }
 </script>

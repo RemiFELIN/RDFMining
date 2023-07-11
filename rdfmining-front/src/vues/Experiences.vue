@@ -47,7 +47,8 @@
             <!-- Timeout: SPARQL timeout and/or timecap -->
         </div>
         <div class="row">
-            <button type="button" v-on:click="generateCommandLine('-ps')">Generate cmdline</button>
+            <!-- <button type="button" v-on:click="generateCommandLine">Generate cmdline</button> -->
+            <button type="button" v-on:click="postProject">Generate cmdline</button>
         </div>
     </form>
     <b>La commande: {{ cmdline }}</b>
@@ -63,6 +64,7 @@ import BNFGrammar from '@/components/form/BNFGrammar.vue';
 import CTextNumber from '@/components/form/TextNumber.vue';
 import CSelect from '@/components/form/Select.vue';
 import CCheckbox from '@/components/form/Checkbox.vue';
+import axios from "axios"
 
 export default {
     name: 'SetupExperience',
@@ -184,7 +186,7 @@ export default {
         },
         generateCommandLine() {
             // Mod
-            this.cmdline = this.cmdlineBase + this.mod + " "
+            this.cmdline = this.cmdlineBase + this.mod + " " + this.getProjectName() + " "
             // In the GE Context
             if(this.mod.includes('-ge')) {
                 this.cmdline += this.addParam(rdfminer.parameters.populationSize, this.populationSize);
@@ -205,6 +207,27 @@ export default {
                     this.cmdline += rdfminer.parameters.diversity + " 0";
                 }
             }
+        },
+        postProject() {
+            this.generateCommandLine();
+            // console.log(this.cmdline);
+            // build a request to the API
+            axios.post("http://localhost:3000/api/experience/setup", {
+                id: this.outputFolder,
+                username: "test",
+                command: this.cmdline
+            }).then(
+                (response) => { 
+                    if(response.status === 200) {
+                        console.log("OK !" + response);
+                        // this.user = { username, password };
+                        this.auth = true;
+                    }  
+                }
+            ).catch((error) => {
+                console.log(error);
+                alert("Incorrect username/password");
+            });
         }
     }
 }

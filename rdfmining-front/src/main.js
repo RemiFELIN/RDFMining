@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
-import App from './App.vue'
+
+import AuthWrapper from "./vues/auth/AuthWrapper.vue";
 import { createRouter, createWebHistory } from 'vue-router';
 
 import WelcomeHome from './vues/Home.vue'
@@ -20,4 +21,4 @@ const router = createRouter({
     routes, // short for `routes: routes`
 })
 
-createApp(App).use(router).mount('#app')
+createApp(AuthWrapper).use(router).mount('#app')

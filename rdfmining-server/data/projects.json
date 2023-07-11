@@ -1,0 +1,1 @@
+{"id":"tata","username":"test","command":"docker-compose exec -T rdfminer ./rdfminer/scripts/run.sh   -dir 'tata'  "}

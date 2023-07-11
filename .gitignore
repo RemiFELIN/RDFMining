@@ -26,3 +26,4 @@ Corese/src/corese/git_folder
 .dba_pwd_set
 docker-compose.yml
 Corese/data/
+rdfmining-server/node_modules/
