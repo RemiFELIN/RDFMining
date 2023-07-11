@@ -8,6 +8,21 @@ const port = 3000
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+// Mongoose
+const settings = require("./settings.json");
+let mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+// Connection
+mongoose.connect(settings.uri, settings.options)
+    .then(() => {
+        // console.log("URI = " + uri);
+        console.log("MongoDB Cluster> CONNECTED");
+    },
+        err => {
+            console.log('MongoDB Cluster> ERROR', err);
+        }
+    );
+
 // REST API SERVICES
 const prefix = "/api/"
 // authentification

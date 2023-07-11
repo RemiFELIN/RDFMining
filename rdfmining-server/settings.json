@@ -1,0 +1,8 @@
+{
+    "uri": "mongodb+srv://rdfmining-cluster.ehbkkkq.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority&tlsCertificateKeyFile=./data/mongodb.pem",
+    "options": {
+        "useNewUrlParser": true,
+        "useUnifiedTopology": true,
+        "dbName": "rdfmining-db"
+    }
+}

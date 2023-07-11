@@ -1,7 +1,8 @@
 <template>
   <CHeader></CHeader>
+  <!-- <b style="font-size: 3vw;">Hello {{ username }} !</b> -->
   <div>
-    <router-view></router-view>
+    <router-view :username="username"></router-view>
   </div>
  
 </template>
@@ -14,7 +15,7 @@ export default {
   components: {
     CHeader,
   },
-  params: {
+  props: {
     username: {
       type: String
     }

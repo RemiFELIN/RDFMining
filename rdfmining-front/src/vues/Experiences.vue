@@ -1,5 +1,5 @@
 <template>
-    <h1>Start your own experiments with RDFMiner !</h1>
+    <h1>Hello {{ username }}, It's time to start your own experiments with RDFMiner !</h1>
     <form>
         <!-- Project Name -->
         <div class="row">
@@ -68,6 +68,11 @@ import axios from "axios"
 
 export default {
     name: 'SetupExperience',
+    props: {
+        username: {
+            type: String
+        }
+    },
     components: {
         CSlider,
         BNFGrammar,
@@ -214,7 +219,7 @@ export default {
             // build a request to the API
             axios.post("http://localhost:3000/api/experience/setup", {
                 id: this.outputFolder,
-                username: "test",
+                username: this.username,
                 command: this.cmdline
             }).then(
                 (response) => { 

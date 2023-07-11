@@ -1,20 +1,28 @@
+let Project = require("../model/project");
+
 function createProject(req, res) {
-    const fs = require('fs');
-    // console.log(req.body);
-    // get body 
-    // const id = req.body.id;
-    // const username = req.body.username;
-    // const command = req.body.command;
-    // add it into db
-    // fake db (tmp)
-    fs.writeFileSync(__dirname + "/../data/projects.json", JSON.stringify(req.body), err => {
-        if (err) {
-            console.log('Error writing file', err);
+    const project = new Project();
+    // set params
+    project.id = req.body.id;
+    project.username = req.body.username;
+    project.command = req.body.command;
+    // push into db
+    project.save().then((data) => {
+        if(data) {
+            res.status(200).send("Project created !");
         } else {
-            console.log('Successfully wrote file');
+            res.status(401).send("POST PROJECT ERROR");
         }
     });
-    res.status(200).send("Ok !");
+    // const fs = require('fs');
+    // fs.writeFileSync(__dirname + "/../data/projects.json", JSON.stringify(req.body), err => {
+    //     if (err) {
+    //         console.log('Error writing file', err);
+    //     } else {
+    //         console.log('Successfully wrote file');
+    //     }
+    // });
+    // res.status(200).send("Ok !");
 }
 
 module.exports = { createProject }

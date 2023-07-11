@@ -16,7 +16,7 @@ import axios from "axios"
 export default {
     data() {
         return {
-            user: null,
+            username: "",
             auth: false,
         };
     },
@@ -35,6 +35,7 @@ export default {
                         console.log("OK !");
                         // this.user = { username, password };
                         this.auth = true;
+                        this.username = username;
                     }  
                 }
             ).catch((error) => {
