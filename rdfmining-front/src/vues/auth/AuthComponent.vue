@@ -66,7 +66,7 @@ export default {
       }).then(
         (response) => {
           if (response.status === 200) {
-            console.log("OK !");
+            console.log(response.data);
             // this.user = { username, password };
             this.auth = true;
             this.username = username;
@@ -74,6 +74,7 @@ export default {
             this.$emit("auth-conf", {
               isAuth: true,
               username: this.username,
+              id: response.data._id
             });
             // update isConnected status
             this.isConnected = true;

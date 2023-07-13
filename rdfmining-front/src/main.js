@@ -7,13 +7,13 @@ import unoverlay from 'unoverlay-vue';
 
 import WelcomeHome from './vues/Home.vue'
 // import VueVisualisation from './vues/Visualisation.vue'
-import CreateProject from './vues/projects/CreateProject.vue'
+import MyProjects from './vues/projects/MyProjects.vue'
 import RDFMinerPublications from './vues/Publications.vue'
 // import LogIn from './vues/LogIn.vue'
 
 const routes = [
     { path: '/', component: WelcomeHome },
-    { path: '/projects', component: CreateProject },
+    { path: '/projects', component: MyProjects },
     // { path: '/visualisation', component: VueVisualisation },
     { path: '/publications', component: RDFMinerPublications },
     // { path: '/login', component: LogIn }

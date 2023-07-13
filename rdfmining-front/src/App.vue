@@ -3,9 +3,9 @@
   <!-- <b>Hello ! connected:{{ isAuth }} and username:{{ username }}</b> -->
   <!-- <b style="font-size: 3vw;">Hello {{ username }} !</b> -->
   <h1 v-if="!isAuth">Welcome to the RDFMiner UI !</h1>
-  <h1 v-else>Hello {{ username }}</h1>
+  <h1 v-else>Hello {{ username }} [_id:{{ id }}]</h1>
   <div style="height: 86vh;">
-    <router-view :username="username"></router-view>
+    <router-view :id="id"></router-view>
     <AuthComponent :enable="enablePopup" @close="togglePopup" @auth-conf="updateStatus"></AuthComponent>
   </div>
   <!-- Connection as footer -->
@@ -28,6 +28,7 @@ export default {
   data() {
     return {
       username: "",
+      id: "",
       isAuth: false,
       enablePopup: false,
     }
@@ -37,6 +38,7 @@ export default {
       this.enablePopup = !this.enablePopup;
     },
     updateStatus(data) {
+      this.id = data.id;
       this.isAuth = data.isAuth;
       this.username = data.username;
     },
@@ -69,6 +71,13 @@ export default {
 .container {
   overflow-y: auto;
   height: 85vh;
+}
+
+.widget {
+  background-color: #ffffff;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.27);
 }
 
 button {

@@ -1,8 +1,12 @@
 // import * as compose from 'docker-compose'
 const express = require('express')
 let bodyParser = require('body-parser');
+const socketIO = require("socket.io");
+// see https://github.com/ConstantinoBernardo/vue-socketio-chat/blob/main/client/src/App.vue
 const app = express()
 const port = 3000
+
+const server = require("http").Server(app);
 
 // Pour les formulaires
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -28,7 +32,7 @@ const prefix = "/api/"
 // authentification
 const auth = require("./services/authentification");
 // launcher
-const launcher = require("./services/launcher");
+const project = require("./services/project");
 // publications
 const publications = require("./services/publications");
 
@@ -42,12 +46,24 @@ app.use((req, res, next) => {
 
 // Routes settings
 app.route(prefix + "auth").get(auth.login);
-app.route(prefix + "experience/setup").post(launcher.createProject);
+app.route(prefix + "projects").get(project.getProjectsByUser);
+app.route(prefix + "project/setup").post(project.createProject);
 app.route(prefix + "publications").get(publications.getAll);
 
+// SOCKET IO
+const io = socketIO(server, {
+    cors: {
+      origin: "*",
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "X-Access-Token"],
+    },
+  });
+io.on("connection", (socket) => {
+    console.log("connected !");
+});
 
 // SERVER SETUP
-app.listen(port, () => {
+server.listen(port, () => {
     console.log("##########################################");
     console.log("RDFMiner Server v1.0");
     console.log(`Example app listening on port ${port}`)

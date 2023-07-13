@@ -12,7 +12,7 @@ function login(req, res) {
         // var isValidPassword = bcrypt.compareSync(req.body.password, user.password);
         if (req.query.password === user.password) {
             console.log("/api/auth : Success !")
-            res.status(200).send("Auth Success");
+            res.status(200).send(user);
         } else {
             res.status(401).send("Wrong username/password");
         }

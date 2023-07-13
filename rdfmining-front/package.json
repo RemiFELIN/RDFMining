@@ -13,6 +13,8 @@
     "codemirror": "^6.0.1",
     "core-js": "^3.8.3",
     "lodash": "^4.17.21",
+    "socket.io-client": "^4.7.1",
+    "unoverlay-vue": "^0.3.0",
     "vue": "^3.2.13",
     "vue-codemirror": "^6.1.1",
     "vue-google-charts": "^1.1.0",

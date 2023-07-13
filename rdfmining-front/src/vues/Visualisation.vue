@@ -32,14 +32,5 @@ export default {
 section#main-content {
     margin: 20px;
 }
-
-.widget {
-    background-color: #ffffff;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.27);
-}
-
-
 </style>
   

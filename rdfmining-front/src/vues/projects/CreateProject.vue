@@ -1,6 +1,6 @@
 <template>
-    <div class="container">
-        <h1>It's time to start your own projects with RDFMiner !</h1>
+    <div class="container" v-if="show">
+        <!-- <h1>It's time to start your own projects with RDFMiner !</h1> -->
         <form>
             <!-- Project Name -->
             <div class="row">
@@ -59,7 +59,7 @@
             </div>
         </form>
     </div>
-    <b>La commande: {{ cmdline }}</b>
+    <!-- <b>La commande: {{ cmdline }}</b> -->
     <!-- <p>Mod: {{ mod }}</p> -->
 </template>
 
@@ -77,8 +77,11 @@ import axios from "axios"
 export default {
     name: 'CreateProject',
     props: {
-        username: {
+        id: {
             type: String
+        },
+        show: {
+            type: Boolean
         }
     },
     components: {
@@ -225,9 +228,9 @@ export default {
             this.generateCommandLine();
             // console.log(this.cmdline);
             // build a request to the API
-            axios.post("http://localhost:3000/api/experience/setup", {
-                id: this.outputFolder,
-                username: this.username,
+            axios.post("http://localhost:3000/api/project/setup", {
+                userId: this.id,
+                projectName: this.outputFolder,
                 command: this.cmdline
             }).then(
                 (response) => {
