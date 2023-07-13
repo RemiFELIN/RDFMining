@@ -14,6 +14,11 @@
             <div class="col-md-6 item">
                 <div class="item-in">
                     <h1>{{ paper.title }}</h1>
+                    <h2>
+                        <template v-for="(author, idx) in paper.authors" :key="idx">
+                            {{ author }} <template v-if="idx != paper.authors.length - 1"> and </template>
+                        </template>
+                    </h2>
                     <h4>{{ paper.conferenceTitle }} ({{ paper.date }})</h4>
                     <h5 style="font-style: italic;" v-if="paper.place != ''"> at {{ paper.place }}</h5>
                     <h4 v-if="paper.distinction.link != ''"><a :href="paper.distinction.link">{{ paper.distinction.type
@@ -37,8 +42,9 @@
 
 
 <script>
-import { publications } from '../data/publications.json'
+// import { publications } from '../data/publications.json'
 import _ from 'lodash';
+import axios from 'axios';
 
 export default {
     name: 'RDFMinerPublications',
@@ -50,16 +56,19 @@ export default {
         }
     },
     mounted() {
-        if (publications) {
-            this.papers = publications;
-            this.papers.forEach((paper) => {
-                paper.keywords.forEach((keyword) => {
-                    if (this.keywords.indexOf(keyword) === -1) {
-                        this.keywords.push(keyword);
-                    }
-                });
-            });
-        }
+        // build a request to the API
+        axios.get("http://localhost:3000/api/publications").then(
+            (response) => {
+                if (response.status === 200) {
+                    // fill papers list
+                    response.data.forEach((paper) => {
+                        this.papers.push(paper);
+                    })
+                }
+            }
+        ).catch((error) => {
+            console.log(error);
+        });
     },
     methods: {
         async copyCitation(citation) {
@@ -71,13 +80,13 @@ export default {
             }
         },
         sortByFilter(key) {
-            if(key === "date_asc") { 
+            if (key === "date_asc") {
                 return _.orderBy(this.papers, 'date');
             } else if (key === "date_desc") {
                 return _.orderBy(this.papers, 'date', 'desc');
             } else {
                 return _.orderBy(this.papers, key);
-            }   
+            }
         }
     }
 }

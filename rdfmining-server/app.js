@@ -29,6 +29,8 @@ const prefix = "/api/"
 const auth = require("./services/authentification");
 // launcher
 const launcher = require("./services/launcher");
+// publications
+const publications = require("./services/publications");
 
 // Pour accepter les connexions cross-domain (CORS)
 app.use((req, res, next) => {
@@ -41,6 +43,7 @@ app.use((req, res, next) => {
 // Routes settings
 app.route(prefix + "auth").get(auth.login);
 app.route(prefix + "experience/setup").post(launcher.createProject);
+app.route(prefix + "publications").get(publications.getAll);
 
 
 // SERVER SETUP

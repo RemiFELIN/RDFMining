@@ -1,7 +1,5 @@
 <template>
   <div class="hello">
-    <h1>Welcome to the RDFMiner UI !</h1>
-    <h2>1.0</h2>
     <img alt="Vue logo" src="../assets/rdfminer.jpg">
   </div>
 </template>

@@ -1,17 +1,23 @@
 <template>
     <div class="navbar">
       <nav>
-        <router-link to="/"              class="nav-link">Home</router-link>
-        <router-link to="/experience"    class="nav-link">Experience</router-link>
-        <router-link to="/visualisation" class="nav-link">Visualisations</router-link>
-        <router-link to="/publications" class="nav-link">Publications</router-link>
+        <router-link class="nav-link" to="/">Home</router-link>
+        <router-link class="nav-link" :class="{ disable: !isAuth }" to="/projects">My projects</router-link>
+        <router-link class="nav-link" to="/publications">Publications</router-link>
+        <!-- <router-link class="nav-link" to="/visualisation" :disabled="!auth">Visualisations</router-link> -->
+        <!-- <router-link class="nav-link" to="/login">Login</router-link> -->
       </nav>
     </div>
 </template>
   
 <script>
 export default {
-    name: 'CHeader'
+    name: 'CHeader',
+    props: {
+      isAuth: {
+        type: Boolean
+      }
+    }
 }
 </script>
   
@@ -19,6 +25,7 @@ export default {
 /* Style the navigation menu */
 .navbar {
   width: 100%;
+  /* height: 100px; */
   background-color: #376b00;
   overflow: auto;
 }
@@ -29,8 +36,8 @@ export default {
   /* padding: 1px; */
   color: white;
   text-decoration: none;
-  font-size: 30px;
-  width: 25%; /* Four equal-width links. If you have two links, use 50%, and 33.33% for three links, etc.. */
+  font-size: 2vw;
+  width: 33.33333%; /* Four equal-width links. If you have two links, use 50%, and 33.33% for three links, etc.. */
   text-align: center; /* If you want the text to be centered */
 }
 
@@ -47,6 +54,11 @@ export default {
 /* Style the current/active link */
 .router-link-active {
   background-color: #04AA6D;
+}
+
+.disable {
+  pointer-events: none;
+  opacity: 50%;
 }
 
 /* Add responsiveness - on screens less than 500px, make the navigation links appear on top of each other, instead of next to each other */

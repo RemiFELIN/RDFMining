@@ -1,4 +1,5 @@
 let Project = require("../model/project");
+let Experience = require("../model/experience");
 
 function createProject(req, res) {
     const project = new Project();
@@ -10,19 +11,13 @@ function createProject(req, res) {
     project.save().then((data) => {
         if(data) {
             res.status(200).send("Project created !");
+            // create an instance of experience
+            const experience = new Experience();
+            console.log(data);
         } else {
             res.status(401).send("POST PROJECT ERROR");
         }
     });
-    // const fs = require('fs');
-    // fs.writeFileSync(__dirname + "/../data/projects.json", JSON.stringify(req.body), err => {
-    //     if (err) {
-    //         console.log('Error writing file', err);
-    //     } else {
-    //         console.log('Successfully wrote file');
-    //     }
-    // });
-    // res.status(200).send("Ok !");
 }
 
 module.exports = { createProject }
