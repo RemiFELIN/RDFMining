@@ -1,74 +1,88 @@
 package com.i3s.app.rdfminer.evolutionary.offspring;
 
+import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.evolutionary.fitness.Fitness;
+import com.i3s.app.rdfminer.evolutionary.fitness.novelty.NoveltySearch;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
+import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class Offspring {
 
     private static final Logger logger = Logger.getLogger(Offspring.class.getName());
 
-    protected Entity parent1;
-    protected Entity parent2;
-    protected Entity child1;
-    protected Entity child2;
+    protected ArrayList<Entity> population;
+    protected ArrayList<Entity> survivors;
     protected Generator generator;
 
-    public Offspring(Entity parent1, Entity parent2, GEIndividual child1, GEIndividual child2, Generator generator)
+    public Offspring(Entity parent1, Entity parent2, GEIndividual child1, GEIndividual child2, ArrayList<Entity> population, Generator generator)
             throws URISyntaxException, IOException {
-//        logger.debug("-----------");
-//        logger.debug("parent1: " + parent1.individual.getGenotype() + "\nis mapped: " + parent1.individual.isMapped());
-//        logger.debug("parent2: " + parent2.individual.getGenotype() + "\nis mapped: " + parent2.individual.isMapped());
-//        logger.debug("child1: " + child1.getGenotype() + "\nis mapped: " + child1.isMapped());
-//        logger.debug("child2: " + child2.getGenotype() + "\nis mapped: " + child2.isMapped());
-//        logger.debug("-----------");
         this.generator = generator;
-        this.parent1 = parent1;
-        this.parent2 = parent2;
-        if(Objects.equals(child1.getGenotype().toString(), parent1.individual.getGenotype().toString())) {
-            this.child1 = this.parent1;
+        this.population = population;
+        this.survivors = new ArrayList<>();
+        // compare child and parent n°1
+        compare(parent1, child1);
+        // compare child and parent n°2
+        compare(parent2, child2);
+    }
+
+    private void compare(Entity parent, GEIndividual offspring) throws URISyntaxException, IOException {
+//        logger.debug("\nParent: " + parent.individual.getPhenotype().getStringNoSpace() + "\nChild: " + offspring.getPhenotype().getStringNoSpace());
+        // equivalence testing
+        if(Objects.equals(offspring.getGenotype().toString(), parent.individual.getGenotype().toString())) {
+            this.survivors.add(parent);
         } else {
-            this.child1 = Fitness.computeEntity(child1, this.generator);
-            if(this.child1.individual.getFitness().getDouble() > this.parent1.individual.getFitness().getDouble()) {
-                GrammaticalEvolution.nBetterIndividual++;
-                logger.debug("new(i): " + this.child1.individual.getGenotype() + " ~ F(i)= " + this.child1.individual.getFitness().getDouble());
-                logger.debug("new(i): " + this.child1.individual.getPhenotype());
-            }
-            // test if the offspring fitness is not worst than its parent
-            if(this.child1.individual.getFitness().getDouble() < this.parent1.individual.getFitness().getDouble()) {
-//                logger.debug("keep the parent i: " + this.parent1.individual.getGenotype() + " alive: F(i)= " + this.parent1.individual.getFitness().getDouble());
-                this.child1 = this.parent1;
-            }
-        }
-        if(Objects.equals(child2.getGenotype().toString(), parent2.individual.getGenotype().toString())) {
-            this.child2 = this.parent2;
-        } else {
-            this.child2 = Fitness.computeEntity(child2, this.generator);
-            if(this.child2.individual.getFitness().getDouble() > this.parent2.individual.getFitness().getDouble()) {
-                GrammaticalEvolution.nBetterIndividual++;
-                logger.debug("new(i): " + this.child2.individual.getGenotype() + " ~ F(i)= " + this.child2.individual.getFitness().getDouble());
-                logger.debug("new(i): " + this.child2.individual.getPhenotype());
-            }
-            // test if the offspring fitness is not worst than its parent
-            if(this.child2.individual.getFitness().getDouble() < this.parent2.individual.getFitness().getDouble()) {
-//                logger.debug("keep the parent i: " + this.parent2.individual.getGenotype() + " alive: F(i)= " + this.parent2.individual.getFitness().getDouble());
-                this.child2 = this.parent2;
+            Entity child = Fitness.computeEntity(offspring, this.generator);
+            // if the novelty search is enabled, we would like to know if the tested offspring is far (or not)
+            // from the current population, in order to reward 'very novel' assumption
+            if (RDFMiner.parameters.useNoveltySearch) {
+                CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES);
+                NoveltySearch ns = new NoveltySearch(endpoint);
+                double scoreChild = ns.getScore(child, ns.getDistanceOfEntityFromPopulation(child, this.population));
+                double scoreParent = ns.getScore(parent, ns.getDistanceOfEntityFromPopulation(parent, this.population));
+                logger.debug("child.score (" + scoreChild + ") vs parent.score (" + scoreParent + ")");
+                // we keep the better individual alive
+                if (scoreChild > scoreParent) {
+                    // report if a better individual is found
+                    GrammaticalEvolution.nBetterIndividual++;
+                }
+                // In a case that child1 is better or as good as the parent, we'll keep the child in order to ensure the
+                // diversity of the future population
+                if(scoreChild >= scoreParent) {
+                    this.survivors.add(child);
+                } else {
+                    // the child is not better ! we'll keep the parent alive
+                    this.survivors.add(parent);
+                }
+            } else {
+                // report if a better individual is found
+                if(child.individual.getFitness().getDouble() > parent.individual.getFitness().getDouble()) {
+                    GrammaticalEvolution.nBetterIndividual++;
+                }
+                // In a case that child1 is better or as good as the parent, we'll keep the child in order to ensure the
+                // diversity of the future population
+                if(child.individual.getFitness().getDouble() >= parent.individual.getFitness().getDouble()) {
+                    this.survivors.add(child);
+                } else {
+                    // the child is not better ! we'll keep the parent alive
+                    this.survivors.add(parent);
+                }
             }
         }
     }
 
     public ArrayList<Entity> get() {
-        // return offsprings
-        return new ArrayList<>(List.of(this.child1, this.child2));
+        // return survivors
+        return this.survivors;
     }
 
 }

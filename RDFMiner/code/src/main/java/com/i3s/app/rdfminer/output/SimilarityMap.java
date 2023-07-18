@@ -49,16 +49,28 @@ public class SimilarityMap {
         logger.info(this.map.length() + " similarities are already known");
     }
 
+    /**
+     * Append the two keys: (phi1.toString.hashCode,phi2.toString.hashCode) and (phi2.toString.hashCode,phi1.toString.hashCode)
+     * into similarities map
+     * @param phi1 the first axiom
+     * @param phi2 the second axiom
+     * @param value similarity values between them
+     */
     public void append(Entity phi1, Entity phi2, double value) {
 //        logger.debug("Append the simalirity between " + phi1 + " and " + phi2 + " into the map");
-        int key = phi1.hashCode() + phi2.hashCode();
-        this.map.put(String.valueOf(key), value);
+        String k1 = String.valueOf(phi1.hashCode()).concat(String.valueOf(phi2.hashCode()));
+        String k2 = String.valueOf(phi2.hashCode()).concat(String.valueOf(phi1.hashCode()));
+        this.map.put(k1, value);
+        this.map.put(k2, value);
     }
 
     public Double get(Entity phi1, Entity phi2) {
-        int key = phi1.hashCode() + phi2.hashCode();
-        if(this.map.has(String.valueOf(key))) {
-            return this.map.getDouble(String.valueOf(key));
+        String k1 = String.valueOf(phi1.hashCode()).concat(String.valueOf(phi2.hashCode()));
+        String k2 = String.valueOf(phi2.hashCode()).concat(String.valueOf(phi1.hashCode()));
+        if(this.map.has(k1)) {
+            return this.map.getDouble(k1);
+        } else if (this.map.has(k2)) {
+            return this.map.getDouble(k2);
         } else {
             return null;
         }
@@ -74,5 +86,12 @@ public class SimilarityMap {
     public JSONObject getMap() {
         return this.map;
     }
+
+//    public static void main(String[] args) {
+//        System.out.println("Toto -> " + "Toto".hashCode());
+//        System.out.println("TATA -> " + "TATA".hashCode());
+//        System.out.println("Toto".hashCode() + "TATA".hashCode());
+//        System.out.println(String.valueOf("Toto".hashCode()).concat(String.valueOf("TATA".hashCode())));
+//    }
 
 }

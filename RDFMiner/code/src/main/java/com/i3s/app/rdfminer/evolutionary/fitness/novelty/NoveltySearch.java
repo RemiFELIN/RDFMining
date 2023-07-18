@@ -49,7 +49,7 @@ public class NoveltySearch {
         for (int i = 0; i < entities.size(); i++) {
             for (int j = 0; j < entities.size(); j++) {
                 if (i != j) {
-                    // use similarity cache$
+                    // use similarity cache
                     if (RDFMiner.similarityMap.get(entities.get(i), entities.get(j)) != null) {
 //                        logger.debug("get similarity value from similarity map ...");
                         entities.get(i).similarities.add(RDFMiner.similarityMap.get(entities.get(i), entities.get(j)));
@@ -75,6 +75,14 @@ public class NoveltySearch {
         return updatedEntities;
     }
 
+    public double getDistanceOfEntityFromPopulation(Entity entity, ArrayList<Entity> population) throws URISyntaxException, IOException {
+        double distance = 0;
+        for(Entity individual : population) {
+            distance += new Similarity(entity, individual).getModifiedSimilarity(endpoint);
+        }
+        return distance;
+    }
+
 //    public static Entity updateSimilarity(CoreseEndpoint endpoint, Entity entity, ArrayList<Entity> entities) throws URISyntaxException, IOException {
 //        logger.debug("Update the similarity of axiom '" + entity.entityAsString + "' among its population to consider novelty approach");
 //        for(Entity other : entities) {
@@ -93,8 +101,19 @@ public class NoveltySearch {
      * @return the value of based novelty fitness <var>f</var>(&phi)
      */
     public static double updateFitness(Entity phi) {
-        logger.debug(phi.individual.getGenotype() + ": sum(sim)= " + phi.similarities.stream().mapToDouble(x -> x).sum());
-        return phi.individual.getFitness().getDouble() * (1 / (1 + phi.similarities.stream().mapToDouble(x -> x).sum()));
+//        logger.debug(phi.individual.getGenotype() + ": sum(sim)= " + );
+        double sumSim = 0;
+        for(double sim : phi.similarities) {
+            sumSim += sim;
+        }
+        // reset phi similarities and avoid side behaviors
+        phi.similarities.clear();
+        // return updated fitness
+        return phi.individual.getFitness().getDouble() * (1 / (1 + sumSim));
+    }
+
+    public double getScore(Entity phi, double distance) {
+        return phi.individual.getFitness().getDouble() * (1 / (1 + distance));
     }
 
     public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException, ExecutionException, TimeoutException {

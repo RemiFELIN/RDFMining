@@ -117,11 +117,11 @@ public class EATools {
 		return newEntities;
 	}
 
-	public static ArrayList<Entity> getTimeCappedEntities(ArrayList<Entity> oldEntities, List<Entity> evaluatedEntities) {
-		ArrayList<Entity> notEvaluated = new ArrayList<>(oldEntities);
+	public static ArrayList<Entity> getTimeCappedEntities(ArrayList<Entity> entities, List<Entity> evaluatedEntities) {
+		ArrayList<Entity> notEvaluated = new ArrayList<>(entities);
 		for(Entity evaluated : evaluatedEntities) {
-			for(Entity entity : oldEntities) {
-				if(evaluated == entity) {
+			for(Entity entity : entities) {
+				if(evaluated.individual.getPhenotype() == entity.individual.getPhenotype()) {
 //					logger.debug("remove " + entity.individual.getPhenotype().getStringNoSpace() + " ...");
 					notEvaluated.remove(entity);
 					break;

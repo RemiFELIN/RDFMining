@@ -68,9 +68,12 @@ public class Crowding {
 		// for each couple, we will minimize the similarities betweem them
 		if (similarityP1ToC1 <= similarityP1ToC2) survivals.add(compare(parent1, child1));
 		else survivals.add(compare(parent1, child2));
-		if (similarityP2ToC1 <= similarityP2ToC2) survivals.add(compare(parent2, child1));
-		else survivals.add(compare(parent2, child2));
-//		logger.debug("Survival selection done !");
+		if (similarityP2ToC2 <= similarityP2ToC1) survivals.add(compare(parent2, child2));
+		else survivals.add(compare(parent2, child1));
+		logger.debug("Survival selection done !");
+		for(Entity ent : survivals) {
+			logger.debug("survival: " + ent.individual.getPhenotype().getStringNoSpace());
+		}
 		return survivals;
 	}
 

@@ -86,19 +86,19 @@ public abstract class Generator {
         GEIndividual individual;
         boolean valid;
         int i = 1;
+//        System.out.println("maxWrapp= " + grammar.getMaxWraps() + " and valid? " + valid);
         do {
 //            System.out.println("Wrap n°1 for chromosome: " + chromosome.toString());
             grammar.setGenotype(chromosome);
             grammar.setPhenotype(new Phenotype());
-            try {
-                valid = grammar.genotype2Phenotype(true);
-            } catch (NullPointerException e) {
-                valid = false;
-            }
-//            System.out.println("is Valid ? " + valid);
+//            try {
+            valid = grammar.genotype2Phenotype(true);
+//            } catch (NullPointerException e) {
+//                valid = false;
+//            }
             i++;
         } while (!valid && i < grammar.getMaxWraps());
-
+//        System.out.println("valid? " + valid);
         individual = new GEIndividual();
         individual.setMapper(grammar);
         individual.setGenotype(new Genotype(chromosome.getLength(), chromosome));

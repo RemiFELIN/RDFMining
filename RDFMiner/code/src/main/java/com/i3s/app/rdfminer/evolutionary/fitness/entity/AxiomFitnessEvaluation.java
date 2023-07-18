@@ -152,7 +152,7 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 			} catch (TimeoutException e) {
-				logger.warn("Assessment Timeout reached for the current entity ...");
+				logger.warn("Time-cap reached for the current entity !");
 			}
 		}
 		// Log how many axioms has been evaluated

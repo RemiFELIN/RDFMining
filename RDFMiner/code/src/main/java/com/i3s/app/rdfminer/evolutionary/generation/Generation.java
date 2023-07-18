@@ -71,7 +71,7 @@ public class Generation {
 //            ArrayList<GEIndividual> parents = new ArrayList<>(List.of(canEntities.get(m).individual, canEntities.get(m + 1).individual));
             GEChromosome chromParent1 = toCompute.get(0).individual.getChromosomes();
             GEChromosome chromParent2 = toCompute.get(1).individual.getChromosomes();
-            logger.debug("Testing chromosomes: " + chromParent1 + " and " + chromParent2);
+//            logger.debug("Testing chromosomes: " + chromParent1 + " and " + chromParent2);
             ArrayList<GEIndividual> futureOffsprings = new ArrayList<>(List.of(
                     generator.getIndividualFromChromosome(chromParent1, curGeneration),
                     generator.getIndividualFromChromosome(chromParent2, curGeneration)
@@ -124,20 +124,33 @@ public class Generation {
                     ifbm.doOperation(futureOffsprings);
                     break;
             }
+            // refresh the phenotype of each offspring from their respective chromosome
+            ArrayList<GEIndividual> offSpring = new ArrayList<>();
+            for(GEIndividual os : futureOffsprings) {
+                offSpring.add(generator.getIndividualFromChromosome(os.getChromosomes(), curGeneration));
+            }
             // overview of generated child
-            logger.debug("Respective offspring: " + futureOffsprings.get(0).getGenotype() + " and " + futureOffsprings.get(1).getGenotype());
+//            logger.debug(
+//                    "\nparent(0): " + toCompute.get(0).individual.getPhenotype().getStringNoSpace() + " [" +
+//                        toCompute.get(0).individual.getGenotype().get(0) + "]" +
+//                    "\nparent(1): " + toCompute.get(1).individual.getPhenotype().getStringNoSpace() + " [" +
+//                            toCompute.get(1).individual.getGenotype().get(0) + "]" +
+//                    "\noffspring(0): " + offSpring.get(0).getPhenotype().getStringNoSpace() + " [" +
+//                            offSpring.get(0).getGenotype().get(0) + "]" +
+//                    "\noffspring(1): " + offSpring.get(1).getPhenotype().getStringNoSpace() + " [" +
+//                            offSpring.get(1).getGenotype().get(0) + "]");
             // After crossover and mutation phasis; each parent is directly modified and gives an offspring
             // if using crowding method in survival selection
             if (RDFMiner.parameters.diversity == 1) {
                 // if crowding is chosen, we need to compute and return the individuals chosen
                 // (between parents and childs) in function of their fitness
 //                int idx = m;
-                entitiesCallables.add(() -> new Crowding(toCompute.get(0), toCompute.get(1), futureOffsprings.get(0),
-                        futureOffsprings.get(1), canEntities, generator).getSurvivalSelection());
+                entitiesCallables.add(() -> new Crowding(toCompute.get(0), toCompute.get(1), offSpring.get(0),
+                        offSpring.get(1), toCompute, generator).getSurvivalSelection());
             } else {
                 // simply return offsprings
-                entitiesCallables.add(() -> new Offspring(toCompute.get(0), toCompute.get(1), futureOffsprings.get(0),
-                        futureOffsprings.get(1), generator).get());
+                entitiesCallables.add(() -> new Offspring(toCompute.get(0), toCompute.get(1), offSpring.get(0),
+                        offSpring.get(1), toCompute, generator).get());
             }
             toCompute.remove(copyToCompute.get(m));
             toCompute.remove(copyToCompute.get(m + 1));

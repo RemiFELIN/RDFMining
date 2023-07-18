@@ -415,7 +415,7 @@ public class Test {
         RDFMiner.parameters.proCrossover = 1.0;
         Generator generator = null;
         try {
-            generator = new RandomShapeGenerator("/user/rfelin/home/projects/RDFMining/IO/shacl-shapes-test.bnf");
+            generator = new RandomAxiomGenerator("/user/rfelin/home/projects/RDFMining/IO/OWL2Axiom-subclassof.bnf", true);
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         };
@@ -423,17 +423,18 @@ public class Test {
         ArrayList<GEIndividual> population = canPop.initialize(null, 1);
         ArrayList<GEIndividual> saveOriginalPop = new ArrayList<>();
         for(GEIndividual ind : population) {
-            System.out.println("original pop: " + ind.getGenotype());
+            System.out.println("original pop: " + ind.getGenotype() + ": " + ind.getPhenotype().getStringNoSpace());
             assert generator != null;
             saveOriginalPop.add(generator.getIndividualFromChromosome(ind.getChromosomes(), 1));
         }
         SwapCrossover swp = new SwapCrossover();
         swp.doOperation(population);
         for(GEIndividual ind : saveOriginalPop) {
-            System.out.println("saved pop: " + ind.getGenotype());
+            System.out.println("saved pop: " + ind.getGenotype() + ": " + ind.getPhenotype().getStringNoSpace());
         }
         for(GEIndividual ind : population) {
-            System.out.println("new pop: " + ind.getGenotype());
+            GEIndividual i = generator.getIndividualFromChromosome(ind.getChromosomes(), 1);
+            System.out.println("new pop: " + i.getGenotype() + ": " + i.getPhenotype().getStringNoSpace());
         }
     }
 
@@ -496,10 +497,10 @@ public class Test {
     }
 
     public static void main(String[] args) {
-        generateRandomPhenotypes();
+//        generateRandomPhenotypes();
 //        testSinglePointCrossoverOnRealPopulation();
 //        testSwapCrossover();
-//        testSwapCrossoverOnRealData();
+        testSwapCrossoverOnRealData();
 //        testSubtreeCrossover();
 //        testSelection();
 //        testSinglePointCrossoverOnRealPopulation();
