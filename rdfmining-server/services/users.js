@@ -1,9 +1,9 @@
 // TODO: s'inspirer du backend effectué dans le projet CV-Angular
 // https://github.com/RemiFELIN/cv-angular/blob/master/backend/server.js
-let users = require("../model/user");
+let User = require("../model/user");
 
 function login(req, res) {    
-    users.findOne({ username: req.query.username }).then((user) => {
+    User.findOne({ username: req.query.username }).then((user) => {
         console.log(req.query);
         // console.log(req.body);
         // if (err) return res.status(500).send('Error on the server');
@@ -19,4 +19,25 @@ function login(req, res) {
     });
 }
 
-module.exports = { login }
+function getUser(req, res) {
+    User.findOne({ username: req.query.username }).then((user) => {
+        if (!user) return res.status(200).send();
+        else return res.status(200).send(user);
+    });
+}
+
+function createUser(req, res) {
+    console.log(req.body);
+    const user = new User();
+    user.username = req.body.params.username;
+    user.password = req.body.params.password;
+    user.save().then((data) => {
+        if (data) {
+            res.status(200).send("User successfully created !");
+        } else {
+            res.status(401).send("Back error");
+        }
+    });
+}
+
+module.exports = { login, getUser, createUser }

@@ -9,28 +9,42 @@
                 <option v-for="value in values" :key="value" :value="value.cmd">{{ value.text }}</option>
             </select>
         </div>
+        <!-- <p>{{ values }}</p> -->
         <!-- <p>Selected mod: {{ mod }}</p> -->
     </div>
 </template>
     
     
 <script>
+import { toRaw } from 'vue';
+
 export default {
     name: 'CSelect',
     props: {
         description: String,
         defaultValue: Number,
-        values: [String]
+        values: Object
     },
     data() {
         return {
             val: this.defaultValue,
+            // data: this.values,
+            key: ""
         }
     },
     methods: {
         emitEventChanged() {
-            console.log(this.val);
-            this.$emit('selectValueChanged', this.val);
+            this.$emit('selectValueChanged', { description: this.getDescription(this.val), value: this.val });
+        },
+        getDescription(value) {
+            let json = toRaw(this.values);
+            let res = "";
+            Object.keys(json).forEach((key) => {
+                if(json[key].cmd === value) {
+                    res = json[key].text;
+                }
+            });
+            return res;
         }
     }
 }

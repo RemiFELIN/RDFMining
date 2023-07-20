@@ -1,6 +1,30 @@
 {
     "publications": [
         {
+            "link": "https://inria.hal.science/hal-04152604v1/document",
+            "distinction": {
+                "link": "https://pfia23.icube.unistra.fr/conferences/ic/index.html%3Fp=prix.html",
+                "type": "Prix mis en lumière"
+            },
+            "title": "Un cadre pour inclure et exploiter des informations probabilistes dans les rapports de validation SHACL",
+            "authors": [
+                "Rémi Felin",
+                "Catherine Faron",
+                "Andrea G. B. Tettamanzi"
+            ],
+            "keywords": [
+                "RDF",
+                "SHACL",
+                "Data Validation",
+                "Probabilistic Assessment"
+            ],
+            "conferenceTitle": "IC 'Ingénierie des Connaissances'",
+            "date": 2023,
+            "place": "Strasbourg, France",
+            "abstract": "SHACL est une recommandation du W3C qui permet de représenter en RDF des contraintes appelées formes (shapes en anglais) et de valider des graphes de données RDF par rapport à ces contraintes. Un validateur SHACL produit un résultat booléen, faux pour une forme SHACL quand au moins un triple dans le graphe RDF n'est pas conforme à la forme, vrai sinon. Nous proposons un cadre probabiliste pour valider un graphe RDF avec une proportion réaliste de triplets qui ne se conforment pas à une shape.",
+            "citation": "Rémi Felin, Catherine Faron, Andrea G B Tettamanzi. Un cadre pour inclure et exploiter des informations probabilistes dans les rapports de validation SHACL. 34es Journées francophones d'Ingénierie des Connaissances (IC 2023) @ Plate-Forme Intelligence Artificielle (PFIA 2023), Jul 2023, Strasbourg, France. ⟨hal-04152604⟩"
+        },
+        {
             "link": "https://hal.science/hal-01084444v1/document",
             "distinction": {
                 "link": "",

@@ -85,7 +85,7 @@ export default {
                 { text: "Generation", value: "generation", sortable: true },
                 { text: "SHACL Shape", value: "phenotype", width: 100 },
                 { text: "Reference Cardinality", value: "referenceCardinality", sortable: true},
-                { text: "#Violations", value: "numExceptions", sortable: true },
+                { text: "#Exceptions", value: "numExceptions", sortable: true },
                 { text: "#Confirmations", value: "numConfirmations", sortable: true },
                 { text: "Likelihood", value: "likelihood", sortable: true },
                 { text: "Fitness Score", value: "fitness", sortable: true },

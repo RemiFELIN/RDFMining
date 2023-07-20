@@ -1,34 +1,22 @@
 <template>
-    <GChart class="container" type="AreaChart" 
-        :data="individuals" 
-        :options="individuals_options" 
-    />
+    <GChart class="chart" type="AreaChart" :data="individuals" :options="individuals_options" />
     <!-- FITNESS VISUALISATION -->
-    <GChart class="container" type="AreaChart" 
-        :data="fitness" 
-        :options="fitness_options" 
-    />
+    <GChart class="chart" type="AreaChart" :data="fitness" :options="fitness_options" />
     <!-- POPULATION EVOLUTION VISUALISATION -->
-    <GChart class="container" type="AreaChart" 
-        :data="popEvol" 
-        :options="popEvol_options"
-    />
-    <GChart class="container" type="BubbleChart" 
-        :data="entitiesData" 
-        :options="bubble_options" 
-    />
+    <GChart class="chart" type="AreaChart" :data="popEvol" :options="popEvol_options" />
+    <GChart class="chart" type="BubbleChart" :data="entitiesData" :options="bubble_options" />
 </template>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.container {
+.chart {
     display: flex;
     justify-content: space-around;
     width: 100%;
 }
 
 @media screen and (max-width: 768px) {
-    .container {
+    .chart {
         flex-direction: column;
         align-items: center;
     }
@@ -53,21 +41,21 @@ export default {
                 title: "#Individuals with non-null Fitness Score",
                 titleTextStyle: { fontSize: 30 },
                 backgroundColor: "#ffffff",
-                hAxis: { 
-                    title: "Generation", 
-                    textStyle: { fontSize: 30 }, 
+                hAxis: {
+                    title: "Generation",
+                    textStyle: { fontSize: 30 },
                     titleTextStyle: { fontSize: 20, italic: false, bold: true }
                 },
-                vAxis: { 
-                    title: "# Individuals", 
+                vAxis: {
+                    title: "# Individuals",
                     titleTextStyle: { fontSize: 20, italic: false, bold: true },
                     textStyle: { fontSize: 30 },
                 },
                 series: {
                     0: { lineWidth: 5 }
                 },
-                colors: [ "#0059FF" ],
-                legend: {position: "top", textStyle: { color: "dark", fontSize: 25 } },
+                colors: ["#0059FF"],
+                legend: { position: "top", textStyle: { color: "dark", fontSize: 25 } },
                 // width: 1500,
                 height: 600,
             },
@@ -77,21 +65,21 @@ export default {
                 title: "Average Fitness Score Evolution Over Generations",
                 titleTextStyle: { fontSize: 30 },
                 backgroundColor: "#ffffff",
-                hAxis: { 
-                    title: "Generation", 
-                    textStyle: { fontSize: 30 }, 
+                hAxis: {
+                    title: "Generation",
+                    textStyle: { fontSize: 30 },
                     titleTextStyle: { fontSize: 20, italic: false, bold: true }
                 },
-                vAxis: { 
-                    title: "Fitness Score", 
+                vAxis: {
+                    title: "Fitness Score",
                     titleTextStyle: { fontSize: 20, italic: false, bold: true },
                     textStyle: { fontSize: 30 },
                 },
                 series: {
                     0: { lineWidth: 5 }
                 },
-                colors: [ "#E56800" ],
-                legend: {position: "top", textStyle: { color: "dark", fontSize: 25 } },
+                colors: ["#E56800"],
+                legend: { position: "top", textStyle: { color: "dark", fontSize: 25 } },
                 // width: 1500,
                 height: 600,
             },
@@ -101,22 +89,22 @@ export default {
                 title: "Population Evolution Over Generations",
                 titleTextStyle: { fontSize: 30 },
                 backgroundColor: "#ffffff",
-                hAxis: { 
+                hAxis: {
                     title: "Generation",
-                    textStyle: { fontSize: 30 }, 
-                    titleTextStyle: { fontSize: 20, italic: false, bold: true } 
+                    textStyle: { fontSize: 30 },
+                    titleTextStyle: { fontSize: 20, italic: false, bold: true }
                 },
-                vAxis: { 
+                vAxis: {
                     title: "Ratio",
-                    textStyle: { fontSize: 30 }, 
-                    titleTextStyle: { fontSize: 20, italic: false, bold: true } 
+                    textStyle: { fontSize: 30 },
+                    titleTextStyle: { fontSize: 20, italic: false, bold: true }
                 },
                 series: {
                     0: { lineWidth: 5 },
                     1: { lineWidth: 5 }
                 },
-                colors: [ "#00FF83", "31BF00" ],
-                legend: {position: "top", textStyle: { color: "dark", fontSize: 25 } },
+                colors: ["#00FF83", "31BF00"],
+                legend: { position: "top", textStyle: { color: "dark", fontSize: 25 } },
                 // width: 1500,
                 height: 600,
             },
@@ -126,27 +114,27 @@ export default {
                 title: "Overview of entities found",
                 titleTextStyle: { fontSize: 30 },
                 backgroundColor: "#ffffff",
-                hAxis: { 
+                hAxis: {
                     title: "Reference Cardinality",
-                    textStyle: { fontSize: 30 }, 
-                    titleTextStyle: { fontSize: 20, italic: false, bold: true } 
+                    textStyle: { fontSize: 30 },
+                    titleTextStyle: { fontSize: 20, italic: false, bold: true }
                 },
-                vAxis: { 
+                vAxis: {
                     title: "CPU Computation time (ms.)",
-                    textStyle: { fontSize: 30 }, 
-                    titleTextStyle: { fontSize: 20, italic: false, bold: true } 
+                    textStyle: { fontSize: 30 },
+                    titleTextStyle: { fontSize: 20, italic: false, bold: true }
                 },
                 bubble: { textStyle: { auraColor: 'none', fontSize: 1 } },
-                sizeAxis: { minSize: 20,  maxSize: 100 },
+                sizeAxis: { minSize: 20, maxSize: 100 },
                 explorer: {},
-                colorAxis: {colors: ['#15d600', '#ff0000']},
+                colorAxis: { colors: ['#15d600', '#ff0000'] },
                 // width: 1500,
                 height: 1000,
             },
         };
     },
     mounted() {
-        if(entities) {
+        if (entities) {
             // entities data
             this.entitiesData.push([
                 "phenotype",
@@ -157,27 +145,27 @@ export default {
             ]);
             // iterate on entities found
             entities.forEach((entity) => {
-                console.log(entity.numExceptions/entity.referenceCardinality)
+                console.log(entity.numExceptions / entity.referenceCardinality)
                 this.entitiesData.push([
                     entity.phenotype,
                     entity.referenceCardinality,
                     entity.elapsedTime,
-                    entity.numExceptions/entity.referenceCardinality,
+                    entity.numExceptions / entity.referenceCardinality,
                     entity.numExceptions
                 ]);
             });
         }
-        if(statistics) {
+        if (statistics) {
             // individuals values 
             this.individuals.push([
-                "Generations", 
+                "Generations",
                 "#Individuals with non-null fitness"
             ]);
             // fitness values
             // structure : 
             // ["Generations", "Fitness"]
             this.fitness.push([
-                "Generations", 
+                "Generations",
                 "Avg. Fitness"
             ]);
             // [1, 1.2]
@@ -188,7 +176,7 @@ export default {
             // structure : 
             // ["Generations", "Fitness"]
             this.popEvol.push([
-                "Generations", 
+                "Generations",
                 "Diversity Coefficient",
                 "Pop. Dvp. Rate",
             ]);

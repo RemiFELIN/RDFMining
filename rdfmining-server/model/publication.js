@@ -4,7 +4,7 @@ let Distinction = require('./distinction').schema;
 
 let PublicationSchema = Schema({
     link: String,
-    distinction: [Distinction],
+    distinction: Distinction,
     title: String,
     authors: [String],
     keywords: [String],

@@ -1,37 +1,41 @@
 <template>
     <div class="container">
-        <!-- List of projects -->
-        <div class="widget" v-if="projects.length != 0">
-            <h1>My projects</h1>
-            <!-- <h2>{{ id }}</h2> -->
-            <p v-for="project in projects" :key="project">{{ project.projectName }}</p>
-        </div>
-        <div class="widget" v-else>
-            <h1>No project initiated</h1>
-        </div>
-        <!-- Init project -->
-        <div class="widget" v-if="projects.length != 0">
-            <h1>I would like to start a new project !</h1>
-            <!-- <h2>{{ id }}</h2> -->
-            <CreateProject :id="id" :show="isVisibleForm"></CreateProject>
-            <button v-if="!isVisibleForm" @click="toggleForm">Let's go</button>
-            <button v-if="isVisibleForm" @click="toggleForm" class="disconnect">Cancel</button>
-        </div>
+        <CAccordion class="customizedAccordion">
+            <CAccordionItem :item-key="1">
+                <CAccordionHeader>My projects ({{ countProject }})</CAccordionHeader>
+                <CAccordionBody>
+                    <TabProjects v-if="showTabProjects" :id="id" :projects="projects"></TabProjects>
+                    <!-- <b>YOYO</b> -->
+                </CAccordionBody>
+            </CAccordionItem>
+            <CAccordionItem :item-key="2">
+                <CAccordionHeader>I would like to start a new project !</CAccordionHeader>
+                <CAccordionBody>
+                    <CreateProject :id="id"></CreateProject>
+                    <button v-if="!isVisibleForm" @click="toggleForm">Let's go</button>
+                    <button v-if="isVisibleForm" @click="toggleForm" class="disconnect">Cancel</button>
+                </CAccordionBody>
+            </CAccordionItem>
+        </CAccordion>
     </div>
 </template>
 
 
 <script>
-// import { publications } from '../data/publications.json'
-// import _ from 'lodash';
-import axios from 'axios';
 import CreateProject from './CreateProject.vue';
-import io from "socket.io-client";
+import TabProjects from './TabProjects.vue';
+import axios from "axios"
+import { CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody } from '@coreui/vue';
 
 export default {
     name: 'MyProjects',
     components: {
         CreateProject,
+        TabProjects,
+        CAccordion,
+        CAccordionItem,
+        CAccordionHeader,
+        CAccordionBody
     },
     props: {
         id: {
@@ -42,13 +46,20 @@ export default {
         return {
             projects: [],
             isVisibleForm: false,
-            socket: io("http://localhost:3000"),
+            countProject: 0,
+            showTabProjects: true,
             // papers: [],
             // keywords: [],
             // choosenFilter: "",
         }
     },
+    methods: {
+        toggleForm() {
+            this.isVisibleForm = !this.isVisibleForm;
+        }
+    },
     mounted() {
+        // build a request to the API
         // build a request to the API
         axios.get("http://localhost:3000/api/projects/", { params: { id: this.id } }).then(
             (response) => {
@@ -56,22 +67,36 @@ export default {
                     // fill papers list
                     response.data.forEach((project) => {
                         this.projects.push(project);
-                    })
+                        this.countProject++;
+                    });
                 }
             }
         ).catch((error) => {
             console.log(error);
         });
-    },
-    methods: {
-        toggleForm() {
-            this.isVisibleForm = !this.isVisibleForm;
-        }
     }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.customizedAccordion {
+    --cui-accordion-btn-color: rgb(14, 14, 163);
+}
+.bottom {
+    /* position: absolute; */
+    width: 50%;
+    /* bottom: 5%; */
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+}
 
+.top {
+    /* position: absolute; */
+    /* height: auto; */
+    display: block;
+    width: auto;
+    margin: 0;
+}
 </style>

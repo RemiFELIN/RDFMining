@@ -1,5 +1,5 @@
 <template>
-    <div class="container" v-if="show">
+    <div class="container">
         <!-- <h1>It's time to start your own projects with RDFMiner !</h1> -->
         <form>
             <!-- Project Name -->
@@ -80,9 +80,6 @@ export default {
         id: {
             type: String
         },
-        show: {
-            type: Boolean
-        }
     },
     components: {
         CSlider,
@@ -98,8 +95,11 @@ export default {
             // cmdline of the experiment
             cmdline: "",
             cmdlineBase: "docker-compose exec -T rdfminer ./rdfminer/scripts/run.sh ",
+            // params json
+            params: {},
             outputFolder: "",
             mod: "",
+            modKey: "",
             // BNF Grammar
             bnfContent: "",
             // pop size
@@ -139,8 +139,9 @@ export default {
         }
     },
     methods: {
-        updateMod(mod) {
-            this.mod = mod;
+        updateMod(data) {
+            this.mod = data.value;
+            this.modKey = data.description;
         },
         updatePopSize(populationSize) {
             this.populationSize = populationSize;
@@ -200,7 +201,7 @@ export default {
         addParam(cmd, value) {
             return cmd + " " + value + " ";
         },
-        generateCommandLine() {
+        registerProject() {
             // Mod
             this.cmdline = this.cmdlineBase + this.mod + " " + this.getProjectName() + " "
             // In the GE Context
@@ -223,15 +224,32 @@ export default {
                     this.cmdline += rdfminer.parameters.diversity + " 0";
                 }
             }
+            // fill params object
+            this.params = {
+                mod: this.mod,
+                outputFolder: this.outputFolder,
+                populationSize: this.populationSize,
+                kBase: this.totalEffort,
+                lenChromosome: this.chromSize,
+                maxWrapp: this.maxWrap,
+                typeSelection: this.choosenSelection,
+                typeMutation: this.choosenMutation,
+                typeCrossover: this.choosenCrossover,
+                noveltySearch: this.enableNoveltySearch,
+                crowding: this.enableCrowding
+            }
         },
         postProject() {
-            this.generateCommandLine();
+            this.registerProject();
+            console.log(this.params);
             // console.log(this.cmdline);
             // build a request to the API
             axios.post("http://localhost:3000/api/project/setup", {
                 userId: this.id,
                 projectName: this.outputFolder,
-                command: this.cmdline
+                command: this.cmdline,
+                mod: this.modKey,
+                params: this.params,
             }).then(
                 (response) => {
                     if (response.status === 200) {
@@ -308,7 +326,6 @@ input[type=submit] {
 
 /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
 @media screen and (max-width: 600px) {
-
     .col-25,
     .col-75,
     input[type=submit] {

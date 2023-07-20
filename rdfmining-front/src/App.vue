@@ -1,57 +1,60 @@
 <template>
-  <CHeader :isAuth="isAuth"></CHeader>
+  <CHeader :isAuth="isAuth" @login="toggleLoginPopup" @logout="logout" @subscribe="toggleSubscribePopup"></CHeader>
   <!-- <b>Hello ! connected:{{ isAuth }} and username:{{ username }}</b> -->
   <!-- <b style="font-size: 3vw;">Hello {{ username }} !</b> -->
   <h1 v-if="!isAuth">Welcome to the RDFMiner UI !</h1>
-  <h1 v-else>Hello {{ username }} [_id:{{ id }}]</h1>
+  <h1 v-else>Hello {{ username }} ! Nice to see you !</h1>
   <div style="height: 86vh;">
     <router-view :id="id"></router-view>
-    <AuthComponent :enable="enablePopup" @close="togglePopup" @auth-conf="updateStatus"></AuthComponent>
+    <LogIn :enable="enableLoginPopup" @close="toggleLoginPopup" @login="login"></LogIn>
+    <VSubscribe :enable="enableSubscribePopup" @close="toggleSubscribePopup"></VSubscribe>
   </div>
-  <!-- Connection as footer -->
-  <footer>
-    <button v-if="!isAuth" @click="togglePopup">Log in</button>
-    <button v-else class="disconnect" @click="logout">Log out</button>
-  </footer>
 </template>
 
 <script>
+// IMPORTANT
+// CoreUI VueJS: https://coreui.io/vue/docs
 import CHeader from './components/Header.vue'
-import AuthComponent from './vues/auth/AuthComponent.vue';
+// import AuthComponent from './vues/auth/AuthComponent.vue';
+import LogIn from './vues/auth/logIn.vue'
+import VSubscribe from './vues/auth/VSubscribe.vue'
+
+import '@coreui/coreui/dist/css/coreui.min.css'
 
 export default {
   name: 'App',
   components: {
     CHeader,
-    AuthComponent
+    LogIn,
+    VSubscribe
   },
   data() {
     return {
       username: "",
       id: "",
       isAuth: false,
-      enablePopup: false,
+      enableLoginPopup: false,
+      enableSubscribePopup: false,
     }
   },
   methods: {
-    togglePopup() {
-      this.enablePopup = !this.enablePopup;
+    toggleLoginPopup() {
+      this.enableLoginPopup = !this.enableLoginPopup;
     },
-    updateStatus(data) {
+    toggleSubscribePopup() {
+      this.enableSubscribePopup = !this.enableSubscribePopup;
+    },
+    login(data) {
       this.id = data.id;
       this.isAuth = data.isAuth;
       this.username = data.username;
     },
     logout() {
+      this.id = "",
       this.isAuth = false;
       this.username = "";
     }
   }
-  // props: {
-  //   username: {
-  //     type: String
-  //   }
-  // }
 }
 </script>
 

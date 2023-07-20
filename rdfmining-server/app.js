@@ -30,34 +30,40 @@ mongoose.connect(settings.uri, settings.options)
 // REST API SERVICES
 const prefix = "/api/"
 // authentification
-const auth = require("./services/authentification");
+const users = require("./services/users");
 // launcher
 const project = require("./services/project");
 // publications
 const publications = require("./services/publications");
+
+// SOCKET IO
+const io = socketIO(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "X-Access-Token"],
+    },
+});
 
 // Pour accepter les connexions cross-domain (CORS)
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-Access-Token");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    req.io = io;
     next();
 });
 
-// Routes settings
-app.route(prefix + "auth").get(auth.login);
-app.route(prefix + "projects").get(project.getProjectsByUser);
-app.route(prefix + "project/setup").post(project.createProject);
-app.route(prefix + "publications").get(publications.getAll);
 
-// SOCKET IO
-const io = socketIO(server, {
-    cors: {
-      origin: "*",
-      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "X-Access-Token"],
-    },
-  });
+// Routes settings
+app.route(prefix + "auth").get(users.login);
+app.route(prefix + "user").get(users.getUser).post(users.createUser);
+app.route(prefix + "publications").get(publications.getAll);
+app.route(prefix + "project/setup").post(project.createProject);
+app.route(prefix + "project/delete").post(project.deleteProject);
+// Real-time services
+app.route(prefix + "projects").get(project.getProjectsByUser);
+
 io.on("connection", (socket) => {
     console.log("connected !");
 });
@@ -70,4 +76,3 @@ server.listen(port, () => {
     console.log("##########################################")
 })
 
-// compose.exec

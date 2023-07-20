@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@codemirror/lang-javascript": "^6.1.9",
+    "@coreui/vue": "^4.10.0",
     "axios": "^1.4.0",
     "codemirror": "^6.0.1",
     "core-js": "^3.8.3",
