@@ -73,12 +73,8 @@ export default {
                     }
                 }).then(
                     (response) => {
-                        if (response.status === 200) {
-                            alert(response.data);
-                            this.$emit("close");
-                        } else {
-                            alert(response.data);
-                        }
+                        alert(response.data);
+                        if (response.status === 200) this.$emit("close");
                     }
                 ).catch((error) => {
                     console.log(error);

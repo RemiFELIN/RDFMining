@@ -1,78 +1,186 @@
 <template>
-    <div class="container">
-        <!-- <h1>It's time to start your own projects with RDFMiner !</h1> -->
-        <form>
-            <!-- Project Name -->
-            <div class="row">
-                <div class="col-25">
-                    <label for="pname">Name of the project</label>
-                </div>
-                <div class="col-75">
-                    <input type="text" id="pname" name="projectName" placeholder="MyProject ; my_project ; my-project ; ..."
-                        v-model="outputFolder">
-                </div>
-            </div>
-            <CSelect :description="'Mod'" :values="features" @selectValueChanged="updateMod"></CSelect>
-            <!-- FOR GRAMMATICAL EVOLUTION of OWL Axioms -->
-            <div v-if="mod.includes('-ge')">
-                <!-- Provide BNF Grammar file -->
-                <BNFGrammar v-if="mod.includes('-ra')" :type="'AXIOM'" @textarea="updateBNFSample"></BNFGrammar>
-                <BNFGrammar v-if="mod.includes('-rs')" :type="'SHACL'" @textarea="updateBNFSample"></BNFGrammar>
-                <!-- Population size -->
-                <CTextNumber :description="'Population Size (min: 10)'" :defaultValue="populationSize" :min="10"
-                    @textNumberChanged="updatePopSize"></CTextNumber>
-                <!-- Total effort -->
-                <CTextNumber :description="'Total effort'" :defaultValue="totalEffort" :min="0"
-                    @textNumberChanged="updateTotalEffort"></CTextNumber>
-                <!-- N GENERATIONS -->
-                <!-- <b>This will give you a number of {{ numberOfGenerations }} generations !</b> -->
-                <!-- Size of chromosomes -->
-                <CTextNumber :description="'Chromosome Size'" :defaultValue="chromSize" :min="1"
-                    @textNumberChanged="updateChromSize"></CTextNumber>
-                <!-- Max wrapping -->
-                <CTextNumber :description="'Max Wrap'" :defaultValue="maxWrap" :min="1" @textNumberChanged="updateMaxWrap">
-                </CTextNumber>
-                <!-- Selection: type of selection and proportion -->
-                <CSelect :description="'Selection Type'" :defaultValue="choosenSelection" :values="typeSelection"
-                    @selectValueChanged="updateTypeSelection"></CSelect>
-                <CSlider :description="'Selected Individuals Proportion'" :defaultValue="selectionRate"
-                    @pValue="updateSelectionRate"></CSlider>
-                <!-- Crossover: type of crossover and probability -->
-                <CSelect :description="'Crossover Type'" :defaultValue="choosenCrossover" :values="typeCrossover"
-                    @selectValueChanged="updateTypeCrossover"></CSelect>
-                <CSlider :description="'P(Crossover)'" :defaultValue="pCrossValue" @pValue="updatePCrossValue"></CSlider>
-                <!-- Mutation: type of mutation and probability -->
-                <CSelect :description="'Mutation Type'" :defaultValue="choosenMutation" :values="typeMutation"
-                    @selectValueChanged="updateTypeMutation"></CSelect>
-                <CSlider :description="'P(Mutation)'" :defaultValue="pMutValue" @pValue="updatePMutValue"></CSlider>
-                <!-- Enable Crowding method -->
-                <CCheckbox :description="'Enable Crowding Method ?'" :defaultValue="false"
-                    @checkboxChanged="updateEnableCrowding"></CCheckbox>
-                <!-- Enable Novelty Search -->
-                <CCheckbox :description="'Enable Novelty Search ?'" :defaultValue="false"
-                    @checkboxChanged="updateEnableNoveltySearch"></CCheckbox>
-                <!-- Timeout: SPARQL timeout and/or timecap -->
-            </div>
-            <div class="row">
-                <!-- <button type="button" v-on:click="generateCommandLine">Generate cmdline</button> -->
-                <button type="button" v-on:click="postProject">Generate cmdline</button>
-            </div>
-        </form>
-    </div>
-    <!-- <b>La commande: {{ cmdline }}</b> -->
-    <!-- <p>Mod: {{ mod }}</p> -->
+    <CForm>
+        <!-- 
+            Project Name 
+        -->
+        <CRow class="mb-3">
+            <CFormLabel for="projectName" class="col-sm-2 col-form-label">Name of the project</CFormLabel>
+            <CCol sm="10">
+                <CFormInput type="email" class="col-sm-2 col-form-label" id="projectName"
+                    placeholder="Example: MyProject; my-project; my_project" v-model="projectName" />
+            </CCol>
+        </CRow>
+        <!-- 
+            Mod selection 
+        -->
+        <CRow class="mb-3">
+            <CFormLabel for="modSelection" class="col-sm-2 col-form-label">I would like to ...</CFormLabel>
+            <CCol sm="10">
+                <CFormSelect aria-label="select-mod" v-model="mod">
+                    <option selected disabled>Select the required mode</option>
+                    <option v-for="feature in features" :key="feature" :value="feature.cmd">{{ feature.text }}</option>
+                </CFormSelect>
+            </CCol>
+        </CRow>
+        <!-- 
+            Depending on the mod, we load the right component 
+            Just below: Grammatical Evolution Mod
+        -->
+        <div v-if="mod.includes('ge')">
+            <!--
+                BNF Grammar template
+            -->
+            <CRow class="mb-3">
+                <CFormLabel for="bnfTemplate" class="col-sm-2 col-form-label">Select a BNF Grammar template</CFormLabel>
+                <CCol sm="10">
+                    <CFormSelect v-if="mod.includes('ra')" aria-label="select-bnf-axioms" v-model="selectedTemplate">
+                        <option selected disabled>Select the required template</option>
+                        <option v-for="bnf in axiomTemplates" :key="bnf" :value="bnf.content">{{ bnf.key }}</option>
+                    </CFormSelect>
+                    <CFormSelect v-else aria-label="select-bnf-shacl" v-model="selectedTemplate">
+                        <option selected disabled>Select the required template</option>
+                        <option v-for="bnf in shaclTemplates" :key="bnf" :value="bnf.content">{{ bnf.key }}</option>
+                    </CFormSelect>
+                </CCol>
+            </CRow>
+            <!--
+                BNF Grammar content
+            -->
+            <CRow class="mb-3">
+                <CFormLabel for="bnfContent" class="col-sm-2 col-form-label">The selected BNF Grammar (editable)
+                </CFormLabel>
+                <CCol sm="10">
+                    <CFormTextarea id="bnfGrammar" style="color: rgb(1, 108, 157)">
+                        {{ selectedTemplate }}
+                    </CFormTextarea>
+                </CCol>
+            </CRow>
+            <!--
+                Population size
+            -->
+            <CRow class="mb-3">
+                <CFormLabel for="populationSize" class="col-sm-2 col-form-label">Population size</CFormLabel>
+                <CCol sm="9">
+                    <CFormRange :min="50" :max="1000" :step="50" id="slider-popSize" v-model="populationSize" />
+                </CCol>
+                <CCol sm="1">
+                    <CFormLabel for="val-popSize" class="col-form-label">Value: <b>{{ populationSize }}</b></CFormLabel>
+                </CCol>
+            </CRow>
+            <!-- 
+                Total effort
+            -->
+            <CRow class="mb-3">
+                <CFormLabel for="totalEffort" class="col-sm-2 col-form-label">Total effort</CFormLabel>
+                <CCol sm="9">
+                    <CFormRange :min="1000" :max="maxEffort" :step="1000" id="slider-totalEffort" v-model="totalEffort" />
+                </CCol>
+                <CCol sm="1">
+                    <CFormLabel for="val-totalEffort" class="col-form-label">Value: <b>{{ totalEffort }}</b></CFormLabel>
+                </CCol>
+            </CRow>
+            <CAlert color="success">
+                You will perform <b>{{ numberOfGenerations }} generations !</b>
+            </CAlert>
+            <!-- 
+                Selection: type of selection and proportion 
+            -->
+            <CRow class="mb-3">
+                <CFormLabel for="selectionType" class="col-sm-2 col-form-label">Selection</CFormLabel>
+                <CCol sm="3">
+                    <CFormSelect aria-label="select-selection" v-model="choosenSelection">
+                        <option selected disabled>Select the required selection</option>
+                        <option v-for="selection in typeSelection" :key="selection" :value="selection.cmd">{{ selection.text }}</option>
+                    </CFormSelect>
+                </CCol>
+                <CCol sm="6">
+                    <CFormRange :min="0" :max="1" :step="0.05" id="slider-selection" v-model="selectionRate" />
+                </CCol>
+                <CCol sm="1">
+                    <CFormLabel for="val-selectionRate" class="col-form-label">Rate: <b>{{ selectionRate }}</b></CFormLabel>
+                </CCol>
+            </CRow>
+            <!-- 
+                Crossover: type of crossover and proportion 
+            -->
+            <CRow class="mb-3">
+                <CFormLabel for="crossoverType" class="col-sm-2 col-form-label">Crossover</CFormLabel>
+                <CCol sm="3">
+                    <CFormSelect aria-label="select-crossover" v-model="choosenCrossover">
+                        <option selected disabled>Select the required crossover</option>
+                        <option v-for="selection in typeCrossover" :key="selection" :value="selection.cmd">{{ selection.text }}</option>
+                    </CFormSelect>
+                </CCol>
+                <CCol sm="6">
+                    <CFormRange :min="0" :max="1" :step="0.05" id="slider-crossover" v-model="crossoverRate" />
+                </CCol>
+                <CCol sm="1">
+                    <CFormLabel for="val-crossoverRate" class="col-form-label">Rate: <b>{{ crossoverRate }}</b></CFormLabel>
+                </CCol>
+            </CRow>
+            <!-- 
+                Mutation: type of mutation and proportion 
+            -->
+            <CRow class="mb-3">
+                <CFormLabel for="mutationType" class="col-sm-2 col-form-label">Mutation</CFormLabel>
+                <CCol sm="3">
+                    <CFormSelect aria-label="select-mutation" v-model="choosenMutation">
+                        <option selected disabled>Select the required mutation</option>
+                        <option v-for="selection in typeMutation" :key="selection" :value="selection.cmd">{{ selection.text }}</option>
+                    </CFormSelect>
+                </CCol>
+                <CCol sm="6">
+                    <CFormRange :min="0" :max="1" :step="0.01" id="slider-mutation" v-model="mutationRate" />
+                </CCol>
+                <CCol sm="1">
+                    <CFormLabel for="val-mutationRate" class="col-form-label">Rate: <b>{{ mutationRate }}</b></CFormLabel>
+                </CCol>
+            </CRow>
+            <!-- 
+                Size of chromosomes 
+            -->
+            <CRow class="mb-3">
+                <CFormLabel for="chromSize" class="col-sm-2 col-form-label">Chromosomes size</CFormLabel>
+                <CCol sm="9">
+                    <CFormRange :min="1" :max="20" :step="1" id="slider-chromSize" v-model="chromSize" />
+                </CCol>
+                <CCol sm="1">
+                    <CFormLabel for="val-chromSize" class="col-form-label">Value: <b>{{ chromSize }}</b></CFormLabel>
+                </CCol>
+            </CRow>
+            <!-- 
+                Max Wrapping
+            -->
+            <CRow class="mb-3">
+                <CFormLabel for="maxWrap" class="col-sm-2 col-form-label">Max Wrap</CFormLabel>
+                <CCol sm="9">
+                    <CFormRange :min="1" :max="100" :step="1" id="slider-maxWrap" v-model="maxWrap" />
+                </CCol>
+                <CCol sm="1">
+                    <CFormLabel for="val-maxWrapp" class="col-form-label">Value: <b>{{ maxWrap }}</b></CFormLabel>
+                </CCol>
+            </CRow>
+            <!-- 
+                Crowding Method - Novelty Search
+            -->
+            <CRow class="mb-3">
+                <CFormLabel for="maxWrap" class="col-sm-2 col-form-label">Some Optimizers</CFormLabel>
+                <CCol sm="5">
+                    <CFormSwitch label="Crowding method (boost the population diversity)" id="switch-crowding" v-model="enableCrowding"/>
+                </CCol>
+                <CCol sm="5">
+                    <CFormSwitch label="Novelty Search (Experimental: only for SubClassOf axioms)" id="switch-ns" v-model="enableNoveltySearch" :disabled="!mod.includes('ra')"/>
+                </CCol>
+            </CRow>
+        </div>
+    </CForm>
 </template>
 
 
 <script>
-// import { ref } from 'vue';
 import { rdfminer } from '../../data/form.json'
-import CSlider from '@/components/form/Slider.vue';
-import BNFGrammar from '@/components/form/BNFGrammar.vue';
-import CTextNumber from '@/components/form/TextNumber.vue';
-import CSelect from '@/components/form/Select.vue';
-import CCheckbox from '@/components/form/Checkbox.vue';
 import axios from "axios"
+import { CForm, CRow, CFormLabel, CCol, CFormInput, CFormSelect, CFormTextarea, CFormRange, CAlert, CFormSwitch } from '@coreui/vue'
 
 export default {
     name: 'CreateProject',
@@ -82,22 +190,31 @@ export default {
         },
     },
     components: {
-        CSlider,
-        BNFGrammar,
-        CTextNumber,
-        CSelect,
-        CCheckbox
+        CForm, CRow, CFormLabel, CCol, CFormInput, CFormSelect, CFormTextarea, CFormRange, CAlert, CFormSwitch
+    },
+    watch: {
+        totalEffort() {
+            this.updateTotalEffort();
+        },
+        populationSize() {
+            this.updateMaxEffort();
+        }
     },
     data() {
         return {
-            // map json
+            // features
             features: [],
+            // BNF Grammar templates
+            shaclTemplates: [],
+            axiomTemplates: [],
+            selectedTemplate: "",
+            descriptionTemplate: "",
             // cmdline of the experiment
             cmdline: "",
             cmdlineBase: "docker-compose exec -T rdfminer ./rdfminer/scripts/run.sh ",
             // params json
             params: {},
-            outputFolder: "",
+            projectName: "",
             mod: "",
             modKey: "",
             // BNF Grammar
@@ -105,9 +222,10 @@ export default {
             // pop size
             populationSize: 200,
             // total effort 
-            totalEffort: 1000,
+            maxEffort: 10000,
+            totalEffort: 10000,
             // ngen
-            numberOfGenerations: 5,
+            numberOfGenerations: 50,
             // chromosomes size
             chromSize: 2,
             // max wrapp
@@ -119,11 +237,11 @@ export default {
             // Crossover
             typeCrossover: [],
             choosenCrossover: 4,
-            pCrossValue: 0.75,
+            crossoverRate: 0.75,
             // Mutation
             typeMutation: [],
             choosenMutation: 1,
-            pMutValue: 0.01,
+            mutationRate: 0.01,
             // crowding
             enableCrowding: false,
             // novelty search
@@ -131,72 +249,33 @@ export default {
         }
     },
     mounted() {
+        // read json
         if (rdfminer) {
+            // features
             this.features = rdfminer.features;
+            // BNF templates
+            this.axiomTemplates = rdfminer.axiomsGrammar;
+            this.shaclTemplates = rdfminer.SHACLGrammar;
             this.typeSelection = rdfminer.typeSelection;
             this.typeCrossover = rdfminer.typeCrossover;
             this.typeMutation = rdfminer.typeMutation;
         }
     },
     methods: {
-        updateMod(data) {
-            this.mod = data.value;
-            this.modKey = data.description;
-        },
-        updatePopSize(populationSize) {
-            this.populationSize = populationSize;
-            this.updateNumberOfGenerations();
-            // console.log("popSize= " + this.populationSize);
-        },
-        updateTotalEffort(totalEffort) {
-            this.totalEffort = totalEffort;
-            this.updateNumberOfGenerations();
-        },
-        updateChromSize(chromSize) {
-            this.chromSize = chromSize;
-        },
-        updateMaxWrap(maxWrap) {
-            this.maxWrap = maxWrap;
-        },
-        updateTypeSelection(type) {
-            this.choosenSelection = type;
-        },
-        updateSelectionRate(selectionRate) {
-            this.selectionRate = selectionRate;
-        },
-        updateTypeCrossover(choosenCrossover) {
-            this.choosenCrossover = choosenCrossover;
-        },
-        updatePCrossValue(pCrossValue) {
-            this.pCrossValue = pCrossValue;
-        },
-        updateTypeMutation(choosenMutation) {
-            this.choosenMutation = choosenMutation;
-        },
-        updatePMutValue(pMutValue) {
-            this.pMutValue = pMutValue;
-        },
-        updateEnableCrowding(enableCrowding) {
-            this.enableCrowding = enableCrowding;
-        },
-        updateEnableNoveltySearch(enableNoveltySearch) {
-            this.enableNoveltySearch = enableNoveltySearch;
-        },
-        updateBNFSample(bnfContent) {
-            // console.log("New value into Experiences.vue: " + sample);
-            this.bnfContent = bnfContent;
-        },
-        updateNumberOfGenerations() {
-            // console.log("i: " + this.populationSize)
-            // console.log("j: " + this.totalEffort)
+        updateTotalEffort() {
             this.numberOfGenerations = Math.floor(this.totalEffort / this.populationSize);
+        },
+        updateMaxEffort() {
+            this.maxEffort = this.populationSize * 50;
+            this.totalEffort = this.maxEffort;
+            this.updateTotalEffort();
         },
         getProjectName() {
             // if the project name is not defined 
-            if (this.outputFolder == "") {
-                this.outputFolder = "MyProject"
+            if (this.projectName == "") {
+                this.projectName = "MyProject"
             }
-            return " -dir " + this.outputFolder;
+            return " -dir " + this.projectName;
         },
         addParam(cmd, value) {
             return cmd + " " + value + " ";
@@ -227,7 +306,7 @@ export default {
             // fill params object
             this.params = {
                 mod: this.mod,
-                outputFolder: this.outputFolder,
+                projectName: this.projectName,
                 populationSize: this.populationSize,
                 kBase: this.totalEffort,
                 lenChromosome: this.chromSize,
@@ -246,7 +325,7 @@ export default {
             // build a request to the API
             axios.post("http://localhost:3000/api/project/setup", {
                 userId: this.id,
-                projectName: this.outputFolder,
+                projectName: this.projectName,
                 command: this.cmdline,
                 mod: this.modKey,
                 params: this.params,
@@ -266,70 +345,3 @@ export default {
     }
 }
 </script>
-
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-/* Style inputs, select elements and textareas */
-* {
-    font-size: 1.1em;
-}
-
-input[type=text],
-select,
-textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    resize: vertical;
-}
-
-/* Style the label to display next to the inputs */
-label {
-    padding: 12px 12px 12px 0;
-    display: inline-block;
-}
-
-/* Style the submit button */
-input[type=submit] {
-    background-color: #04AA6D;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    float: right;
-}
-
-/* Floating column for labels: 25% width */
-.col-25 {
-    float: left;
-    width: 25%;
-    margin-top: 6px;
-}
-
-/* Floating column for inputs: 75% width */
-.col-75 {
-    float: left;
-    width: 75%;
-    margin-top: 6px;
-}
-
-/* Clear floats after the columns */
-.row:after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
-/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 600px) {
-    .col-25,
-    .col-75,
-    input[type=submit] {
-        width: 100%;
-        margin-top: 0;
-    }
-}</style>

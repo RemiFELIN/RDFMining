@@ -35,6 +35,8 @@ const users = require("./services/users");
 const project = require("./services/project");
 // publications
 const publications = require("./services/publications");
+// specifications
+const specifications = require("./services/specifications");
 
 // SOCKET IO
 const io = socketIO(server, {
@@ -58,6 +60,7 @@ app.use((req, res, next) => {
 // Routes settings
 app.route(prefix + "auth").get(users.login);
 app.route(prefix + "user").get(users.getUser).post(users.createUser);
+app.route(prefix + "spec").get(specifications.get);
 app.route(prefix + "publications").get(publications.getAll);
 app.route(prefix + "project/setup").post(project.createProject);
 app.route(prefix + "project/delete").post(project.deleteProject);

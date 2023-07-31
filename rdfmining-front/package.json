@@ -19,6 +19,7 @@
     "vue": "^3.2.13",
     "vue-codemirror": "^6.1.1",
     "vue-google-charts": "^1.1.0",
+    "vue-openapi": "^0.10.0",
     "vue-router": "^4.2.2",
     "vue3-easy-data-table": "^1.5.45"
   },

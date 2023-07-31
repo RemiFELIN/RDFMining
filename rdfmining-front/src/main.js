@@ -9,6 +9,7 @@ import WelcomeHome from './vues/Home.vue'
 import VueVisualisation from './vues/Visualisation.vue'
 import MyProjects from './vues/projects/MyProjects.vue'
 import RDFMinerPublications from './vues/Publications.vue'
+import SwaggerDoc from './rdfminer/SwaggerDoc.vue'
 // import LogIn from './vues/LogIn.vue'
 
 const routes = [
@@ -16,6 +17,7 @@ const routes = [
     { path: '/projects', component: MyProjects },
     { path: '/visualisation', component: VueVisualisation },
     { path: '/publications', component: RDFMinerPublications },
+    { path: '/api', component: SwaggerDoc },
     // { path: '/login', component: LogIn }
 ]
 

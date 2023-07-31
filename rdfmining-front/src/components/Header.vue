@@ -1,20 +1,22 @@
 <template>
   <CNavbar expand="lg" color-scheme="light" class="bg-light">
     <CContainer fluid>
-      <CNavbarBrand>RDFMiner UI</CNavbarBrand>
+      <CNavbarBrand style="pointer-events: none;">RDFMiner UI</CNavbarBrand>
       <!-- <CNavbarToggler aria-label="Toggle navigation" aria-expanded={visible} @click="visible = !visible" /> -->
       <CCollapse class="navbar-collapse" :visible="visible">
         <CNavbarNav component="nav">
-          <CNavLink><router-link to="/">Home</router-link></CNavLink>
-          <CNavLink :disabled="!isAuth"><router-link to="/projects">Projects</router-link></CNavLink>
+          <CNavItem>
+            <CNavLink><router-link to="/">Home</router-link></CNavLink>
+          </CNavItem>
+          <CNavLink :disabled="!isAuth" :style="!isAuth ? 'opacity: 0.3' : ''"><router-link to="/projects">Projects</router-link></CNavLink>
           <CNavLink><router-link to="/publications">Publications</router-link></CNavLink>
-          <!-- <CNavLink class="right"><router-link to="/publications">Log in</router-link></CNavLink> -->
-          <CButton type="submit" :color="!isAuth ? 'success' : 'danger'" variant="outline"
+          <!-- <CNavLink><router-link to="/api">API</router-link></CNavLink> -->
+          <CButton class="right" v-if="!isAuth" type="submit" color="info" variant="outline" @click="onSubscribeClick">
+            Subscribe
+          </CButton>
+          <CButton class="right" type="submit" :color="!isAuth ? 'success' : 'danger'" variant="outline"
             @click="onSubmitClick">
             {{ !isAuth ? "Log In" : "Log Out " }}
-          </CButton>
-          <CButton v-if="!isAuth" type="submit" color="info" variant="outline"
-            @click="onSubscribeClick">Subscribe
           </CButton>
         </CNavbarNav>
       </CCollapse>
@@ -23,23 +25,18 @@
 </template>
   
 <script>
-import { CNavbar, CContainer, CNavbarBrand, CCollapse, CNavbarNav, CNavLink, CButton } from '@coreui/vue';
+import { CNavbar, CContainer, CNavbarBrand, CCollapse, CNavbarNav, CNavLink, CButton, CNavItem } from '@coreui/vue';
 
 export default {
   name: 'CHeader',
   components: {
-    CNavbar, CContainer, CNavbarBrand, CCollapse, CNavbarNav, CNavLink, CButton
+    CNavbar, CContainer, CNavbarBrand, CCollapse, CNavbarNav, CNavLink, CButton, CNavItem
   },
   props: {
     isAuth: {
       type: Boolean
     }
   },
-  // data() {
-  //   return {
-  //     isLogIn: true,
-  //   }
-  // },
   methods: {
     onSubmitClick() {
       if (!this.isAuth) {
@@ -56,9 +53,28 @@ export default {
 </script>
   
 <style scoped>
+a {
+  color: #0060B6;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #00A0C6;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 .right {
   position: absolute;
   right: 0;
+  top: 0;
+  margin-right: 30px;
+  margin-left: 30px;
+  width: 100px;
+}
+
+.right+.right {
+  margin-right: 10%;
 }
 </style>
   

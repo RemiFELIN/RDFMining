@@ -2,12 +2,12 @@
   <CHeader :isAuth="isAuth" @login="toggleLoginPopup" @logout="logout" @subscribe="toggleSubscribePopup"></CHeader>
   <!-- <b>Hello ! connected:{{ isAuth }} and username:{{ username }}</b> -->
   <!-- <b style="font-size: 3vw;">Hello {{ username }} !</b> -->
-  <h1 v-if="!isAuth">Welcome to the RDFMiner UI !</h1>
-  <h1 v-else>Hello {{ username }} ! Nice to see you !</h1>
+  <!-- <h1 v-if="!isAuth">Welcome to the RDFMiner UI !</h1> -->
+  <!-- <h1 v-else>Hello {{ username }} ! Nice to see you !</h1> -->
   <div style="height: 86vh;">
     <router-view :id="id"></router-view>
-    <LogIn :enable="enableLoginPopup" @close="toggleLoginPopup" @login="login"></LogIn>
     <VSubscribe :enable="enableSubscribePopup" @close="toggleSubscribePopup"></VSubscribe>
+    <LogIn :enable="enableLoginPopup" @close="toggleLoginPopup" @login="login"></LogIn>
   </div>
 </template>
 
