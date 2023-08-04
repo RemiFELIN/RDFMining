@@ -11,9 +11,7 @@
             <CAccordionItem :item-key="2">
                 <CAccordionHeader>I would like to start a new project !</CAccordionHeader>
                 <CAccordionBody>
-                    <CreateProject :id="id"></CreateProject>
-                    <button v-if="!isVisibleForm" @click="toggleForm">Let's go</button>
-                    <button v-if="isVisibleForm" @click="toggleForm" class="disconnect">Cancel</button>
+                    <CreateProject :id="id" @new="refresh"></CreateProject>
                 </CAccordionBody>
             </CAccordionItem>
         </CAccordion>
@@ -56,6 +54,23 @@ export default {
     methods: {
         toggleForm() {
             this.isVisibleForm = !this.isVisibleForm;
+        },
+        refresh() {
+            this.countProject = 0;
+            this.projects = [];
+            axios.get("http://localhost:3000/api/projects/", { params: { id: this.id } }).then(
+                (response) => {
+                    if (response.status === 200) {
+                        // fill papers list
+                        response.data.forEach((project) => {
+                            this.projects.push(project);
+                            this.countProject++;
+                        });
+                    }
+                }
+            ).catch((error) => {
+                console.log(error);
+            });
         }
     },
     mounted() {
@@ -83,6 +98,7 @@ export default {
 .customizedAccordion {
     --cui-accordion-btn-color: rgb(14, 14, 163);
 }
+
 .bottom {
     /* position: absolute; */
     width: 50%;

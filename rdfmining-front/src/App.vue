@@ -4,20 +4,31 @@
   <!-- <b style="font-size: 3vw;">Hello {{ username }} !</b> -->
   <!-- <h1 v-if="!isAuth">Welcome to the RDFMiner UI !</h1> -->
   <!-- <h1 v-else>Hello {{ username }} ! Nice to see you !</h1> -->
-  <div style="height: 86vh;">
+  <div>
     <router-view :id="id"></router-view>
     <VSubscribe :enable="enableSubscribePopup" @close="toggleSubscribePopup"></VSubscribe>
     <LogIn :enable="enableLoginPopup" @close="toggleLoginPopup" @login="login"></LogIn>
   </div>
+  <!-- Footer -->
+  <CFooter :style="cfooterStyle" position="fixed">
+    <div>
+      <!-- <CLink href="https://coreui.io">CoreUI</CLink> -->
+      <span>RDFMiner UI&copy; 2023.</span>
+    </div>
+    <div>
+      <CLink href="https://team.inria.fr/wimmics/">WIMMICS</CLink>
+      <span> team - Inria, I3S</span>
+    </div>
+  </CFooter>
 </template>
 
 <script>
 // IMPORTANT
 // CoreUI VueJS: https://coreui.io/vue/docs
 import CHeader from './components/Header.vue'
-// import AuthComponent from './vues/auth/AuthComponent.vue';
 import LogIn from './vues/auth/logIn.vue'
 import VSubscribe from './vues/auth/VSubscribe.vue'
+import { CFooter, CLink } from '@coreui/vue'
 
 import '@coreui/coreui/dist/css/coreui.min.css'
 
@@ -26,7 +37,9 @@ export default {
   components: {
     CHeader,
     LogIn,
-    VSubscribe
+    VSubscribe,
+    CFooter,
+    CLink
   },
   data() {
     return {
@@ -35,6 +48,10 @@ export default {
       isAuth: false,
       enableLoginPopup: false,
       enableSubscribePopup: false,
+      cfooterStyle: {
+        '--cui-footer-color': "rgb(0, 63, 127)",
+        '--cui-footer-min-height': "1em"
+      }
     }
   },
   methods: {
@@ -51,7 +68,7 @@ export default {
     },
     logout() {
       this.id = "",
-      this.isAuth = false;
+        this.isAuth = false;
       this.username = "";
     }
   }
@@ -60,7 +77,7 @@ export default {
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  /* font-family: Avenir, Helvetica, Arial, sans-serif; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* text-align: center; */
@@ -71,30 +88,25 @@ export default {
   overflow: hidden;
 }
 
-.container {
-  overflow-y: auto;
-  height: 85vh;
-}
-
-.widget {
-  background-color: #ffffff;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.27);
-}
-
 button {
-  width: 100%;
-  font-size: 2vw;
+  /* width: 100%; */
   background-color: #4CAF50;
   color: white;
-  padding: 20px 20px;
+  /* padding: 20px 20px; */
   margin: 8px 0;
-  border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 
+.debug {
+  color: #4CAF50;
+}
+
+/* 
+.container {
+  overflow-y: auto;
+  height: 95vh;
+}
 button:hover {
   background-color: #dde9de;
   color: black;
@@ -102,5 +114,5 @@ button:hover {
 
 .disconnect {
   background-color: #b01313;
-}
+} */
 </style>

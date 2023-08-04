@@ -1,5 +1,6 @@
 // import * as compose from 'docker-compose'
-const express = require('express')
+const logger = require("./logger");
+const express = require('express');
 let bodyParser = require('body-parser');
 const socketIO = require("socket.io");
 // see https://github.com/ConstantinoBernardo/vue-socketio-chat/blob/main/client/src/App.vue
@@ -20,10 +21,13 @@ mongoose.Promise = global.Promise;
 mongoose.connect(settings.uri, settings.options)
     .then(() => {
         // console.log("URI = " + uri);
-        console.log("MongoDB Cluster> CONNECTED");
+        // console.log("MongoDB Cluster> CONNECTED");
+        logger.info("Connected to the cluster !")
     },
         err => {
-            console.log('MongoDB Cluster> ERROR', err);
+            // console.log('MongoDB Cluster> ERROR', err);
+            logger.error("Error during the connection to the cluster");
+            logger.error(err);
         }
     );
 
@@ -37,6 +41,8 @@ const project = require("./services/project");
 const publications = require("./services/publications");
 // specifications
 const specifications = require("./services/specifications");
+// params
+const params = require("./services/params");
 
 // SOCKET IO
 const io = socketIO(server, {
@@ -64,18 +70,21 @@ app.route(prefix + "spec").get(specifications.get);
 app.route(prefix + "publications").get(publications.getAll);
 app.route(prefix + "project/setup").post(project.createProject);
 app.route(prefix + "project/delete").post(project.deleteProject);
+app.route(prefix + "params").get(params.get);
 // Real-time services
 app.route(prefix + "projects").get(project.getProjectsByUser);
+app.route(prefix + "project").get(project.getProjectByNameAndUser);
 
 io.on("connection", (socket) => {
-    console.log("connected !");
+    // console.log("connected !");
+    logger.info("socket.io - connection");
 });
 
 // SERVER SETUP
 server.listen(port, () => {
-    console.log("##########################################");
-    console.log("RDFMiner Server v1.0");
-    console.log(`Example app listening on port ${port}`)
-    console.log("##########################################")
+    logger.info("##########################################");
+    logger.info("RDFMiner Server v1.0");
+    logger.info(`Example app listening on port ${port}`)
+    logger.info("##########################################")
 })
 

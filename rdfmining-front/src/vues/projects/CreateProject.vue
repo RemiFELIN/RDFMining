@@ -1,82 +1,177 @@
 <template>
-    <CForm>
+    <CForm novalidate :validated="validated">
+        <h2>General Settings</h2><br />
         <!-- 
             Project Name 
         -->
         <CRow class="mb-3">
-            <CFormLabel for="projectName" class="col-sm-2 col-form-label">Name of the project</CFormLabel>
+            <CFormLabel class="col-sm-2 col-form-label"><b>{{ directory.description }}</b></CFormLabel>
             <CCol sm="10">
-                <CFormInput type="email" class="col-sm-2 col-form-label" id="projectName"
-                    placeholder="Example: MyProject; my-project; my_project" v-model="projectName" />
+                <CFormInput type="email" class="col-sm-2 col-form-label"
+                    placeholder="Example: MyProject; my-project; my_project" v-model="selectedProjectName" required
+                    :feedback-invalid="errorMessage" :invalid="selectedProjectName == '' || alreadyExist" />
             </CCol>
         </CRow>
         <!-- 
             Mod selection 
         -->
         <CRow class="mb-3">
-            <CFormLabel for="modSelection" class="col-sm-2 col-form-label">I would like to ...</CFormLabel>
+            <CFormLabel class="col-sm-2 col-form-label"><b>I would like to ...</b></CFormLabel>
             <CCol sm="10">
-                <CFormSelect aria-label="select-mod" v-model="mod">
+                <CFormSelect v-model="selectedFeature" @change="selectedBNFTemplate = ''"
+                    feedback-invalid="Please, select a feature" :invalid="selectedFeature == ''">
                     <option selected disabled>Select the required mode</option>
-                    <option v-for="feature in features" :key="feature" :value="feature.cmd">{{ feature.text }}</option>
+                    <option v-for="feature in features" :key="feature" :value="feature.cmd">{{ feature.description }}
+                    </option>
                 </CFormSelect>
+            </CCol>
+        </CRow>
+        <!-- 
+            SPARQL Endpoint
+        -->
+        <CRow class="mb-3">
+            <CFormLabel class="col-sm-2 col-form-label"><b>{{ targetSparqlEndpoint.description }}</b></CFormLabel>
+            <CCol sm="3">
+                <CFormSelect v-model="selectedTargetEndpoint" feedback-invalid="Please, select a SPARQL endpoint"
+                    :invalid="selectedTargetEndpoint == ''">
+                    <option selected disabled>Select the required endpoint</option>
+                    <option v-for="endpoint in endpoints" :key="endpoint" :value="endpoint.value">{{ endpoint.description }}
+                    </option>
+                </CFormSelect>
+            </CCol>
+            <CCol sm="7">
+                <CFormInput v-model="selectedTargetEndpoint" feedback-invalid="It must be a valid SPARQL endpoint"
+                    :invalid="!selectedTargetEndpoint.includes('http://') || !selectedTargetEndpoint.includes('sparql')" />
+            </CCol>
+        </CRow>
+        <!--
+            Prefixes
+        -->
+        <CRow class="mb-3">
+            <CFormLabel class="col-sm-2 col-form-label"><b>{{ prefixes.description }}</b></CFormLabel>
+            <CCol sm="10">
+                <!-- Template -->
+                <CFormSelect v-model="selectedPrefixes" feedback-invalid="Please select a prefixes sample" required
+                    :invalid="selectedPrefixes == ''">
+                    <option selected disabled>Select the required prefixes</option>
+                    <option v-for="sample in prefixesSamples" :key="sample" :value="sample.value">{{ sample.description }}
+                    </option>
+                </CFormSelect>
+                <br />
+                <!-- Content -->
+                <CFormTextarea style="color: rgb(1, 108, 157)" v-model="selectedPrefixes">
+                    {{ selectedPrefixes }}
+                </CFormTextarea>
             </CCol>
         </CRow>
         <!-- 
             Depending on the mod, we load the right component 
             Just below: Grammatical Evolution Mod
         -->
-        <div v-if="mod.includes('ge')">
+        <div v-if="selectedFeature.includes('ge')">
+
+            <h2>Grammatical Evolution</h2><br />
+            
             <!--
-                BNF Grammar template
+                SHACL
+            -->
+            <div v-if="selectedFeature.includes('rs')">
+                <CRow class="mb-3">
+                    <CFormLabel class="col-sm-2 col-form-label"><b>Probabilistic SHACL</b></CFormLabel>
+                    <CCol sm="2">
+                        <!-- Alpha -->
+                        <CFormLabel>{{ shaclAlpha.description }}</CFormLabel>
+                    </CCol>
+                    <CCol sm="2">
+                        <!-- Alpha -->
+                        <CFormSelect v-model="selectedShaclAlpha" required>
+                            <option selected disabled>Select the required significance level</option>
+                            <option v-for="alpha in alphaValues" :key="alpha" :value="alpha.value">{{ alpha.description
+                            }}</option>
+                        </CFormSelect>
+                    </CCol>
+                    <CCol sm="1">
+                        <!-- p-value -->
+                        <CFormLabel>{{ shaclProb.description }}</CFormLabel>
+                    </CCol>
+                    <CCol sm="4">
+                        <CFormRange :min="0" :max="1" :step="0.05" v-model="selectedShaclProb" />
+                    </CCol>
+                    <CCol sm="1">
+                        <CFormLabel class="col-form-label"><b>{{ selectedShaclProb }}</b></CFormLabel>
+                    </CCol>
+                </CRow>
+                <CAlert color="warning" v-if="selectedShaclProb == 0">
+                    Considering an <b>error rate tolerance</b> of <b>0%</b>, the acceptance criterion <b>will not accept any
+                        violation !</b>
+                </CAlert>
+            </div>
+            <!--
+                BNF Grammar
             -->
             <CRow class="mb-3">
-                <CFormLabel for="bnfTemplate" class="col-sm-2 col-form-label">Select a BNF Grammar template</CFormLabel>
+                <CFormLabel class="col-sm-2 col-form-label"><b>{{ grammar.description }}</b></CFormLabel>
                 <CCol sm="10">
-                    <CFormSelect v-if="mod.includes('ra')" aria-label="select-bnf-axioms" v-model="selectedTemplate">
+                    <!-- Template -->
+                    <CFormSelect aria-label="select-bnf-axioms" v-model="selectedBNFTemplate"
+                        feedback-invalid="Please select a BNF template (You can customize it !)" required
+                        :invalid="selectedBNFTemplate == ''">
                         <option selected disabled>Select the required template</option>
-                        <option v-for="bnf in axiomTemplates" :key="bnf" :value="bnf.content">{{ bnf.key }}</option>
+                        <option v-for="bnf in templates" :key="bnf" :value="bnf.value">{{ bnf.description }}</option>
                     </CFormSelect>
-                    <CFormSelect v-else aria-label="select-bnf-shacl" v-model="selectedTemplate">
-                        <option selected disabled>Select the required template</option>
-                        <option v-for="bnf in shaclTemplates" :key="bnf" :value="bnf.content">{{ bnf.key }}</option>
-                    </CFormSelect>
+                    <br />
+                    <!-- Content -->
+                    <CFormTextarea style="color: rgb(1, 108, 157)">
+                        {{ selectedBNFTemplate }}
+                    </CFormTextarea>
                 </CCol>
             </CRow>
-            <!--
-                BNF Grammar content
+            <!-- 
+                Size of chromosomes 
             -->
             <CRow class="mb-3">
-                <CFormLabel for="bnfContent" class="col-sm-2 col-form-label">The selected BNF Grammar (editable)
-                </CFormLabel>
-                <CCol sm="10">
-                    <CFormTextarea id="bnfGrammar" style="color: rgb(1, 108, 157)">
-                        {{ selectedTemplate }}
-                    </CFormTextarea>
+                <CFormLabel class="col-sm-2 col-form-label"><b>{{ sizeChromosome.description }}</b></CFormLabel>
+                <CCol sm="9">
+                    <CFormRange :min="1" :max="20" :step="1" v-model="selectedSizeChromosome" />
+                </CCol>
+                <CCol sm="1">
+                    <CFormLabel class="col-form-label"><b>{{ selectedSizeChromosome }}</b></CFormLabel>
+                </CCol>
+            </CRow>
+            <!-- 
+                Max Wrapping
+            -->
+            <CRow class="mb-3">
+                <CFormLabel class="col-sm-2 col-form-label"><b>{{ maxWrap.description }}</b></CFormLabel>
+                <CCol sm="9">
+                    <CFormRange :min="1" :max="100" :step="1" v-model="selectedMaxWrap" />
+                </CCol>
+                <CCol sm="1">
+                    <CFormLabel class="col-form-label"><b>{{ selectedMaxWrap }}</b></CFormLabel>
                 </CCol>
             </CRow>
             <!--
                 Population size
             -->
             <CRow class="mb-3">
-                <CFormLabel for="populationSize" class="col-sm-2 col-form-label">Population size</CFormLabel>
+                <CFormLabel class="col-sm-2 col-form-label"><b>{{ populationSize.description }}</b></CFormLabel>
                 <CCol sm="9">
-                    <CFormRange :min="50" :max="1000" :step="50" id="slider-popSize" v-model="populationSize" />
+                    <CFormRange :min="50" :max="1000" :step="50" v-model="selectedPopulationSize" />
                 </CCol>
                 <CCol sm="1">
-                    <CFormLabel for="val-popSize" class="col-form-label">Value: <b>{{ populationSize }}</b></CFormLabel>
+                    <CFormLabel class="col-form-label"><b>{{ selectedPopulationSize }}</b></CFormLabel>
                 </CCol>
             </CRow>
             <!-- 
                 Total effort
             -->
             <CRow class="mb-3">
-                <CFormLabel for="totalEffort" class="col-sm-2 col-form-label">Total effort</CFormLabel>
+                <CFormLabel class="col-sm-2 col-form-label"><b>{{ effort.description }}</b></CFormLabel>
                 <CCol sm="9">
-                    <CFormRange :min="1000" :max="maxEffort" :step="1000" id="slider-totalEffort" v-model="totalEffort" />
+                    <CFormRange :min="1000" :max="maxEffort" :step="1000" v-model="selectedTotalEffort" />
                 </CCol>
                 <CCol sm="1">
-                    <CFormLabel for="val-totalEffort" class="col-form-label">Value: <b>{{ totalEffort }}</b></CFormLabel>
+                    <CFormLabel class="col-form-label"><b>{{ selectedTotalEffort }}</b></CFormLabel>
                 </CCol>
             </CRow>
             <CAlert color="success">
@@ -86,101 +181,165 @@
                 Selection: type of selection and proportion 
             -->
             <CRow class="mb-3">
-                <CFormLabel for="selectionType" class="col-sm-2 col-form-label">Selection</CFormLabel>
+                <CFormLabel class="col-sm-2 col-form-label"><b>{{ selection.description }}</b></CFormLabel>
                 <CCol sm="3">
-                    <CFormSelect aria-label="select-selection" v-model="choosenSelection">
+                    <CFormSelect aria-label="select-selection" v-model="selectedSelection"
+                        feedback-invalid="Please, choose a selection operator" :invalid="selectedSelection == ''">
                         <option selected disabled>Select the required selection</option>
-                        <option v-for="selection in typeSelection" :key="selection" :value="selection.cmd">{{ selection.text }}</option>
+                        <option v-for="selection in selectionType" :key="selection" :value="selection.value">{{
+                            selection.description
+                        }}</option>
                     </CFormSelect>
                 </CCol>
                 <CCol sm="6">
-                    <CFormRange :min="0" :max="1" :step="0.05" id="slider-selection" v-model="selectionRate" />
+                    <CFormRange :min="0" :max="1" :step="0.05" v-model="selectionRate" />
                 </CCol>
                 <CCol sm="1">
-                    <CFormLabel for="val-selectionRate" class="col-form-label">Rate: <b>{{ selectionRate }}</b></CFormLabel>
+                    <CFormLabel class="col-form-label"><b>{{ selectionRate }}</b></CFormLabel>
                 </CCol>
             </CRow>
             <!-- 
                 Crossover: type of crossover and proportion 
             -->
             <CRow class="mb-3">
-                <CFormLabel for="crossoverType" class="col-sm-2 col-form-label">Crossover</CFormLabel>
+                <CFormLabel class="col-sm-2 col-form-label"><b>{{ crossover.description }}</b></CFormLabel>
                 <CCol sm="3">
-                    <CFormSelect aria-label="select-crossover" v-model="choosenCrossover">
+                    <CFormSelect aria-label="select-crossover" v-model="selectedCrossover"
+                        feedback-invalid="Please, choose a crossover operator" :invalid="selectedCrossover == ''">
                         <option selected disabled>Select the required crossover</option>
-                        <option v-for="selection in typeCrossover" :key="selection" :value="selection.cmd">{{ selection.text }}</option>
+                        <option v-for="crossover in crossoverType" :key="crossover" :value="crossover.value">{{
+                            crossover.description
+                        }}</option>
                     </CFormSelect>
                 </CCol>
                 <CCol sm="6">
-                    <CFormRange :min="0" :max="1" :step="0.05" id="slider-crossover" v-model="crossoverRate" />
+                    <CFormRange :min="0" :max="1" :step="0.05" v-model="crossoverRate" />
                 </CCol>
                 <CCol sm="1">
-                    <CFormLabel for="val-crossoverRate" class="col-form-label">Rate: <b>{{ crossoverRate }}</b></CFormLabel>
+                    <CFormLabel class="col-form-label"><b>{{ crossoverRate }}</b></CFormLabel>
                 </CCol>
             </CRow>
             <!-- 
                 Mutation: type of mutation and proportion 
             -->
             <CRow class="mb-3">
-                <CFormLabel for="mutationType" class="col-sm-2 col-form-label">Mutation</CFormLabel>
+                <CFormLabel class="col-sm-2 col-form-label"><b>{{ mutation.description }}</b></CFormLabel>
                 <CCol sm="3">
-                    <CFormSelect aria-label="select-mutation" v-model="choosenMutation">
+                    <CFormSelect aria-label="select-mutation" v-model="selectedMutation"
+                        feedback-invalid="Please, choose a mutation operator" :invalid="selectedMutation == ''">
                         <option selected disabled>Select the required mutation</option>
-                        <option v-for="selection in typeMutation" :key="selection" :value="selection.cmd">{{ selection.text }}</option>
+                        <option v-for="mutation in mutationType" :key="mutation" :value="mutation.value">{{
+                            mutation.description
+                        }}</option>
                     </CFormSelect>
                 </CCol>
                 <CCol sm="6">
-                    <CFormRange :min="0" :max="1" :step="0.01" id="slider-mutation" v-model="mutationRate" />
+                    <CFormRange :min="0" :max="1" :step="0.01" v-model="mutationRate" />
                 </CCol>
                 <CCol sm="1">
-                    <CFormLabel for="val-mutationRate" class="col-form-label">Rate: <b>{{ mutationRate }}</b></CFormLabel>
-                </CCol>
-            </CRow>
-            <!-- 
-                Size of chromosomes 
-            -->
-            <CRow class="mb-3">
-                <CFormLabel for="chromSize" class="col-sm-2 col-form-label">Chromosomes size</CFormLabel>
-                <CCol sm="9">
-                    <CFormRange :min="1" :max="20" :step="1" id="slider-chromSize" v-model="chromSize" />
-                </CCol>
-                <CCol sm="1">
-                    <CFormLabel for="val-chromSize" class="col-form-label">Value: <b>{{ chromSize }}</b></CFormLabel>
-                </CCol>
-            </CRow>
-            <!-- 
-                Max Wrapping
-            -->
-            <CRow class="mb-3">
-                <CFormLabel for="maxWrap" class="col-sm-2 col-form-label">Max Wrap</CFormLabel>
-                <CCol sm="9">
-                    <CFormRange :min="1" :max="100" :step="1" id="slider-maxWrap" v-model="maxWrap" />
-                </CCol>
-                <CCol sm="1">
-                    <CFormLabel for="val-maxWrapp" class="col-form-label">Value: <b>{{ maxWrap }}</b></CFormLabel>
+                    <CFormLabel class="col-form-label"><b>{{ mutationRate }}</b></CFormLabel>
                 </CCol>
             </CRow>
             <!-- 
                 Crowding Method - Novelty Search
             -->
             <CRow class="mb-3">
-                <CFormLabel for="maxWrap" class="col-sm-2 col-form-label">Some Optimizers</CFormLabel>
+                <CFormLabel class="col-sm-2 col-form-label"><b>Some Optimizers</b></CFormLabel>
                 <CCol sm="5">
-                    <CFormSwitch label="Crowding method (boost the population diversity)" id="switch-crowding" v-model="enableCrowding"/>
+                    <CFormSwitch :label="crowding.description" v-model="enableCrowding" />
                 </CCol>
                 <CCol sm="5">
-                    <CFormSwitch label="Novelty Search (Experimental: only for SubClassOf axioms)" id="switch-ns" v-model="enableNoveltySearch" :disabled="!mod.includes('ra')"/>
+                    <CFormSwitch :label="noveltySearch.description" v-model="enableNoveltySearch"
+                        :disabled="!selectedFeature.includes('ra')" />
                 </CCol>
             </CRow>
         </div>
+
+        <div v-else>
+            <!-- 
+                Evaluator Mod 
+            -->
+            <div v-if="selectedFeature.includes('sf')">
+                <h2>SHACL shapes assessment</h2><br />
+                <!-- 
+                    Probabilistic SHACL
+                -->
+                <CRow class="mb-3">
+                    <CFormLabel class="col-sm-2 col-form-label"><b>Probabilistic SHACL</b></CFormLabel>
+                    <CCol sm="2">
+                        <!-- Alpha -->
+                        <CFormLabel>{{ shaclAlpha.description }}</CFormLabel>
+                    </CCol>
+                    <CCol sm="2">
+                        <!-- Alpha -->
+                        <CFormSelect v-model="selectedShaclAlpha" required :disabled="selectedShaclProb == 0">
+                            <option selected disabled>Select the required significance level</option>
+                            <option v-for="alpha in alphaValues" :key="alpha" :value="alpha.value">{{ alpha.description
+                            }}</option>
+                        </CFormSelect>
+                    </CCol>
+                    <CCol sm="1">
+                        <!-- p-value -->
+                        <CFormLabel>{{ shaclProb.description }}</CFormLabel>
+                    </CCol>
+                    <CCol sm="4">
+                        <CFormRange :min="0" :max="1" :step="0.05" v-model="selectedShaclProb" />
+                    </CCol>
+                    <CCol sm="1">
+                        <CFormLabel class="col-form-label"><b>{{ selectedShaclProb }}</b></CFormLabel>
+                    </CCol>
+                </CRow>
+                <CAlert color="warning" v-if="selectedShaclProb == 0">
+                    <b>Standard SHACL validation !</b> increase the <b>P-value</b> to enable the <b>probabilistic SHACL validation</b>
+                </CAlert>
+                <CAlert color="warning" v-else>
+                    <b>Probabilistic SHACL validation !</b> set the <b>P-value</b> at 0 to enable the <b>standard SHACL validation</b>
+                </CAlert>
+                <!-- 
+                    Shapes file 
+                -->
+                <CRow class="mb-3">
+                    <CFormLabel class="col-sm-2 col-form-label"><b>{{ shapesFile.description }}</b></CFormLabel>
+                    <CCol sm="10">
+                        <input class="col-form-label" type="file" @change="readFile" />
+                        <!-- Content -->
+                        <CFormTextarea style="color: rgb(1, 108, 157)" v-model="shapes">
+                            {{ shapes }}
+                        </CFormTextarea>
+                    </CCol>
+                </CRow>
+            </div>
+            <div v-if="selectedFeature.includes('af')">
+                <h2>OWL axioms assessment</h2><br />
+                <!-- 
+                    OWL axioms file 
+                -->
+                <CRow class="mb-3">
+                    <CFormLabel class="col-sm-2 col-form-label"><b>{{ axiomsFile.description }}</b></CFormLabel>
+                    <CCol sm="10">
+                        <input class="col-form-label" type="file" @change="readFile" />
+                        <!-- Content -->
+                        <CFormTextarea style="color: rgb(1, 108, 157)" v-model="axioms">
+                            {{ axioms }}
+                        </CFormTextarea>
+                    </CCol>
+                </CRow>
+            </div>
+        </div>
+        <!--
+            Launch XP
+        -->
+        <CButton color="success" @click="postProject">Let's go</CButton>
     </CForm>
 </template>
 
 
 <script>
-import { rdfminer } from '../../data/form.json'
+// import { rdfminer } from '../../data/form.json'
 import axios from "axios"
-import { CForm, CRow, CFormLabel, CCol, CFormInput, CFormSelect, CFormTextarea, CFormRange, CAlert, CFormSwitch } from '@coreui/vue'
+import { CForm, CRow, CFormLabel, CCol, CFormInput, CFormSelect, CFormTextarea, CFormRange, CAlert, CFormSwitch, CButton } from '@coreui/vue'
+import { markRaw } from "vue";
+// import { toRaw } from "vue";
 
 export default {
     name: 'CreateProject',
@@ -190,158 +349,243 @@ export default {
         },
     },
     components: {
-        CForm, CRow, CFormLabel, CCol, CFormInput, CFormSelect, CFormTextarea, CFormRange, CAlert, CFormSwitch
-    },
-    watch: {
-        totalEffort() {
-            this.updateTotalEffort();
-        },
-        populationSize() {
-            this.updateMaxEffort();
-        }
-    },
-    data() {
-        return {
-            // features
-            features: [],
-            // BNF Grammar templates
-            shaclTemplates: [],
-            axiomTemplates: [],
-            selectedTemplate: "",
-            descriptionTemplate: "",
-            // cmdline of the experiment
-            cmdline: "",
-            cmdlineBase: "docker-compose exec -T rdfminer ./rdfminer/scripts/run.sh ",
-            // params json
-            params: {},
-            projectName: "",
-            mod: "",
-            modKey: "",
-            // BNF Grammar
-            bnfContent: "",
-            // pop size
-            populationSize: 200,
-            // total effort 
-            maxEffort: 10000,
-            totalEffort: 10000,
-            // ngen
-            numberOfGenerations: 50,
-            // chromosomes size
-            chromSize: 2,
-            // max wrapp
-            maxWrap: 10,
-            // typeSelection
-            typeSelection: [],
-            choosenSelection: 1,
-            selectionRate: 0.1,
-            // Crossover
-            typeCrossover: [],
-            choosenCrossover: 4,
-            crossoverRate: 0.75,
-            // Mutation
-            typeMutation: [],
-            choosenMutation: 1,
-            mutationRate: 0.01,
-            // crowding
-            enableCrowding: false,
-            // novelty search
-            enableNoveltySearch: false,
-        }
-    },
-    mounted() {
-        // read json
-        if (rdfminer) {
-            // features
-            this.features = rdfminer.features;
-            // BNF templates
-            this.axiomTemplates = rdfminer.axiomsGrammar;
-            this.shaclTemplates = rdfminer.SHACLGrammar;
-            this.typeSelection = rdfminer.typeSelection;
-            this.typeCrossover = rdfminer.typeCrossover;
-            this.typeMutation = rdfminer.typeMutation;
-        }
+        CForm, CRow, CFormLabel, CCol, CFormInput, CFormSelect, CFormTextarea, CFormRange, CAlert, CFormSwitch, CButton
     },
     methods: {
-        updateTotalEffort() {
-            this.numberOfGenerations = Math.floor(this.totalEffort / this.populationSize);
+        updateNumberGenerations() {
+            this.numberOfGenerations = Math.floor(this.selectedTotalEffort / this.selectedPopulationSize);
         },
         updateMaxEffort() {
-            this.maxEffort = this.populationSize * 50;
-            this.totalEffort = this.maxEffort;
-            this.updateTotalEffort();
+            this.maxEffort = this.selectedPopulationSize * 50;
+            this.selectedTotalEffort = this.maxEffort;
+            this.updateNumberGenerations();
         },
-        getProjectName() {
-            // if the project name is not defined 
-            if (this.projectName == "") {
-                this.projectName = "MyProject"
-            }
-            return " -dir " + this.projectName;
+        getDefaultValue(data) {
+            return data.values[0].value;
         },
-        addParam(cmd, value) {
-            return cmd + " " + value + " ";
-        },
-        registerProject() {
-            // Mod
-            this.cmdline = this.cmdlineBase + this.mod + " " + this.getProjectName() + " "
-            // In the GE Context
-            if (this.mod.includes('-ge')) {
-                this.cmdline += this.addParam(rdfminer.parameters.populationSize, this.populationSize);
-                this.cmdline += this.addParam(rdfminer.parameters.kBase, this.totalEffort);
-                this.cmdline += this.addParam(rdfminer.parameters.lenChromosome, this.chromSize);
-                this.cmdline += this.addParam(rdfminer.parameters.maxWrapp, this.maxWrap);
-                this.cmdline += this.addParam(rdfminer.parameters.typeSelection, this.choosenSelection);
-                this.cmdline += this.addParam(rdfminer.parameters.typeCrossover, this.choosenCrossover);
-                this.cmdline += this.addParam(rdfminer.parameters.typeMutation, this.choosenMutation);
-                // novelty search
-                if (this.enableNoveltySearch) {
-                    this.cmdline += rdfminer.parameters.noveltySearch + " ";
-                }
-                // crowding ?
-                if (this.enableCrowding) {
-                    this.cmdline += rdfminer.parameters.diversity + " 1";
+        readFile(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = e => {
+                if (this.selectedFeature.includes('sf')) {
+                    this.shapes = e.target.result;
                 } else {
-                    this.cmdline += rdfminer.parameters.diversity + " 0";
+                    this.axioms = e.target.result;
                 }
             }
-            // fill params object
-            this.params = {
-                mod: this.mod,
-                projectName: this.projectName,
-                populationSize: this.populationSize,
-                kBase: this.totalEffort,
-                lenChromosome: this.chromSize,
-                maxWrapp: this.maxWrap,
-                typeSelection: this.choosenSelection,
-                typeMutation: this.choosenMutation,
-                typeCrossover: this.choosenCrossover,
-                noveltySearch: this.enableNoveltySearch,
-                crowding: this.enableCrowding
-            }
+            reader.readAsText(file);
         },
         postProject() {
-            this.registerProject();
-            console.log(this.params);
             // console.log(this.cmdline);
             // build a request to the API
             axios.post("http://localhost:3000/api/project/setup", {
                 userId: this.id,
-                projectName: this.projectName,
-                command: this.cmdline,
-                mod: this.modKey,
-                params: this.params,
+                projectName: this.selectedProjectName,
+                mod: this.selectedFeature,
+                prefixes: this.selectedPrefixes,
+                targetSparqlEndpoint: this.selectedTargetEndpoint,
+                settings: {
+                    bnf: this.selectedBNFTemplate,
+                    populationSize: this.selectedPopulationSize,
+                    effort: this.selectedTotalEffort,
+                    sizeChromosome: this.selectedSizeChromosome,
+                    maxWrap: this.selectedMaxWrap,
+                    selectionType: this.selectedSelection,
+                    selectionRate: this.selectionRate,
+                    mutationType: this.selectedMutation,
+                    mutationRate: this.mutationRate,
+                    crossoverType: this.selectedCrossover,
+                    crossoverRate: this.crossoverRate,
+                    noveltySearch: this.enableNoveltySearch,
+                    crowding: this.enableCrowding,
+                    shaclAlpha: this.selectedShaclAlpha,
+                    shaclProb: this.selectedShaclProb,
+                    axioms: this.axioms,
+                    shapes: this.shapes
+                },
             }).then(
                 (response) => {
                     if (response.status === 200) {
                         console.log("OK !" + response);
-                        // this.user = { username, password };
-                        this.auth = true;
+                        this.$emit("new");
                     }
                 }
             ).catch((error) => {
                 console.log(error);
-                alert("Incorrect username/password");
             });
         }
-    }
+    },
+    watch: {
+        selectedTotalEffort() {
+            this.updateNumberGenerations();
+        },
+        selectedPopulationSize() {
+            this.updateMaxEffort();
+        },
+        selectedProjectName() {
+            if (this.selectedProjectName != '') {
+                // checking project name 
+                // already exists ?
+                console.log(this.id + " " + this.selectedProjectName);
+                axios.get("http://localhost:3000/api/project", {
+                    params:
+                        { id: this.id, projectName: this.selectedProjectName }
+                }).then(
+                    (response) => {
+                        // console.log(response.data)
+                        if (response.status === 200) {
+                            if (response.data.length == 0) {
+                                // Does not exists ! 
+                                this.alreadyExist = false;
+                            } else {
+                                // error from the server
+                                this.alreadyExist = true;
+                                this.errorMessage = "This project name already exists !"
+                            }
+                        }
+                    }
+                ).catch((error) => {
+                    console.log(error);
+                });
+            } else {
+                this.errorMessage = "Please, choose a name for your project"
+            }
+
+        }
+    },
+    data() {
+        return {
+            validated: null,
+            // project name 
+            directory: {},
+            selectedProjectName: "",
+            alreadyExist: true,
+            errorMessage: "Please, choose a name for your project",
+            // features
+            features: [],
+            selectedFeature: "",
+            // prefixes
+            prefixes: {},
+            prefixesSamples: [],
+            selectedPrefixes: "",
+            // SPARQL endpoint
+            targetSparqlEndpoint: {},
+            endpoints: [],
+            selectedTargetEndpoint: "",
+            // shacl - axioms content
+            axiomsFile: {},
+            axioms: "",
+            shapesFile: {},
+            shapes: "",
+            // BNF Grammar templates
+            grammar: {},
+            templates: [],
+            selectedBNFTemplate: "",
+            // pop size
+            populationSize: {},
+            selectedPopulationSize: null,
+            // total effort 
+            effort: {},
+            maxEffort: 0,
+            selectedTotalEffort: -1,
+            // ngen
+            numberOfGenerations: 50,
+            // selection 
+            selection: {},
+            selectionType: [],
+            selectedSelection: 0,
+            selectionRate: -1,
+            // Crossover
+            crossover: {},
+            crossoverType: [],
+            selectedCrossover: 0,
+            crossoverRate: -1,
+            // Mutation
+            mutation: {},
+            mutationType: [],
+            selectedMutation: 0,
+            mutationRate: -1,
+            // chromosomes size
+            sizeChromosome: {},
+            selectedSizeChromosome: -1,
+            // max wrapp
+            maxWrap: {},
+            selectedMaxWrap: -1,
+            // crowding
+            crowding: {},
+            enableCrowding: false,
+            // novelty search
+            noveltySearch: {},
+            enableNoveltySearch: false,
+            // shacl: p-value et alpha
+            shaclAlpha: {},
+            alphaValues: [],
+            selectedShaclAlpha: -1,
+            shaclProb: {},
+            selectedShaclProb: -1
+        }
+    },
+    mounted() {
+        axios.get("http://localhost:3000/api/params").then(
+            (response) => {
+                const data = response.data[0];
+                // Mapping variables
+                // directory 
+                this.directory = data.projectName;
+                // features
+                this.features.push(data.axiomsMining, data.axiomsAssessment, data.shapesMining, data.shapesAssessment);
+                // prefixes
+                this.prefixes = data.prefixes;
+                this.prefixesSamples = markRaw(data.prefixes.values);
+                this.selectedPrefixes = this.getDefaultValue(data.prefixes);
+                // SPARQL endpoint
+                this.targetSparqlEndpoint = data.targetSparqlEndpoint;
+                this.endpoints = markRaw(data.targetSparqlEndpoint.values);
+                // BNF grammar
+                this.grammar = data.grammar;
+                this.templates = markRaw(data.grammar.values);
+                // population size 
+                this.populationSize = data.populationSize;
+                this.selectedPopulationSize = this.getDefaultValue(data.populationSize);
+                // max effort
+                this.effort = data.effort;
+                this.selectedTotalEffort = this.getDefaultValue(data.effort);
+                // selection
+                this.selection = data.selection;
+                this.selectionType = markRaw(data.selection.values);
+                this.selectionRate = this.getDefaultValue(data.pSelection);
+                // crossover
+                this.crossover = data.crossover;
+                this.crossoverType = markRaw(data.crossover.values);
+                this.crossoverRate = this.getDefaultValue(data.pCrossover);
+                // mutation
+                this.mutation = data.mutation;
+                this.mutationType = markRaw(data.mutation.values);
+                this.mutationRate = this.getDefaultValue(data.pMutation);
+                // chromosome size
+                this.sizeChromosome = data.sizeChromosome;
+                this.selectedSizeChromosome = this.getDefaultValue(data.sizeChromosome);
+                // max wrapp
+                this.maxWrap = data.maxWrap;
+                this.selectedMaxWrap = this.getDefaultValue(data.maxWrap);
+                // optimizers
+                this.crowding = data.crowding;
+                this.enableCrowding = this.getDefaultValue(data.crowding);
+                this.noveltySearch = data.noveltySearch;
+                this.enableNoveltySearch = this.getDefaultValue(data.noveltySearch);
+                // SHACL: alpha and prob
+                this.shaclAlpha = data.shaclAlpha;
+                this.alphaValues = markRaw(data.shaclAlpha.values);
+                this.selectedShaclAlpha = this.getDefaultValue(data.shaclAlpha);
+                this.shaclProb = data.shaclProb;
+                this.selectedShaclProb = this.getDefaultValue(data.shaclProb);
+                // assessment 
+                this.axiomsFile = data.axiomsAssessment;
+                this.shapesFile = data.shapesAssessment;
+            }
+        ).catch((error) => {
+            console.log(error);
+        });
+    },
 }
 </script>
