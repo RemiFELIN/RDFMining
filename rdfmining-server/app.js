@@ -1,9 +1,8 @@
 // import * as compose from 'docker-compose'
-const logger = require("./logger");
+const logger = require("./tools/logger");
 const express = require('express');
 let bodyParser = require('body-parser');
 const socketIO = require("socket.io");
-// see https://github.com/ConstantinoBernardo/vue-socketio-chat/blob/main/client/src/App.vue
 const app = express()
 const port = 3000
 

@@ -1,6 +1,6 @@
 <template>
   <div class="hello">
-    <img alt="Vue logo" src="../assets/rdfminer.jpg">
+    <img alt="Vue logo" src="../../public/assets/rdfminer.jpg">
   </div>
 </template>
 

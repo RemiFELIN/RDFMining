@@ -169,7 +169,7 @@ public abstract class Expression {
 		// but remove the prefix and the closing ">":
 		String[] s = rootSymbol.split("/");
 		String name = s[s.length - 1];
-		return String.format(Global.CACHE_PATH + "%s-%08x.cache", name.substring(0, name.length() - 1),
+		return String.format(Global.CACHE_FOLDER + "%s-%08x.cache", name.substring(0, name.length() - 1),
 				toString().hashCode());
 	}
 

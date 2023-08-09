@@ -50,15 +50,16 @@ public class GrammaticalEvolution {
 
         Generator generator = null;
         if (parameters.axiomFile == null) {
+            Global.GRAMMAR_FILE = Global.OUTPUT_PATH + parameters.grammarFile;
             if (parameters.useRandomAxiomGenerator) {
                 // if a randomly generated Axiom already exists then continue
                 // to generate a new Axioms based on BNF
-                logger.info("Initializing the random axiom generator with grammar " + parameters.grammarFile + "...");
-                generator = new RandomAxiomGenerator(parameters.grammarFile, true);
+                logger.info("Initializing the random axiom generator with grammar: " + Global.GRAMMAR_FILE);
+                generator = new RandomAxiomGenerator(Global.GRAMMAR_FILE, true);
             } else if (parameters.useRandomShaclShapeGenerator) {
                 // launch random SHACL Shapes generator
-                logger.info("Initializing the random SHACL Shapes generator with grammar " + parameters.grammarFile + "...");
-                generator = new RandomShapeGenerator(parameters.grammarFile);
+                logger.info("Initializing the random SHACL Shapes generator with grammar: " + Global.GRAMMAR_FILE + "...");
+                generator = new RandomShapeGenerator(Global.GRAMMAR_FILE);
             } else {
                 logger.error("Generator is not defined ! Cannot generate any individuals ...");
                 logger.warn("You can use: (-ra) to generate OWL Axioms; (-rs) to generate SHACL Shapes");

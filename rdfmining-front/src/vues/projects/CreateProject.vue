@@ -62,6 +62,7 @@
                 <CFormTextarea style="color: rgb(1, 108, 157)" v-model="selectedPrefixes">
                     {{ selectedPrefixes }}
                 </CFormTextarea>
+                <!-- <p>{{ selectedPrefixes }}</p> -->
             </CCol>
         </CRow>
         <!-- 
@@ -168,14 +169,14 @@
             <CRow class="mb-3">
                 <CFormLabel class="col-sm-2 col-form-label"><b>{{ effort.description }}</b></CFormLabel>
                 <CCol sm="9">
-                    <CFormRange :min="1000" :max="maxEffort" :step="1000" v-model="selectedTotalEffort" />
+                    <CFormRange :min="minEffort" :max="maxEffort" :step="50" v-model="selectedTotalEffort" />
                 </CCol>
                 <CCol sm="1">
                     <CFormLabel class="col-form-label"><b>{{ selectedTotalEffort }}</b></CFormLabel>
                 </CCol>
             </CRow>
             <CAlert color="success">
-                You will perform <b>{{ numberOfGenerations }} generations !</b>
+                You will perform <b>{{ numberOfGenerations }} generation(s) !</b>
             </CAlert>
             <!-- 
                 Selection: type of selection and proportion 
@@ -355,7 +356,8 @@ export default {
         updateNumberGenerations() {
             this.numberOfGenerations = Math.floor(this.selectedTotalEffort / this.selectedPopulationSize);
         },
-        updateMaxEffort() {
+        updateEffort() {
+            this.minEffort = this.selectedPopulationSize;
             this.maxEffort = this.selectedPopulationSize * 50;
             this.selectedTotalEffort = this.maxEffort;
             this.updateNumberGenerations();
@@ -376,6 +378,8 @@ export default {
             reader.readAsText(file);
         },
         postProject() {
+            // set task field
+            this.task = this.selectedFeature.includes('ge') ? "Mining" : "Assessment";
             // console.log(this.cmdline);
             // build a request to the API
             axios.post("http://localhost:3000/api/project/setup", {
@@ -384,6 +388,7 @@ export default {
                 mod: this.selectedFeature,
                 prefixes: this.selectedPrefixes,
                 targetSparqlEndpoint: this.selectedTargetEndpoint,
+                task: this.task,
                 settings: {
                     bnf: this.selectedBNFTemplate,
                     populationSize: this.selectedPopulationSize,
@@ -420,7 +425,7 @@ export default {
             this.updateNumberGenerations();
         },
         selectedPopulationSize() {
-            this.updateMaxEffort();
+            this.updateEffort();
         },
         selectedProjectName() {
             if (this.selectedProjectName != '') {
@@ -464,6 +469,7 @@ export default {
             // features
             features: [],
             selectedFeature: "",
+            task: "",
             // prefixes
             prefixes: {},
             prefixesSamples: [],
@@ -483,9 +489,10 @@ export default {
             selectedBNFTemplate: "",
             // pop size
             populationSize: {},
-            selectedPopulationSize: null,
+            selectedPopulationSize: 0,
             // total effort 
             effort: {},
+            minEffort: 0,
             maxEffort: 0,
             selectedTotalEffort: -1,
             // ngen
@@ -537,7 +544,7 @@ export default {
                 // prefixes
                 this.prefixes = data.prefixes;
                 this.prefixesSamples = markRaw(data.prefixes.values);
-                this.selectedPrefixes = this.getDefaultValue(data.prefixes);
+                // this.selectedPrefixes = this.getDefaultValue(data.prefixes);
                 // SPARQL endpoint
                 this.targetSparqlEndpoint = data.targetSparqlEndpoint;
                 this.endpoints = markRaw(data.targetSparqlEndpoint.values);

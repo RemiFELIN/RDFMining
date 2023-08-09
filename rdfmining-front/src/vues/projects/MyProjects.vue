@@ -1,21 +1,25 @@
 <template>
-    <div class="container">
-        <CAccordion class="customizedAccordion">
-            <CAccordionItem :item-key="1">
-                <CAccordionHeader>My projects ({{ countProject }})</CAccordionHeader>
-                <CAccordionBody>
-                    <TabProjects v-if="showTabProjects" :id="id" :projects="projects"></TabProjects>
-                    <!-- <b>YOYO</b> -->
-                </CAccordionBody>
-            </CAccordionItem>
-            <CAccordionItem :item-key="2">
-                <CAccordionHeader>I would like to start a new project !</CAccordionHeader>
-                <CAccordionBody>
-                    <CreateProject :id="id" @new="refresh"></CreateProject>
-                </CAccordionBody>
-            </CAccordionItem>
-        </CAccordion>
-    </div>
+    <!-- <div class="container"> -->
+    <CAccordion class="customizedAccordion">
+        <CAccordionItem :item-key="1">
+            <CAccordionHeader>My projects ({{ countProject }})</CAccordionHeader>
+            <CAccordionBody>
+                <TabProjects v-if="showTabProjects" :id="id" :projects="projects" @delete="deletePopup"></TabProjects>
+                <!-- <b>YOYO</b> -->
+            </CAccordionBody>
+        </CAccordionItem>
+        <CAccordionItem :item-key="2">
+            <CAccordionHeader>I would like to start a new project !</CAccordionHeader>
+            <CAccordionBody>
+                <CreateProject :id="id" @new="refresh"></CreateProject>
+            </CAccordionBody>
+        </CAccordionItem>
+    </CAccordion>
+    <!-- </div> -->
+    <!-- Delete Popup -->
+    <DeletePopup :enable="showDeletePopup" :id="id" :projectName="selectedProject" @deleted="updateProjects"
+        @close="deletePopup">
+    </DeletePopup>
 </template>
 
 
@@ -23,11 +27,13 @@
 import CreateProject from './CreateProject.vue';
 import TabProjects from './TabProjects.vue';
 import axios from "axios"
+import DeletePopup from './DeletePopup.vue';
 import { CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody } from '@coreui/vue';
 
 export default {
     name: 'MyProjects',
     components: {
+        DeletePopup,
         CreateProject,
         TabProjects,
         CAccordion,
@@ -46,12 +52,29 @@ export default {
             isVisibleForm: false,
             countProject: 0,
             showTabProjects: true,
+            showDeletePopup: false,
             // papers: [],
             // keywords: [],
             // choosenFilter: "",
         }
     },
     methods: {
+        updateProjects(projectName) {
+            this.countProject--;
+            this.projects.forEach((project) => {
+                if(project.projectName == projectName) {
+                    this.projects.pop(project);
+                    this.selectedProject = "";
+                    return;
+                }
+            });
+        },
+        deletePopup(projectName) {
+            this.showDeletePopup = !this.showDeletePopup;
+            console.log("myProject: " + projectName);
+            this.selectedProject = projectName;
+            console.log(this.showDeletePopup + " for " + this.selectedProject);
+        },
         toggleForm() {
             this.isVisibleForm = !this.isVisibleForm;
         },

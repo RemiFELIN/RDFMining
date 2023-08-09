@@ -113,21 +113,24 @@ public class RDFMiner {
 
 		System.loadLibrary(Global.SO_LIBRARY);
 
-		// Create cache folder if it not already exists
-		if(!(new File(Global.CACHE_PATH)).exists()) {
-			boolean created = (new File(Global.CACHE_PATH)).mkdir();
-			if(created)
-				logger.info("Cache folder successfully created");
-		}
-		
+		// Update output and caches path
+		Global.OUTPUT_PATH += Global.USERS + parameters.username + "/";
+
 		if(parameters.singleAxiom == null) {
-			logger.info("Output folder: " + Global.OUTPUT_PATH + parameters.resultFolder);
-			if(!(new File(Global.OUTPUT_PATH + parameters.resultFolder)).exists()) {
-				boolean created = (new File(Global.OUTPUT_PATH + parameters.resultFolder)).mkdirs();
+			logger.info("Output folder: " + Global.OUTPUT_PATH + parameters.directory);
+			if(!(new File(Global.OUTPUT_PATH + parameters.directory)).exists()) {
+				boolean created = (new File(Global.OUTPUT_PATH + parameters.directory)).mkdirs();
 				if(created)
 					logger.info("Successfully created !");
 			}
-			RDFMiner.outputFolder = Global.OUTPUT_PATH + parameters.resultFolder;
+			RDFMiner.outputFolder = Global.OUTPUT_PATH + parameters.directory;
+		}
+		// Create cache folder if it not already exists
+		Global.CACHE_FOLDER = RDFMiner.outputFolder + "/caches/";
+		if(!(new File(Global.CACHE_FOLDER)).exists()) {
+			boolean created = (new File(Global.CACHE_FOLDER)).mkdir();
+			if(created)
+				logger.info("Cache folder successfully created");
 		}
 
 		// define a SPARQL Endpoint to use if provided
@@ -174,21 +177,17 @@ public class RDFMiner {
 		}
 
 		// define a set of prefixes provided by user (with -prefix option), else use the default prefixes
-		if(parameters.prefixesFile != null) {
-			File prefixesFile = new File(parameters.prefixesFile);
-			if(prefixesFile.exists()) {
-				logger.info("(--prefixes) RDFMiner will use the following prefixes file");
-				logger.info(prefixesFile.getAbsolutePath());
-				try {
-					Global.PREFIXES = Files.readString(Path.of(prefixesFile.getAbsolutePath()));
-				} catch (IOException e) {
-					logger.error("Error when reading the prefix file ...");
-					logger.error(e.getMessage());
-					System.exit(1);
-				}
-			} else {
-				logger.error("The given prefixes file does not exists ...");
-				logger.warn("RDFMiner will use the default prefixes to perform SPARQL queries ...");
+		Global.PREFIXES_FILE = RDFMiner.outputFolder + parameters.prefixesFile;
+		File prefixesFile = new File(Global.PREFIXES_FILE);
+		if(prefixesFile.exists()) {
+			logger.info("RDFMiner will use the specified prefixes file");
+			logger.info(prefixesFile.getAbsolutePath());
+			try {
+				Global.PREFIXES = Files.readString(Path.of(prefixesFile.getAbsolutePath()));
+			} catch (IOException e) {
+				logger.error("Error when reading the prefix file ...");
+				logger.error(e.getMessage());
+				System.exit(1);
 			}
 		} else {
 			logger.info("RDFMiner will use the default prefixes to perform SPARQL queries ...");
@@ -196,8 +195,9 @@ public class RDFMiner {
 
 		// Novelty search
 		if(parameters.useNoveltySearch) {
+			Global.SIMILARITIES_FILE = Global.CACHE_FOLDER + "axioms_similarity.json";
 			if(!new File(Global.SIMILARITIES_FILE).exists()) {
-				logger.info("Create the similarity map and save it into " + Global.SIMILARITIES_FILE + " file");
+				logger.info("Create the similarity map and save it into " + Global.SIMILARITIES_FILE);
 				similarityMap = new SimilarityMap();
 			} else {
 				similarityMap = new SimilarityMap(new File(Global.SIMILARITIES_FILE));

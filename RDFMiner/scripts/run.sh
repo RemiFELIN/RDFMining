@@ -5,12 +5,12 @@ arr=("$@")
 if [[ "$arr" != "launch" ]]
 then
 	for index in ${!arr[@]}; do
-		if [ "${arr[index]}" == "-a" ] || \
-		[ "${arr[index]}" == "--axioms" ] || \
+		if [ "${arr[index]}" == "-af" ] || \
+		[ "${arr[index]}" == "--axioms-file" ] || \
 		[ "${arr[index]}" == "-g" ] || \
 		[ "${arr[index]}" == "--grammar" ] || \
-		[ "${arr[index]}" == "-s" ] || \
-		[ "${arr[index]}" == "--subclasslist" ]; then
+		[ "${arr[index]}" == "-sf" ] || \
+		[ "${arr[index]}" == "--shapes-file" ]; then
 			echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - set '+x' authorization : "${arr[index + 1]}\
 			" for "${arr[index]}" option"
 			# Set 'x' autorization for each file used

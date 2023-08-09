@@ -89,12 +89,12 @@ public class Global {
     /**
      * Output path of results, it corresponding to '/rdfminer/io/' in container
      */
-    public static final String OUTPUT_PATH = HOME + "io/";
+    public static String OUTPUT_PATH = HOME + "io/";
 
     /**
      * Name of output results file in JSON
      */
-    public static final String RESULTS_FILENAME = "results.json";
+    public static final String RESULTS_FILENAME = "/results.json";
 
     /**
      * Name of SHACL Validation report (Classic; probabilistic) file using turtle (.ttl) format
@@ -115,12 +115,18 @@ public class Global {
      */
     public static final String PROBABILISTIC_STTL_RESULT_AS_HTML = "results.html";
 
+    public static final String USERS = "users/";
+
     /**
      * .cache files folder path
      */
-    public static final String CACHE_PATH = HOME + "/caches/";
+    public static String CACHE_FOLDER = "";
 
-    public static final String SIMILARITIES_FILE = HOME + "/caches/axioms_similarity.json";
+    public static String GRAMMAR_FILE = "";
+
+    public static String PREFIXES_FILE = "";
+
+    public static String SIMILARITIES_FILE = "";
 
     /**
      * Number of threads used to perform evaluation of axioms, its value depends on

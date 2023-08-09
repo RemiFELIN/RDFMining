@@ -1,8 +1,10 @@
 let Project = require("../model/project");
-let docker = require("../docker/builder");
 let Settings = require("../model/settings");
+
+let builder = require("../docker/builder");
+let docker = require("../docker/docker");
 // let Experience = require("../model/experience");
-let logger = require("../logger");
+let logger = require("../tools/logger");
 
 function createProject(req, res) {
     const project = new Project();
@@ -11,6 +13,9 @@ function createProject(req, res) {
     project.projectName = req.body.projectName;
     project.mod = req.body.mod;
     project.status = 0;
+    project.prefixes = req.body.prefixes;
+    project.task = req.body.task;
+    project.targetSparqlEndpoint = req.body.targetSparqlEndpoint;
     project.settings = new Settings(req.body.settings);
     // push into db
     project.save().then((data) => {
@@ -18,11 +23,10 @@ function createProject(req, res) {
             res.status(200).send("Project created: " + data._id);
             logger.info("Project created: " + data._id);
             // build cmdline for docker 
-            let cmdline = docker.constructDockerCmdFromData(data);
-            console.log("debug: " + cmdline);
+            let result = builder.constructDockerCmdFromData(data);
+            docker.exec(result.cmd, result.output);
             // console.log(data);
             // req.io.emit("newProject", data);
-
         } else {
             res.status(401).send("POST PROJECT ERROR");
             logger.error("Error during the process 'createProject()'");
@@ -32,7 +36,7 @@ function createProject(req, res) {
 
 function deleteProject(req, res) {
     Project.deleteOne({ userId: req.body.userId, projectName: req.body.projectName }).then((data) => {
-        res.status(200).send("Project deleted !");
+        res.status(200).send(data._id);
         req.io.emit("deleteProject", data);
         // console.log("/project/delete: " + data);
         logger.info("project " + data._id + " deleted !");

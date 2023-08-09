@@ -20,6 +20,9 @@ public class CmdLineParameters {
 	@Option(name = "-h", aliases = { "--help" }, metaVar = "HELP")
 	public boolean help;
 
+	@Option(name = "-user", aliases = { "--username" }, usage = "Specify the username", metaVar = "SHAPES_FILE")
+	public String username = "admin";
+
 	@Option(name = "-sa", aliases = { "--single-axiom" }, usage = "test a single axiom given", metaVar = "AXIOM")
 	public String singleAxiom = null;
 
@@ -38,7 +41,7 @@ public class CmdLineParameters {
 	public String axiomFile = null;
 
 	@Option(name = "-p", aliases = { "--prefixes" }, usage = "use this file as the prefixes to be used in SPARQL queries", metaVar = "PREFIXES")
-	public String prefixesFile = null;
+	public String prefixesFile = "prefixes.txt";
 
 	@Option(name = "-cs", aliases = { "--classic-shacl" }, usage = "use classic SHACL validation", metaVar = "CLASSIC_SHACL")
 	public boolean useClassicShaclMode = false;
@@ -75,10 +78,10 @@ public class CmdLineParameters {
 	public double dynTimeOut = 0.0;
 
 	@Option(name = "-g", aliases = { "--grammar" }, usage = "use this file as the axiom grammar", metaVar = "GRAMMAR")
-	public String grammarFile = System.getenv("HOME") + "code/resources/OWL2Axiom-test.bnf";
+	public String grammarFile = "grammar.bnf";
 
 	@Option(name = "-dir", aliases = { "--directory" }, usage = "path of output folder", metaVar = "RESULTFOLDER")
-	public String resultFolder = "results";
+	public String directory = "results";
 
 	// GENERATOR
 	@Option(name = "-ra", aliases = { "--random-axiom" }, usage = "use the random axiom generator")
