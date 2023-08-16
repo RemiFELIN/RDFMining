@@ -3,10 +3,10 @@ package com.i3s.app.rdfminer.launcher;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
+import com.i3s.app.rdfminer.evolutionary.EntityMining;
 import com.i3s.app.rdfminer.evolutionary.fitness.Fitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.individual.CandidatePopulation;
-import com.i3s.app.rdfminer.evolutionary.EntityMining;
 import com.i3s.app.rdfminer.evolutionary.types.TypeCrossover;
 import com.i3s.app.rdfminer.evolutionary.types.TypeMutation;
 import com.i3s.app.rdfminer.evolutionary.types.TypeSelection;
@@ -17,6 +17,13 @@ import com.i3s.app.rdfminer.output.Cache;
 import com.i3s.app.rdfminer.output.IndividualJSON;
 import com.i3s.app.rdfminer.output.Results;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -117,7 +124,7 @@ public class GrammaticalEvolution {
         int curGeneration = 1;
 
         Cache cache = null;
-        final String CACHE_PATH = RDFMiner.outputFolder + "buffer_size" + RDFMiner.parameters.populationSize + ".json";
+        final String CACHE_PATH = RDFMiner.outputFolder + "/buffer_size" + RDFMiner.parameters.populationSize + ".json";
         File bufferFile = new File(CACHE_PATH);
         // check if the buffer file exists and if it is not empty
         if (bufferFile.exists() && (new BufferedReader(new FileReader(CACHE_PATH))).readLine() != null) {
@@ -176,6 +183,8 @@ public class GrammaticalEvolution {
             logger.info("Edit JSON file results ...");
             RDFMiner.results.stats = RDFMiner.stats.toJSON();
             RDFMiner.results.content = RDFMiner.content;
+            // save entities
+            sendEntities();
             RDFMiner.output.write(RDFMiner.results.toJSON().toString(2));
             RDFMiner.output.close();
             // if novelty seach is used
@@ -186,6 +195,24 @@ public class GrammaticalEvolution {
             logger.error("I/O error while closing JSON writer: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
+        }
+    }
+
+    public static void sendEntities() {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            JSONObject toSend = new JSONObject();
+            toSend.put("userId", RDFMiner.parameters.username);
+            toSend.put("projectName", RDFMiner.parameters.directory);
+            toSend.put("entities", RDFMiner.results.content);
+            //
+            HttpPut put = new HttpPut(Global.RDFMINER_SERVER_IP + "api/result");
+            put.setEntity(new StringEntity(toSend.toString(), ContentType.APPLICATION_JSON));
+            logger.info("PUT request: updating entities ...");
+            HttpResponse response = httpClient.execute(put);
+            logger.info("Status code: " + response.getStatusLine().getStatusCode());
+            logger.info(new BasicResponseHandler().handleResponse(response));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

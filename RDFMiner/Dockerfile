@@ -1,13 +1,13 @@
 # The aim of this file is to setup an complete environment to launch RDFMiner tool
 
-# Get Debian image from Docker Hub
-FROM debian
+# Get maven:3-jdk-11 image from Docker Hub
+FROM maven:3-jdk-11
 #:stretch
 
 # Setup RDFMiner version
 ENV RDFMINER_VERSION=1.4
 ENV CORESE_VERSION=4.3.0
-ENV JAVA_VERSION=11
+# ENV JAVA_VERSION=11
 
 # Setup HOME environment variable
 ENV HOME=/rdfminer/
@@ -17,6 +17,7 @@ ENV HOME=/rdfminer/
 
 # Add repository (OpenJDK)
 # add-apt-repository ppa:openjdk-r/ppa && \
+# RUN add-apt-repository ppa:openjdk-r/ppa
 # Update
 RUN apt-get update
 # Install gcc 
@@ -26,18 +27,16 @@ RUN apt install gcc -y
 # and catch errors while building phasis
 # Install Openjdk $JAVA_VERSION : we use this jdk to run the maven build phasis and run rdfminer jar
 # echo "\n********** 2/3: OPENJDK" && \
-RUN apt-get install openjdk-$JAVA_VERSION-jdk -y
+# RUN apt-get install openjdk-$JAVA_VERSION-jdk -y
 # Install maven
 # echo "\n********** 3/3: MAVEN" && \
-RUN apt-get --no-install-recommends install maven -y
+# RUN apt-get --no-install-recommends install maven -y
 # Check all dependencies versions
 # echo "\n********** FINISH: version control phase \n" && \
-RUN echo "\n"$(gcc --version)"\n" && \
-    echo "\n"$(java -version) && \
-    echo $(mvn -v)"\n"
+RUN echo "\n"$(gcc --version)"\n"
 
 # define JAVA_HOME
-ENV JAVA_HOME=/usr/lib/jvm/java-$JAVA_VERSION-openjdk-amd64/
+# ENV JAVA_HOME=/usr/lib/jvm/java-$JAVA_VERSION-openjdk-amd64/
 
 # copy all project in HOME folder in image to build
 COPY . $HOME
@@ -89,14 +88,11 @@ RUN mvn install:install-file \
         -DgeneratePom=true \
         --quiet
 
-# Compile c code by running "compile_c_code" shell code
-RUN echo -n "Compile rdfminer_axiom_Axiom.so ... " && sh $HOME/scripts/compile_c_code.sh && echo "Done."
-
 # run command 'mvn clean install' to build jar of RDFMiner
 RUN cd $HOME/code && mvn clean install
     
-# Uninstall GCC and Maven
-RUN apt-get remove gcc maven -y
+# Uninstall GCC
+RUN apt-get remove gcc -y
 RUN apt autoremove -y
 RUN apt-get clean
 

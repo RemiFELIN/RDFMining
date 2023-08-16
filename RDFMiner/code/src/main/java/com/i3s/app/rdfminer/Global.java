@@ -59,6 +59,11 @@ public class Global {
     public static final String CORESE_IP = "http://172.19.0.4:9100/";
 
     /**
+     * RDFMiner Server IP Address
+     */
+    public static final String RDFMINER_SERVER_IP = "http://172.19.0.1:9200/";
+
+    /**
      * default prefixes used to perform queries with the remote {@link Global#TARGET_SPARQL_ENDPOINT
      * SPARQL endpoint}
      */

@@ -45,7 +45,7 @@ public class Offspring {
             // if the novelty search is enabled, we would like to know if the tested offspring is far (or not)
             // from the current population, in order to reward 'very novel' assumption
             if (RDFMiner.parameters.useNoveltySearch) {
-                CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES);
+                CoreseEndpoint endpoint = new CoreseEndpoint(Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES);
                 NoveltySearch ns = new NoveltySearch(endpoint);
                 double scoreChild = ns.getScore(child, ns.getDistanceOfEntityFromPopulation(child, this.population));
                 double scoreParent = ns.getScore(parent, ns.getDistanceOfEntityFromPopulation(parent, this.population));

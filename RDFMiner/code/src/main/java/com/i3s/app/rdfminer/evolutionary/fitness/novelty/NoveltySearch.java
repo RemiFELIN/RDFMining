@@ -127,7 +127,7 @@ public class NoveltySearch {
 
         RDFMiner.similarityMap = new SimilarityMap(new File("/user/rfelin/home/projects/RDFMining/RDFMiner/caches/axioms_similarity.json"));
 
-        CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, "http://172.19.0.2:9000/sparql", Global.PREFIXES);
+        CoreseEndpoint endpoint = new CoreseEndpoint("http://172.19.0.2:9000/sparql", Global.PREFIXES);
 //        Axiom a = AxiomFactory.create(null, "SubClassOf(<http://dbpedia.org/ontology/InformationAppliance> <http://www.w3.org/2004/02/skos/core#Concept>)",
 //                    endpoint);
         // -0.6641085922800061

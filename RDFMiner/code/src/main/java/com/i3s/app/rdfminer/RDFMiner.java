@@ -134,7 +134,8 @@ public class RDFMiner {
 		}
 
 		// define a SPARQL Endpoint to use if provided
-		if (parameters.useClassicShaclMode || parameters.useProbabilisticShaclMode) {
+		// todo: switch case ???
+		if ((parameters.useClassicShaclMode || parameters.useProbabilisticShaclMode) && parameters.targetSparqlEndpoint == null) {
 			// SHACL Shapes mining !
 			Global.TARGET_SPARQL_ENDPOINT = Global.CORESE_IP;
 			logger.warn("RDFMiner will query the Corese semantic factory: " + Global.TARGET_SPARQL_ENDPOINT);
@@ -172,7 +173,6 @@ public class RDFMiner {
 			logger.warn("Grammatical evolution activated without training dataset specified !");
 			logger.warn("RDFMiner will query the target database in SERVICE clause: " + Global.TARGET_SPARQL_ENDPOINT);
 			logger.warn("The processes may take longer if the target database contains a large set of RDF triples ...");
-//			logger.warn("This database contains a subset (1%) of a dump of DBPedia 2015-04 ...");
 			Global.TRAINING_SPARQL_ENDPOINT = Global.TARGET_SPARQL_ENDPOINT;
 		}
 

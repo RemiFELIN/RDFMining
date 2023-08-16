@@ -19,7 +19,7 @@ then
 	done
 	echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - launch rdfminer.jar ..."
 	# Execute jar file with params
-	${JAVA_HOME}bin/java -Xmx4g -Djava.library.path=${HOME}/code/resources/. -Dfile.encoding="UTF-8" -jar ${HOME}/jar/rdfminer-${RDFMINER_VERSION}.jar "${@}"
+	${JAVA_HOME}/bin/java -Xmx4g -Djava.library.path=${HOME}/code/resources/. -Dfile.encoding="UTF-8" -jar ${HOME}/jar/rdfminer-${RDFMINER_VERSION}.jar "${@}"
 else
 	echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [run.sh] INFO - launch rdfminer service ..."
 	# TMP : to keep a container running

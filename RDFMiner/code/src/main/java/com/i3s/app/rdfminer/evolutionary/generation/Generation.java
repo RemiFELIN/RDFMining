@@ -208,7 +208,7 @@ public class Generation {
         // Check if Novelty Search is enabled
         if(RDFMiner.parameters.useNoveltySearch) {
             // Compute the similarities of each axiom between them, and update the population
-            NoveltySearch noveltySearch = new NoveltySearch(new CoreseEndpoint(Global.CORESE_IP, Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES));
+            NoveltySearch noveltySearch = new NoveltySearch(new CoreseEndpoint(Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES));
             try {
                 evaluatedIndividuals = noveltySearch.update(evaluatedIndividuals);
             } catch (URISyntaxException | IOException e) {

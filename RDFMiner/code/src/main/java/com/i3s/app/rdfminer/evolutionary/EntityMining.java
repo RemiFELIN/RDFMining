@@ -15,8 +15,17 @@ import com.i3s.app.rdfminer.evolutionary.tools.EATools;
 import com.i3s.app.rdfminer.evolutionary.types.TypeSelection;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.output.GenerationJSON;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -149,6 +158,26 @@ public class EntityMining {
         logger.info("Population development rate: " + (generation.populationDevelopmentRate * 100) + "%");
         logger.info("Number of individual(s) with a non-null fitness: " + generation.numIndividualsWithNonNullFitness);
         RDFMiner.stats.generations.add(generation.toJSON());
+        // send generations to the server
+        sendGenerations();
+    }
+
+    public static void sendGenerations() {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            JSONObject toSend = new JSONObject();
+            toSend.put("userId", RDFMiner.parameters.username);
+            toSend.put("projectName", RDFMiner.parameters.directory);
+            toSend.put("generations", RDFMiner.stats.generations);
+            //
+            HttpPut put = new HttpPut(Global.RDFMINER_SERVER_IP + "api/result");
+            put.setEntity(new StringEntity(toSend.toString(), ContentType.APPLICATION_JSON));
+            logger.info("PUT request: updating generations ...");
+            HttpResponse response = httpClient.execute(put);
+            logger.info("Status code: " + response.getStatusLine().getStatusCode());
+            logger.info(new BasicResponseHandler().handleResponse(response));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

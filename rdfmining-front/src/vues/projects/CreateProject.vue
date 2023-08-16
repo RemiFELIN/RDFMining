@@ -41,7 +41,7 @@
             </CCol>
             <CCol sm="7">
                 <CFormInput v-model="selectedTargetEndpoint" feedback-invalid="It must be a valid SPARQL endpoint"
-                    :invalid="!selectedTargetEndpoint.includes('http://') || !selectedTargetEndpoint.includes('sparql')" />
+                    :invalid="!selectedTargetEndpoint.includes('http://')" />
             </CCol>
         </CRow>
         <!--
@@ -157,7 +157,7 @@
             <CRow class="mb-3">
                 <CFormLabel class="col-sm-2 col-form-label"><b>{{ populationSize.description }}</b></CFormLabel>
                 <CCol sm="9">
-                    <CFormRange :min="50" :max="1000" :step="50" v-model="selectedPopulationSize" />
+                    <CFormRange :min="10" :max="1000" :step="10" v-model="selectedPopulationSize" />
                 </CCol>
                 <CCol sm="1">
                     <CFormLabel class="col-form-label"><b>{{ selectedPopulationSize }}</b></CFormLabel>
@@ -169,7 +169,7 @@
             <CRow class="mb-3">
                 <CFormLabel class="col-sm-2 col-form-label"><b>{{ effort.description }}</b></CFormLabel>
                 <CCol sm="9">
-                    <CFormRange :min="minEffort" :max="maxEffort" :step="50" v-model="selectedTotalEffort" />
+                    <CFormRange :min="minEffort" :max="maxEffort" :step="10" v-model="selectedTotalEffort" />
                 </CCol>
                 <CCol sm="1">
                     <CFormLabel class="col-form-label"><b>{{ selectedTotalEffort }}</b></CFormLabel>
@@ -382,7 +382,7 @@ export default {
             this.task = this.selectedFeature.includes('ge') ? "Mining" : "Assessment";
             // console.log(this.cmdline);
             // build a request to the API
-            axios.post("http://localhost:3000/api/project/setup", {
+            axios.post("http://localhost:9200/api/project/setup", {
                 userId: this.id,
                 projectName: this.selectedProjectName,
                 mod: this.selectedFeature,
@@ -432,7 +432,7 @@ export default {
                 // checking project name 
                 // already exists ?
                 console.log(this.id + " " + this.selectedProjectName);
-                axios.get("http://localhost:3000/api/project", {
+                axios.get("http://localhost:9200/api/project", {
                     params:
                         { id: this.id, projectName: this.selectedProjectName }
                 }).then(
@@ -533,7 +533,7 @@ export default {
         }
     },
     mounted() {
-        axios.get("http://localhost:3000/api/params").then(
+        axios.get("http://localhost:9200/api/params").then(
             (response) => {
                 const data = response.data[0];
                 // Mapping variables

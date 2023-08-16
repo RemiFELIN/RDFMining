@@ -66,7 +66,7 @@ export default {
     },
     methods: {
         submit(username, password) {
-            axios.post("http://localhost:3000/api/user", {
+            axios.post("http://localhost:9200/api/user", {
                     params: {
                         username: username,
                         password: password
@@ -85,7 +85,7 @@ export default {
         username() {
             if (this.username != '') {
                 // We'll check if this username does not already exist in our DB
-                axios.get("http://localhost:3000/api/user", {
+                axios.get("http://localhost:9200/api/user", {
                     username: this.username
                 }).then(
                     (response) => {

@@ -22,7 +22,7 @@ public class ExtendedShacl {
 
     public static void runWithEval(ShapesManager shapesManager) throws URISyntaxException, IOException {
         // launch evaluation
-        CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, Global.PREFIXES);
+        CoreseEndpoint endpoint = new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
         // get the original number of triples into Corese triplestore
         int originalNTriples = endpoint.countAllFromCoreseTripleStore();
         // Launch SHACL evaluation from the Corese server and get the result in turtle
@@ -51,7 +51,7 @@ public class ExtendedShacl {
     }
 
     public static void runWithoutEval(ValidationReport validationReport, ShapesManager shapesManager) throws URISyntaxException, IOException {
-        CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, Global.PREFIXES);
+        CoreseEndpoint endpoint = new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
         // get the original number of triples into Corese triplestore
         int originalNTriples = endpoint.countAllFromCoreseTripleStore();
         logger.info("Original number of RDF triples into Corese triplestore: " + originalNTriples);

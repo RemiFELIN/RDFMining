@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Automatically generate a YML file to build the whole architecture using docker-compose command
-# It will scan the workspace absolute path of the current machine and avoid any modification of it by users
+# It will scan the workspace absolute path of the current machine 
+# avoid any modification of it by users
 
 # Define the YML file to generate IF IT DOES NOT EXISTS
 YML_FILE=docker-compose.yml
@@ -27,9 +28,14 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     # echo $WORKSPACE_ABSOLUTE_PATH
     touch $YML_FILE
     # Define version of each services
-    RDFMINER_VERSION=1.4
-    VIRTUOSO_VERSION=7.2.5
-    CORESE_VERSION=4.3.1
+    RDFMINER_VERSION="1.4"
+    VIRTUOSO_VERSION="7.2.5"
+    CORESE_VERSION="4.3.1"
+    RDFMINER_SERVER_VERSION="1.0"
+    # Define ports
+    VIRTUOSO_SERVER_PORT=9000
+    CORESE_SERVER_PORT=9100
+    RDFMINER_SERVER_PORT=9200
     # 
     #   EDIT docker-compose.yml
     # 
@@ -70,7 +76,7 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     addLineToYML 6 "       build:"
     addLineToYML 9 "          context: ./Virtuoso/."
     addLineToYML 6 "       ports:"
-    addLineToYML 9 "          - '9000:9000'"
+    addLineToYML 9 "          - '"$VIRTUOSO_SERVER_PORT":"$VIRTUOSO_SERVER_PORT"'"
     addLineToYML 6 "       volumes:"
     addLineToYML 9 "          - type: bind"
     addLineToYML 11 "            source: "$WORKSPACE_ABSOLUTE_PATH"Virtuoso/data"
@@ -90,7 +96,7 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     addLineToYML 6 "       build:" 
     addLineToYML 9 "          context: ./Corese/."
     addLineToYML 6 "       ports:"
-    addLineToYML 9 "          - '9100:9100'"
+    addLineToYML 9 "          - '"$CORESE_SERVER_PORT":"$CORESE_SERVER_PORT"'"
     addLineToYML 6 "       volumes:"
     addLineToYML 9 "          - type: bind"
     addLineToYML 11 "            source: "$WORKSPACE_ABSOLUTE_PATH"Corese/log"
@@ -104,6 +110,27 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     addLineToYML 6 "       networks:"
     addLineToYML 9 "          rdfmining_network:"
     addLineToYML 12 "               ipv4_address: 172.19.0.4"
+    # 
+    #   RDFMiner Server v1.0
+    # https://nodejs.org/fr/docs/guides/nodejs-docker-webapp
+    #
+    # addLineToYML 3 "   server:"
+    # addLineToYML 6 "       restart: always"
+    # addLineToYML 6 "       image: rdfminer-server:"$RDFMINER_SERVER_VERSION
+    # addLineToYML 6 "       build:" 
+    # addLineToYML 9 "          context: ./rdfmining-server/."
+    # addLineToYML 6 "       volumes:"
+    # addLineToYML 9 "          - type: bind"
+    # addLineToYML 11 "            source: "$WORKSPACE_ABSOLUTE_PATH"rdfmining-server/node_modules"
+    # addLineToYML 11 "            target: /server/node_modules"
+    # addLineToYML 9 "          - type: bind"
+    # addLineToYML 11 "            source: "$WORKSPACE_ABSOLUTE_PATH"rdfmining-server/logs"
+    # addLineToYML 11 "            target: /server/logs"
+    # addLineToYML 6 "       ports:"
+    # addLineToYML 9 "          - '"$RDFMINER_SERVER_PORT":"$RDFMINER_SERVER_PORT"'"
+    # addLineToYML 6 "       networks:"
+    # addLineToYML 9 "          rdfmining_network:"
+    # addLineToYML 12 "               ipv4_address: 172.19.0.5"
     #
     #   Define networks architecture
     # 

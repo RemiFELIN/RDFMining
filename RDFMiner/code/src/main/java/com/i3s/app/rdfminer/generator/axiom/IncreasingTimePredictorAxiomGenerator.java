@@ -168,7 +168,7 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 	 */
 	protected Set<String> getNodes(String sparql) throws URISyntaxException, IOException {
 		logger.warn("Querying DBpedia with query " + sparql);
-		CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
+		CoreseEndpoint endpoint = new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
 		List<String> results = endpoint.selectFederatedQuery("class", sparql);
 		return new TreeSet<>(results);
 	}

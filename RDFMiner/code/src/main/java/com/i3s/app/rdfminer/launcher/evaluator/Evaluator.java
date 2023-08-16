@@ -130,7 +130,7 @@ public class Evaluator {
 				callables.add(() -> {
 					try {
 						logger.info("Testing axiom: " + finalAxiomName);
-						Axiom a = AxiomFactory.create(null, axiom, new CoreseEndpoint(Global.CORESE_IP, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
+						Axiom a = AxiomFactory.create(null, axiom, new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
 //						a.setEntityAsString(finalAxiomName);
 						return a;
 					} catch (QueryExceptionHTTP httpError) {
@@ -160,7 +160,7 @@ public class Evaluator {
 					String finalAxiomName = axiomName;
 					callables.add(() -> {
 						logger.info("Testing axiom: " + finalAxiomName);
-						Axiom a = AxiomFactory.create(null, finalAxiomName, new CoreseEndpoint(Global.CORESE_IP, Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
+						Axiom a = AxiomFactory.create(null, finalAxiomName, new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
 						a.setEntityAsString(finalAxiomName);
 						if (RDFMiner.parameters.singleAxiom != null) {
 							logger.info("Axiom evaluated !");

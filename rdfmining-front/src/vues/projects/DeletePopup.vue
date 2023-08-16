@@ -53,7 +53,7 @@ export default {
     },
     methods: {
         deleteProject() {
-            axios.post("http://localhost:3000/api/project/delete", {
+            axios.post("http://localhost:9200/api/project/delete", {
                 userId: this.id,
                 projectName: this.projectName
             }).then(

@@ -60,7 +60,7 @@ export default {
     },
     mounted() {
         // build a request to the API
-        axios.get("http://localhost:3000/api/publications").then(
+        axios.get("http://localhost:9200/api/publications").then(
             (response) => {
                 if (response.status === 200) {
                     // fill papers list

@@ -48,7 +48,7 @@ export default {
     },
     beforeMount() {
         // build a request to the API
-        axios.get("http://localhost:3000/api/spec/").then(
+        axios.get("http://localhost:9200/api/spec/").then(
             (response) => {
                 if (response.status === 200) {
                     this.html = response.data;

@@ -81,7 +81,7 @@ export default {
         refresh() {
             this.countProject = 0;
             this.projects = [];
-            axios.get("http://localhost:3000/api/projects/", { params: { id: this.id } }).then(
+            axios.get("http://localhost:9200/api/projects/", { params: { id: this.id } }).then(
                 (response) => {
                     if (response.status === 200) {
                         // fill papers list
@@ -99,7 +99,7 @@ export default {
     mounted() {
         // build a request to the API
         // build a request to the API
-        axios.get("http://localhost:3000/api/projects/", { params: { id: this.id } }).then(
+        axios.get("http://localhost:9200/api/projects/", { params: { id: this.id } }).then(
             (response) => {
                 if (response.status === 200) {
                     // fill papers list

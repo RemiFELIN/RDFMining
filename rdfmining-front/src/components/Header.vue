@@ -8,16 +8,19 @@
           <CNavItem>
             <CNavLink><router-link to="/">Home</router-link></CNavLink>
           </CNavItem>
-          <CNavLink :disabled="!isAuth" :style="!isAuth ? 'opacity: 0.3' : ''"><router-link to="/projects">Projects</router-link></CNavLink>
+          <CNavLink :disabled="!isAuth" :style="!isAuth ? 'opacity: 0.3' : ''"><router-link
+              to="/projects">Projects</router-link></CNavLink>
           <CNavLink><router-link to="/publications">Publications</router-link></CNavLink>
           <!-- <CNavLink><router-link to="/api">API</router-link></CNavLink> -->
-          <CButton class="right" v-if="!isAuth" type="submit" color="info" variant="outline" @click="onSubscribeClick">
-            Subscribe
-          </CButton>
-          <CButton class="right" type="submit" :color="!isAuth ? 'success' : 'danger'" variant="outline"
-            @click="onSubmitClick">
-            {{ !isAuth ? "Log In" : "Log Out " }}
-          </CButton>
+          <CButtonGroup class="right">
+            <CButton type="submit" :color="!isAuth ? 'success' : 'danger'" shape="rounded-0"
+              @click="onSubmitClick">
+              {{ !isAuth ? "Log In" : "Log Out " }}
+            </CButton>
+            <CButton v-if="!isAuth" type="submit" color="info" shape="rounded-0" @click="onSubscribeClick">
+              Subscribe
+            </CButton>
+          </CButtonGroup>
         </CNavbarNav>
       </CCollapse>
     </CContainer>
@@ -25,12 +28,12 @@
 </template>
   
 <script>
-import { CNavbar, CContainer, CNavbarBrand, CCollapse, CNavbarNav, CNavLink, CButton, CNavItem } from '@coreui/vue';
+import { CNavbar, CContainer, CNavbarBrand, CCollapse, CNavbarNav, CNavLink, CButton, CButtonGroup, CNavItem } from '@coreui/vue';
 
 export default {
   name: 'CHeader',
   components: {
-    CNavbar, CContainer, CNavbarBrand, CCollapse, CNavbarNav, CNavLink, CButton, CNavItem
+    CNavbar, CContainer, CNavbarBrand, CCollapse, CNavbarNav, CNavLink, CButton, CNavItem, CButtonGroup
   },
   props: {
     isAuth: {
@@ -64,17 +67,18 @@ a:hover {
   cursor: pointer;
 }
 
+
 .right {
   position: absolute;
   right: 0;
   top: 0;
-  margin-right: 30px;
-  margin-left: 30px;
-  width: 100px;
+  /* margin-right: 30px; */
+  /* margin-left: 30px; */
+  /* width: 100px; */
 }
 
-.right+.right {
+/*.right+.right {
   margin-right: 10%;
-}
+} */
 </style>
   

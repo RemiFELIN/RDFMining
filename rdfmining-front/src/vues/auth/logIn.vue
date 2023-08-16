@@ -60,7 +60,7 @@ export default {
         // Connection service
         submit(username, password) {
             // build a request to the API
-            axios.get("http://localhost:3000/api/auth", {
+            axios.get("http://localhost:9200/api/auth", {
                 params: {
                     username,
                     password

@@ -61,25 +61,13 @@ public class CoreseEndpoint {
 
     /**
      * Constructor of SparqlEndpoint
-     * @param url the IP Address of Corese server
+     * @param service the SPARQL endpoint to ask into federated query
      * @param prefixes the prefixes used for the queries
      */
-    public CoreseEndpoint(String url, String prefixes) {
-        this.url = url;
-        this.prefixes = prefixes;
-    }
-
-    public CoreseEndpoint(String url, String service, String prefixes) {
-        this.url = url;
+    public CoreseEndpoint(String service, String prefixes) {
+        this.url = Global.CORESE_IP;
         this.service = service;
         this.prefixes = prefixes;
-    }
-
-    public CoreseEndpoint(String url, String service, String prefixes, long timeout) {
-        this.url = url;
-        this.service = service;
-        this.prefixes = prefixes;
-        this.timeout = timeout;
     }
 
     public String addFederatedQuery(String sparql) {
@@ -176,7 +164,7 @@ public class CoreseEndpoint {
      */
     public String query(String format, String sparql) throws URISyntaxException, IOException {
         // build the final URL
-        final String service = url + CoreseService.CORESE_SPARQL_ENDPOINT;
+        final String service = this.url + CoreseService.CORESE_SPARQL_ENDPOINT;
         // specify all the query params needed to launch a request on Corese server
         HashMap<String, String> params = new HashMap<>();
         // specify SPARQL and Format in parameters
@@ -361,28 +349,5 @@ public class CoreseEndpoint {
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
-
-//    public static void main(String[] args) throws URISyntaxException, IOException {
-//        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-//        // build the final URL
-//        final String service = Global.CORESE_SPARQL_ENDPOINT + CoreseService.CORESE_LOAD_RDF;
-//        URIBuilder builder = new URIBuilder(service);
-//        // POST request
-//        HttpPost post = new HttpPost(builder.build());
-//        post.setHeader("Content-Type", "application/x-www-form-urlencoded");
-//        post.setHeader("Accept", "*/*");
-//        // set x-www-form-urlencoded body
-//        StringEntity entity = new StringEntity("remote_path=http://172.19.0.4:9100/rdfminer/file/content?name=shapes.ttl",
-//                ContentType.APPLICATION_FORM_URLENCODED);
-//        post.setEntity(entity);
-//        System.out.println(Arrays.toString(post.getAllHeaders()));
-//        // launch service
-//        System.out.println("save test into Corese graph ...");
-//        HttpResponse response = httpClient.execute(post);
-//        if(response.getStatusLine().getStatusCode() != HttpURLConnection.HTTP_OK)
-//            System.out.println("Error " + response.getStatusLine().getStatusCode() + " while loading on server ...");
-//        else
-//            System.out.println("The RDF data file has been loaded in Corese server !");
-//    }
 
 }

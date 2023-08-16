@@ -100,7 +100,7 @@ export default {
     data() {
         return {
             // projects: [],
-            socket: io("http://localhost:3000"),
+            socket: io("http://localhost:9200"),
             // searchValue: ref("Yolo")
             status: {
                 0: { text: "Pending...", color: "red" },
