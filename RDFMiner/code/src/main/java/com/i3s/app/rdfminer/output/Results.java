@@ -25,8 +25,15 @@ public class Results {
 
     private static final Logger logger = Logger.getLogger(Results.class.getName());
 
+    public final static String USER_ID = "userId";
+    public final static String PROJECT_NAME = "projectName";
+    public final static String STATISTICS = "statistics";
+    public final static String ENTITIES = "entities";
+
+    public final static String GENERATIONS = "generations";
+
     public List<JSONObject> content;
-    public JSONObject stats;
+    public JSONObject statistics;
 
     public Results() {
         // set the content part of the results
@@ -45,10 +52,10 @@ public class Results {
      */
     public JSONObject toJSON() {
         JSONObject json = new JSONObject();
-        json.put("userId", RDFMiner.parameters.username);
-        json.put("projectName", RDFMiner.parameters.directory);
-        json.put("statistics", stats);
-        json.put("entities", new JSONArray(content));
+        json.put(USER_ID, RDFMiner.parameters.username);
+        json.put(PROJECT_NAME, RDFMiner.parameters.directory);
+        json.put(STATISTICS, RDFMiner.stats.toJSON());
+        json.put(ENTITIES, new JSONArray(content));
         return json;
     }
 
@@ -60,7 +67,7 @@ public class Results {
             logger.info("POST request: sending results ...");
             HttpResponse response = httpClient.execute(post);
             logger.info("Status code: " + response.getStatusLine().getStatusCode());
-            logger.info(new BasicResponseHandler().handleResponse(response));
+            logger.debug(new BasicResponseHandler().handleResponse(response));
         } catch (IOException e) {
             e.printStackTrace();
         }

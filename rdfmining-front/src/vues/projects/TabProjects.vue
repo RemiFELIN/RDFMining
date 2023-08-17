@@ -21,50 +21,7 @@
             <!-- <CTableDataCell colSpan="3" align="middle">Previous</CTableDataCell>
             <CTableDataCell align="right">Next</CTableDataCell> -->
         </CTableFoot>
-
     </CTable>
-    
-    <!-- <div class="containter">
-        <Vue3EasyDataTable :headers="headers" :items="projects" :rows-per-page="5" table-class-name="customize-table"
-            theme-color="#1d90ff" alternating buttons-pagination>
-
-            <template #expand="item">
-                <div>
-                    Parameters used:
-                    <ul>
-                        <li><b>Population size:</b> {{ item.params.populationSize }}</li>
-                        <li><b>Total effort:</b> {{ item.params.kBase }}</li>
-                        <li><b>Chromosome size:</b> {{ item.params.lenChromosome }}</li>
-                        <li><b>Max wrapp:</b> {{ item.params.maxWrapp }}</li>
-                        <li><b>Selection type:</b> {{ typeSelection[item.params.typeSelection].text }}</li>
-                        <li><b>Crossover type:</b> {{ typeCrossover[item.params.typeCrossover].text }}</li>
-                        <li><b>Mutation type:</b> {{ typeMutation[item.params.typeMutation].text }}</li>
-                        <li><b>Crowding method:</b> {{ item.params.crowding ? "YES" : "NO" }}</li>
-                        <li><b>Novelty Search:</b> {{ item.params.noveltySearch ? "YES" : "NO" }}</li>
-                    </ul>
-                </div>
-            </template>
-            <template #item-projectName="item">
-                <b>{{ item.projectName }}</b>
-            </template>
-            <template #item-mod="item">
-                <p>{{ item.mod }}</p>
-            </template>
-            <template #item-status="item">
-                <b :style="{ color: status[item.status].color }">{{ status[item.status].text }}</b>
-            </template>
-            <template #item-operation="item">
-                <div class="operation-wrapper">
-                    <img v-if="item.status != 2" src="../../assets/cancel.png" class="button-action" @click="cancelExecution(item)" />
-                    <img v-if="item.status != 0" src="../../assets/dashboard.png" class="button-action" @click="cancelExecution(item)" />
-                    <img src="../../assets/garbage.png" class="button-action" @click="enableDeletePopup(item)" />
-                </div>
-            </template>
-        </Vue3EasyDataTable>
-        <Popup v-if="showDeletePopup" :message="'Are you sure you want to delete this project? (this is not reversible)'"
-            @confirm="deleteProject(this.item)" @cancel="showDeletePopup = false">
-        </Popup>
-    </div> -->
 </template>
 
 
@@ -90,11 +47,14 @@ export default {
         id: {
             type: String,
         },
-        projects: {}
+        projects: Array
     },
     methods: {
         deletePopup(projectName) {
             this.$emit("delete", projectName);
+        },
+        updateStatus(project, status) {
+            project.status = status;
         }
     },
     data() {
@@ -118,9 +78,14 @@ export default {
     },
     mounted() {
         // SOCKET IO
-        // this.socket.on("newProject", (data) => {
-        //     this.projects.push(data);
-        // });
+        this.socket.on("update-status", (data) => {
+            console.log(data);
+            this.projects.forEach((p) => {
+                if(p.projectName == data.projectName) {
+                    this.updateStatus(p, data.status);
+                }
+            });
+        });
         // Header
     }
 }

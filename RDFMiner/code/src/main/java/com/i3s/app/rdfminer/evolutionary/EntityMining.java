@@ -15,6 +15,7 @@ import com.i3s.app.rdfminer.evolutionary.tools.EATools;
 import com.i3s.app.rdfminer.evolutionary.types.TypeSelection;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.output.GenerationJSON;
+import com.i3s.app.rdfminer.output.Results;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
@@ -157,7 +158,7 @@ public class EntityMining {
         logger.info("Diversity coefficient: " + (generation.diversityCoefficient * 100) + "%");
         logger.info("Population development rate: " + (generation.populationDevelopmentRate * 100) + "%");
         logger.info("Number of individual(s) with a non-null fitness: " + generation.numIndividualsWithNonNullFitness);
-        RDFMiner.stats.generations.add(generation.toJSON());
+        RDFMiner.stats.generations.put(generation.toJSON());
         // send generations to the server
         sendGenerations();
     }
@@ -165,9 +166,9 @@ public class EntityMining {
     public static void sendGenerations() {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             JSONObject toSend = new JSONObject();
-            toSend.put("userId", RDFMiner.parameters.username);
-            toSend.put("projectName", RDFMiner.parameters.directory);
-            toSend.put("generations", RDFMiner.stats.generations);
+            toSend.put(Results.USER_ID, RDFMiner.parameters.username);
+            toSend.put(Results.PROJECT_NAME, RDFMiner.parameters.directory);
+            toSend.put(Results.STATISTICS, RDFMiner.stats.toJSON());
             //
             HttpPut put = new HttpPut(Global.RDFMINER_SERVER_IP + "api/result");
             put.setEntity(new StringEntity(toSend.toString(), ContentType.APPLICATION_JSON));

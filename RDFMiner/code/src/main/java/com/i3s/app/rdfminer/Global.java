@@ -104,7 +104,7 @@ public class Global {
     /**
      * Name of SHACL Validation report (Classic; probabilistic) file using turtle (.ttl) format
      */
-    public static final String SHACL_VALIDATION_REPORT_FILENAME = "shacl_report.ttl";
+    public static final String SHACL_VALIDATION_REPORT_FILENAME = "/shacl_report.ttl";
 
     public static final String SHACL_SHAPES_FILENAME = "shapes.ttl";
 

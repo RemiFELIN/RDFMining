@@ -7,9 +7,6 @@ import com.i3s.app.rdfminer.evolutionary.types.TypeSelection;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * 
  * This class is used to map all results about statistics of GE on a object and generate a {@link org.json.JSONObject}
@@ -33,7 +30,7 @@ public class Stat {
 	public String crossoverMethod;
 	public String mutationMethod;
 	public double selectionSize;
-	public List<JSONObject> generations = new ArrayList<>();
+	public JSONArray generations;
 
 	public Stat() {
 		this.populationSize = RDFMiner.parameters.populationSize;
@@ -47,6 +44,7 @@ public class Stat {
 		this.selectionMethod = TypeSelection.getLabel(RDFMiner.parameters.typeSelection);
 		this.crossoverMethod = TypeCrossover.getLabel(RDFMiner.parameters.typeCrossover);
 		this.mutationMethod = TypeMutation.getLabel(RDFMiner.parameters.typeMutation);
+		this.generations = new JSONArray();
 	}
 
 	public JSONObject toJSON() {
@@ -60,7 +58,7 @@ public class Stat {
 		json.put("mutationMethod", this.mutationMethod);
 		json.put("crossoverMethod", this.crossoverMethod);
 		json.put("selectionSize", this.selectionSize);
-		json.put("generations", new JSONArray(this.generations));
+		json.put("generations", this.generations);
 		json.put("sparqlTimeout", (this.timeOut == 0 ? JSONObject.NULL : this.timeOut));
 		json.put("timeCap", (this.timeCap == 0 ? JSONObject.NULL : this.timeCap));
 		return json;

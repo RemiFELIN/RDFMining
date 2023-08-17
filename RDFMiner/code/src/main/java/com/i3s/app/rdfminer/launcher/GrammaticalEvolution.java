@@ -181,7 +181,7 @@ public class GrammaticalEvolution {
     public static void writeAndFinish() {
         try {
             logger.info("Edit JSON file results ...");
-            RDFMiner.results.stats = RDFMiner.stats.toJSON();
+            RDFMiner.results.statistics = RDFMiner.stats.toJSON();
             RDFMiner.results.content = RDFMiner.content;
             // save entities
             sendEntities();
