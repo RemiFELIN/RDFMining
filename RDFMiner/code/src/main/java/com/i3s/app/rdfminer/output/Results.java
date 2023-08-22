@@ -61,7 +61,7 @@ public class Results {
 
     private void saveResult() {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpPost post = new HttpPost(Global.RDFMINER_SERVER_IP + "api/result");
+            HttpPost post = new HttpPost(Global.RDFMINER_SERVER_IP + "api/results");
             // specify the POST body to send to the server as part of the request
             post.setEntity(new StringEntity(this.toJSON().toString(), ContentType.APPLICATION_JSON));
             logger.info("POST request: sending results ...");

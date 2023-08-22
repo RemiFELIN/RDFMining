@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class describes an entity that can be designed by RDFMiner.
@@ -212,7 +213,8 @@ public class Entity {
         json.put("referenceCardinality", this.referenceCardinality);
         json.put("numConfirmations", this.numConfirmations);
         json.put("numExceptions", this.numExceptions);
-        json.put("exceptions", new JSONArray(this.exceptions));
+        // filtering: just return the first 100 results
+        json.put("exceptions", new JSONArray(this.exceptions.stream().limit(100).collect(Collectors.toList())));
         json.put("confirmations", new JSONArray(this.confirmations));
         json.put("elapsedTime", this.elapsedTime);
         if(RDFMiner.parameters.useProbabilisticShaclMode || RDFMiner.parameters.useClassicShaclMode) {

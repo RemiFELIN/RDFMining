@@ -170,7 +170,7 @@ public class EntityMining {
             toSend.put(Results.PROJECT_NAME, RDFMiner.parameters.directory);
             toSend.put(Results.STATISTICS, RDFMiner.stats.toJSON());
             //
-            HttpPut put = new HttpPut(Global.RDFMINER_SERVER_IP + "api/result");
+            HttpPut put = new HttpPut(Global.RDFMINER_SERVER_IP + "api/results");
             put.setEntity(new StringEntity(toSend.toString(), ContentType.APPLICATION_JSON));
             logger.info("PUT request: updating generations ...");
             HttpResponse response = httpClient.execute(put);

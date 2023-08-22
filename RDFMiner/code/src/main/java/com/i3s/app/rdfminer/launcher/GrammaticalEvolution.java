@@ -205,7 +205,7 @@ public class GrammaticalEvolution {
             toSend.put("projectName", RDFMiner.parameters.directory);
             toSend.put("entities", RDFMiner.results.content);
             //
-            HttpPut put = new HttpPut(Global.RDFMINER_SERVER_IP + "api/result");
+            HttpPut put = new HttpPut(Global.RDFMINER_SERVER_IP + "api/results");
             put.setEntity(new StringEntity(toSend.toString(), ContentType.APPLICATION_JSON));
             logger.info("PUT request: updating entities ...");
             HttpResponse response = httpClient.execute(put);

@@ -15,7 +15,8 @@ import SwaggerDoc from './rdfminer/SwaggerDoc.vue'
 const routes = [
     { path: '/', component: WelcomeHome },
     { path: '/projects', component: MyProjects },
-    { path: '/visualisation', component: VueVisualisation },
+    // here, the id corresponds to the results ID (linked to the project)
+    { path: '/visualisation/:resultsId', component: VueVisualisation, name: "VueVisualisation" },
     { path: '/publications', component: RDFMinerPublications },
     { path: '/api', component: SwaggerDoc },
     // { path: '/login', component: LogIn }

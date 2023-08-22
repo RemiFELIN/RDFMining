@@ -1,36 +1,82 @@
 <template>
-    <h1 style="text-align: center;">Summary Dashboard for the {{ experienceId }} project</h1>
-    <section id="main-content" class="container">
-        <div>
-            <h2>Statistics</h2>
-            <VueStatistics></VueStatistics>
-        </div>
-        <div>
-            <h2>SHACL Shapes</h2>
-            <VisuShapes></VisuShapes>
-        </div>
-    </section>
+    <h1 style="text-align: center;">Summary Dashboard for the <i>{{ results.projectName }}</i> project</h1>
+    <CAccordion class="customizedAccordion" :active-item-key="2" always-open>
+        <CAccordionItem :item-key="1">
+            <CAccordionHeader>Console log</CAccordionHeader>
+            <CAccordionBody>
+                <ConsoleLog v-if="isReady" :path="path"></ConsoleLog>
+            </CAccordionBody>
+        </CAccordionItem>
+        <CAccordionItem :item-key="2">
+            <CAccordionHeader>Statistics</CAccordionHeader>
+            <CAccordionBody>
+                <VueStatistics v-if="isReady" :results="results"></VueStatistics>
+            </CAccordionBody>
+        </CAccordionItem>
+        <CAccordionItem :item-key="3">
+            <CAccordionHeader>Entities</CAccordionHeader>
+            <CAccordionBody>
+                <VisuEntities :results="results"></VisuEntities>
+            </CAccordionBody>
+        </CAccordionItem>
+    </CAccordion>
 </template>
 
 <script>
-import VueStatistics from '../rdfminer/Statistics.vue'
-import VisuShapes from '../rdfminer/Shapes.vue'
+import { CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody } from '@coreui/vue';
+import VueStatistics from './vis/Statistics.vue'
+import VisuEntities from './vis/Entities.vue'
+import ConsoleLog from './vis/ConsoleLog.vue'
+import axios from 'axios';
 
 export default {
     name: 'VueVisualisation',
     props: {
-        experienceId: String
+        resultsId: {
+            type: String,
+        }
+    },
+    data() {
+        return {
+            id: "",
+            results: {},
+            path: "",
+            isReady: false,
+        };
+    },
+    // methods: {
+    //     getPath() {
+    //         return this.results.userId + "/" + this.results.projectName;
+    //     }
+    // },
+    mounted() {
+        this.id = this.$route.params.resultsId;
+        // get results from server
+        axios.get("http://localhost:9200/api/results", { params: { resultsId: this.id } }).then(
+            (response) => {
+                if (response.status === 200) {
+                    // redirect on visualisation route with the results ID linked to the project
+                    console.log("visualisation: " + JSON.stringify(response.data));
+                    if (response.data != {}) {
+                        this.results = response.data;
+                        this.path = this.results.userId + "/" + this.results.projectName;
+                        this.isReady = true;
+                    }
+                }
+            }
+        ).catch((error) => {
+            console.log(error);
+        });
     },
     components: {
-        VueStatistics,
-        VisuShapes
-    }
+        VueStatistics, VisuEntities, CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody, ConsoleLog
+    },
 }
 </script>
 
 <style scoped>
-section#main-content {
-    margin: 20px;
+.customizedAccordion {
+    --cui-accordion-btn-color: rgb(14, 14, 163);
 }
 </style>
   

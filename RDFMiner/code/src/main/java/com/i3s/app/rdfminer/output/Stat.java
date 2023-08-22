@@ -59,6 +59,7 @@ public class Stat {
 		json.put("crossoverMethod", this.crossoverMethod);
 		json.put("selectionSize", this.selectionSize);
 		json.put("generations", this.generations);
+		json.put("nGenerations", Math.round(RDFMiner.parameters.kBase / this.populationSize));
 		json.put("sparqlTimeout", (this.timeOut == 0 ? JSONObject.NULL : this.timeOut));
 		json.put("timeCap", (this.timeCap == 0 ? JSONObject.NULL : this.timeCap));
 		return json;
