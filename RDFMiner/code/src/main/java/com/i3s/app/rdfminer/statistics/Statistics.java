@@ -14,7 +14,7 @@ public class Statistics {
 
 	private static final Logger logger = Logger.getLogger(Statistics.class.getName());
 
-	public double computeAverageFitness(ArrayList<Entity> entities) {
+	public static double computeAverageFitness(ArrayList<Entity> entities) {
 //		logger.debug("entities.size = " + entities.size());
 		double sumFitness = 0;
 		for (Entity entity : entities) {
@@ -39,11 +39,11 @@ public class Statistics {
 		return count / entities.size();
 	}
 
-	public long getEntitiesWithNonNullFitness(ArrayList<Entity> entities) {
+	public static long getEntitiesWithNonNullFitness(ArrayList<Entity> entities) {
 		return entities.stream().filter(entity -> entity.individual.getFitness().getDouble() != 0).count();
 	}
 
-	public double getAverageSumDistance(ArrayList<Entity> entities) {
+	public static double getAverageSumDistance(ArrayList<Entity> entities) {
 		double sumDistances = 0.0;
 		for(Entity entity : entities) {
 			double distance = 0.0;

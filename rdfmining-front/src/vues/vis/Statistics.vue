@@ -5,7 +5,8 @@
                 <!-- <CCardImage width="10" height="20" orientation="top" src="../assets/fitness.png"></CCardImage> -->
                 <CCardTitle class="text-center">Individuals with <b>non-null fitness</b></CCardTitle>
                 <CCardBody>
-                    <CChart type="bar" :wrapper="true" :data="ind_non_null_chart" :key="refresh" :redraw="true">
+                    <CChart type="bar" :wrapper="true" :data="ind_non_null_chart" :options="options" :key="refresh"
+                        :redraw="true">
                     </CChart>
                 </CCardBody>
             </CCard>
@@ -15,7 +16,8 @@
                 <!-- <CCardImage width="10" height="20" orientation="top" src="../assets/fitness.png"></CCardImage> -->
                 <CCardTitle class="text-center"><b>Fitness</b> individuals</CCardTitle>
                 <CCardBody>
-                    <CChart type="line" :wrapper="true" :data="ind_fitness_chart" :key="refresh" :redraw="true">
+                    <CChart type="line" :wrapper="true" :data="ind_fitness_chart" :options="options" :key="refresh"
+                        :redraw="true">
                     </CChart>
                 </CCardBody>
             </CCard>
@@ -25,7 +27,8 @@
                 <!-- <CCardImage width="10" height="20" orientation="top" src="../assets/fitness.png"></CCardImage> -->
                 <CCardTitle class="text-center"><b>Population</b> evolution</CCardTitle>
                 <CCardBody>
-                    <CChart type="line" :wrapper="true" :data="pop_evol_chart" :key="refresh" :redraw="true"></CChart>
+                    <CChart type="line" :wrapper="true" :data="pop_evol_chart" :options="options_rate" :key="refresh"
+                        :redraw="true"></CChart>
                 </CCardBody>
             </CCard>
         </CCol>
@@ -71,6 +74,52 @@ export default {
             nGenerations: 0,
             // n_gen labels
             gen_labels: [],
+            // options plugin
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        font: {
+                            size: 16,
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: function (context) {
+                            return "Generation " + context[0].label;
+                        },
+                        label: function (context) {
+                            // return context.dataset.label + " value: " + context.formattedValue;
+                            return context.formattedValue;
+                        },
+                    }
+                }
+            },
+            plugins_rate: {
+                legend: {
+                    display: true,
+                    labels: {
+                        font: {
+                            size: 16,
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: function (context) {
+                            return "Generation " + context[0].label;
+                        },
+                        label: function (context) {
+                            // return context.dataset.label + " value: " + context.formattedValue;
+                            return (context.formattedValue * 100) + "%";
+                        },
+                    }
+                }
+            },
+            // chart options
+            options: {},
+            options_rate: {},
             // CoreUI CCharts: Individuals with non-null fitness
             ind_non_null_data: [],
             ind_non_null_chart: {},
@@ -141,7 +190,47 @@ export default {
                     // pointBorderColor: '#fff',
                     data: this.ind_non_null_data
                 }
-            ]
+            ],
+        };
+        this.options = {
+            // maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                },
+                x: {
+                    beginAtZero: true,
+                    type: 'linear',
+                    title: {
+                        display: true,
+                        text: 'Generation',
+                        font: {
+                            size: 18
+                        }
+                    },
+                }
+            },
+            plugins: this.plugins
+        };
+        this.options_rate = {
+            // maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                },
+                x: {
+                    beginAtZero: true,
+                    type: 'linear',
+                    title: {
+                        display: true,
+                        text: 'Generation',
+                        font: {
+                            size: 18
+                        }
+                    },
+                }
+            },
+            plugins: this.plugins_rate
         };
         // Individuals fitness chart
         this.ind_fitness_chart = {
@@ -179,21 +268,6 @@ export default {
                 }
             ]
         };
-        // Bubble chart
-        // this.bubble_chart = {
-        //     labels: this.gen_labels,
-        //     datasets: [
-        //         {
-        //             label: 'Bubble Data',
-        //             data: [
-        //                 { x: 1, y: 5, r: 10 },
-        //                 { x: 2, y: 7, r: 15 }
-        //             ],
-        //             backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        //             pointHoverRadius: 20, // Taille au survol
-        //         }
-        //     ]
-        // };
         //
         if (toRaw(this.results.entities.length) != 0) {
             // entities data
@@ -230,16 +304,15 @@ export default {
             // refresh
             this.refresh = !this.refresh;
         });
-        //
-
     }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
 .card {
-    height: auto;
+    height: 100%;
 }
 
 .chart {

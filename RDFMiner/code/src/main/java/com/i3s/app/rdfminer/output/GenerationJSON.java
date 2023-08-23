@@ -24,6 +24,7 @@ public class GenerationJSON {
 	public final static String AVERAGE_FITNESS = "averageFitness";
 	public final static String NUM_INDIVIDUALS_WITH_NON_NULL_FITNESS = "numIndividualsWithNonNullFitness";
 	public final static String AVERAGE_SUM_DISTANCE = "averageSumDistance";
+	public final static String COMPUTATION_TIME = "computationTime";
 
 	public int generation;
 	public double populationDevelopmentRate;
@@ -31,26 +32,29 @@ public class GenerationJSON {
 	public double averageFitness;
 	public long numIndividualsWithNonNullFitness;
 	public double averageSumDistance;
+	public long computationTime;
 
-	public void setGenerationJSON(ArrayList<Entity> originalPopulation, ArrayList<Entity> newPopulation, int curGeneration) {
-		Statistics stat = new Statistics();
+	public void setGenerationJSON(ArrayList<Entity> originalPopulation, ArrayList<Entity> newPopulation, int curGeneration, long computationTime) {
+//		Statistics stat = new Statistics();
 		this.generation = curGeneration;
+		this.computationTime = computationTime;
 		this.populationDevelopmentRate = EATools.getPopulationDevelopmentRate(originalPopulation, newPopulation);
 		this.diversityCoefficient = (double) EATools.getDistinctPhenotypePopulation(newPopulation).size() / newPopulation.size();
-		this.averageFitness = stat.computeAverageFitness(newPopulation);
-		this.numIndividualsWithNonNullFitness = stat.getEntitiesWithNonNullFitness(newPopulation);
+		this.averageFitness = Statistics.computeAverageFitness(newPopulation);
+		this.numIndividualsWithNonNullFitness = Statistics.getEntitiesWithNonNullFitness(newPopulation);
 		if(RDFMiner.parameters.useNoveltySearch) {
-			this.averageSumDistance = stat.getAverageSumDistance(newPopulation);
+			this.averageSumDistance = Statistics.getAverageSumDistance(newPopulation);
 		}
 	}
 
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
-		json.put(GENERATION, generation);
-		json.put(POPULATION_DEVELOPMENT_RATE, populationDevelopmentRate);
-		json.put(DIVERSITY_COEFFICIENT, diversityCoefficient);
-		json.put(AVERAGE_FITNESS, averageFitness);
-		json.put(NUM_INDIVIDUALS_WITH_NON_NULL_FITNESS, numIndividualsWithNonNullFitness);
+		json.put(GENERATION, this.generation);
+		json.put(COMPUTATION_TIME, this.computationTime);
+		json.put(POPULATION_DEVELOPMENT_RATE, this.populationDevelopmentRate);
+		json.put(DIVERSITY_COEFFICIENT, this.diversityCoefficient);
+		json.put(AVERAGE_FITNESS, this.averageFitness);
+		json.put(NUM_INDIVIDUALS_WITH_NON_NULL_FITNESS, this.numIndividualsWithNonNullFitness);
 		json.put(AVERAGE_SUM_DISTANCE,
 				(RDFMiner.parameters.useNoveltySearch ? this.averageSumDistance : JSONObject.NULL));
 		return json;

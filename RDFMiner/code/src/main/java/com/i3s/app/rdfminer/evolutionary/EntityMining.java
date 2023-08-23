@@ -34,9 +34,13 @@ public class EntityMining {
 
     private static final Logger logger = Logger.getLogger(EntityMining.class.getName());
 
+    private static long start;
+
     public static ArrayList<Entity> run(Generator generator, ArrayList<Entity> entities,
                                         int curGeneration, int curCheckpoint)
             throws ExecutionException, InterruptedException {
+        // compute execution time (in ns)
+        start = System.nanoTime();
         // set a save of original population
         // to see how GE will modify it
         ArrayList<Entity> originalPopulation = new ArrayList<>(entities);
@@ -152,8 +156,11 @@ public class EntityMining {
         }
         // set stats
         GenerationJSON generation = new GenerationJSON();
-        generation.setGenerationJSON(originalPopulation, newPopulation, curGeneration);
+        // get computation time in second
+        long duration = (System.nanoTime() - start) / 1000000000;
+        generation.setGenerationJSON(originalPopulation, newPopulation, curGeneration, duration);
         // Log usefull stats concerning the algorithm evolution
+        logger.info("Computation time: " + generation.averageFitness + "s");
         logger.info("Average fitness: " + generation.averageFitness);
         logger.info("Diversity coefficient: " + (generation.diversityCoefficient * 100) + "%");
         logger.info("Population development rate: " + (generation.populationDevelopmentRate * 100) + "%");

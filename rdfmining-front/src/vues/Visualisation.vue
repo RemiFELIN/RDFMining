@@ -1,10 +1,17 @@
 <template>
     <h1 style="text-align: center;">Summary Dashboard for the <i>{{ results.projectName }}</i> project</h1>
-    <CAccordion class="customizedAccordion" :active-item-key="2" always-open>
+    <CAccordion class="customizedAccordion" :active-item-key="1" always-open>
         <CAccordionItem :item-key="1">
-            <CAccordionHeader>Console log</CAccordionHeader>
+            <CAccordionHeader>Global information</CAccordionHeader>
             <CAccordionBody>
-                <ConsoleLog v-if="isReady" :path="path"></ConsoleLog>
+                <!-- <VisuEntities v-if="isReady" :results="results"></VisuEntities> -->
+                <VueGlobal v-if="isReady" :results="results" :path="path"></VueGlobal>
+            </CAccordionBody>
+        </CAccordionItem>
+        <CAccordionItem :item-key="3">
+            <CAccordionHeader>Entities</CAccordionHeader>
+            <CAccordionBody>
+                <VisuEntities v-if="isReady" :results="results"></VisuEntities>
             </CAccordionBody>
         </CAccordionItem>
         <CAccordionItem :item-key="2">
@@ -13,10 +20,10 @@
                 <VueStatistics v-if="isReady" :results="results"></VueStatistics>
             </CAccordionBody>
         </CAccordionItem>
-        <CAccordionItem :item-key="3">
-            <CAccordionHeader>Entities</CAccordionHeader>
+        <CAccordionItem :item-key="4">
+            <CAccordionHeader>Console log</CAccordionHeader>
             <CAccordionBody>
-                <VisuEntities :results="results"></VisuEntities>
+                <ConsoleLog v-if="isReady" :path="path"></ConsoleLog>
             </CAccordionBody>
         </CAccordionItem>
     </CAccordion>
@@ -27,6 +34,7 @@ import { CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody } from '@c
 import VueStatistics from './vis/Statistics.vue'
 import VisuEntities from './vis/Entities.vue'
 import ConsoleLog from './vis/ConsoleLog.vue'
+import VueGlobal from './vis/Global.vue';
 import axios from 'axios';
 
 export default {
@@ -51,6 +59,7 @@ export default {
     // },
     mounted() {
         this.id = this.$route.params.resultsId;
+        console.log(this.id);
         // get results from server
         axios.get("http://localhost:9200/api/results", { params: { resultsId: this.id } }).then(
             (response) => {
@@ -69,7 +78,7 @@ export default {
         });
     },
     components: {
-        VueStatistics, VisuEntities, CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody, ConsoleLog
+        VueStatistics, VisuEntities, CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody, ConsoleLog, VueGlobal
     },
 }
 </script>
