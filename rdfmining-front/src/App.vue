@@ -1,11 +1,11 @@
 <template>
   <CHeader :isAuth="isAuth" @login="toggleLoginPopup" @logout="logout" @subscribe="toggleSubscribePopup"></CHeader>
-  <!-- <b>Hello ! connected:{{ isAuth }} and username:{{ username }}</b> -->
-  <!-- <b style="font-size: 3vw;">Hello {{ username }} !</b> -->
+  <!-- <b>Hello ! connected:{{ isAuth }} and userId:{{ userId }}</b> -->
+  <!-- <b style="font-size: 3vw;">Hello {{ userId }} !</b> -->
   <!-- <h1 v-if="!isAuth">Welcome to the RDFMiner UI !</h1> -->
-  <!-- <h1 v-else>Hello {{ username }} ! Nice to see you !</h1> -->
+  <!-- <h1 v-else>Hello {{ userId }} ! Nice to see you !</h1> -->
   <div>
-    <router-view :id="id"></router-view>
+    <router-view></router-view>
     <VSubscribe :enable="enableSubscribePopup" @close="toggleSubscribePopup"></VSubscribe>
     <LogIn :enable="enableLoginPopup" @close="toggleLoginPopup" @login="login"></LogIn>
   </div>
@@ -43,8 +43,8 @@ export default {
   },
   data() {
     return {
-      username: "",
-      id: "",
+      userId: "",
+      // token: this.$cookies.get("token"),
       isAuth: false,
       enableLoginPopup: false,
       enableSubscribePopup: false,
@@ -62,14 +62,23 @@ export default {
       this.enableSubscribePopup = !this.enableSubscribePopup;
     },
     login(data) {
-      this.id = data.id;
-      this.isAuth = data.isAuth;
-      this.username = data.username;
+      this.$cookies.set("token", data.token);
+      this.$cookies.set("id", data.userId);
+      // this.token = this.$cookies.get("token");
+      this.isAuth = true;
     },
     logout() {
-      this.id = "",
-        this.isAuth = false;
-      this.username = "";
+      this.$cookies.remove("token");
+      this.$cookies.remove("id");
+      // this.token = "",
+      this.isAuth = false;
+      // this.userId = "";
+    }
+  },
+  mounted() {
+    // console.log(this.$cookies.get("token"));
+    if(this.$cookies.get("token") != null) {
+      this.isAuth = true;
     }
   }
 }

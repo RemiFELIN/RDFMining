@@ -66,7 +66,7 @@ export default {
     },
     methods: {
         submit(username, password) {
-            axios.post("http://localhost:9200/api/user", {
+            axios.post("http://localhost:9200/api/auth", {
                     params: {
                         username: username,
                         password: password
@@ -86,16 +86,17 @@ export default {
             if (this.username != '') {
                 // We'll check if this username does not already exist in our DB
                 axios.get("http://localhost:9200/api/user", {
-                    username: this.username
+                    params : { username: this.username }
                 }).then(
                     (response) => {
-                        console.log(response.data)
+                        // console.log(response.data)
                         if (response.status === 200) {
-                            if (response.data.length == 0) {
-                                this.isValidUsername = true;
-                            } else {
-                                this.isValidUsername = false;
-                            }
+                            this.isValidUsername = response.data;
+                            // if (response.data.length == 0) {
+                            //     this.isValidUsername = true;
+                            // } else {
+                            //     this.isValidUsername = false;
+                            // }
                         }
                     }
                 ).catch((error) => {

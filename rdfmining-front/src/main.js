@@ -4,13 +4,19 @@ import App from "./App.vue";
 import { createRouter, createWebHistory } from 'vue-router';
 
 import unoverlay from 'unoverlay-vue';
+import VueCookies from 'vue3-cookies';
 
 import WelcomeHome from './vues/Home.vue'
-import VueVisualisation from './vues/Visualisation.vue'
+import VueVisualisation from './vues/vis/Visualisation.vue'
 import MyProjects from './vues/projects/MyProjects.vue'
 import RDFMinerPublications from './vues/Publications.vue'
 import SwaggerDoc from './rdfminer/SwaggerDoc.vue'
 // import LogIn from './vues/LogIn.vue'
+
+const cookiesConfig = {
+    expireTimes: "1d",
+    secure: true
+};
 
 const routes = [
     { path: '/', component: WelcomeHome },
@@ -28,4 +34,4 @@ const router = createRouter({
     routes, // short for `routes: routes`
 })
 
-createApp(App).use(router).use(unoverlay).mount('#app')
+createApp(App).use(router).use(VueCookies, cookiesConfig).use(unoverlay).mount('#app')

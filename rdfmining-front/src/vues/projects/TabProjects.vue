@@ -28,6 +28,7 @@
 import io from "socket.io-client";
 import axios from "axios";
 import { CTable, CTableHead, CTableBody, CTableFoot, CTableRow, CTableHeaderCell, CTableDataCell, CAvatar } from '@coreui/vue';
+import { useCookies } from 'vue3-cookies'
 
 export default {
     name: 'TabProjects',
@@ -37,9 +38,6 @@ export default {
         // Popup
     },
     props: {
-        id: {
-            type: String,
-        },
         projects: Array
     },
     methods: {
@@ -50,12 +48,15 @@ export default {
             project.status = status;
         },
         redirectVisu(p) {
-            console.log(this.id, " and ", p)
+            // console.log(this.id, " and ", p)
             // Is any results related to this project ?
-            axios.get("http://localhost:9200/api/results",  { params: { userId: this.id, projectName: p } }).then(
+            axios.get("http://localhost:9200/api/results",  { 
+                params: { projectName: p },
+                headers: { "x-access-token": this.cookies.get("token") }
+            }).then(
                 (response) => {
-                    console.log(response.data);
                     if (response.status === 200) {
+                        console.log(response.data);
                         // redirect on visualisation route with the results ID linked to the project
                         this.$router.push({ name: "VueVisualisation", params: { resultsId: response.data } });
                     } 
@@ -67,6 +68,7 @@ export default {
     },
     data() {
         return {
+            cookies: useCookies(["token", "id"]).cookies,
             socket: io("http://localhost:9200"),
             status: {
                 0: { text: "Pending...", color: "red" },
@@ -80,6 +82,8 @@ export default {
         };
     },
     mounted() {
+        this.cookies = useCookies(["token", "id"]).cookies;
+        console.log("Token: " + this.cookies.get("token"));
         // SOCKET IO
         // update project status
         this.socket.on("update-status", (data) => {

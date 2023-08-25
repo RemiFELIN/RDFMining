@@ -10,32 +10,36 @@
             <option value="conferenceTitle">By conference</option>
             <option value="place">By place</option>
         </select>
-        <CCard v-for="paper in sortByFilter(choosenFilter)" :key="paper">
-            <CCardBody>
-                <!-- <CCardHeader>PAPER TYPE</CCardHeader> -->
-                <CCardTitle>{{ paper.title }}</CCardTitle>
-                <CCardSubtitle class="mb-2 text-muted">
-                    <template v-for="(author, idx) in paper.authors" :key="idx">
-                        {{ author }} <template v-if="idx != paper.authors.length - 1"> and </template>
-                    </template>
-                </CCardSubtitle>
-                <CCardSubtitle class="mb-2 text-muted">{{ paper.conferenceTitle }} ({{ paper.date }})</CCardSubtitle>
-                <CCardSubtitle v-if="paper.distinction.link != ''">
-                    <a :href="paper.distinction.link">
-                        {{ paper.distinction.type }}
-                    </a>
-                </CCardSubtitle>
-                <CCardText><b>Abstract: </b>{{ paper.abstract }}</CCardText>
-                <CCardText>
-                    <b>Keywords: </b>
-                    <template v-for="(keyword, idx) in paper.keywords" :key="idx">
-                        {{ keyword }} <template v-if="idx != paper.keywords.length - 1"> ; </template>
-                    </template>
-                </CCardText>
-                <CCardLink @click="copyCitation(paper.citation)">Copy Citation</CCardLink>
-                <CCardLink :href="paper.link">Access to the ressource</CCardLink>
-            </CCardBody>
-        </CCard>
+        <div v-for="paper in sortByFilter(choosenFilter)" :key="paper">
+            <CCard>
+                <CCardBody>
+                    <!-- <CCardHeader>PAPER TYPE</CCardHeader> -->
+                    <CCardTitle>{{ paper.title }}</CCardTitle>
+                    <CCardSubtitle class="mb-2 text-muted">
+                        <template v-for="(author, idx) in paper.authors" :key="idx">
+                            {{ author }} <template v-if="idx != paper.authors.length - 1"> and </template>
+                        </template>
+                    </CCardSubtitle>
+                    <CCardSubtitle class="mb-2 text-muted">{{ paper.conferenceTitle }} ({{ paper.date }})</CCardSubtitle>
+                    <CCardSubtitle v-if="paper.distinction.link != ''">
+                        <a :href="paper.distinction.link">
+                            {{ paper.distinction.type }}
+                        </a>
+                    </CCardSubtitle>
+                    <CCardText><b>Abstract: </b>{{ paper.abstract }}</CCardText>
+                    <CCardText>
+                        <b>Keywords: </b>
+                        <template v-for="(keyword, idx) in paper.keywords" :key="idx">
+                            {{ keyword }} <template v-if="idx != paper.keywords.length - 1"> ; </template>
+                        </template>
+                    </CCardText>
+                    <CCardLink @click="copyCitation(paper.citation)">Copy Citation</CCardLink>
+                    <CCardLink :href="paper.link">Access to the ressource</CCardLink>
+                </CCardBody>
+            </CCard>
+            <br>
+        </div>
+
     </div>
 </template>
 
@@ -45,6 +49,7 @@
 import _ from 'lodash';
 import axios from 'axios';
 import { CCard, CCardBody, CCardText, CCardTitle, CCardSubtitle, CCardLink } from '@coreui/vue'
+// import { useCookies } from 'vue3-cookies'
 
 export default {
     name: 'RDFMinerPublications',
@@ -59,6 +64,9 @@ export default {
         }
     },
     mounted() {
+        // 
+        // const cookies = useCookies(["token", "id"]).cookies;
+        // console.log(cookies.get("token"));
         // build a request to the API
         axios.get("http://localhost:9200/api/publications").then(
             (response) => {

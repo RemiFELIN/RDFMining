@@ -31,10 +31,11 @@
 
 <script>
 import { CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody } from '@coreui/vue';
-import VueStatistics from './vis/Statistics.vue'
-import VisuEntities from './vis/Entities.vue'
-import ConsoleLog from './vis/ConsoleLog.vue'
-import VueGlobal from './vis/Global.vue';
+import { useCookies } from "vue3-cookies";
+import VueStatistics from './Statistics.vue';
+import VisuEntities from './Entities.vue';
+import ConsoleLog from './ConsoleLog.vue';
+import VueGlobal from './Global.vue';
 import axios from 'axios';
 
 export default {
@@ -46,6 +47,7 @@ export default {
     },
     data() {
         return {
+            cookies: useCookies(["token", "id"]).cookies,
             id: "",
             results: {},
             path: "",
@@ -61,7 +63,10 @@ export default {
         this.id = this.$route.params.resultsId;
         console.log(this.id);
         // get results from server
-        axios.get("http://localhost:9200/api/results", { params: { resultsId: this.id } }).then(
+        axios.get("http://localhost:9200/api/results", { 
+            params: { resultsId: this.id },
+            headers: { "x-access-token": this.cookies.get("token") } 
+        }).then(
             (response) => {
                 if (response.status === 200) {
                     // redirect on visualisation route with the results ID linked to the project

@@ -23,6 +23,13 @@
                     You are connected ! Welcome {{ username }} !
                 </div>
             </CAlert>
+            <!-- Wrong username/password; error from server -->
+            <CAlert :visible="errorMessage != ''" color="danger" class="d-flex align-items-center">
+                <!-- <CIcon class="flex-shrink-0 me-2" width="24" height="24" /> -->
+                <div>
+                    {{ errorMessage }}
+                </div>
+            </CAlert>
         </CModalBody>
         <CModalFooter>
             <CButton v-if="!isConnected" color="success" :disabled="username == '' || password == ''" @click="submit(username, password)">Submit
@@ -49,6 +56,7 @@ export default {
             password: "",
             success: false,
             isConnected: false,
+            errorMessage: "",
         };
     },
     props: {
@@ -60,31 +68,29 @@ export default {
         // Connection service
         submit(username, password) {
             // build a request to the API
-            axios.get("http://localhost:9200/api/auth", {
+            axios.get("http://localhost:9200/api/login", {
                 params: {
-                    username,
-                    password
+                    username: username,
+                    password: password
                 }
             }).then(
                 (response) => {
                     if (response.status === 200) {
                         console.log(response.data);
                         // this.user = { username, password };
-                        this.username = username;
+                        // this.username = response.data.username;
                         // emit auth to App
-                        this.$emit("login", {
-                            isAuth: true,
-                            username: this.username,
-                            id: response.data._id
-                        });
+                        this.$emit("login", response.data);
                         // update isConnected status
                         this.isConnected = true;
                         // this.$emit('close');
+                    } else if (response.status === 401 || response.status === 500) {
+                        this.errorMessage = response.data.message;
                     }
                 }
             ).catch((error) => {
-                console.log(error);
-                alert("Incorrect username/password");
+                // console.log(error);
+                this.errorMessage = error;
             });
         },
         // subscription service

@@ -29,6 +29,7 @@
 // https://coreui.io/vue/docs/components/modal.html
 import axios from "axios"
 import { CButton, CRow, CModal, CModalHeader, CModalTitle, CModalBody, CModalFooter, CAlert } from "@coreui/vue";
+import { useCookies } from "vue3-cookies";
 
 export default {
     name: 'DeletePopup',
@@ -37,13 +38,14 @@ export default {
     },
     data() {
         return {
+            cookies: useCookies(["token", "id"]).cookies,
             deleted: false,
         };
     },
     props: {
-        id: {
-            type: String
-        },
+        // token: {
+        //     type: String
+        // },
         projectName: {
             type: String
         },
@@ -53,12 +55,12 @@ export default {
     },
     methods: {
         deleteProject() {
-            axios.post("http://localhost:9200/api/project/delete", {
-                userId: this.id,
-                projectName: this.projectName
+            axios.delete("http://localhost:9200/api/project", {
+                params: { projectName: this.projectName },
+                headers: { "x-access-token": this.cookies.get("token") }
             }).then(
-                (response) => {
-                    console.log("Delete project " + this.projectName + ": " + response);
+                () => {
+                    // console.log("Delete project " + this.projectName + ": " + response);
                     this.deleted = true;
                     this.$emit("deleted", this.projectName);
                 }

@@ -32,9 +32,10 @@
 <script>
 // https://developers.google.com/chart/interactive/docs/gallery/areachart?hl=fr#overview
 // import { entities } from '../data/results_1.json'
-import { CChart } from '@coreui/vue-chartjs'
+import { CChart } from '@coreui/vue-chartjs';
 import { CCard, CCardBody, CCardTitle, CRow, CCol, CProgress, CProgressBar, CButton } from '@coreui/vue';
 import { toRaw } from 'vue';
+import { useCookies } from "vue3-cookies";
 import axios from 'axios';
 import io from "socket.io-client";
 
@@ -53,6 +54,7 @@ export default {
     },
     data() {
         return {
+            cookies: useCookies(["token", "id"]).cookies, 
             // force refresh of component
             refresh: true,
             // socket io
@@ -104,6 +106,7 @@ export default {
         if (toRaw(this.results.statistics.generations.length) != 0) {
             //
             this.curGeneration = toRaw(this.results.statistics.generations.length);
+            this.progression = (this.curGeneration / this.nGenerations) * 100;
             //
             for (let i = 0; i < toRaw(this.results.statistics.generations.length); i++) {
                 // console.log(toRaw(this.results.statistics.generations[i]));
@@ -160,9 +163,10 @@ export default {
     methods: {
         getResults() {
             // get logs
-            axios.get("http://localhost:9200/api/results",
-                { params: { path: this.path, file: "results" } }
-            ).then(
+            axios.get("http://localhost:9200/api/results", { 
+                params: { path: this.path, file: "results" },
+                headers: { "x-access-token": this.cookies.get("token") } 
+            }).then(
                 (response) => {
                     this.download(response.data, "results.json");
                 }
@@ -172,9 +176,10 @@ export default {
         },
         getSHACLReport() {
             // get logs
-            axios.get("http://localhost:9200/api/results",
-                { params: { path: this.path, file: "shacl" } }
-            ).then(
+            axios.get("http://localhost:9200/api/results", { 
+                params: { path: this.path, file: "shacl" },
+                headers: { "x-access-token": this.cookies.get("token") } 
+            }).then(
                 (response) => {
                     this.download(response.data, "shacl_report.ttl");
                 }

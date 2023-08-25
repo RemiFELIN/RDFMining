@@ -72,7 +72,7 @@
         <div v-if="selectedFeature.includes('ge')">
 
             <h2>Grammatical Evolution</h2><br />
-            
+
             <!--
                 SHACL
             -->
@@ -291,10 +291,12 @@
                     </CCol>
                 </CRow>
                 <CAlert color="warning" v-if="selectedShaclProb == 0">
-                    <b>Standard SHACL validation !</b> increase the <b>P-value</b> to enable the <b>probabilistic SHACL validation</b>
+                    <b>Standard SHACL validation !</b> increase the <b>P-value</b> to enable the <b>probabilistic SHACL
+                        validation</b>
                 </CAlert>
                 <CAlert color="warning" v-else>
-                    <b>Probabilistic SHACL validation !</b> set the <b>P-value</b> at 0 to enable the <b>standard SHACL validation</b>
+                    <b>Probabilistic SHACL validation !</b> set the <b>P-value</b> at 0 to enable the <b>standard SHACL
+                        validation</b>
                 </CAlert>
                 <!-- 
                     Shapes file 
@@ -341,14 +343,15 @@ import axios from "axios"
 import { CForm, CRow, CFormLabel, CCol, CFormInput, CFormSelect, CFormTextarea, CFormRange, CAlert, CFormSwitch, CButton } from '@coreui/vue'
 import { markRaw } from "vue";
 // import { toRaw } from "vue";
+import { useCookies } from "vue3-cookies";
 
 export default {
     name: 'CreateProject',
-    props: {
-        id: {
-            type: String
-        },
-    },
+    // props: {
+    //     token: {
+    //         type: String
+    //     },
+    // },
     components: {
         CForm, CRow, CFormLabel, CCol, CFormInput, CFormSelect, CFormTextarea, CFormRange, CAlert, CFormSwitch, CButton
     },
@@ -382,42 +385,50 @@ export default {
             this.task = this.selectedFeature.includes('ge') ? "Mining" : "Assessment";
             // console.log(this.cmdline);
             // build a request to the API
-            axios.post("http://localhost:9200/api/project/setup", {
-                userId: this.id,
-                projectName: this.selectedProjectName,
-                mod: this.selectedFeature,
-                prefixes: this.selectedPrefixes,
-                targetSparqlEndpoint: this.selectedTargetEndpoint,
-                task: this.task,
-                settings: {
-                    bnf: this.selectedBNFTemplate,
-                    populationSize: this.selectedPopulationSize,
-                    effort: this.selectedTotalEffort,
-                    sizeChromosome: this.selectedSizeChromosome,
-                    maxWrap: this.selectedMaxWrap,
-                    selectionType: this.selectedSelection,
-                    selectionRate: this.selectionRate,
-                    mutationType: this.selectedMutation,
-                    mutationRate: this.mutationRate,
-                    crossoverType: this.selectedCrossover,
-                    crossoverRate: this.crossoverRate,
-                    noveltySearch: this.enableNoveltySearch,
-                    crowding: this.enableCrowding,
-                    shaclAlpha: this.selectedShaclAlpha,
-                    shaclProb: this.selectedShaclProb,
-                    axioms: this.axioms,
-                    shapes: this.shapes
-                },
-            }).then(
-                (response) => {
-                    if (response.status === 200) {
-                        console.log("OK !" + response);
-                        this.$emit("new");
+            axios.post("http://localhost:9200/api/project",
+                [
+                    {
+                        // userId: this.token.userId,
+                        projectName: this.selectedProjectName,
+                        mod: this.selectedFeature,
+                        prefixes: this.selectedPrefixes,
+                        targetSparqlEndpoint: this.selectedTargetEndpoint,
+                        task: this.task,
+                        settings: {
+                            bnf: this.selectedBNFTemplate,
+                            populationSize: this.selectedPopulationSize,
+                            effort: this.selectedTotalEffort,
+                            sizeChromosome: this.selectedSizeChromosome,
+                            maxWrap: this.selectedMaxWrap,
+                            selectionType: this.selectedSelection,
+                            selectionRate: this.selectionRate,
+                            mutationType: this.selectedMutation,
+                            mutationRate: this.mutationRate,
+                            crossoverType: this.selectedCrossover,
+                            crossoverRate: this.crossoverRate,
+                            noveltySearch: this.enableNoveltySearch,
+                            crowding: this.enableCrowding,
+                            shaclAlpha: this.selectedShaclAlpha,
+                            shaclProb: this.selectedShaclProb,
+                            axioms: this.axioms,
+                            shapes: this.shapes
+                        }
                     }
-                }
-            ).catch((error) => {
-                console.log(error);
-            });
+                ],
+                {
+                    headers: {
+                        "x-access-token": this.cookies.get("token")
+                    }
+                }).then(
+                    (response) => {
+                        if (response.status === 200) {
+                            console.log("OK !" + response);
+                            this.$emit("new");
+                        }
+                    }
+                ).catch((error) => {
+                    console.log(error);
+                });
         }
     },
     watch: {
@@ -431,10 +442,9 @@ export default {
             if (this.selectedProjectName != '') {
                 // checking project name 
                 // already exists ?
-                console.log(this.id + " " + this.selectedProjectName);
                 axios.get("http://localhost:9200/api/project", {
-                    params:
-                        { id: this.id, projectName: this.selectedProjectName }
+                    headers: { "x-access-token": this.cookies.get("token") },
+                    params: { projectName: this.selectedProjectName }
                 }).then(
                     (response) => {
                         // console.log(response.data)
@@ -460,6 +470,7 @@ export default {
     },
     data() {
         return {
+            cookies: useCookies(["token", "id"]).cookies,
             validated: null,
             // project name 
             directory: {},
