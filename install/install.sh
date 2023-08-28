@@ -62,4 +62,4 @@ echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Build services ..."
 ./install/services/build_rdfminer.sh
 ./install/services/build_corese.sh
 ./install/services/build_virtuoso.sh
-# ./install/services/build_server.sh
+./install/services/build_front.sh
