@@ -1,7 +1,7 @@
 <template>
   <CNavbar expand="lg" color-scheme="light" class="bg-light">
     <CContainer fluid>
-      <CNavbarBrand style="pointer-events: none;">RDFMiner UI</CNavbarBrand>
+      <CNavbarBrand style="pointer-events: none;">RDFMiner GUI</CNavbarBrand>
       <!-- <CNavbarToggler aria-label="Toggle navigation" aria-expanded={visible} @click="visible = !visible" /> -->
       <CCollapse class="navbar-collapse" :visible="visible">
         <CNavbarNav component="nav">

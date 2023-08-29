@@ -1,7 +1,7 @@
 <template>
     <CModal :visible="enable" alignment="center" scrollable>
         <CModalHeader>
-            <CModalTitle>Delete {{ projectName }} project</CModalTitle>
+            <CModalTitle>Delete <b>{{ projectName }}</b> project</CModalTitle>
         </CModalHeader>
         <CModalBody>
             <!-- USERNAME -->
