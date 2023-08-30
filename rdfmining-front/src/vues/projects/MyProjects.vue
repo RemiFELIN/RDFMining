@@ -17,7 +17,7 @@
     </CAccordion>
     <!-- </div> -->
     <!-- Delete Popup -->
-    <DeletePopup :enable="showDeletePopup" :projectName="selectedProject" @deleted="updateProjects"
+    <DeletePopup :enable="showDeletePopup" :projectName="selectedProject" @deleted="deleteProject"
         @close="deletePopup">
     </DeletePopup>
 </template>
@@ -51,29 +51,24 @@ export default {
         return {
             cookies: useCookies(["token", "id"]).cookies,
             projects: [],
-            isVisibleForm: false,
             countProject: 0,
             showTabProjects: true,
             showDeletePopup: false,
         }
     },
     methods: {
-        updateProjects(projectName) {
-            this.countProject--;
-            this.projects.forEach((project) => {
-                if(project.projectName == projectName) {
-                    this.projects.pop(project);
-                    this.selectedProject = "";
-                    return;
-                }
+        deleteProject() {
+            // delete the selected project
+            this.projects = this.projects.filter((project) => {
+                // keep all the others
+                return project.projectName != this.selectedProject;
             });
+            this.selectedProject = "";
+            this.countProject--;
         },
         deletePopup(projectName) {
             this.showDeletePopup = !this.showDeletePopup;
             this.selectedProject = projectName;
-        },
-        toggleForm() {
-            this.isVisibleForm = !this.isVisibleForm;
         },
         refresh() {
             this.countProject = 0;

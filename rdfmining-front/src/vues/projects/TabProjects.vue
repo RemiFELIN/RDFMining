@@ -1,4 +1,5 @@
 <template>
+    <div class="scroll">
     <CTable striped hover>
         <CTableHead color="light">
             <CTableRow>
@@ -42,13 +43,15 @@
                     <CAvatar class="clickable" src="assets/garbage.png" @click="deletePopup(project.projectName)" /> -->
                 </CTableDataCell>
                 <CTableDataCell :color="getColor(project.status)" style="font-weight: bold;">
-                    <CSpinner v-if="project.status != 2" size="sm" style="margin-right:10px;"/>{{ status[project.status].text }}
+                    <CSpinner v-if="project.status != 2" size="sm" style="margin-right:10px;" />{{
+                        status[project.status].text }}
                 </CTableDataCell>
             </CTableRow>
         </CTableBody>
         <CTableFoot>
         </CTableFoot>
     </CTable>
+</div>
 </template>
 
 
@@ -153,9 +156,20 @@ export default {
 </script>
 
 <style scoped>
-p {
-  display: inline-block;
+.scroll {
+    /* background-color: #fed9ff; */
+    /* width: auto; */
+    height: 400px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    /* text-align: center; */
+    /* padding: 20px; */
 }
+
+p {
+    display: inline-block;
+}
+
 .clickable {
     cursor: pointer;
     padding: 1%;
@@ -163,4 +177,5 @@ p {
 
 .clickable:hover {
     opacity: 0.2;
-}</style>
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-    <CModal :visible="enable" alignment="center" scrollable>
+    <CModal :visible="enable" alignment="center" @close="reset" scrollable>
         <CModalHeader>
             <CModalTitle>Delete <b>{{ projectName }}</b> project</CModalTitle>
         </CModalHeader>
@@ -9,17 +9,22 @@
                 Are you sure to delete the project ?
             </CRow>
             <!-- ALERT -->
-            <CAlert :visible="deleted" color="success" class="d-flex align-items-center">
+            <CAlert :visible="isDeleted" color="success" class="d-flex align-items-center">
                 <!-- <CIcon class="flex-shrink-0 me-2" width="24" height="24" /> -->
                 <div>
                     The project <b>{{ projectName }}</b> has been deleted !
                 </div>
             </CAlert>
+            <CAlert :visible="isError" color="danger" class="d-flex align-items-center">
+                <!-- <CIcon class="flex-shrink-0 me-2" width="24" height="24" /> -->
+                <div>
+                    Error during deletion ({{ code }}), please try again later...
+                </div>
+            </CAlert>
         </CModalBody>
-        <CModalFooter>
-            <CButton v-if="!deleted" color="success" @click="deleteProject">Yes
+        <CModalFooter v-if="isDeleted == false">
+            <CButton color="success" @click="deleteProject">Yes
             </CButton>
-            <CButton color="danger" @click="$emit('close', project)">Close</CButton>
         </CModalFooter>
     </CModal>
 </template>
@@ -39,7 +44,9 @@ export default {
     data() {
         return {
             cookies: useCookies(["token", "id"]).cookies,
-            deleted: false,
+            isDeleted: false,
+            isError: false,
+            code: "",
         };
     },
     props: {
@@ -54,15 +61,24 @@ export default {
         }
     },
     methods: {
+        reset() {
+            this.isDeleted = false;
+            this.isError = false;
+            this.code = "";
+        },
         deleteProject() {
             axios.delete("http://localhost:9200/api/project", {
                 params: { projectName: this.projectName },
                 headers: { "x-access-token": this.cookies.get("token") }
             }).then(
-                () => {
-                    // console.log("Delete project " + this.projectName + ": " + response);
-                    this.deleted = true;
-                    this.$emit("deleted", this.projectName);
+                (response) => {
+                    if (response.data == true) {
+                        this.isDeleted = true;
+                        this.$emit("deleted", this.projectName);
+                    } else {
+                        this.isError = true;
+                        this.code = response.status;
+                    }
                 }
             ).catch((error) => {
                 console.log(error);
