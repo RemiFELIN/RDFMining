@@ -10,6 +10,13 @@ import com.i3s.app.rdfminer.output.Results;
 import com.i3s.app.rdfminer.output.SimilarityMap;
 import com.i3s.app.rdfminer.output.Stat;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONArray;
@@ -67,7 +74,7 @@ public class RDFMiner {
 	public static String[][] predicateTable;
 
 	/**
-	 * The entry point of the RDF Miner application.
+	 * The entry point of the RDFMiner application.
 	 */
 	public static void main(String[] args) throws InterruptedException, ExecutionException, URISyntaxException, IOException {
 
@@ -216,6 +223,24 @@ public class RDFMiner {
 		} else {
 			// launch evaluator !
 			new Evaluator();
+		}
+	}
+
+	public static void sendEntities() {
+		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+			JSONObject toSend = new JSONObject();
+			toSend.put("userId", RDFMiner.parameters.username);
+			toSend.put("projectName", RDFMiner.parameters.directory);
+			toSend.put("entities", RDFMiner.content);
+			//
+			HttpPut put = new HttpPut(Global.RDFMINER_SERVER_IP + "api/results");
+			put.setEntity(new StringEntity(toSend.toString(), ContentType.APPLICATION_JSON));
+			logger.info("PUT request: updating entities ...");
+			HttpResponse response = httpClient.execute(put);
+			logger.info("Status code: " + response.getStatusLine().getStatusCode());
+			logger.info(new BasicResponseHandler().handleResponse(response));
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

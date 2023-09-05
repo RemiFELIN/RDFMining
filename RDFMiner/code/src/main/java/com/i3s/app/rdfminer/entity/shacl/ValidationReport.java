@@ -24,6 +24,8 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ValidationReport {
 
@@ -74,6 +76,7 @@ public class ValidationReport {
             this.likelihoodByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.LIKELIHOOD);
             this.generalityByShape = getNumericalInValSummaryByShape(ProbabilisticShacl.GENERALITY);
         }
+//        logger.info("Validation structure:\n" + exceptionsByShape.keySet());
     }
 
     public HashMap<String, Number> getNumericalInValSummaryByShape(String parameter) {
@@ -192,16 +195,49 @@ public class ValidationReport {
 
     @Override
     public String toString() {
-        return this.prettifyPrint();
+        return this.prettifyPrint(this.content);
     }
 
-    public String prettifyPrint() {
-        return this.content.replace(".@", ".\n@")
+    public String prettifyPrint(String validationReport) {
+        return validationReport.replace(".@", ".\n@")
                 .replace(".<", ".\n\n<")
                 .replace(";sh", ";\nsh")
                 .replace(";psh", ";\npsh")
                 .replace(";r", ";\nr")
                 .replace("._", ".\n\n_");
+    }
+
+    public String getContent(boolean prefix) {
+        String filteredContent = this.content;
+        if (!prefix) {
+            // filtering content: remove all the prefixes definition
+            Pattern pattern = Pattern.compile("(@prefix [a-zA-Z]*[:] <http:\\/\\/[a-zA-Z0-9\\/\\.\\#\\-]*> \\.)");
+            Matcher matcher = pattern.matcher(this.content);
+            while(matcher.find()) {
+//                logger.info("removing prefix: " + matcher.group());
+                filteredContent = filteredContent.replace(matcher.group(0), "");
+            }
+        }
+//        logger.info("filteredContent: " + filteredContent);
+        return this.prettifyPrint(filteredContent) + "\n";
+    }
+
+    public static void main(String[] args) {
+        String report = "@prefix psh: <http://ns.inria.fr/probabilistic-shacl/> .@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .@prefix xsh: <http://www.w3.org/ns/shacl#> .@prefix sh: <http://www.w3.org/ns/shacl#> .@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .<urn:uuid:b1d44ca5-1b71-4315-b88c-42e41ce67b1f> rdf:type sh:ValidationResult ;sh:focusNode <http://ns.inria.fr/covid19/51dd0bdd5680a978bf834d5b4cbfaa8dd84dea90> ;sh:resultMessage \"Fail at: [sh:hasValue <http://www.wikidata.org/entity/Q16023751> ;\\n  sh:path rdf:type]\" ;sh:resultPath rdf:type ;sh:resultSeverity sh:Violation ;sh:sourceConstraintComponent sh:HasValueConstraintComponent ;sh:sourceShape <http://www.example.com/myDataGraph#3> ;sh:value <http://www.wikidata.org/entity/Q16023751> .<urn:uuid:1adb2307-6848-4d7f-83ae-b3e37fafea85> rdf:type sh:ValidationResult ;sh:focusNode <http://ns.inria.fr/covid19/380469cdbf2999dc4d165cbed03b008549cc93a7> ;sh:resultMessage \"Fail at: [sh:hasValue <http://www.wikidata.org/entity/Q16023751> ;\\n  sh:path rdf:type]\" ;sh:resultPath rdf:type ;sh:resultSeverity sh:Violation ;sh:sourceConstraintComponent sh:HasValueConstraintComponent ;sh:sourceShape <http://www.example.com/myDataGraph#3> ;sh:value <http://www.wikidata.org/entity/Q16023751> .<urn:uuid:ab5852d5-a9f7-47d6-9234-5de8730bb3ab> rdf:type sh:ValidationResult ;sh:focusNode <http://ns.inria.fr/covid19/237f3ce9618785cef42c210a3e679cf8d1d5f519> ;sh:resultMessage \"Fail at: [sh:hasValue <http://www.wikidata.org/entity/Q16023751> ;\\n  sh:path rdf:type]\" ;sh:resultPath rdf:type ;sh:resultSeverity sh:Violation ;sh:sourceConstraintComponent sh:HasValueConstraintComponent ;sh:sourceShape <http://www.example.com/myDataGraph#3> ;sh:value <http://www.wikidata.org/entity/Q16023751> .<urn:uuid:c765f9e7-d767-4577-aaa4-7008956fce89> rdf:type sh:ValidationResult ;sh:focusNode <http://ns.inria.fr/covid19/56e960feeb64c50c3153251668f26b3b33d4ded2> ;sh:resultMessage \"Fail at: [sh:hasValue <http://www.wikidata.org/entity/Q16023751> ;\\n  sh:path rdf:type]\" ;sh:resultPath rdf:type ;sh:resultSeverity sh:Violation ;sh:sourceConstraintComponent sh:HasValueConstraintComponent ;sh:sourceShape <http://www.example.com/myDataGraph#3> ;sh:value <http://www.wikidata.org/entity/Q16023751> .<urn:uuid:5f66d79f-fa07-43dc-a2e5-a467d0564dc7> rdf:type sh:ValidationResult ;sh:focusNode <http://ns.inria.fr/covid19/273ed1bf60b19e3db4ab3894a20598336b7e0ef4> ;sh:resultMessage \"Fail at: [sh:hasValue <http://www.wikidata.org/entity/Q16023751> ;\\n  sh:path rdf:type]\" ;sh:resultPath rdf:type ;sh:resultSeverity sh:Violation ;sh:sourceConstraintComponent sh:HasValueConstraintComponent ;sh:sourceShape <http://www.example.com/myDataGraph#3> ;sh:value <http://www.wikidata.org/entity/Q16023751> .<urn:uuid:33aef801-e35f-4399-b029-1338fd6e0948> rdf:type sh:ValidationResult ;sh:focusNode <http://ns.inria.fr/covid19/52ee7bd3f076b9f68b8fcea6687db4327d99cf71> ;sh:resultMessage \"Fail at: [sh:hasValue <http://www.wikidata.org/entity/Q16023751> ;\\n  sh:path rdf:type]\" ;sh:resultPath rdf:type ;sh:resultSeverity sh:Violation ;sh:sourceConstraintComponent sh:HasValueConstraintComponent ;sh:sourceShape <http://www.example.com/myDataGraph#3> ;sh:value <http://www.wikidata.org/entity/Q16023751> .<urn:uuid:7cb4ca56-d14d-47f6-a82d-9f05fd6f9fac> rdf:type sh:ValidationResult ;sh:focusNode <http://ns.inria.fr/covid19/70b51615329fe89b718e0df871d649b989586b05> ;sh:resultMessage \"Fail at: [sh:hasValue <http://www.wikidata.org/entity/Q16023751> ;\\n  sh:path rdf:type]\" ;sh:resultPath rdf:type ;sh:resultSeverity sh:Violation ;sh:sourceConstraintComponent sh:HasValueConstraintComponent ;sh:sourceShape <http://www.example.com/myDataGraph#3> ;sh:value <http://www.wikidata.org/entity/Q16023751> .<urn:uuid:0444e80a-1a73-435b-89b3-d32b0e3dfb4a> rdf:type sh:ValidationResult ;sh:focusNode <http://ns.inria.fr/covid19/435b2c1a312dad2b0d70591efe688612cc47fe19> ;sh:resultMessage \"Fail at: [sh:hasValue <http://www.wikidata.org/entity/Q16023751> ;\\n  sh:path rdf:type]\" ;sh:resultPath rdf:type ;sh:resultSeverity sh:Violation ;sh:sourceConstraintComponent sh:HasValueConstraintComponent ;sh:sourceShape <http://www.example.com/myDataGraph#3> ;sh:value <http://www.wikidata.org/entity/Q16023751> .<urn:uuid:12a40d2f-9662-46b6-8f5c-58f908e57268> rdf:type sh:ValidationResult ;sh:focusNode <http://ns.inria.fr/covid19/54e82ae1126dc9eed820d7a255cb4edca68a9f82> ;sh:resultMessage \"Fail at: [sh:hasValue <http://www.wikidata.org/entity/Q16023751> ;\\n  sh:path rdf:type]\" ;sh:resultPath rdf:type ;sh:resultSeverity sh:Violation ;sh:sourceConstraintComponent sh:HasValueConstraintComponent ;sh:sourceShape <http://www.example.com/myDataGraph#3> ;sh:value <http://www.wikidata.org/entity/Q16023751> .<urn:uuid:84e50a02-941f-4c37-84c9-7d053106d46a> rdf:type sh:ValidationResult ;sh:focusNode <http://ns.inria.fr/covid19/49861eebbc323ac1fda5c90a3f25b755300b7413> ;sh:resultMessage \"Fail at: [sh:hasValue <http://www.wikidata.org/entity/Q16023751> ;\\n  sh:path rdf:type]\" ;sh:resultPath rdf:type ;sh:resultSeverity sh:Violation ;sh:sourceConstraintComponent sh:HasValueConstraintComponent ;sh:sourceShape <http://www.example.com/myDataGraph#3> ;sh:value <http://www.wikidata.org/entity/Q16023751> .<urn:uuid:eb6c1fa8-3b7d-4a00-850f-86347a206589> rdf:type sh:ValidationResult ;sh:focusNode <http://ns.inria.fr/covid19/1376526470f18216200ecd6c375d9913942fa362> ;sh:resultMessage \"Fail at: [sh:hasValue <http://www.wikidata.org/entity/Q16023751> ;\\n  sh:path rdf:type]\" ;sh:resultPath rdf:type ;sh:resultSeverity sh:Violation ;sh:sourceConstraintComponent sh:HasValueConstraintComponent ;sh:sourceShape <http://www.example.com/myDataGraph#3> ;sh:value <http://www.wikidata.org/entity/Q16023751> .<urn:uuid:b06805ad-2be0-44e2-aac7-b21a198b0c8b> rdf:type sh:ValidationResult ;sh:focusNode <http://ns.inria.fr/covid19/5e6b537332182bd3c8f642accc5eae577055a4c4> ;sh:resultMessage \"Fail at: [sh:hasValue <http://www.wikidata.org/entity/Q16023751> ;\\n  sh:path rdf:type]\" ;sh:resultPath rdf:type ;sh:resultSeverity sh:Violation ;sh:sourceConstraintComponent sh:HasValueConstraintComponent ;sh:sourceShape <http://www.example.com/myDataGraph#3> ;sh:value <http://www.wikidata.org/entity/Q16023751> .<urn:uuid:5cc29ddd-4dec-4ec3-b1c8-82debc0b423f> rdf:type sh:ValidationResult ;sh:focusNode <http://ns.inria.fr/covid19/3bac8eb8788f6b0387777fd123f57f9264e59df9> ;sh:resultMessage \"Fail at: [sh:hasValue <http://www.wikidata.org/entity/Q16023751> ;\\n  sh:path rdf:type]\" ;sh:resultPath rdf:type ;sh:resultSeverity sh:Violation ;sh:sourceConstraintComponent sh:HasValueConstraintComponent ;sh:sourceShape <http://www.example.com/myDataGraph#3> ;sh:value <http://www.wikidata.org/entity/Q16023751> .<urn:uuid:5a8db7e5-b24d-40c9-b1a3-f8e32961330a> rdf:type sh:ValidationResult ;sh:focusNode <http://ns.inria.fr/covid19/0537823ee7ac420f3f6e1a1261afa425dd4cd1a6> ;sh:resultMessage \"Fail at: [sh:hasValue <http://www.wikidata.org/entity/Q16023751> ;\\n  sh:path rdf:type]\" ;sh:resultPath rdf:type ;sh:resultSeverity sh:Violation ;sh:sourceConstraintComponent sh:HasValueConstraintComponent ;sh:sourceShape <http://www.example.com/myDataGraph#3> ;sh:value <http://www.wikidata.org/entity/Q16023751> ._:bb4483 psh:summary _:bb4529 ;rdf:type sh:ValidationReport ;sh:conforms false ;sh:result <urn:uuid:5a8db7e5-b24d-40c9-b1a3-f8e32961330a> ;sh:result <urn:uuid:eb6c1fa8-3b7d-4a00-850f-86347a206589> ;sh:result <urn:uuid:ab5852d5-a9f7-47d6-9234-5de8730bb3ab> ;sh:result <urn:uuid:5f66d79f-fa07-43dc-a2e5-a467d0564dc7> ;sh:result <urn:uuid:1adb2307-6848-4d7f-83ae-b3e37fafea85> ;sh:result <urn:uuid:5cc29ddd-4dec-4ec3-b1c8-82debc0b423f> ;sh:result <urn:uuid:0444e80a-1a73-435b-89b3-d32b0e3dfb4a> ;sh:result <urn:uuid:84e50a02-941f-4c37-84c9-7d053106d46a> ;sh:result <urn:uuid:b1d44ca5-1b71-4315-b88c-42e41ce67b1f> ;sh:result <urn:uuid:33aef801-e35f-4399-b029-1338fd6e0948> ;sh:result <urn:uuid:12a40d2f-9662-46b6-8f5c-58f908e57268> ;sh:result <urn:uuid:c765f9e7-d767-4577-aaa4-7008956fce89> ;sh:result <urn:uuid:b06805ad-2be0-44e2-aac7-b21a198b0c8b> ;sh:result <urn:uuid:7cb4ca56-d14d-47f6-a82d-9f05fd6f9fac> ._:bb4529 psh:focusShape <http://www.example.com/myDataGraph#3> ;psh:generality \"0.000291745485003341\"^^xsd:decimal ;psh:likelihood \"6.767468643021722E-11\"^^xsd:double ;psh:numConfirmation 17 ;psh:numViolation 14 ;psh:referenceCardinality 31 ;rdf:type psh:ValidationSummary .";
+        // filtering content: remove all the prefixes definition
+        Pattern pattern = Pattern.compile("(@prefix [a-zA-Z]*[:] <http:\\/\\/[a-zA-Z0-9\\/\\.\\#\\-]*> \\.)");
+        Matcher matcher = pattern.matcher(report);
+        while(matcher.find()) {
+            logger.info("removing prefix: " + matcher.group());
+            report = report.replace(matcher.group(), "");
+        }
+        report = report.replace(".@", ".\n@")
+                .replace(".<", ".\n\n<")
+                .replace(";sh", ";\nsh")
+                .replace(";psh", ";\npsh")
+                .replace(";r", ";\nr")
+                .replace("._", ".\n\n_");
+        logger.info(report);
     }
 
 }

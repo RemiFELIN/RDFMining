@@ -32,7 +32,7 @@ import java.util.Objects;
  */
 public class CoreseEndpoint {
 
-    private static final Logger logger = Logger.getLogger(CoreseEndpoint.class);
+    private static final Logger logger = Logger.getLogger(CoreseEndpoint.class.getName());
 
     /**
      * The URL of the SPARQL endpoint.
@@ -202,6 +202,7 @@ public class CoreseEndpoint {
     }
 
     public String getValidationReportFromServer(String content) throws URISyntaxException, IOException {
+//        logger.info("Perform SHACL validation:\n" + content);
         // fill params
         HashMap<String, String> params = new HashMap<>();
         if(RDFMiner.parameters.useProbabilisticShaclMode) {

@@ -133,6 +133,10 @@ public class Global {
 
     public static String SIMILARITIES_FILE = "";
 
+    public static String AXIOMS_FILE = "";
+
+    public static String SHAPES_FILE = "";
+
     /**
      * Number of threads used to perform evaluation of axioms, its value depends on
      * the processor(s) of the server which are used to deploy and use the RDF

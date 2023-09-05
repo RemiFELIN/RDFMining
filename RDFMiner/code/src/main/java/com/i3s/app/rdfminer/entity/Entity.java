@@ -162,6 +162,10 @@ public class Entity {
      */
     public double ari = 0.0;
 
+    public Double pValue = (double) 0;
+
+    public boolean accepted = false;
+
     /**
      * Updates the counts used to compute the possibility and necessity degrees.
      * <p>
@@ -217,8 +221,12 @@ public class Entity {
         json.put("exceptions", new JSONArray(this.exceptions.stream().limit(100).collect(Collectors.toList())));
         json.put("confirmations", new JSONArray(this.confirmations));
         json.put("elapsedTime", this.elapsedTime);
-        if(RDFMiner.parameters.useProbabilisticShaclMode || RDFMiner.parameters.useClassicShaclMode) {
+        if (RDFMiner.parameters.useClassicShaclMode) {
             json.put("likelihood", this.likelihood.doubleValue());
+        } else if (RDFMiner.parameters.useProbabilisticShaclMode) {
+            json.put("likelihood", this.likelihood.doubleValue());
+            json.put("pValue", this.pValue.doubleValue());
+            json.put("acceptance", this.accepted);
         } else {
             json.put("possibility", this.possibility().doubleValue());
             json.put("necessity",this.necessity().doubleValue());

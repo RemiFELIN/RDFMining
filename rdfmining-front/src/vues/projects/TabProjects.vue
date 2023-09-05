@@ -1,57 +1,58 @@
 <template>
     <div class="scroll">
-    <CTable striped hover>
-        <CTableHead color="light">
-            <CTableRow>
-                <CTableHeaderCell v-for="header in headers" :key="header" scope="col">{{ header }}</CTableHeaderCell>
-            </CTableRow>
-        </CTableHead>
-        <CTableBody>
-            <CTableRow v-for="project in projects" :key="project">
-                <CTableHeaderCell scope="row">{{ project.projectName }}</CTableHeaderCell>
-                <CTableDataCell>{{ project.task }}</CTableDataCell>
-                <CTableDataCell><a :href="project.targetSparqlEndpoint">{{ project.targetSparqlEndpoint }}</a>
-                </CTableDataCell>
-                <CTableDataCell>
-                    <!-- <CAvatar class="clickable" src="assets/dashboard.png" @click="redirectVisu(project.projectName)"
+        <CTable striped hover>
+            <CTableHead color="light">
+                <CTableRow>
+                    <CTableHeaderCell v-for="header in headers" :key="header" scope="col">{{ header }}</CTableHeaderCell>
+                </CTableRow>
+            </CTableHead>
+            <CTableBody>
+                <CTableRow v-for="project in projects" :key="project" align="middle">
+                    <CTableHeaderCell scope="row">{{ project.projectName }}</CTableHeaderCell>
+                    <CTableDataCell>{{ project.task }}</CTableDataCell>
+                    <CTableDataCell><a :href="project.targetSparqlEndpoint">{{ project.targetSparqlEndpoint }}</a>
+                    </CTableDataCell>
+                    <CTableDataCell>
+                        <!-- <CAvatar class="clickable" src="assets/dashboard.png" @click="redirectVisu(project.projectName)"
                         v-if="project.status != 0" /> -->
-                    <CButton v-if="project.status != 0" @click="redirectVisu(project.projectName)" color="info"
-                        variant="outline">
-                        Dashboard
-                    </CButton>
-                    <CButton disabled v-else>
-                        <CSpinner variant="grow" size="sm" aria-hidden="true" />
-                        Waiting for the server
-                    </CButton>
-                </CTableDataCell>
-                <CTableDataCell>
-                    <!-- <CButton color="success" variant="outline" :disabled="project.status != 0" style="margin:5px;">
+                        <CButton v-if="project.status != 0" @click="redirectVisu(project)" color="info"
+                            variant="outline">
+                            Dashboard
+                        </CButton>
+                        <CButton disabled v-else>
+                            <CSpinner variant="grow" size="sm" aria-hidden="true" />
+                            Waiting for the server
+                        </CButton>
+                    </CTableDataCell>
+                    <CTableDataCell>
+                        <!-- <CButton color="success" variant="outline" :disabled="project.status != 0" style="margin:5px;">
                         <CImage src="assets/start.png" width="20" height="20" />
                         Start
                     </CButton> -->
-                    <CButton color="danger" variant="outline" :disabled="project.status != 1" style="margin:5px;">
-                        <CImage src="assets/cancel.png" width="20" height="20" />
-                        Stop
-                    </CButton>
-                    <CButton color="danger" style="margin:5px;" @click="deletePopup(project.projectName)">
-                        <CImage src="assets/garbage.png" width="20" height="20" />
-                        Delete
-                    </CButton>
-                    <!-- <CAvatar class="clickable" src="assets/cancel.png" />
+                        <CButton color="danger" variant="outline" :disabled="project.status != 1" style="margin:5px;">
+                            <CImage src="assets/cancel.png" width="20" height="20" />
+                            Stop
+                        </CButton>
+                        <CButton color="danger" style="margin:5px;" @click="deletePopup(project.projectName)">
+                            <CImage src="assets/garbage.png" width="20" height="20" />
+                            Delete
+                        </CButton>
+                        <!-- <CAvatar class="clickable" src="assets/cancel.png" />
                     <CAvatar class="clickable" src="assets/dashboard.png" @click="redirectVisu(project.projectName)"
                         v-if="project.status != 0" />
                     <CAvatar class="clickable" src="assets/garbage.png" @click="deletePopup(project.projectName)" /> -->
-                </CTableDataCell>
-                <CTableDataCell :color="getColor(project.status)" style="font-weight: bold;">
-                    <CSpinner v-if="project.status != 2" size="sm" style="margin-right:10px;" />{{
-                        status[project.status].text }}
-                </CTableDataCell>
-            </CTableRow>
-        </CTableBody>
-        <CTableFoot>
-        </CTableFoot>
-    </CTable>
-</div>
+                    </CTableDataCell>
+                    <CTableDataCell :color="getColor(project.status)" style="font-weight: bold;">
+                        <CSpinner :variant="project.status < 1 ? 'grow' : 'border'" v-if="project.status != 2" size="sm"
+                            style="margin-right:10px;" />{{
+                                status[project.status].text }}
+                    </CTableDataCell>
+                </CTableRow>
+            </CTableBody>
+            <CTableFoot>
+            </CTableFoot>
+        </CTable>
+    </div>
 </template>
 
 
@@ -80,14 +81,14 @@ export default {
         },
         redirectVisu(p) {
             axios.get("http://localhost:9200/api/results", {
-                params: { projectName: p },
+                params: { projectName: p.projectName },
                 headers: { "x-access-token": this.cookies.get("token") }
             }).then(
                 (response) => {
                     if (response.status === 200) {
                         console.log(response.data);
                         // redirect on visualisation route with the results ID linked to the project
-                        this.$router.push({ name: "VueVisualisation", params: { resultsId: response.data } });
+                        this.$router.push({ name: "VueVisualisation", params: { resultsId: response.data, task: p.task } });
                     }
                 }
             ).catch((error) => {
@@ -98,11 +99,13 @@ export default {
             switch (status) {
                 default:
                 case 0:
-                    return "danger";
+                    return "light";
                 case 1:
                     return "warning";
                 case 2:
                     return "success";
+                case -1:
+                    return "danger";
             }
         },
         /**

@@ -15,7 +15,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class is used to map all results on an object and generate a {@link org.json.JSONObject} of it.
@@ -32,18 +31,23 @@ public class Results {
 
     public final static String GENERATIONS = "generations";
 
-    public List<JSONObject> content;
+    public final static String N_ENTITIES = "nEntities";
+    public int nEntities;
+
+//    public List<JSONObject> content;
     public JSONObject statistics;
 
-    public Results() {
+    public Results(boolean evaluator) {
         // set the content part of the results
         // i.e. a set of assessed OWL Axioms or SHACL Shapes
         RDFMiner.content = new ArrayList<>();
         // set statistics
         // i.e. parameters used; statistics over generations; ...
-        RDFMiner.stats = new Stat();
+        if (!evaluator) {
+            RDFMiner.stats = new Stat();
+        }
         // send it to the server
-        saveResult();
+//        saveResult();
     }
 
     /**
@@ -54,12 +58,17 @@ public class Results {
         JSONObject json = new JSONObject();
         json.put(USER_ID, RDFMiner.parameters.username);
         json.put(PROJECT_NAME, RDFMiner.parameters.directory);
-        json.put(STATISTICS, RDFMiner.stats.toJSON());
-        json.put(ENTITIES, new JSONArray(content));
+        if (RDFMiner.stats != null) json.put(STATISTICS, RDFMiner.stats.toJSON());
+        if (this.nEntities != 0) json.put(N_ENTITIES, this.nEntities);
+        json.put(ENTITIES, new JSONArray(RDFMiner.content));
         return json;
     }
 
-    private void saveResult() {
+    public void setNumberEntities(int n) {
+        this.nEntities = n;
+    }
+
+    public void saveResult() {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost post = new HttpPost(Global.RDFMINER_SERVER_IP + "api/results");
             // specify the POST body to send to the server as part of the request

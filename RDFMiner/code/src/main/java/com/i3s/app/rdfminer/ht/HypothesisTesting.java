@@ -4,8 +4,11 @@ import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.shacl.Shape;
 import org.apache.commons.math3.distribution.BinomialDistribution;
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
+import org.apache.log4j.Logger;
 
 public class HypothesisTesting {
+
+    private static final Logger logger = Logger.getLogger(HypothesisTesting.class.getName());
 
     public Shape shape;
     private Double X2;
@@ -31,6 +34,32 @@ public class HypothesisTesting {
             // rejected !
             this.isAccepted = false;
         }
+    }
+
+    public static void eval(Shape shape) {
+        logger.info("~~~");
+        logger.info("shape.referenceCardinality= " + shape.referenceCardinality);
+        logger.info("shape.numExceptions= " + shape.numExceptions);
+        logger.info("shape.numConfirmations= " + shape.numConfirmations);
+        logger.info("~~~");
+        double nExcTheo = shape.referenceCardinality * Double.parseDouble(RDFMiner.parameters.probShaclP);
+        double nConfTheo = shape.referenceCardinality - nExcTheo;
+        if(shape.numExceptions <= nExcTheo) {
+            // if observed error is lower, accept the shape
+            shape.accepted = true;
+        } else if (nExcTheo >= 5 && nConfTheo >= 5) {
+            // apply statistic test X2
+            shape.pValue = (Math.pow(shape.numExceptions - nExcTheo, 2) / nExcTheo) +
+                    (Math.pow(shape.numConfirmations - nConfTheo, 2) / nConfTheo);
+            logger.info("Hypothesis testing of " + shape.absoluteIri + ": pVal=" + shape.pValue);
+            double critical = new ChiSquaredDistribution(1).inverseCumulativeProbability(1 - RDFMiner.parameters.alpha);
+            // test value and accept it if it's lower than critical value
+            shape.accepted = shape.pValue <= critical;
+        } else {
+            // rejected !
+            shape.accepted = false;
+        }
+        logger.info("Acceptance of " + shape.absoluteIri + ": " + shape.accepted);
     }
 
     public String getAcceptanceTriple() {

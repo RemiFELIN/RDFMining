@@ -3,10 +3,9 @@
         <CCol xs>
             <CCard class="card">
                 <!-- <CCardImage width="10" height="20" orientation="top" src="../assets/fitness.png"></CCardImage> -->
-                <CCardTitle class="text-center">Generations computation time (in sec.)</CCardTitle>
+                <CCardTitle class="text-center">Entities elapsed time (in sec.)</CCardTitle>
                 <CCardBody>
-                    <CChart type="bar" :wrapper="true" :data="computation_time_chart" :options="options" :key="refresh"
-                        :redraw="true">
+                    <CChart type="bar" :wrapper="false" :data="getChart()" :key="refresh" :options="options" :redraw="true">
                     </CChart>
                 </CCardBody>
             </CCard>
@@ -20,9 +19,11 @@
                         <CProgressBar :value="progression">{{ progression }}%</CProgressBar>
                     </CProgress>
                     <CCardTitle class="text-center"><b>Actions</b></CCardTitle>
-                    <CButton style="margin: 5px;" color="success" variant="outline" :disabled="progression != 100" @click="getResults">Download
+                    <CButton style="margin: 5px;" color="success" variant="outline" :disabled="progression != 100"
+                        @click="getResults">Download
                         results (JSON)</CButton>
-                    <CButton color="info" variant="outline" :disabled="progression != 100" @click="getSHACLReport">Download SHACL report (Turtle)</CButton>
+                    <CButton color="info" variant="outline" :disabled="progression != 100" @click="getSHACLReport">Download
+                        SHACL report (Turtle)</CButton>
                 </CCardBody>
             </CCard>
         </CCol>
@@ -40,7 +41,7 @@ import axios from 'axios';
 import io from "socket.io-client";
 
 export default {
-    name: 'VueGlobal',
+    name: 'VueGlobalEval',
     components: {
         CChart, CCard, CCardBody, CCardTitle, CRow, CCol, CProgress, CProgressBar, CButton
     },
@@ -54,18 +55,19 @@ export default {
     },
     data() {
         return {
-            cookies: useCookies(["token", "id"]).cookies, 
+            cookies: useCookies(["token", "id"]).cookies,
             // force refresh of component
             refresh: true,
             // socket io
             socket: io("http://localhost:9200"),
-            // generations
-            nGenerations: 0,
+            // entities
+            options: {},
+            nEntities: 0,
             // current generation
-            curGeneration: 1,
+            curEntities: 1,
             progression: 0,
             // n_gen labels
-            gen_labels: [],
+            entities_labels: [],
             // options plugin
             plugins: {
                 legend: {
@@ -79,7 +81,7 @@ export default {
                 tooltip: {
                     callbacks: {
                         title: function (context) {
-                            return "Generation " + context[0].label;
+                            return "Phenotype: " + context[0].label;
                         },
                         label: function (context) {
                             // return context.dataset.label + " value: " + context.formattedValue;
@@ -88,72 +90,75 @@ export default {
                     }
                 }
             },
-            // chart options
-            options: {},
             // CoreUI CCharts: Individuals with non-null fitness
-            computation_time_data: [],
+            elapsed_time_data: [],
             computation_time_chart: {},
         };
     },
     mounted() {
-        // get number of generations
-        this.nGenerations = toRaw(this.results.statistics.nGenerations);
+        // get number of entities
+        this.nEntities = toRaw(this.results.nEntities);
         // deduce x-labels
-        this.gen_labels = Array.from({ length: this.nGenerations }, (_, idx) => idx + 1);
+        // this.entities_labels = Array.from({ length: this.nEntities }, (_, idx) => idx + 1);
         //
-        this.computation_time_data = Array(this.nGenerations).fill(0);
+        // this.elapsed_time_data = Array(this.nEntities).fill(0);
         // verify if any results (or all ?) are already defined
-        if (toRaw(this.results.statistics.generations.length) != 0) {
+
+        if (toRaw(this.results.entities.length) != 0) {
             //
-            this.curGeneration = toRaw(this.results.statistics.generations.length);
-            this.progression = (this.curGeneration / this.nGenerations) * 100;
+            this.curEntities = toRaw(this.results.entities.length);
+            this.progression = (this.curEntities / this.nEntities) * 100;
             //
-            for (let i = 0; i < toRaw(this.results.statistics.generations.length); i++) {
-                // console.log(toRaw(this.results.statistics.generations[i]));
-                this.computation_time_data[i] = toRaw(this.results.statistics.generations[i].computationTime);
+            for (let i = 0; i < toRaw(this.results.entities.length); i++) {
+                this.entities_labels.push(toRaw(this.results.entities[i].phenotype));
+                this.elapsed_time_data[i] = toRaw(this.results.entities[i].elapsedTime);
             }
         }
+        console.log(toRaw(this.elapsed_time_data));
         // Individuals with non-null fitness chart
         this.computation_time_chart = {
-            labels: this.gen_labels,
+            labels: toRaw(this.entities_labels),
             datasets: [
                 {
-                    label: 'Computation time',
+                    label: 'Elapsed time',
                     backgroundColor: 'rgba(222, 0, 0, 0.8)',
                     // borderColor: 'rgba(220, 220, 220, 1)',
                     // pointBackgroundColor: 'rgba(220, 220, 220, 1)',
                     // pointBorderColor: '#fff',
-                    data: this.computation_time_data
+                    data: toRaw(this.elapsed_time_data)
                 }
             ],
         };
         this.options = {
             // maintainAspectRatio: false,
             scales: {
-                y: {
-                    beginAtZero: true
-                },
+                // y: {
+                //     beginAtZero: true
+                // },
                 x: {
-                    beginAtZero: true,
-                    type: 'linear',
-                    title: {
-                        display: true,
-                        text: 'Generation',
-                        font: {
-                            size: 18
-                        }
-                    },
+                    // beginAtZero: true,
+                    // Empirically set
+                    display: this.nEntities > 20 ? false : true,
+                    // type: 'linear',
+                    // title: {
+                    //     display: true,
+                    //     text: 'Entities',
+                    //     font: {
+                    //         size: 18
+                    //     }
+                    // },
                 }
             },
             plugins: this.plugins
         }
         // SOCKET IO
-        this.socket.on("update-generation", (data) => {
+        this.socket.on("update-entities", (data) => {
             // console.log("socket.io updates generations ... with " + JSON.stringify(data));
             // update each data arrays
-            this.computation_time_chart.datasets[0].data[data.generation] = data.computationTime;
+            this.computation_time_chart.labels.push(data.phenotype);
+            this.computation_time_chart.datasets[0].data.push(data.elapsedTime);
             //
-            this.curGeneration += 1;
+            this.curEntities += 1;
             //
             console.log(this.computation_time_chart.datasets[0].data);
             // refresh
@@ -161,11 +166,14 @@ export default {
         });
     },
     methods: {
+        getChart() {
+            return toRaw(this.computation_time_chart);
+        },
         getResults() {
             // get logs
-            axios.get("http://localhost:9200/api/results", { 
+            axios.get("http://localhost:9200/api/results", {
                 params: { path: this.path, file: "results" },
-                headers: { "x-access-token": this.cookies.get("token") } 
+                headers: { "x-access-token": this.cookies.get("token") }
             }).then(
                 (response) => {
                     this.download(response.data, "results.json");
@@ -176,9 +184,9 @@ export default {
         },
         getSHACLReport() {
             // get logs
-            axios.get("http://localhost:9200/api/results", { 
+            axios.get("http://localhost:9200/api/results", {
                 params: { path: this.path, file: "shacl" },
-                headers: { "x-access-token": this.cookies.get("token") } 
+                headers: { "x-access-token": this.cookies.get("token") }
             }).then(
                 (response) => {
                     this.download(response.data, "shacl_report.ttl");
@@ -204,8 +212,8 @@ export default {
         }
     },
     watch: {
-        curGeneration() {
-            this.progression = (this.curGeneration / this.nGenerations) * 100;
+        curEntities() {
+            this.progression = (this.curEntities / this.nEntities) * 100;
         }
     }
 }

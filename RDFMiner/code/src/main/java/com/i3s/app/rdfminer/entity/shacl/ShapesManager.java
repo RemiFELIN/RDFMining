@@ -1,6 +1,7 @@
 package com.i3s.app.rdfminer.entity.shacl;
 
 import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.entity.shacl.vocabulary.Shacl;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
@@ -105,6 +106,9 @@ public class ShapesManager {
                     // add each result on the final list
                     shapes.add("<" + solution.getValue("shapes") + ">");
                 }
+                logger.info(shapes.size() + " shape(s) are ready to be evaluated !");
+                RDFMiner.results.setNumberEntities(shapes.size());
+                RDFMiner.results.saveResult();
                 for(String shapeSubject : shapes) {
                     // feel shape content
                     StringBuilder sb = new StringBuilder();

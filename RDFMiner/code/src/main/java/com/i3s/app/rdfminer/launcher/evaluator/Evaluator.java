@@ -6,13 +6,15 @@ import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.entity.axiom.AxiomFactory;
+import com.i3s.app.rdfminer.entity.shacl.Shape;
 import com.i3s.app.rdfminer.entity.shacl.ShapesManager;
-import com.i3s.app.rdfminer.entity.shacl.ValidationReport;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Phenotype;
 import com.i3s.app.rdfminer.generator.axiom.AxiomGenerator;
 import com.i3s.app.rdfminer.generator.axiom.CandidateAxiomGenerator;
 import com.i3s.app.rdfminer.generator.axiom.IncreasingTimePredictorAxiomGenerator;
 import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
+import com.i3s.app.rdfminer.ht.HypothesisTesting;
+import com.i3s.app.rdfminer.output.Results;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 import org.apache.jena.shared.JenaException;
@@ -34,6 +36,8 @@ public class Evaluator {
 
 	public Evaluator()
 			throws URISyntaxException, IOException, ExecutionException, InterruptedException {
+		// set results content as JSON object
+		RDFMiner.results = new Results(true);
 		// special case where -af and -sf are used in the same time
 		if(RDFMiner.parameters.axiomFile != null && RDFMiner.parameters.shapeFile != null) {
 			logger.error("(--axioms-file) and (--shapes-file) are used in the same time !");
@@ -61,7 +65,8 @@ public class Evaluator {
 
 		// Create an empty JSON array which will be fill with our results
 		RDFMiner.evaluatedEntities = new JSONArray();
-		
+
+		// todo: refacto !
 		if (RDFMiner.parameters.axiomFile == null) {
 			if (RDFMiner.parameters.singleAxiom == null) {
 				if (RDFMiner.parameters.useRandomAxiomGenerator) {
@@ -79,10 +84,11 @@ public class Evaluator {
 				logger.info("launch test on a single axiom");
 			}
 		} else {
+			Global.AXIOMS_FILE = Global.OUTPUT_PATH + RDFMiner.parameters.axiomFile;
 			logger.info("Reading axioms from file " + RDFMiner.parameters.axiomFile + "...");
 			try {
 				// Try to read the status file:
-				axiomFile = new BufferedReader(new FileReader(RDFMiner.parameters.axiomFile));
+				axiomFile = new BufferedReader(new FileReader(Global.AXIOMS_FILE));
 			} catch (IOException e) {
 				logger.error("Could not open file " + RDFMiner.parameters.axiomFile);
 				return;
@@ -182,6 +188,8 @@ public class Evaluator {
 
 		// get all callables and execute it
 		logger.info(callables.size() + " tasks are ready ...");
+		RDFMiner.results.setNumberEntities(callables.size());
+		RDFMiner.results.saveResult();
 		// Submit tasks
 		List<Future<Axiom>> futureAxioms = executor.invokeAll(callables);
 		// We recover our axioms
@@ -194,8 +202,18 @@ public class Evaluator {
 
 		for(Axiom axiom : axiomList) {
 			// Save a JSON report of the test
-			RDFMiner.evaluatedEntities.put(axiom.toJSON());
+			RDFMiner.content.add(axiom.toJSON());
+			RDFMiner.sendEntities();
 		}
+
+//		JSONObject jsonResults = new JSONObject();
+//		jsonResults.put(Results.ENTITIES, RDFMiner.evaluatedEntities);
+		RDFMiner.output.write(RDFMiner.results.toJSON().toString(2));
+
+		// Force flushing the data to the files
+		RDFMiner.output.flush();
+		// Close it
+		RDFMiner.output.close();
 
 		logger.info("Done testing axioms. Exiting.");
 		System.exit(0);
@@ -213,10 +231,11 @@ public class Evaluator {
 		RDFMiner.evaluatedEntities = new JSONArray();
 
 		if (RDFMiner.parameters.shapeFile != null) {
+			Global.SHAPES_FILE = Global.OUTPUT_PATH + RDFMiner.parameters.shapeFile;
 			logger.info("Reading SHACL Shapes from file " + RDFMiner.parameters.shapeFile + "...");
 			try {
 				// Try to read the status file:
-				shapesContent = Files.asCharSource(new File(RDFMiner.parameters.shapeFile), Charsets.UTF_8).read();
+				shapesContent = Files.asCharSource(new File(Global.SHAPES_FILE), Charsets.UTF_8).read();
 			} catch (IOException e) {
 				logger.error("Could not open file " + RDFMiner.parameters.shapeFile);
 				return;
@@ -241,21 +260,30 @@ public class Evaluator {
 
 		CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, Global.PREFIXES);
 		ShapesManager shapesManager = new ShapesManager(shapesContent, false, endpoint);
-		String report;
 
-		if (RDFMiner.parameters.useProbabilisticShaclMode) {
-			// run extended SHACL eval
-			ExtendedShacl.runWithEval(shapesManager);
-		} else {
-			if(!RDFMiner.parameters.useClassicShaclMode) {
-				logger.warn("No validation mode specified !");
-				logger.warn("By default, the standard SHACL validation will be used");
-			}
-			report = endpoint.getValidationReportFromServer(shapesManager.content);
-//			System.out.println(report);
-			ValidationReport validationReport = new ValidationReport(report);
-			RDFMiner.output.write(validationReport.prettifyPrint());
+		// filewriter: json file with all shapes as JSON
+		FileWriter results = new FileWriter(RDFMiner.outputFolder + Global.RESULTS_FILENAME);
+
+		for (int i=0; i<shapesManager.getPopulation().size(); i++) {
+			Shape shape = shapesManager.getPopulation().get(i);
+			HypothesisTesting.eval(shape);
+//			RDFMiner.evaluatedEntities.put(shape.toJSON());
+			RDFMiner.content.add(shape.toJSON());
+			RDFMiner.sendEntities();
+			if (i==0) RDFMiner.output.write(shape.validationReport.getContent(true));
+			else RDFMiner.output.write(shape.validationReport.getContent(false));
 		}
+
+//		JSONObject jsonResults = new JSONObject();
+//		jsonResults.put(Results.ENTITIES, RDFMiner.evaluatedEntities);
+		results.write(RDFMiner.results.toJSON().toString(2));
+
+		// Force flushing the data to the files
+		RDFMiner.output.flush();
+		results.flush();
+
+		RDFMiner.output.close();
+		results.close();
 
 		logger.info("Done testing SHACL shape(s). Exiting.");
 		System.exit(0);

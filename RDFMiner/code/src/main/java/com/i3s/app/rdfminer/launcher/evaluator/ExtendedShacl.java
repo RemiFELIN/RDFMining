@@ -27,11 +27,11 @@ public class ExtendedShacl {
         int originalNTriples = endpoint.countAllFromCoreseTripleStore();
         // Launch SHACL evaluation from the Corese server and get the result in turtle
         String report = endpoint.getValidationReportFromServer(shapesManager.content);
-        endpoint.sendFileToServer(new File(RDFMiner.parameters.shapeFile), Global.SHACL_SHAPES_FILENAME);
+        endpoint.sendFileToServer(new File(Global.SHAPES_FILE), Global.SHACL_SHAPES_FILENAME);
         // write SHACL report in output file
         ValidationReport validationReport = new ValidationReport(report);
         logger.info("Writting validation report in " + RDFMiner.outputFolder + Global.SHACL_VALIDATION_REPORT_FILENAME + " ...");
-        RDFMiner.output.write(validationReport.prettifyPrint());
+        RDFMiner.output.write(validationReport.prettifyPrint(validationReport.content));
         RDFMiner.output.close();
         // perform hypothesis testing
         performHypothesisTesting(validationReport, shapesManager);
@@ -57,7 +57,7 @@ public class ExtendedShacl {
         logger.info("Original number of RDF triples into Corese triplestore: " + originalNTriples);
         // write shapes from population
         createShapesFile(shapesManager.content);
-        endpoint.sendFileToServer(new File(Global.SHACL_SHAPES_FILENAME), Global.SHACL_SHAPES_FILENAME);
+        endpoint.sendFileToServer(new File(Global.SHAPES_FILE), Global.SHACL_SHAPES_FILENAME);
         // perform hypothesis testing
         performHypothesisTesting(validationReport, shapesManager);
         // send hypothesis result to Corese graph

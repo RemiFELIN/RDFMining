@@ -79,6 +79,8 @@ public class Shape extends Entity {
      */
     public ArrayList<String> properties;
 
+    public ValidationReport validationReport;
+
     /**
      *
      */
@@ -126,6 +128,7 @@ public class Shape extends Entity {
         // that simply stores everything in main memory.
         this.db = new SailRepository(new MemoryStore());
         setIdentifierWithQuery();
+        this.setEntityAsString(this.absoluteIri);
         // get the targetted class(es) if it provides
         this.targetClasses = getValuesFromProperty(Shacl.TARGETCLASS);
         // get the targetSubjectsOf if it provides
@@ -172,7 +175,8 @@ public class Shape extends Entity {
             TupleQuery query = con.prepareTupleQuery(request);
             try (TupleQueryResult result = query.evaluate()) {
                 for (BindingSet solution : result) {
-                    this.relativeIri = this.absoluteIri = "<" + solution.getValue("x") + ">";
+                    this.relativeIri = "<" + solution.getValue("x") + ">";
+                    this.absoluteIri = this.relativeIri;
                 }
             }
         } finally {
@@ -202,14 +206,16 @@ public class Shape extends Entity {
     }
 
     public void fillParamFromReport(ValidationReport report) {
+        String iri = this.absoluteIri.replace("<", "").replace(">", "");
+        logger.info("Extracting informations from SHACL validation for " + iri);
 //        System.out.println(fullUri);
-        this.referenceCardinality = report.referenceCardinalityByShape.get(this.absoluteIri).intValue();
-        this.numConfirmations = report.numConfirmationsByShape.get(this.absoluteIri).intValue();
-        this.numExceptions = report.numExceptionsByShape.get(this.absoluteIri).intValue();
-        this.likelihood = report.likelihoodByShape.get(this.absoluteIri);
+        this.referenceCardinality = report.referenceCardinalityByShape.get(iri).intValue();
+        this.numConfirmations = report.numConfirmationsByShape.get(iri).intValue();
+        this.numExceptions = report.numExceptionsByShape.get(iri).intValue();
+        this.likelihood = report.likelihoodByShape.get(iri);
 //        this.generality = report.generalityByShape.get(parsedUri);
-        if(report.exceptionsByShape.get(this.absoluteIri) != null) {
-            this.exceptions = new ArrayList<>(report.exceptionsByShape.get(this.absoluteIri));
+        if(report.exceptionsByShape.get(iri) != null) {
+            this.exceptions = new ArrayList<>(report.exceptionsByShape.get(iri));
         }
         if(this.individual != null) {
             this.individual.setFitness(new BasicFitness(computeFitness(), this.individual));
@@ -218,7 +224,7 @@ public class Shape extends Entity {
 
     @Override
     public String toString() {
-        return this.relativeIri + this.content;
+        return this.content;
     }
 
     /**
@@ -241,7 +247,7 @@ public class Shape extends Entity {
         // launch evaluation
         String report = endpoint.getValidationReportFromServer(Global.PREFIXES + this);
         // read evaluation report
-        ValidationReport validationReport = new ValidationReport(report);
+        this.validationReport = new ValidationReport(report);
         // add results
         this.fillParamFromReport(validationReport);
     }

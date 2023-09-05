@@ -17,13 +17,6 @@ import com.i3s.app.rdfminer.output.Cache;
 import com.i3s.app.rdfminer.output.IndividualJSON;
 import com.i3s.app.rdfminer.output.Results;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -53,7 +46,8 @@ public class GrammaticalEvolution {
         }));
 
         // set results content as JSON object
-        RDFMiner.results = new Results();
+        RDFMiner.results = new Results(false);
+        RDFMiner.results.saveResult();
 
         Generator generator = null;
         if (parameters.axiomFile == null) {
@@ -182,9 +176,9 @@ public class GrammaticalEvolution {
         try {
             logger.info("Edit JSON file results ...");
             RDFMiner.results.statistics = RDFMiner.stats.toJSON();
-            RDFMiner.results.content = RDFMiner.content;
+//            RDFMiner.results.content = RDFMiner.content;
             // save entities
-            sendEntities();
+            RDFMiner.sendEntities();
             RDFMiner.output.write(RDFMiner.results.toJSON().toString(2));
             RDFMiner.output.close();
             // if novelty seach is used
@@ -195,24 +189,6 @@ public class GrammaticalEvolution {
             logger.error("I/O error while closing JSON writer: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
-        }
-    }
-
-    public static void sendEntities() {
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            JSONObject toSend = new JSONObject();
-            toSend.put("userId", RDFMiner.parameters.username);
-            toSend.put("projectName", RDFMiner.parameters.directory);
-            toSend.put("entities", RDFMiner.results.content);
-            //
-            HttpPut put = new HttpPut(Global.RDFMINER_SERVER_IP + "api/results");
-            put.setEntity(new StringEntity(toSend.toString(), ContentType.APPLICATION_JSON));
-            logger.info("PUT request: updating entities ...");
-            HttpResponse response = httpClient.execute(put);
-            logger.info("Status code: " + response.getStatusLine().getStatusCode());
-            logger.info(new BasicResponseHandler().handleResponse(response));
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

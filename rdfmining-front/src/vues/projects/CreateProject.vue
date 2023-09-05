@@ -103,8 +103,12 @@
                     </CCol>
                 </CRow>
                 <CAlert color="warning" v-if="selectedShaclProb == 0">
-                    Considering an <b>error rate tolerance</b> of <b>0%</b>, the acceptance criterion <b>will not accept any
-                        violation !</b>
+                    <b>Standard SHACL validation !</b> increase the <b>P-value</b> to enable the <b>probabilistic SHACL
+                        validation</b>
+                </CAlert>
+                <CAlert color="warning" v-else>
+                    <b>Probabilistic SHACL validation !</b> set the <b>P-value</b> at 0 to enable the <b>standard SHACL
+                        validation</b>
                 </CAlert>
             </div>
             <!--
@@ -118,7 +122,7 @@
                         feedback-invalid="Please select a BNF template (You can customize it !)" required
                         :invalid="selectedBNFTemplate == ''">
                         <option selected disabled>Select the required template</option>
-                        <option v-for="bnf in templates" :key="bnf" :value="bnf.value">{{ bnf.description }}</option>
+                        <option v-for="bnf in filteredTemplates" :key="bnf" :value="bnf.value">{{ bnf.description }}</option>
                     </CFormSelect>
                     <br />
                     <!-- Content -->
@@ -126,6 +130,7 @@
                         {{ selectedBNFTemplate }}
                     </CFormTextarea>
                 </CCol>
+                <!-- <p>filtered: {{ filteredTemplates.length }} / templates: {{ templates.length }}</p> -->
             </CRow>
             <!-- 
                 Size of chromosomes 
@@ -357,7 +362,7 @@ export default {
     },
     methods: {
         updateNumberGenerations() {
-            this.numberOfGenerations = Math.floor(this.selectedTotalEffort / this.selectedPopulationSize);
+            this.numberOfGenerations = Math.ceil(this.selectedTotalEffort / this.selectedPopulationSize);
         },
         updateEffort() {
             this.minEffort = this.selectedPopulationSize;
@@ -432,6 +437,19 @@ export default {
         }
     },
     watch: {
+        selectedFeature() {
+            if (this.selectedFeature.includes("-rs")) {
+                // filtering BNF templates with grammars related to SHACL shapes
+                this.filteredTemplates = this.templates.filter((bnf) => {
+                    return bnf.description.includes("SHACL") == true;
+                });
+            } else if (this.selectedFeature.includes("-ra")) {
+                // filtering BNF templates with grammars related to SHACL shapes
+                this.filteredTemplates = this.templates.filter((bnf) => {
+                    return bnf.description.includes("OWL") == true;
+                });
+            }
+        },
         selectedTotalEffort() {
             this.updateNumberGenerations();
         },
@@ -497,6 +515,7 @@ export default {
             // BNF Grammar templates
             grammar: {},
             templates: [],
+            filteredTemplates: [],
             selectedBNFTemplate: "",
             // pop size
             populationSize: {},

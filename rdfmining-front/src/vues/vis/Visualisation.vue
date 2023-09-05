@@ -5,7 +5,8 @@
             <CAccordionHeader>Global information</CAccordionHeader>
             <CAccordionBody>
                 <!-- <VisuEntities v-if="isReady" :results="results"></VisuEntities> -->
-                <VueGlobal v-if="isReady" :results="results" :path="path"></VueGlobal>
+                <VueGlobalGE v-if="isReady && task=='Mining'" :results="results" :path="path"></VueGlobalGE>
+                <VueGlobalEval v-if="isReady && task=='Assessment'" :results="results" :path="path"></VueGlobalEval>
             </CAccordionBody>
         </CAccordionItem>
         <CAccordionItem :item-key="3">
@@ -14,7 +15,7 @@
                 <VisuEntities v-if="isReady" :results="results"></VisuEntities>
             </CAccordionBody>
         </CAccordionItem>
-        <CAccordionItem :item-key="2">
+        <CAccordionItem :item-key="2" v-if="task=='Mining'">
             <CAccordionHeader>Statistics</CAccordionHeader>
             <CAccordionBody>
                 <VueStatistics v-if="isReady" :results="results"></VueStatistics>
@@ -35,20 +36,25 @@ import { useCookies } from "vue3-cookies";
 import VueStatistics from './Statistics.vue';
 import VisuEntities from './Entities.vue';
 import ConsoleLog from './ConsoleLog.vue';
-import VueGlobal from './Global.vue';
+import VueGlobalGE from './GlobalGE.vue';
+import VueGlobalEval from './GlobalEval.vue';
 import axios from 'axios';
 
 export default {
     name: 'VueVisualisation',
-    props: {
-        resultsId: {
-            type: String,
-        }
-    },
+    // props: {
+    //     resultsId: {
+    //         type: String,
+    //     },
+    //     task: {
+    //         type: String
+    //     }
+    // },
     data() {
         return {
             cookies: useCookies(["token", "id"]).cookies,
             id: "",
+            task: "",
             results: {},
             path: "",
             isReady: false,
@@ -60,7 +66,9 @@ export default {
     //     }
     // },
     mounted() {
+        this.task = this.$route.params.task;
         this.id = this.$route.params.resultsId;
+        console.log(this.task);
         console.log(this.id);
         // get results from server
         axios.get("http://localhost:9200/api/results", { 
@@ -70,7 +78,7 @@ export default {
             (response) => {
                 if (response.status === 200) {
                     // redirect on visualisation route with the results ID linked to the project
-                    console.log("visualisation: " + JSON.stringify(response.data));
+                    // console.log("visualisation: " + JSON.stringify(response.data));
                     if (response.data != {}) {
                         this.results = response.data;
                         this.path = this.results.userId + "/" + this.results.projectName;
@@ -83,7 +91,7 @@ export default {
         });
     },
     components: {
-        VueStatistics, VisuEntities, CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody, ConsoleLog, VueGlobal
+        VueStatistics, VisuEntities, CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody, ConsoleLog, VueGlobalGE, VueGlobalEval
     },
 }
 </script>
