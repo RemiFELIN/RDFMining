@@ -10,13 +10,20 @@
                 <CTableRow v-for="project in projects" :key="project" align="middle">
                     <CTableHeaderCell scope="row">{{ project.projectName }}</CTableHeaderCell>
                     <CTableDataCell>{{ project.task }}</CTableDataCell>
-                    <CTableDataCell><a :href="project.targetSparqlEndpoint">{{ project.targetSparqlEndpoint }}</a>
+                    <!-- <CTableDataCell><a :href="project.targetSparqlEndpoint">{{ project.targetSparqlEndpoint }}</a> -->
+                    <!-- </CTableDataCell> -->
+                    <CTableDataCell>
+                        <CButton color="primary" variant="outline" style="margin:5px;" @click="detailsPopup(project)">
+                            <CImage src="assets/json.png" width="20" height="20" />
+                            Details
+                        </CButton>
                     </CTableDataCell>
                     <CTableDataCell>
                         <!-- <CAvatar class="clickable" src="assets/dashboard.png" @click="redirectVisu(project.projectName)"
                         v-if="project.status != 0" /> -->
                         <CButton v-if="project.status != 0" @click="redirectVisu(project)" color="info"
                             variant="outline">
+                            <CImage src="assets/dashboard.png" width="20" height="20" />
                             Dashboard
                         </CButton>
                         <CButton disabled v-else>
@@ -76,6 +83,9 @@ export default {
         deletePopup(projectName) {
             this.$emit("delete", projectName);
         },
+        detailsPopup(p) {
+            this.$emit("details", p);
+        },
         updateStatus(project, status) {
             project.status = status;
         },
@@ -86,7 +96,7 @@ export default {
             }).then(
                 (response) => {
                     if (response.status === 200) {
-                        console.log(response.data);
+                        // console.log(response.data);
                         // redirect on visualisation route with the results ID linked to the project
                         this.$router.push({ name: "VueVisualisation", params: { resultsId: response.data, task: p.task } });
                     }
@@ -133,7 +143,7 @@ export default {
             },
             showDeletePopup: false,
             selectedProject: "",
-            headers: ["Project name", "Task", "SPARQL endpoint", "Results", "Operations", "Status"],
+            headers: ["Project name", "Task", "Parameters", "Results", "Operations", "Status"],
             item: null,
         };
     },
@@ -143,7 +153,7 @@ export default {
         // SOCKET IO
         // update project status
         this.socket.on("update-status", (data) => {
-            console.log(data);
+            // console.log(data);
             this.projects.forEach((p) => {
                 if (p.projectName == data.projectName) {
                     this.updateStatus(p, data.status);
@@ -152,7 +162,7 @@ export default {
         });
         // update resultId
         this.socket.on("results-created", () => {
-            console.log("results created !");
+            // console.log("results created !");
         });
     }
 }

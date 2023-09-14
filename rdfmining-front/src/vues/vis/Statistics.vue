@@ -140,20 +140,24 @@ export default {
                 titleTextStyle: { fontSize: 30 },
                 backgroundColor: "#ffffff",
                 hAxis: {
-                    title: "Reference Cardinality",
+                    title: "# exceptions",
                     textStyle: { fontSize: 30 },
                     titleTextStyle: { fontSize: 20, italic: false, bold: true }
                 },
                 vAxis: {
-                    title: "CPU Computation time (ms.)",
+                    title: "CPU computation time (ms.)",
                     textStyle: { fontSize: 30 },
                     titleTextStyle: { fontSize: 20, italic: false, bold: true }
+                },
+                colorAxis: {
+                    minValue: 0,  
+                    colors: ['#00FF00', '#FF0000']
                 },
                 bubble: { textStyle: { auraColor: 'none', fontSize: 1 } },
                 sizeAxis: { minSize: 20, maxSize: 100 },
                 explorer: {},
-                colorAxis: { colors: ['#15d600', '#ff0000'] },
-                // width: 1500,
+                // colorAxis: { colors: ['#15d600', '#ff0000'] },
+                width: 1500,
                 height: 750,
             },
         };
@@ -199,7 +203,7 @@ export default {
                     beginAtZero: true
                 },
                 x: {
-                    beginAtZero: true,
+                    beginAtZero: false,
                     type: 'linear',
                     title: {
                         display: true,
@@ -219,7 +223,7 @@ export default {
                     beginAtZero: true
                 },
                 x: {
-                    beginAtZero: true,
+                    beginAtZero: false,
                     type: 'linear',
                     title: {
                         display: true,
@@ -273,20 +277,20 @@ export default {
             // entities data
             this.entities_data.push([
                 "phenotype",
-                "referenceCardinality",
+                "numExceptions",
                 "elapsedTime",
                 "Violations Ratio",
-                "numExceptions"
+                "referenceCardinality"
             ]);
             // iterate on entities found
             for (let i = 0; i < toRaw(this.results.entities.length); i++) {
                 // console.log(entity.numExceptions / entity.referenceCardinality)
                 this.entities_data.push([
                     toRaw(this.results.entities[i].phenotype),
-                    toRaw(this.results.entities[i].referenceCardinality),
+                    toRaw(this.results.entities[i].numExceptions),
                     toRaw(this.results.entities[i].elapsedTime),
                     toRaw(this.results.entities[i].numExceptions) / toRaw(this.results.entities[i].referenceCardinality),
-                    toRaw(this.results.entities[i].numExceptions)
+                    toRaw(this.results.entities[i].referenceCardinality)
                 ]);
             }
             this.entities_avalaible = true;
@@ -295,10 +299,10 @@ export default {
         this.socket.on("update-generation", (data) => {
             // console.log("socket.io updates generations ... with " + JSON.stringify(data));
             // update each data arrays
-            this.ind_non_null_chart.datasets[0].data[data.generation] = data.numIndividualsWithNonNullFitness;
-            this.ind_fitness_chart.datasets[0].data[data.generation] = data.averageFitness;
-            this.pop_evol_chart.datasets[0].data[data.generation] = data.diversityCoefficient;
-            this.pop_evol_chart.datasets[1].data[data.generation] = data.populationDevelopmentRate;
+            this.ind_non_null_chart.datasets[0].data[data.generation - 1] = data.numIndividualsWithNonNullFitness;
+            this.ind_fitness_chart.datasets[0].data[data.generation - 1] = data.averageFitness;
+            this.pop_evol_chart.datasets[0].data[data.generation - 1] = data.populationDevelopmentRate;
+            this.pop_evol_chart.datasets[1].data[data.generation - 1] = data.diversityCoefficient;
             //
             console.log(this.ind_fitness_chart.datasets[0].data);
             // refresh
@@ -310,7 +314,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
 .card {
     height: 100%;
 }

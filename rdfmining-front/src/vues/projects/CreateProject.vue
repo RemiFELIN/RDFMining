@@ -49,7 +49,7 @@
         -->
         <CRow class="mb-3">
             <CFormLabel class="col-sm-2 col-form-label"><b>{{ prefixes.description }}</b></CFormLabel>
-            <CCol sm="10">
+            <CCol sm="3">
                 <!-- Template -->
                 <CFormSelect v-model="selectedPrefixes" feedback-invalid="Please select a prefixes sample" required
                     :invalid="selectedPrefixes == ''">
@@ -57,12 +57,14 @@
                     <option v-for="sample in prefixesSamples" :key="sample" :value="sample.value">{{ sample.description }}
                     </option>
                 </CFormSelect>
-                <br />
+                <!-- <br /> -->
+                <!-- <p>{{ selectedPrefixes }}</p> -->
+            </CCol>
+            <CCol sm="7">
                 <!-- Content -->
                 <CFormTextarea style="color: rgb(1, 108, 157)" v-model="selectedPrefixes">
                     {{ selectedPrefixes }}
                 </CFormTextarea>
-                <!-- <p>{{ selectedPrefixes }}</p> -->
             </CCol>
         </CRow>
         <!-- 
@@ -116,15 +118,18 @@
             -->
             <CRow class="mb-3">
                 <CFormLabel class="col-sm-2 col-form-label"><b>{{ grammar.description }}</b></CFormLabel>
-                <CCol sm="10">
+                <CCol sm="3">
                     <!-- Template -->
                     <CFormSelect aria-label="select-bnf-axioms" v-model="selectedBNFTemplate"
                         feedback-invalid="Please select a BNF template (You can customize it !)" required
                         :invalid="selectedBNFTemplate == ''">
                         <option selected disabled>Select the required template</option>
-                        <option v-for="bnf in filteredTemplates" :key="bnf" :value="bnf.value">{{ bnf.description }}</option>
+                        <option v-for="bnf in filteredTemplates" :key="bnf" :value="bnf.value">{{ bnf.description }}
+                        </option>
                     </CFormSelect>
-                    <br />
+                    <!-- <br /> -->
+                </CCol>
+                <CCol sm="7">
                     <!-- Content -->
                     <CFormTextarea style="color: rgb(1, 108, 157)">
                         {{ selectedBNFTemplate }}
@@ -385,6 +390,35 @@ export default {
             }
             reader.readAsText(file);
         },
+        getForm() {
+            return {
+                // userId: this.token.userId,
+                projectName: this.selectedProjectName,
+                mod: this.selectedFeature,
+                prefixes: this.selectedPrefixes,
+                targetSparqlEndpoint: this.selectedTargetEndpoint,
+                task: this.task,
+                settings: {
+                    bnf: this.selectedBNFTemplate,
+                    populationSize: this.selectedPopulationSize,
+                    effort: this.selectedTotalEffort,
+                    sizeChromosome: this.selectedSizeChromosome,
+                    maxWrap: this.selectedMaxWrap,
+                    selectionType: this.selectedSelection,
+                    selectionRate: this.selectionRate,
+                    mutationType: this.selectedMutation,
+                    mutationRate: this.mutationRate,
+                    crossoverType: this.selectedCrossover,
+                    crossoverRate: this.crossoverRate,
+                    noveltySearch: this.enableNoveltySearch,
+                    crowding: this.enableCrowding,
+                    shaclAlpha: this.selectedShaclAlpha,
+                    shaclProb: this.selectedShaclProb,
+                    axioms: this.axioms,
+                    shapes: this.shapes
+                }
+            }
+        },
         postProject() {
             // set task field
             this.task = this.selectedFeature.includes('ge') ? "Mining" : "Assessment";
@@ -392,33 +426,7 @@ export default {
             // build a request to the API
             axios.post("http://localhost:9200/api/project",
                 [
-                    {
-                        // userId: this.token.userId,
-                        projectName: this.selectedProjectName,
-                        mod: this.selectedFeature,
-                        prefixes: this.selectedPrefixes,
-                        targetSparqlEndpoint: this.selectedTargetEndpoint,
-                        task: this.task,
-                        settings: {
-                            bnf: this.selectedBNFTemplate,
-                            populationSize: this.selectedPopulationSize,
-                            effort: this.selectedTotalEffort,
-                            sizeChromosome: this.selectedSizeChromosome,
-                            maxWrap: this.selectedMaxWrap,
-                            selectionType: this.selectedSelection,
-                            selectionRate: this.selectionRate,
-                            mutationType: this.selectedMutation,
-                            mutationRate: this.mutationRate,
-                            crossoverType: this.selectedCrossover,
-                            crossoverRate: this.crossoverRate,
-                            noveltySearch: this.enableNoveltySearch,
-                            crowding: this.enableCrowding,
-                            shaclAlpha: this.selectedShaclAlpha,
-                            shaclProb: this.selectedShaclProb,
-                            axioms: this.axioms,
-                            shapes: this.shapes
-                        }
-                    }
+                    this.getForm()
                 ],
                 {
                     headers: {
@@ -427,8 +435,8 @@ export default {
                 }).then(
                     (response) => {
                         if (response.status === 200) {
-                            console.log("OK !" + response);
-                            this.$emit("new");
+                            // console.log("OK !" + response);
+                            this.$emit("new", this.getForm().projectName);
                         }
                     }
                 ).catch((error) => {

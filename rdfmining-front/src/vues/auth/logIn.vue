@@ -34,7 +34,7 @@
         <CModalFooter>
             <CButton v-if="!isConnected" color="success" :disabled="username == '' || password == ''" @click="submit(username, password)">Submit
             </CButton>
-            <CButton color="danger" @click="$emit('close')">Close</CButton>
+            <CButton color="danger" @click="close">Close</CButton>
         </CModalFooter>
     </CModal>
 </template>
@@ -65,6 +65,14 @@ export default {
         }
     },
     methods: {
+        close() {
+            this.username = "",
+            this.password = "",
+            this.success = false,
+            this.isConnected = false,
+            this.errorMessage = "",
+            this.$emit('close');
+        },
         // Connection service
         submit(username, password) {
             // build a request to the API

@@ -5,8 +5,8 @@
             <CAccordionHeader>Global information</CAccordionHeader>
             <CAccordionBody>
                 <!-- <VisuEntities v-if="isReady" :results="results"></VisuEntities> -->
-                <VueGlobalGE v-if="isReady && task=='Mining'" :results="results" :path="path"></VueGlobalGE>
-                <VueGlobalEval v-if="isReady && task=='Assessment'" :results="results" :path="path"></VueGlobalEval>
+                <VueGlobalGE v-if="isReady && task=='Mining'" :results="results" :path="path" :task="'Mining'"></VueGlobalGE>
+                <VueGlobalEval v-if="isReady && task=='Assessment'" :results="results" :path="path" :task="'Assessment'"></VueGlobalEval>
             </CAccordionBody>
         </CAccordionItem>
         <CAccordionItem :item-key="3">
@@ -42,14 +42,9 @@ import axios from 'axios';
 
 export default {
     name: 'VueVisualisation',
-    // props: {
-    //     resultsId: {
-    //         type: String,
-    //     },
-    //     task: {
-    //         type: String
-    //     }
-    // },
+    components: {
+        VueStatistics, VisuEntities, CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody, ConsoleLog, VueGlobalGE, VueGlobalEval
+    },
     data() {
         return {
             cookies: useCookies(["token", "id"]).cookies,
@@ -60,13 +55,9 @@ export default {
             isReady: false,
         };
     },
-    // methods: {
-    //     getPath() {
-    //         return this.results.userId + "/" + this.results.projectName;
-    //     }
-    // },
     mounted() {
         this.task = this.$route.params.task;
+        console.log("TASK:" + this.task);
         this.id = this.$route.params.resultsId;
         console.log(this.task);
         console.log(this.id);
@@ -77,8 +68,6 @@ export default {
         }).then(
             (response) => {
                 if (response.status === 200) {
-                    // redirect on visualisation route with the results ID linked to the project
-                    // console.log("visualisation: " + JSON.stringify(response.data));
                     if (response.data != {}) {
                         this.results = response.data;
                         this.path = this.results.userId + "/" + this.results.projectName;
@@ -89,9 +78,6 @@ export default {
         ).catch((error) => {
             console.log(error);
         });
-    },
-    components: {
-        VueStatistics, VisuEntities, CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody, ConsoleLog, VueGlobalGE, VueGlobalEval
     },
 }
 </script>

@@ -51,6 +51,9 @@ export default {
         },
         path: {
             type: String
+        },
+        task: {
+            type: String
         }
     },
     data() {
@@ -96,74 +99,76 @@ export default {
         };
     },
     mounted() {
-        // get number of entities
-        this.nEntities = toRaw(this.results.nEntities);
-        // deduce x-labels
-        // this.entities_labels = Array.from({ length: this.nEntities }, (_, idx) => idx + 1);
-        //
-        // this.elapsed_time_data = Array(this.nEntities).fill(0);
-        // verify if any results (or all ?) are already defined
+        if (this.task == "Assessment") {
+            // get number of entities
+            this.nEntities = toRaw(this.results.nEntities);
+            // deduce x-labels
+            // this.entities_labels = Array.from({ length: this.nEntities }, (_, idx) => idx + 1);
+            //
+            // this.elapsed_time_data = Array(this.nEntities).fill(0);
+            // verify if any results (or all ?) are already defined
 
-        if (toRaw(this.results.entities.length) != 0) {
-            //
-            this.curEntities = toRaw(this.results.entities.length);
-            this.progression = (this.curEntities / this.nEntities) * 100;
-            //
-            for (let i = 0; i < toRaw(this.results.entities.length); i++) {
-                this.entities_labels.push(toRaw(this.results.entities[i].phenotype));
-                this.elapsed_time_data[i] = toRaw(this.results.entities[i].elapsedTime);
+            if (toRaw(this.results.entities.length) != 0) {
+                //
+                this.curEntities = toRaw(this.results.entities.length);
+                this.progression = Math.round((this.curEntities / this.nEntities) * 100);
+                //
+                for (let i = 0; i < toRaw(this.results.entities.length); i++) {
+                    this.entities_labels.push(toRaw(this.results.entities[i].phenotype));
+                    this.elapsed_time_data[i] = toRaw(this.results.entities[i].elapsedTime);
+                }
             }
-        }
-        console.log(toRaw(this.elapsed_time_data));
-        // Individuals with non-null fitness chart
-        this.computation_time_chart = {
-            labels: toRaw(this.entities_labels),
-            datasets: [
-                {
-                    label: 'Elapsed time',
-                    backgroundColor: 'rgba(222, 0, 0, 0.8)',
-                    // borderColor: 'rgba(220, 220, 220, 1)',
-                    // pointBackgroundColor: 'rgba(220, 220, 220, 1)',
-                    // pointBorderColor: '#fff',
-                    data: toRaw(this.elapsed_time_data)
-                }
-            ],
-        };
-        this.options = {
-            // maintainAspectRatio: false,
-            scales: {
-                // y: {
-                //     beginAtZero: true
-                // },
-                x: {
-                    // beginAtZero: true,
-                    // Empirically set
-                    display: this.nEntities > 20 ? false : true,
-                    // type: 'linear',
-                    // title: {
-                    //     display: true,
-                    //     text: 'Entities',
-                    //     font: {
-                    //         size: 18
-                    //     }
+            console.log(toRaw(this.elapsed_time_data));
+            // Individuals with non-null fitness chart
+            this.computation_time_chart = {
+                labels: toRaw(this.entities_labels),
+                datasets: [
+                    {
+                        label: 'Elapsed time',
+                        backgroundColor: 'rgba(222, 0, 0, 0.8)',
+                        // borderColor: 'rgba(220, 220, 220, 1)',
+                        // pointBackgroundColor: 'rgba(220, 220, 220, 1)',
+                        // pointBorderColor: '#fff',
+                        data: toRaw(this.elapsed_time_data)
+                    }
+                ],
+            };
+            this.options = {
+                // maintainAspectRatio: false,
+                scales: {
+                    // y: {
+                    //     beginAtZero: true
                     // },
-                }
-            },
-            plugins: this.plugins
+                    x: {
+                        // beginAtZero: true,
+                        // Empirically set
+                        display: this.nEntities > 20 ? false : true,
+                        // type: 'linear',
+                        // title: {
+                        //     display: true,
+                        //     text: 'Entities',
+                        //     font: {
+                        //         size: 18
+                        //     }
+                        // },
+                    }
+                },
+                plugins: this.plugins
+            }
+            // SOCKET IO
+            this.socket.on("update-entities", (data) => {
+                // console.log("socket.io updates generations ... with " + JSON.stringify(data));
+                // update each data arrays
+                this.computation_time_chart.labels.push(data.phenotype);
+                this.computation_time_chart.datasets[0].data.push(data.elapsedTime);
+                //
+                this.curEntities += 1;
+                //
+                console.log(this.computation_time_chart.datasets[0].data);
+                // refresh
+                this.refresh = !this.refresh;
+            });
         }
-        // SOCKET IO
-        this.socket.on("update-entities", (data) => {
-            // console.log("socket.io updates generations ... with " + JSON.stringify(data));
-            // update each data arrays
-            this.computation_time_chart.labels.push(data.phenotype);
-            this.computation_time_chart.datasets[0].data.push(data.elapsedTime);
-            //
-            this.curEntities += 1;
-            //
-            console.log(this.computation_time_chart.datasets[0].data);
-            // refresh
-            this.refresh = !this.refresh;
-        });
     },
     methods: {
         getChart() {
@@ -213,7 +218,7 @@ export default {
     },
     watch: {
         curEntities() {
-            this.progression = (this.curEntities / this.nEntities) * 100;
+            this.progression = Math.round((this.curEntities / this.nEntities) * 100);
         }
     }
 }

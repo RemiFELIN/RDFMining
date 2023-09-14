@@ -14,7 +14,7 @@ RUN cd $APP && npm install
 COPY *.js       $APP/
 
 # building project
-RUN cd $APP && npm run build
+# RUN cd $APP && npm run build
 
 # expose port
 EXPOSE 8080

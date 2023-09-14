@@ -1,23 +1,26 @@
 <template>
-    <CTable striped hover>
-        <CTableHead color="light">
-            <CTableRow>
-                <CTableHeaderCell v-for="header in headers" :key="header" scope="col">{{ header }}</CTableHeaderCell>
-            </CTableRow>
-        </CTableHead>
-        <CTableBody>
-            <CTableRow v-for="entity in entities" :key="entity">
-                <CTableHeaderCell scope="row">{{ entity.phenotype }}</CTableHeaderCell>
-                <CTableDataCell>{{ entity.referenceCardinality }}</CTableDataCell>
-                <CTableDataCell>{{ entity.numExceptions }}</CTableDataCell>
-                <CTableDataCell>{{ entity.numConfirmations }}</CTableDataCell>
-                <CTableDataCell>{{ entity.likelihood }}</CTableDataCell>
-                <CTableDataCell>{{ entity.fitness }}</CTableDataCell>
-            </CTableRow>
-        </CTableBody>
-        <CTableFoot>
-        </CTableFoot>
-    </CTable>
+    <div class="scroll">
+        <CTable striped hover>
+            <CTableHead color="light">
+                <CTableRow>
+                    <CTableHeaderCell v-for="header in headers" :key="header" scope="col">{{ header }}</CTableHeaderCell>
+                </CTableRow>
+            </CTableHead>
+            <CTableBody>
+                <CTableRow v-for="entity in entities" :key="entity" :color="getColor(entity.acceptance)">
+                    <CTableHeaderCell scope="row">{{ entity.phenotype }}</CTableHeaderCell>
+                    <CTableDataCell>{{ entity.referenceCardinality }}</CTableDataCell>
+                    <CTableDataCell>{{ entity.numExceptions }}</CTableDataCell>
+                    <CTableDataCell>{{ entity.numConfirmations }}</CTableDataCell>
+                    <CTableDataCell>{{ entity.likelihood }}</CTableDataCell>
+                    <CTableDataCell>{{ entity.fitness }}</CTableDataCell>
+                    <CTableDataCell>{{ entity.acceptance }}</CTableDataCell>
+                </CTableRow>
+            </CTableBody>
+            <CTableFoot>
+            </CTableFoot>
+        </CTable>
+    </div>
 </template>
 
 
@@ -41,9 +44,10 @@ export default {
         CTable, CTableHead, CTableRow, CTableBody, CTableFoot, CTableDataCell, CTableHeaderCell
     },
     methods: {
-        getColor(a) {
-            console.log((0.3 + 0.7 * a))
-            return "font-size: 1.2em; color: rgb(0,0,0," + (0.3 + 0.7 * a) + ");"
+        getColor(accepted) {
+            if (accepted) 
+                return "success";
+            return "danger";
         },
     },
     data() {
@@ -64,12 +68,22 @@ export default {
             }
         });
         // Header
-        this.headers = ["SHACL Shape (" + this.phenotypes.length + ")", "Reference Cardinality", "#Exceptions", "#Confirmations", "Likelihood", "Fitness Score"];
+        this.headers = ["SHACL Shape (" + this.phenotypes.length + ")", "Reference Cardinality", "#Exceptions", "#Confirmations", "Likelihood", "Fitness Score", "Acceptance"];
     }
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.scroll {
+    /* background-color: #fed9ff; */
+    /* width: auto; */
+    height: 400px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    /* text-align: center; */
+    /* padding: 20px; */
+}
+</style>
 <!-- 
 .shapes {
     font-family: "Lucida Console", Courier, monospace;
