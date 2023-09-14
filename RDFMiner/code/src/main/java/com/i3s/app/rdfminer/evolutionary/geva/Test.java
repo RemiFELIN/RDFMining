@@ -475,12 +475,13 @@ public class Test {
 
     }
 
-    public static void test2() {
+    public static void testGetIndividualFromChromosome() {
         RDFMiner.parameters.initLenChromosome = 2;
         RDFMiner.parameters.populationSize = 1;
         Generator generator = null;
         try {
-            generator = new RandomShapeGenerator("/user/rfelin/home/projects/RDFMining/IO/OWL2Axiom-subclassof.bnf");
+            // /user/rfelin/home/projects/RDFMining/IO/OWL2Axiom-subclassof.bnf
+            generator = new RandomShapeGenerator("/user/rfelin/home/projects/RDFMining/IO/users/64e7594dfbb9f24cf6d7c272/test/grammar.bnf");
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
@@ -488,19 +489,21 @@ public class Test {
         chrom.setMaxChromosomeLength(1000);
         // 1000427925,1741643077,
         // 1000427925,1620996495,
-        chrom.add(1000427925);
-        chrom.add(1620996495);
+        chrom.add(325361434);
+        chrom.add(520567525);
         // a sh:NodeShape ; sh:targetClass <http://www.wikidata.org/entity/Q837783>  ;
         // sh:property [  sh:path rdf:type ; sh:hasValue <http://www.wikidata.org/entity/Q5380903>  ;  ]
         GEIndividual ind = generator.getIndividualFromChromosome(chrom, 1);
         System.out.println(ind.getPhenotype().getStringNoSpace());
+        System.out.println(ind.getChromosomes());
     }
 
     public static void main(String[] args) {
+        testGetIndividualFromChromosome();
 //        generateRandomPhenotypes();
 //        testSinglePointCrossoverOnRealPopulation();
 //        testSwapCrossover();
-        testSwapCrossoverOnRealData();
+//        testSwapCrossoverOnRealData();
 //        testSubtreeCrossover();
 //        testSelection();
 //        testSinglePointCrossoverOnRealPopulation();

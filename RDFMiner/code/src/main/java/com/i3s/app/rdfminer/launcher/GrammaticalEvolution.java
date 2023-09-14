@@ -89,7 +89,7 @@ public class GrammaticalEvolution {
         logger.info("MAXIMUM WRAPPING: " + parameters.maxWrapp);
         logger.info("========================================================");
         logger.info("TYPE SELECTION: " + TypeSelection.getLabel(parameters.typeSelection));
-        logger.info("SIZE SELECTION: " + parameters.sizeSelection);
+        logger.info("SIZE ELITE SELECTION: " + parameters.sizeEliteSelection);
 //        int sizeElite = parameters.sizeElite * parameters.populationSize < 1 ?
 //                1 : (int) (parameters.sizeElite * parameters.populationSize);
 //        logger.info("SIZE ELITE: " + sizeElite);

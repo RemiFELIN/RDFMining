@@ -40,7 +40,7 @@ public class Stat {
 		this.timeCap = RDFMiner.parameters.timeCap;
 		this.crossoverProbability = RDFMiner.parameters.proCrossover;
 		this.mutationProbability = RDFMiner.parameters.proMutation;
-		this.selectionSize = (int) (RDFMiner.parameters.sizeSelection * RDFMiner.parameters.populationSize);
+		this.selectionSize = (int) (RDFMiner.parameters.sizeEliteSelection * RDFMiner.parameters.populationSize);
 		this.selectionMethod = TypeSelection.getLabel(RDFMiner.parameters.typeSelection);
 		this.crossoverMethod = TypeCrossover.getLabel(RDFMiner.parameters.typeCrossover);
 		this.mutationMethod = TypeMutation.getLabel(RDFMiner.parameters.typeMutation);
@@ -59,7 +59,7 @@ public class Stat {
 		json.put("crossoverMethod", this.crossoverMethod);
 		json.put("selectionSize", this.selectionSize);
 		json.put("generations", this.generations);
-		json.put("nGenerations", Math.round(RDFMiner.parameters.kBase / this.populationSize));
+		json.put("nGenerations", Math.ceil((double) RDFMiner.parameters.kBase / this.populationSize));
 		json.put("sparqlTimeout", (this.timeOut == 0 ? JSONObject.NULL : this.timeOut));
 		json.put("timeCap", (this.timeCap == 0 ? JSONObject.NULL : this.timeCap));
 		return json;

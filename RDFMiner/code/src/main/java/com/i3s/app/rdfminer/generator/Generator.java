@@ -83,7 +83,6 @@ public abstract class Generator {
      * @return an individual well formed from chromosome
      */
     public GEIndividual getIndividualFromChromosome(GEChromosome chromosome, int generation) {
-        GEIndividual individual;
         boolean valid;
         int i = 1;
 //        System.out.println("maxWrapp= " + grammar.getMaxWraps() + " and valid? " + valid);
@@ -99,7 +98,7 @@ public abstract class Generator {
             i++;
         } while (!valid && i < grammar.getMaxWraps());
 //        System.out.println("valid? " + valid);
-        individual = new GEIndividual();
+        GEIndividual individual = new GEIndividual();
         individual.setMapper(grammar);
         individual.setGenotype(new Genotype(chromosome.getLength(), chromosome));
         individual.setPhenotype(grammar.getPhenotype());

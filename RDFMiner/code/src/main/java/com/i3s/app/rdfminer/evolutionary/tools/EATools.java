@@ -68,38 +68,6 @@ public class EATools {
 		return (double) count / newPopulation.size();
 	}
 
-//	/**
-//	 * Renew a given axioms population
-//	 * @param entities a given population
-//	 * @param curGeneration the current generation
-//	 * @param elitismEntities an elitism population
-//	 * @return a renewed population
-//	 */
-//	public static ArrayList<Entity> renew(int curGeneration, ArrayList<Entity> entities, ArrayList<Entity> elitismEntities) {
-//		ArrayList<Entity> newEntities = new ArrayList<>();
-//		// add elitism entities
-//		if (elitismEntities != null) {
-//			for (Entity etilism : elitismEntities) {
-//				// set generation
-////				if (etilism.generation == null) {
-////					etilism.generation = etilism.;
-////				}
-////				etilism.individual.setAge(etilism.generation);
-////				newEntities.add(etilism);
-//			}
-//		}
-//		// add others entities
-//		for (Entity entity : entities) {
-//			// set generation
-//			if (entity.generation == null) {
-//				entity.generation = curGeneration;
-//			}
-//			entity.individual.setAge(entity.generation);
-//			newEntities.add(entity);
-//		}
-//		return newEntities;
-//	}
-
 	public static ArrayList<Entity> bindIndividualsWithEntities(ArrayList<GEIndividual> individuals, ArrayList<Entity> entities) {
 		ArrayList<Entity> newEntities = new ArrayList<>();
 		for(GEIndividual individual : individuals) {
@@ -108,8 +76,6 @@ public class EATools {
 //				logger.debug("### Entity: " + entity.individual);
 				if(Objects.equals(individual.getPhenotype().getStringNoSpace(), entity.individual.getPhenotype().getStringNoSpace())) {
 					newEntities.add(entity);
-					// update entities list and reduce interation in it !
-					entities.remove(entity);
 					break;
 				}
 			}
@@ -163,6 +129,12 @@ public class EATools {
 			toReturn.add(entity);
 		}
 		return toReturn;
+	}
+
+	public static boolean compareIndividuals(GEIndividual parent, GEIndividual offspring) {
+//		logger.debug(parent.getGenotype().get(0).toString());
+//		logger.debug(offspring.getGenotype().get(0).toString());
+		return Objects.equals(parent.getGenotype().get(0).toString(), offspring.getGenotype().get(0).toString());
 	}
 
 }

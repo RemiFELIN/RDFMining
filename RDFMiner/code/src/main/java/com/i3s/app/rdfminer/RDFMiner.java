@@ -229,10 +229,12 @@ public class RDFMiner {
 	public static void sendEntities() {
 		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
 			JSONObject toSend = new JSONObject();
-			toSend.put("userId", RDFMiner.parameters.username);
-			toSend.put("projectName", RDFMiner.parameters.directory);
-			toSend.put("entities", RDFMiner.content);
+			toSend.put(Results.USER_ID, RDFMiner.parameters.username);
+			toSend.put(Results.PROJECT_NAME, RDFMiner.parameters.directory);
+			toSend.put(Results.ENTITIES, RDFMiner.content);
 			//
+//			System.out.println("update entities:");
+//			System.out.println(toSend.toString(2));
 			HttpPut put = new HttpPut(Global.RDFMINER_SERVER_IP + "api/results");
 			put.setEntity(new StringEntity(toSend.toString(), ContentType.APPLICATION_JSON));
 			logger.info("PUT request: updating entities ...");

@@ -67,6 +67,11 @@ public class GEIndividual extends AbstractIndividual {
     private int previouslyUsedCodons;
     protected boolean previouslyValid;
 
+    /**
+     * Mark an individual if this one is selected during the selection process
+     */
+    public boolean isSelected = false;
+
     int[] mutationPoints;
     int[] crossoverPoints;
     protected ArrayList<Fitness> parentsFitness;

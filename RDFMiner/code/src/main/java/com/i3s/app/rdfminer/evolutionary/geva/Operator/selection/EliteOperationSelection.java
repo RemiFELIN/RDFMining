@@ -125,6 +125,8 @@ public class EliteOperationSelection extends SelectionOperation {
                 ind.setFitness(fA[cnt].getIndividual().getFitness());
                 ((GEIndividual) ind).setMapped(((GEIndividual) (fA[cnt].getIndividual())).isMapped());
                 ((GEIndividual) ind).setUsedCodons(((GEIndividual) (fA[cnt].getIndividual())).getUsedCodons());
+                // this individual is selected
+                ((GEIndividual) ind).isSelected = true;
             }
             this.selectedPopulation.add(ind);
 //            }

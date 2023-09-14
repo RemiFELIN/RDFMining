@@ -233,19 +233,22 @@ public class Shape extends Entity {
      */
     public double computeFitness() {
         // compute a hypothesis testing
-        HypothesisTesting ht = new HypothesisTesting(this);
+//        HypothesisTesting ht = new HypothesisTesting(this);
+        HypothesisTesting.eval(this);
         // if the ht gives a success
-        if(ht.isAccepted) {
+        if(this.accepted) {
             return this.numConfirmations;
         } else {
-            return this.numConfirmations * (this.likelihood.doubleValue() / ht.getMaxMassFunction());
+            return this.numConfirmations * (this.likelihood.doubleValue() / HypothesisTesting.getMaxMassFunction(this));
         }
     }
 
     @Override
     public void update(CoreseEndpoint endpoint) throws URISyntaxException, IOException {
+        String content = this.individual == null ? Global.PREFIXES + this : Global.PREFIXES + this.relativeIri + this;
+//        logger.info(content);
         // launch evaluation
-        String report = endpoint.getValidationReportFromServer(Global.PREFIXES + this);
+        String report = endpoint.getValidationReportFromServer(content);
         // read evaluation report
         this.validationReport = new ValidationReport(report);
         // add results

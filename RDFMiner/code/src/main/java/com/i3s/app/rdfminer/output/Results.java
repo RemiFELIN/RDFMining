@@ -61,6 +61,8 @@ public class Results {
         if (RDFMiner.stats != null) json.put(STATISTICS, RDFMiner.stats.toJSON());
         if (this.nEntities != 0) json.put(N_ENTITIES, this.nEntities);
         json.put(ENTITIES, new JSONArray(RDFMiner.content));
+//        System.out.println("init result:");
+//        System.out.println(json.toString(2));
         return json;
     }
 

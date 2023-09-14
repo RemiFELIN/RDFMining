@@ -43,14 +43,15 @@ public class EntityMining {
         start = System.nanoTime();
         // set a save of original population
         // to see how GE will modify it
-        ArrayList<Entity> originalPopulation = new ArrayList<>(entities);
+
         // set size selection
 //        int sizeSelection = (int) (RDFMiner.parameters.sizeSelection * RDFMiner.parameters.populationSize);
 //        int sizeElite = RDFMiner.parameters.sizeElite * RDFMiner.parameters.populationSize < 1 ?
 //                1 : (int) (RDFMiner.parameters.sizeElite * RDFMiner.parameters.populationSize);
         // Checkpoint reached, this is a code to evaluate and save axioms in output file
-        if(RDFMiner.parameters.populationSize * curGeneration >=
-                Math.round((RDFMiner.parameters.kBase * (curCheckpoint + 1)) / RDFMiner.parameters.checkpoint) ) {
+        if((long) RDFMiner.parameters.populationSize * curGeneration >=
+                Math.round((double) (RDFMiner.parameters.kBase * (curCheckpoint + 1)) / RDFMiner.parameters.checkpoint)) {
+            ArrayList<Entity> originalPopulation = new ArrayList<>(entities);
             if(RDFMiner.parameters.checkpoint != 1 && curCheckpoint != RDFMiner.parameters.checkpoint - 1) {
                 // INTERMEDIATE step (i.e. checkpoint)
                 logger.info("Checkpoint n°" + (curCheckpoint + 1) + " reached !");
@@ -97,7 +98,7 @@ public class EntityMining {
 //                logger.debug("getSelectedPop.size= " + eos.getSelectedPopulation().size());
                 for(Individual selected : eos.getSelectedPopulation().getAll()) {
                     selectedIndividuals.add((GEIndividual) selected);
-                    entitiesAsIndividuals.remove((GEIndividual) selected);
+//                    entitiesAsIndividuals.remove((GEIndividual) selected);
                 }
                 break;
             case TypeSelection.PROPORTIONAL_ROULETTE_WHEEL:
@@ -105,7 +106,7 @@ public class EntityMining {
                 prw.doOperation(entitiesAsIndividuals);
                 for(Individual selected : prw.getSelectedPopulation().getAll()) {
                     selectedIndividuals.add((GEIndividual) selected);
-                    entitiesAsIndividuals.remove((GEIndividual) selected);
+//                    entitiesAsIndividuals.remove((GEIndividual) selected);
                 }
                 break;
             case TypeSelection.SCALED_ROULETTE_WHEEL:
@@ -113,7 +114,7 @@ public class EntityMining {
                 srw.doOperation(entitiesAsIndividuals);
                 for(Individual selected : srw.getSelectedPopulation().getAll()) {
                     selectedIndividuals.add((GEIndividual) selected);
-                    entitiesAsIndividuals.remove((GEIndividual) selected);
+//                    entitiesAsIndividuals.remove((GEIndividual) selected);
                 }
                 break;
             case TypeSelection.TOURNAMENT_SELECT:
@@ -121,7 +122,7 @@ public class EntityMining {
                 ts.doOperation(entitiesAsIndividuals);
                 for(Individual selected : ts.getSelectedPopulation().getAll()) {
                     selectedIndividuals.add((GEIndividual) selected);
-                    entitiesAsIndividuals.remove((GEIndividual) selected);
+//                    entitiesAsIndividuals.remove((GEIndividual) selected);
                 }
                 break;
         }
@@ -134,17 +135,18 @@ public class EntityMining {
             logger.debug(selected.individual.getGenotype() + ": " + selected.individual.getPhenotype().getStringNoSpace());
         }
         // individuals to compute
-        ArrayList<Entity> toCompute = EATools.bindIndividualsWithEntities(entitiesAsIndividuals, entities);
+//        ArrayList<Entity> toCompute = EATools.bindIndividualsWithEntities(entitiesAsIndividuals, entities);
 //        logger.debug("selectedEntities.size= " + selectedEntities.size());
 //        logger.debug("toCompute.size= " + toCompute.size());
         // Compute GE and add new population on a new list of individuals
-        ArrayList<Entity> newPopulation = Generation.compute(toCompute, selectedEntities, curGeneration, generator);
+
+        ArrayList<Entity> newPopulation = Generation.compute(entities, curGeneration, generator);
 //        logger.debug("size computed pop = " + computedPopulation.size());
         // set new population
         newPopulation.addAll(selectedEntities);// EATools.renew(curGeneration, computedPopulation, selectedEntities);
 //        logger.debug("size new pop = " + newPopulation.size());
         // stats
-        setStats(originalPopulation, newPopulation, curGeneration);
+        setStats(entities, newPopulation, curGeneration);
 //        logger.debug("size new pop= " + newPopulation.size());
         // renew population
         return newPopulation;
@@ -156,8 +158,8 @@ public class EntityMining {
         }
         // set stats
         GenerationJSON generation = new GenerationJSON();
-        // get computation time in second
-        long duration = (System.nanoTime() - start) / 1000000000;
+        // get computation time in ms
+        long duration = (System.nanoTime() - start) / 1000000;
         generation.setGenerationJSON(originalPopulation, newPopulation, curGeneration, duration);
         // Log usefull stats concerning the algorithm evolution
         logger.info("Computation time: " + generation.averageFitness + "s");
@@ -178,6 +180,8 @@ public class EntityMining {
             toSend.put(Results.STATISTICS, RDFMiner.stats.toJSON());
             //
             HttpPut put = new HttpPut(Global.RDFMINER_SERVER_IP + "api/results");
+//            System.out.println("update generations:");
+//            System.out.println(toSend.toString(2));
             put.setEntity(new StringEntity(toSend.toString(), ContentType.APPLICATION_JSON));
             logger.info("PUT request: updating generations ...");
             HttpResponse response = httpClient.execute(put);

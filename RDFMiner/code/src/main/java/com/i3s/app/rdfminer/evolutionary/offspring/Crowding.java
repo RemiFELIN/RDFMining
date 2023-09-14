@@ -8,6 +8,7 @@ import com.i3s.app.rdfminer.evolutionary.fitness.novelty.NoveltySearch;
 import com.i3s.app.rdfminer.evolutionary.fitness.novelty.Similarity;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.tools.EATools;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
@@ -16,7 +17,6 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class Crowding {
 
@@ -39,8 +39,9 @@ public class Crowding {
 		this.entities = entities;
 		this.parent1 = parent1;
 		this.parent2 = parent2;
+		logger.debug("gen(child1) == gen(parent1) ? " + EATools.compareIndividuals(parent1.individual, child1));
 //		logger.debug("# parent 1: " + parent1.individual.getPhenotype().getStringNoSpace());
-		if(Objects.equals(child1.getGenotype().toString(), parent1.individual.getGenotype().toString())) {
+		if(EATools.compareIndividuals(parent1.individual, child1)) {
 //			logger.debug("No differences observed between the parent and its child ...");
 			this.child1 = this.parent1;
 			this.similarityP1ToC1 = 1;
@@ -51,7 +52,8 @@ public class Crowding {
 			this.similarityP2ToC1 = this.distance(this.parent2, this.child1);
 		}
 //		logger.debug("# parent 2: " + parent2.individual.getPhenotype().getStringNoSpace());
-		if(Objects.equals(child2.getGenotype().toString(), parent2.individual.getGenotype().toString())) {
+		logger.debug("gen(child2) == gen(parent2) ? " + EATools.compareIndividuals(parent2.individual, child2));
+		if(EATools.compareIndividuals(parent2.individual, child2)) {
 //			logger.debug("No differences observed between the parent and its child ...");
 			this.child2 = this.parent2;
 			this.similarityP1ToC2 = this.distance(this.parent1, this.child2);
@@ -77,7 +79,7 @@ public class Crowding {
 		return survivals;
 	}
 
-	public double distance(Entity phi1, Entity phi2) throws URISyntaxException, IOException {
+	private double distance(Entity phi1, Entity phi2) throws URISyntaxException, IOException {
 		if(RDFMiner.parameters.useNoveltySearch) {
 			return similarityDistance(phi1, phi2);
 		} else {
@@ -85,7 +87,7 @@ public class Crowding {
 		}
 	}
 
-	public double similarityDistance(Entity phi1, Entity phi2) throws URISyntaxException, IOException {
+	private double similarityDistance(Entity phi1, Entity phi2) throws URISyntaxException, IOException {
 		if(RDFMiner.similarityMap.get(phi1, phi2) != null) {
 //			logger.debug("get similarity value from similarity map ...");
 			return RDFMiner.similarityMap.get(phi1, phi2);
@@ -96,7 +98,7 @@ public class Crowding {
 		}
 	}
 
-	public double levenshteinDistance(Entity a, Entity b) {
+	private double levenshteinDistance(Entity a, Entity b) {
 		String word1 = a.individual.getPhenotype().toString();
 		String word2 = b.individual.getPhenotype().toString();
 		int len1 = word1.length();
@@ -132,7 +134,7 @@ public class Crowding {
 		return 1 / dp[len1][len2];
 	}
 
-	public Entity compare(Entity parent, Entity child) throws URISyntaxException, IOException {
+	private Entity compare(Entity parent, Entity child) throws URISyntaxException, IOException {
 		// if the parent is not evaluated
 		if (parent.individual.getFitness() == null) {
 //			logger.warn("Compute parent fitness !");
@@ -148,6 +150,7 @@ public class Crowding {
 		parent.individual.setFitness(new BasicFitness(NoveltySearch.updateFitness(parent), parent.individual));
 		child.individual.setFitness(new BasicFitness(NoveltySearch.updateFitness(child), child.individual));
 		// log if the offspring is different from its parent and if its fitness is upper to parent's fitness
+
 		if(child.individual.getGenotype() != parent.individual.getGenotype() &&
 				child.individual.getFitness().getDouble() > parent.individual.getFitness().getDouble()) {
 			logger.info("A better offspring has been found !");

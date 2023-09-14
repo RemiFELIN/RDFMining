@@ -37,11 +37,11 @@ public class HypothesisTesting {
     }
 
     public static void eval(Shape shape) {
-        logger.info("~~~");
-        logger.info("shape.referenceCardinality= " + shape.referenceCardinality);
-        logger.info("shape.numExceptions= " + shape.numExceptions);
-        logger.info("shape.numConfirmations= " + shape.numConfirmations);
-        logger.info("~~~");
+        logger.info("\n~~~" +
+                "\nshape.referenceCardinality= " + shape.referenceCardinality +
+                "\nshape.numExceptions= " + shape.numExceptions +
+                "\nshape.numConfirmations= " + shape.numConfirmations +
+                "\n~~~");
         double nExcTheo = shape.referenceCardinality * Double.parseDouble(RDFMiner.parameters.probShaclP);
         double nConfTheo = shape.referenceCardinality - nExcTheo;
         if(shape.numExceptions <= nExcTheo) {
@@ -74,9 +74,9 @@ public class HypothesisTesting {
         return X2;
     }
 
-    public double getMaxMassFunction() {
+    public static double getMaxMassFunction(Shape shape) {
         BinomialDistribution bd = new BinomialDistribution(
-                this.shape.referenceCardinality,
+                shape.referenceCardinality,
                 Double.parseDouble(RDFMiner.parameters.probShaclP));
         return bd.probability((int) Math.floor(bd.getNumericalMean()));
     }

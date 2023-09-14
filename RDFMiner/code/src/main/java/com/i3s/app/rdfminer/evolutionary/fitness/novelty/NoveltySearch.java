@@ -101,6 +101,9 @@ public class NoveltySearch {
      * @return the value of based novelty fitness <var>f</var>(&phi)
      */
     public static double updateFitness(Entity phi) {
+        if (!RDFMiner.parameters.useNoveltySearch) {
+            return phi.individual.getFitness().getDouble();
+        }
 //        logger.debug(phi.individual.getGenotype() + ": sum(sim)= " + );
         double sumSim = 0;
         for(double sim : phi.similarities) {

@@ -6,6 +6,7 @@ import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.evolutionary.fitness.Fitness;
 import com.i3s.app.rdfminer.evolutionary.fitness.novelty.NoveltySearch;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.tools.EATools;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
@@ -14,7 +15,6 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class Offspring {
 
@@ -38,7 +38,11 @@ public class Offspring {
     private void compare(Entity parent, GEIndividual offspring) throws URISyntaxException, IOException {
 //        logger.debug("\nParent: " + parent.individual.getPhenotype().getStringNoSpace() + "\nChild: " + offspring.getPhenotype().getStringNoSpace());
         // equivalence testing
-        if(Objects.equals(offspring.getGenotype().toString(), parent.individual.getGenotype().toString())) {
+//        logger.debug(offspring.getGenotype().get(0).toString());
+//        logger.debug(parent.individual.getGenotype().get(0).toString());
+        boolean areEquals = EATools.compareIndividuals(parent.individual, offspring);
+//        logger.debug("gen(child) == gen(parent) ? " + areEquals);
+        if(areEquals) {
             this.survivors.add(parent);
         } else {
             Entity child = Fitness.computeEntity(offspring, this.generator);

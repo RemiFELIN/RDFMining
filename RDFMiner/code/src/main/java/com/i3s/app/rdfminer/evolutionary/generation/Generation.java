@@ -3,21 +3,21 @@ package com.i3s.app.rdfminer.evolutionary.generation;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
+import com.i3s.app.rdfminer.evolutionary.fitness.novelty.NoveltySearch;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.crossover.SinglePointCrossover;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.crossover.SubtreeCrossover;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.crossover.SwapCrossover;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.crossover.TwoPointCrossover;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.mutation.IntFlipByteMutation;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.mutation.IntFlipMutation;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.mutation.NodalMutation;
+import com.i3s.app.rdfminer.evolutionary.geva.Operator.mutation.SubtreeMutation;
+import com.i3s.app.rdfminer.evolutionary.offspring.Crowding;
 import com.i3s.app.rdfminer.evolutionary.offspring.Offspring;
 import com.i3s.app.rdfminer.evolutionary.types.TypeCrossover;
 import com.i3s.app.rdfminer.evolutionary.types.TypeMutation;
-import com.i3s.app.rdfminer.evolutionary.fitness.novelty.NoveltySearch;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.mutation.NodalMutation;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.crossover.SubtreeCrossover;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.mutation.SubtreeMutation;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.mutation.IntFlipByteMutation;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.mutation.IntFlipMutation;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.crossover.SinglePointCrossover;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.crossover.TwoPointCrossover;
-import com.i3s.app.rdfminer.evolutionary.offspring.Crowding;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
@@ -37,13 +37,13 @@ public class Generation {
      * genetical algorithm
      *
      * @param canEntities        the candidate population
-     * @param selectedEntities        the selected population
+//     * @param selectedEntities        the selected population
      * @param curGeneration     the current generation
      * @param generator     an instance of {@link Generator Generator}
      * @return a new population
      */
     public static ArrayList<Entity> compute(ArrayList<Entity> canEntities,
-                                            ArrayList<Entity> selectedEntities,
+//                                            ArrayList<Entity> selectedEntities,
                                             int curGeneration,
                                             Generator generator)
             throws InterruptedException, ExecutionException {
@@ -56,21 +56,24 @@ public class Generation {
 //		List<Crowding> shapesToEvaluate = new ArrayList<>();
         int m = 0;
         // shuffle populations before crossover & mutation
-//        Collections.shuffle(canEntities);
+        Collections.shuffle(canEntities);
 //        Collections.shuffle(selectedEntites);
         // selected entities for crossover-mutation-crowding
-        ArrayList<Entity> toCompute = new ArrayList<>(canEntities);
-        toCompute.addAll(selectedEntities);
-        Collections.shuffle(toCompute);
-        logger.info("Number of entities into Crossover/Mutation process: " + toCompute.size());
-        ArrayList<Entity> copyToCompute = new ArrayList<>(toCompute);
+//        ArrayList<Entity> selectedEntities = new ArrayList<>(canEntities);
+        // We'll return 'n' new individuals, where 'n' is equals to the candidates entities size minus the selection size
+        int selectionSize = (int) (RDFMiner.parameters.sizeEliteSelection * RDFMiner.parameters.populationSize);
         // process crossover and mutation 2 by 2
-        int even = canEntities.size() % 2;
-        while (m < canEntities.size() - even) {
+        int even = (canEntities.size() - selectionSize) % 2;
+        logger.debug("~~~~~~~~~~\nSelected entities for crossover/mutation:");
+        for(int i = 0; i < canEntities.size() - selectionSize - even; i++) {
+            logger.debug("(" + (i+1) + "): " + canEntities.get(i).individual.getChromosomes());
+        }
+//        if (canEntities.size() % 2 == 0) {
+        while (m < canEntities.size() - selectionSize - even) {
             // get the two individuals which are neighbours
 //            ArrayList<GEIndividual> parents = new ArrayList<>(List.of(canEntities.get(m).individual, canEntities.get(m + 1).individual));
-            GEChromosome chromParent1 = toCompute.get(0).individual.getChromosomes();
-            GEChromosome chromParent2 = toCompute.get(1).individual.getChromosomes();
+            GEChromosome chromParent1 = canEntities.get(m).individual.getChromosomes();
+            GEChromosome chromParent2 = canEntities.get(m + 1).individual.getChromosomes();
 //            logger.debug("Testing chromosomes: " + chromParent1 + " and " + chromParent2);
             ArrayList<GEIndividual> futureOffsprings = new ArrayList<>(List.of(
                     generator.getIndividualFromChromosome(chromParent1, curGeneration),
@@ -125,43 +128,41 @@ public class Generation {
                     break;
             }
             // refresh the phenotype of each offspring from their respective chromosome
-            ArrayList<GEIndividual> offSpring = new ArrayList<>();
-            for(GEIndividual os : futureOffsprings) {
-                offSpring.add(generator.getIndividualFromChromosome(os.getChromosomes(), curGeneration));
-            }
+//            ArrayList<GEIndividual> offSpring = new ArrayList<>();
+//            for(GEIndividual os : futureOffsprings) {
+//                offSpring.add(generator.getIndividualFromChromosome(os.getChromosomes(), curGeneration));
+//            }
             // overview of generated child
-//            logger.debug(
-//                    "\nparent(0): " + toCompute.get(0).individual.getPhenotype().getStringNoSpace() + " [" +
-//                        toCompute.get(0).individual.getGenotype().get(0) + "]" +
-//                    "\nparent(1): " + toCompute.get(1).individual.getPhenotype().getStringNoSpace() + " [" +
-//                            toCompute.get(1).individual.getGenotype().get(0) + "]" +
-//                    "\noffspring(0): " + offSpring.get(0).getPhenotype().getStringNoSpace() + " [" +
-//                            offSpring.get(0).getGenotype().get(0) + "]" +
-//                    "\noffspring(1): " + offSpring.get(1).getPhenotype().getStringNoSpace() + " [" +
-//                            offSpring.get(1).getGenotype().get(0) + "]");
+            logger.debug(
+                    "\n~~~\nparent(" + m + "): " + canEntities.get(m).individual.getGenotype().get(0) + "]" +
+                            "\nparent(" + (m + 1) + "): " + canEntities.get(m + 1).individual.getGenotype().get(0) + "]" +
+                            "\n~\noffspr(" + m + "): " + futureOffsprings.get(0).getGenotype().get(0) + "]" +
+                            "\noffspr(" + (m + 1) + "): " + futureOffsprings.get(1).getGenotype().get(0) + "]\n~~~");
             // After crossover and mutation phasis; each parent is directly modified and gives an offspring
             // if using crowding method in survival selection
             if (RDFMiner.parameters.diversity == 1) {
                 // if crowding is chosen, we need to compute and return the individuals chosen
                 // (between parents and childs) in function of their fitness
 //                int idx = m;
-                entitiesCallables.add(() -> new Crowding(toCompute.get(0), toCompute.get(1), offSpring.get(0),
-                        offSpring.get(1), toCompute, generator).getSurvivalSelection());
+                int idx = m;
+                entitiesCallables.add(() -> new Crowding(canEntities.get(idx), canEntities.get(idx + 1), futureOffsprings.get(0),
+                        futureOffsprings.get(1), canEntities, generator).getSurvivalSelection());
             } else {
                 // simply return offsprings
-                entitiesCallables.add(() -> new Offspring(toCompute.get(0), toCompute.get(1), offSpring.get(0),
-                        offSpring.get(1), toCompute, generator).get());
+                int idx = m;
+                entitiesCallables.add(() -> new Offspring(canEntities.get(idx), canEntities.get(idx + 1), futureOffsprings.get(0),
+                        futureOffsprings.get(1), canEntities, generator).get());
             }
-            toCompute.remove(copyToCompute.get(m));
-            toCompute.remove(copyToCompute.get(m + 1));
+//                selectedEntities.remove(canEntities.get(m));
+//                selectedEntities.remove(canEntities.get(m + 1));
 //            logger.debug("Size copyToCompute list: " + copyToCompute.size());
 //            logger.debug("Size toCompute list: " + toCompute.size());
             m = m + 2;
         }
-        // fill entity that was not choosen for the crossover-mutation process
-        if(even == 1) {
-            logger.debug("A last entity will be added directly on population");
-            evaluatedIndividuals.add(toCompute.get(0));
+//        }
+        if (even == 1) {
+            logger.debug("The last entity will be added directly on population (because the population size is not even)");
+            evaluatedIndividuals.add(canEntities.get(m + 1));
         }
         logger.info(entitiesCallables.size() + " tasks ready to be launched !");
         // Submit tasks
@@ -216,6 +217,7 @@ public class Generation {
                 e.printStackTrace();
             }
         }
+        logger.debug("~~~~~~~~~~");
         // return the modified individuals
         return evaluatedIndividuals;
     }
@@ -237,5 +239,10 @@ public class Generation {
 //            System.out.println("elem : " + newTest.get(0));
 //        }
 //    }
+
+    public static void main(String[] args) {
+        Random rand = new Random();
+        System.out.println(rand.nextInt(7));
+    }
 
 }

@@ -150,9 +150,17 @@ public class CmdLineParameters {
 			"--type-mutation" }, usage = "use as this value as the type of mutation operation (1: Int Flip; 2: Int Flip Byte; 3: Nodal; 4: Sub tree)", metaVar = "TYPE_MUTATION")
 	public int typeMutation = 1;
 
-	@Option(name = "-sez", aliases = {
-			"--size-select" }, usage = "use as this value as the size of parent selection operation", metaVar = "SIZE_SELECTION")
-	public double sizeSelection = 0.2;
+	@Option(name = "-ses", aliases = {
+			"--size-elite-selection" }, usage = "use as this value as the proportion of elited individuals to select", metaVar = "SIZE_ELITE")
+	public double sizeEliteSelection = 0.2;
+
+	@Option(name = "-sps", aliases = {
+			"--size-pop-selection" }, usage = "use as this value as the proportion of individuals to select for operations", metaVar = "SIZE_SELECTION")
+	public double sizeSelectedPop = 0.2;
+
+	@Option(name = "-stour", aliases = {
+			"--size-tournament" }, usage = "use as this value as the proportion of individuals to select for operations (Only used if you have choosen the tournament selection)", metaVar = "SIZE_TOURNAMENT")
+	public double sizeTournament = 0.1;
 
 //	@Option(name = "-sezm", aliases = {
 //			"--sizeMutationselect" }, usage = "use as this value as the size of mutation selection operation", metaVar = "SIZE_MUTATIONSELECTIOn")
@@ -160,7 +168,7 @@ public class CmdLineParameters {
 
 	@Option(name = "-div", aliases = {
 			"--diversity" }, usage = "use as this value as the chose of diversity method", metaVar = "DIVER_METHOD")
-	public int diversity = 1; // 0- not use; 1- crowding method
+	public int diversity = 0; // 0- not use; 1- crowding method
 
 	@Option(name = "-kb", aliases = { "--K_Base" }, usage = "KBase", metaVar = "K_BASE")
 	public int kBase = 5000;

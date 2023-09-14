@@ -71,7 +71,7 @@ public abstract class SelectionOperation implements Operation {
      * New instance based on RDFMiner parameters
      */
     public SelectionOperation() {
-        this.size = (int) (RDFMiner.parameters.sizeSelection * RDFMiner.parameters.populationSize);
+        this.size = (int) (RDFMiner.parameters.sizeEliteSelection * RDFMiner.parameters.populationSize);
         this.selectedPopulation = new SimplePopulation(this.size);
 //        logger.info("Size selection = " + this.size);
     }

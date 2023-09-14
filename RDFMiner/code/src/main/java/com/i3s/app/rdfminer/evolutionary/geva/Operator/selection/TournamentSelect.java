@@ -33,12 +33,16 @@ import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.evolutionary.geva.Exceptions.BadParameterException;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.Fitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.Stochastic;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * The operation of this class is tournament selection.
@@ -80,9 +84,9 @@ public class TournamentSelect extends SelectionOperation implements Stochastic {
      */
     public TournamentSelect() {
         super();
+        this.size = (int) (RDFMiner.parameters.sizeSelectedPop * RDFMiner.parameters.populationSize);
         this.rng = new MersenneTwisterFast();
-        // Heuristic: ~50% of popsize for the size of turnament
-        this.tournamentSize = (int) (RDFMiner.parameters.populationSize / 2);
+        this.tournamentSize = (int) (RDFMiner.parameters.sizeTournament * RDFMiner.parameters.populationSize);
         tour = new ArrayList<>(this.tournamentSize);
     }
     
@@ -130,8 +134,12 @@ public class TournamentSelect extends SelectionOperation implements Stochastic {
         int i=0;
         while(i < this.tournamentSize) {
             contestant = this.rng.nextInt(operands.size());
-            tour.add(operands.get(contestant).getFitness());
-            i++;
+            Fitness participant = operands.get(contestant).getFitness();
+            // if participant is not already into the tournament
+            if (!tour.contains(participant)) {
+                tour.add(operands.get(contestant).getFitness());
+                i++;
+            }
         }
     }
     
@@ -140,16 +148,29 @@ public class TournamentSelect extends SelectionOperation implements Stochastic {
      **/
     public void selectFromTour() {
 //        System.out.println("Tournament: ");
-        for(Fitness f : tour) {
-//            System.out.println("   f(i)= " + f.getDouble());
-        }
         tour.sort(Collections.reverseOrder());
-	    this.selectedPopulation.add(tour.get(0).getIndividual());
+//        for(Fitness f : tour) {
+//            System.out.println(f.getIndividual().getGenotype() + " ~ f(i)= " + f.getDouble());
+//        }
+        boolean added = false;
+        int winnerIdx = 0;
+        // avoid duplicates: if the winner is already into the selection, we'll take the 2nd and so on...
+        while (!added) {
+            Individual winner = tour.get(winnerIdx).getIndividual();
+            if (!this.selectedPopulation.contains(winner)) {
+//                System.out.println("Winner is the number " + winnerIdx);
+                this.selectedPopulation.add(winner);
+                added = true;
+            } else {
+                winnerIdx++;
+            }
+        }
+
 
     }
 
     public void setRNG(RandomNumberGenerator m) {
-            this.rng =m;
+            this.rng = m;
     }
 
     public RandomNumberGenerator getRNG() {

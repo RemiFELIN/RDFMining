@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 
+import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.selection.SelectionOperation;
@@ -41,10 +42,7 @@ import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.Stochastic;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * This is an abstract class for creating Roulette wheel selection
@@ -70,6 +68,7 @@ public abstract class RouletteWheel extends SelectionOperation implements Stocha
      */
     public RouletteWheel() {
         super();
+        this.size = (int) (RDFMiner.parameters.sizeSelectedPop * RDFMiner.parameters.populationSize);
         this.rng = new MersenneTwisterFast();
     }
 
@@ -111,10 +110,11 @@ public abstract class RouletteWheel extends SelectionOperation implements Stocha
         double prob;
         Individual selected;
         this.selectedPopulation.clear();
-
+//        System.out.println("[spinRoulette] accProb = " + Arrays.toString(this.accProbs));
         while (this.selectedPopulation.size() < super.getSize()) {
             prob = rng.nextDouble();
             int cnt = 0;
+//            System.out.println("prob> " + prob);
             while (cnt < operands.size() && this.accProbs[cnt] < prob) {
                 cnt++;
             }
@@ -123,10 +123,11 @@ public abstract class RouletteWheel extends SelectionOperation implements Stocha
                 cnt = operands.size() - 1; //If the selection with the roulette fails, take the last individual
             }
 //            System.out.println("cnt= " + cnt);
+            // Avoid duplicates individuals into selection
             selected = operands.get(cnt);
-
-            this.selectedPopulation.add(selected);
-
+            if (!this.selectedPopulation.contains(selected)) {
+                this.selectedPopulation.add(selected);
+            }
         }
     }
 
