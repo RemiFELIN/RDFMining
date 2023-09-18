@@ -8,7 +8,6 @@ import com.i3s.app.rdfminer.evolutionary.fitness.novelty.NoveltySearch;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.tools.EATools;
 import com.i3s.app.rdfminer.generator.Generator;
-import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
 
@@ -55,10 +54,10 @@ public class Offspring {
                 double scoreParent = ns.getScore(parent, ns.getDistanceOfEntityFromPopulation(parent, this.population));
                 logger.debug("child.score (" + scoreChild + ") vs parent.score (" + scoreParent + ")");
                 // we keep the better individual alive
-                if (scoreChild > scoreParent) {
-                    // report if a better individual is found
-                    GrammaticalEvolution.nBetterIndividual++;
-                }
+//                if (scoreChild > scoreParent) {
+//                    // report if a better individual is found
+//                    GrammaticalEvolution.nBetterIndividual++;
+//                }
                 // In a case that child1 is better or as good as the parent, we'll keep the child in order to ensure the
                 // diversity of the future population
                 if(scoreChild >= scoreParent) {
@@ -69,9 +68,9 @@ public class Offspring {
                 }
             } else {
                 // report if a better individual is found
-                if(child.individual.getFitness().getDouble() > parent.individual.getFitness().getDouble()) {
-                    GrammaticalEvolution.nBetterIndividual++;
-                }
+//                if(child.individual.getFitness().getDouble() > parent.individual.getFitness().getDouble()) {
+//                    GrammaticalEvolution.nBetterIndividual++;
+//                }
                 // In a case that child1 is better or as good as the parent, we'll keep the child in order to ensure the
                 // diversity of the future population
                 if(child.individual.getFitness().getDouble() >= parent.individual.getFitness().getDouble()) {

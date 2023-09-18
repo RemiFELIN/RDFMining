@@ -127,7 +127,7 @@ public class Test {
             e.printStackTrace();
         };
         CandidatePopulation canPop = new CandidatePopulation(generator);
-        ArrayList<GEIndividual> population = canPop.initialize(null, 1);
+        ArrayList<GEIndividual> population = canPop.initialize(null);
         System.out.println("--------\nSUBTREE CROSSOVER");
         SubtreeCrossover stc = new SubtreeCrossover(new MersenneTwisterFast(), 1);
         for(Individual i : population) {
@@ -153,7 +153,7 @@ public class Test {
             e.printStackTrace();
         };
         CandidatePopulation canPop = new CandidatePopulation(generator);
-        ArrayList<GEIndividual> population = canPop.initialize(null, 1);
+        ArrayList<GEIndividual> population = canPop.initialize(null);
         System.out.println("--------\nSUBTREE CROSSOVER");
         SinglePointCrossover stc = new SinglePointCrossover();
         stc.setFixedCrossoverPoint(true);
@@ -191,7 +191,7 @@ public class Test {
             e.printStackTrace();
         };
         CandidatePopulation canPop = new CandidatePopulation(generator);
-        ArrayList<GEIndividual> population = canPop.initialize(null, 1);
+        ArrayList<GEIndividual> population = canPop.initialize(null);
         System.out.println("--------\nNodal Mutation");
         NodalMutation ifm = new NodalMutation(new MersenneTwisterFast(), .8);
         for(Individual i : population) {
@@ -216,7 +216,7 @@ public class Test {
             e.printStackTrace();
         };
         CandidatePopulation canPop = new CandidatePopulation(generator);
-        ArrayList<GEIndividual> population = canPop.initialize(null, 1);
+        ArrayList<GEIndividual> population = canPop.initialize(null);
         System.out.println("--------\nNodal Mutation");
         SubtreeMutation ifm = new SubtreeMutation(new MersenneTwisterFast(), 1);
         for(Individual i : population) {
@@ -241,7 +241,7 @@ public class Test {
             e.printStackTrace();
         };
         CandidatePopulation canPop = new CandidatePopulation(generator);
-        ArrayList<GEIndividual> population = canPop.initialize(null, 1);
+        ArrayList<GEIndividual> population = canPop.initialize(null);
         System.out.println("--------\nStructural Mutation");
         StructuralMutation ifm = new StructuralMutation(new MersenneTwisterFast(), 1);
         for(Individual i : population) {
@@ -339,7 +339,7 @@ public class Test {
             e.printStackTrace();
         };
         CandidatePopulation canPop = new CandidatePopulation(generator);
-        ArrayList<GEIndividual> population = canPop.initialize(null, 1);
+        ArrayList<GEIndividual> population = canPop.initialize(null);
         for(GEIndividual e : population) {
 //            System.out.println(e.getGenotype());
             System.out.println("GEIndividual: " + e.getGenotype());
@@ -420,12 +420,12 @@ public class Test {
             e.printStackTrace();
         };
         CandidatePopulation canPop = new CandidatePopulation(generator);
-        ArrayList<GEIndividual> population = canPop.initialize(null, 1);
+        ArrayList<GEIndividual> population = canPop.initialize(null);
         ArrayList<GEIndividual> saveOriginalPop = new ArrayList<>();
         for(GEIndividual ind : population) {
             System.out.println("original pop: " + ind.getGenotype() + ": " + ind.getPhenotype().getStringNoSpace());
             assert generator != null;
-            saveOriginalPop.add(generator.getIndividualFromChromosome(ind.getChromosomes(), 1));
+            saveOriginalPop.add(generator.getIndividualFromChromosome(ind.getChromosomes()));
         }
         SwapCrossover swp = new SwapCrossover();
         swp.doOperation(population);
@@ -433,7 +433,7 @@ public class Test {
             System.out.println("saved pop: " + ind.getGenotype() + ": " + ind.getPhenotype().getStringNoSpace());
         }
         for(GEIndividual ind : population) {
-            GEIndividual i = generator.getIndividualFromChromosome(ind.getChromosomes(), 1);
+            GEIndividual i = generator.getIndividualFromChromosome(ind.getChromosomes());
             System.out.println("new pop: " + i.getGenotype() + ": " + i.getPhenotype().getStringNoSpace());
         }
     }
@@ -449,7 +449,7 @@ public class Test {
             e.printStackTrace();
         };
         CandidatePopulation canPop = new CandidatePopulation(generator);
-        ArrayList<GEIndividual> population = canPop.initialize(null, 1);
+        ArrayList<GEIndividual> population = canPop.initialize(null);
         System.out.println();
         for(GEIndividual ind : population) {
             System.out.println(ind.getPhenotype());
@@ -466,7 +466,7 @@ public class Test {
             e.printStackTrace();
         };
         CandidatePopulation canPop = new CandidatePopulation(generator);
-        ArrayList<GEIndividual> population = canPop.initialize(null, 1);
+        ArrayList<GEIndividual> population = canPop.initialize(null);
         for(GEIndividual individual: population) {
             System.out.println(individual.getDistinctPhenotypes());
             System.out.println("individuals: " + individual.getChromosomes());
@@ -481,7 +481,7 @@ public class Test {
         Generator generator = null;
         try {
             // /user/rfelin/home/projects/RDFMining/IO/OWL2Axiom-subclassof.bnf
-            generator = new RandomShapeGenerator("/user/rfelin/home/projects/RDFMining/IO/users/64e7594dfbb9f24cf6d7c272/test/grammar.bnf");
+            generator = new RandomShapeGenerator("/user/rfelin/home/projects/RDFMining/IO/users/64e7594dfbb9f24cf6d7c272/refonte/grammar.bnf");
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
@@ -489,11 +489,11 @@ public class Test {
         chrom.setMaxChromosomeLength(1000);
         // 1000427925,1741643077,
         // 1000427925,1620996495,
-        chrom.add(325361434);
-        chrom.add(520567525);
+        chrom.add(558085338);
+        chrom.add(2136115903);
         // a sh:NodeShape ; sh:targetClass <http://www.wikidata.org/entity/Q837783>  ;
         // sh:property [  sh:path rdf:type ; sh:hasValue <http://www.wikidata.org/entity/Q5380903>  ;  ]
-        GEIndividual ind = generator.getIndividualFromChromosome(chrom, 1);
+        GEIndividual ind = generator.getIndividualFromChromosome(chrom);
         System.out.println(ind.getPhenotype().getStringNoSpace());
         System.out.println(ind.getChromosomes());
     }

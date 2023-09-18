@@ -35,10 +35,9 @@ public class CandidatePopulation {
 	/**
 	 * Initialize a set of individuals 
 	 * @param cache a given file used as a cache file
-	 * @param curGeneration the current generation
 	 * @return a new candidate population
 	 */
-	public ArrayList<GEIndividual> initialize(Cache cache, int curGeneration)
+	public ArrayList<GEIndividual> initialize(Cache cache)
 			throws NumberFormatException, IndexOutOfBoundsException {
 		GEChromosome chromosome;
 		GEIndividual individual;
@@ -68,7 +67,7 @@ public class CandidatePopulation {
 		for(int i=0; i<chromosomes.size(); i++) {
 			if (generator != null) {
 				// init individual
-				individual = generator.getIndividualFromChromosome(chromosomes.get(i), curGeneration);
+				individual = generator.getIndividualFromChromosome(chromosomes.get(i));
 				// set its fitness
 				if(cache != null) {
 					individual.setFitness(new BasicFitness(fitnessList.get(i), individual));

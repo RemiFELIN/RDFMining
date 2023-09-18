@@ -32,7 +32,7 @@ import java.util.*;
 public class EATest {
 
     public static ArrayList<GEIndividual> createInitialPopulation(Generator generator) {
-        ArrayList<GEIndividual> population = new CandidatePopulation(generator).initialize(null, 1);
+        ArrayList<GEIndividual> population = new CandidatePopulation(generator).initialize(null);
         // simulation: fitness
         ArrayList<Integer> fitness = new ArrayList<>(List.of(1,5,7,2,11,3,15,9,2,20));
         for (int i=0; i<population.size(); i++) {
@@ -42,7 +42,6 @@ public class EATest {
     }
 
     public static ArrayList<GEIndividual> getElitePopulation(ArrayList<GEIndividual> population) {
-
         ArrayList<GEIndividual> elites = new ArrayList<>();
         // elite selection
         EliteOperationSelection eos = new EliteOperationSelection();
@@ -168,8 +167,8 @@ public class EATest {
             }
             GEChromosome chromParent1 = selectedIndividuals.get(firstIdx).getChromosomes();
             GEChromosome chromParent2 = selectedIndividuals.get(secondIdx).getChromosomes();
-            couple.add(generator.getIndividualFromChromosome(chromParent1, 1));
-            couple.add(generator.getIndividualFromChromosome(chromParent2, 1));
+            couple.add(generator.getIndividualFromChromosome(chromParent1));
+            couple.add(generator.getIndividualFromChromosome(chromParent2));
 //            System.out.println("(0): " + firstIdx + " (1): " + secondIdx);
             // crossover
             crossover(couple);
@@ -204,17 +203,17 @@ public class EATest {
             distinctsGenotype.add(finI.getGenotype().toString());
         }
         System.out.println("[size distincts] ~ " + distinctsGenotype.size());
-        return (double) distinctsGenotype.size() * 100 / (2 * init.size());
+        return (double) (distinctsGenotype.size() - init.size()) * 100 / init.size();
     }
 
     public static void main(String[] args) {
         // init
-        RDFMiner.parameters.sizeSelectedPop = 0.5;
-        RDFMiner.parameters.sizeEliteSelection = 0.2;
+        RDFMiner.parameters.selectionRate = 0.5;
+        RDFMiner.parameters.eliteSelectionRate = 0.2;
         RDFMiner.parameters.initLenChromosome = 2;
         RDFMiner.parameters.populationSize = 10;
         RDFMiner.parameters.typeSelection = 4;
-        RDFMiner.parameters.sizeTournament = 0.3;
+        RDFMiner.parameters.tournamentSelectionRate = 0.3;
         RDFMiner.parameters.proCrossover = 0.01;
         RDFMiner.parameters.proMutation = 0.01;
         Generator generator = null;

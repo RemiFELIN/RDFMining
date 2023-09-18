@@ -37,11 +37,11 @@ public class HypothesisTesting {
     }
 
     public static void eval(Shape shape) {
-        logger.info("\n~~~" +
-                "\nshape.referenceCardinality= " + shape.referenceCardinality +
-                "\nshape.numExceptions= " + shape.numExceptions +
-                "\nshape.numConfirmations= " + shape.numConfirmations +
-                "\n~~~");
+//        logger.info("\n~~~" +
+//                "\nshape.referenceCardinality= " + shape.referenceCardinality +
+//                "\nshape.numExceptions= " + shape.numExceptions +
+//                "\nshape.numConfirmations= " + shape.numConfirmations +
+//                "\n~~~");
         double nExcTheo = shape.referenceCardinality * Double.parseDouble(RDFMiner.parameters.probShaclP);
         double nConfTheo = shape.referenceCardinality - nExcTheo;
         if(shape.numExceptions <= nExcTheo) {

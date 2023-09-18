@@ -131,7 +131,7 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
         chrom.setMaxChromosomeLength(1000);
         chrom.add(537439393);
         chrom.add(537439393);
-        GEIndividual individual = generator.getIndividualFromChromosome(chrom, 1);
+        GEIndividual individual = generator.getIndividualFromChromosome(chrom);
 //        ShapesManager shapesManager1 = new ShapesManager(individual);
         CoreseEndpoint endpoint1 = new CoreseEndpoint(Global.CORESE_IP, Global.PREFIXES);
         Shape shape = new Shape(individual, endpoint1);

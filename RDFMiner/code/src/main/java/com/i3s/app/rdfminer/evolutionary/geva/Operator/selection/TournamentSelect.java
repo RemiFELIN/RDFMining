@@ -38,6 +38,7 @@ import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.Stochastic;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,6 +51,8 @@ import java.util.Properties;
  * selected tournament of size tournamentSize is cloned to the selected population.
  **/
 public class TournamentSelect extends SelectionOperation implements Stochastic {
+
+    private static final Logger logger = Logger.getLogger(TournamentSelect.class.getName());
     
     protected RandomNumberGenerator rng;
     protected int tournamentSize;
@@ -84,9 +87,9 @@ public class TournamentSelect extends SelectionOperation implements Stochastic {
      */
     public TournamentSelect() {
         super();
-        this.size = (int) (RDFMiner.parameters.sizeSelectedPop * RDFMiner.parameters.populationSize);
+        this.size = (int) (RDFMiner.parameters.selectionRate * RDFMiner.parameters.populationSize);
         this.rng = new MersenneTwisterFast();
-        this.tournamentSize = (int) (RDFMiner.parameters.sizeTournament * RDFMiner.parameters.populationSize);
+        this.tournamentSize = (int) (RDFMiner.parameters.tournamentSelectionRate * RDFMiner.parameters.populationSize);
         tour = new ArrayList<>(this.tournamentSize);
     }
     
@@ -117,10 +120,13 @@ public class TournamentSelect extends SelectionOperation implements Stochastic {
      **/
     public void doOperation(List<GEIndividual> operands) {
         this.selectedPopulation.clear();
+        int nTournament = 0;
         while(this.selectedPopulation.size()<this.size){
             fillTour(operands);
             selectFromTour();
+            nTournament++;
         }
+        logger.info(nTournament + " tournament(s) has been performed !");
     }
 
     /**
@@ -163,6 +169,10 @@ public class TournamentSelect extends SelectionOperation implements Stochastic {
                 added = true;
             } else {
                 winnerIdx++;
+            }
+            // It is possible that all participants are already in the population !
+            if (winnerIdx == tour.size()) {
+                break;
             }
         }
 

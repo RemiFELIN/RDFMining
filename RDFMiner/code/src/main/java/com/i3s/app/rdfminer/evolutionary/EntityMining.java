@@ -4,15 +4,9 @@ import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.evolutionary.fitness.Fitness;
-import com.i3s.app.rdfminer.evolutionary.generation.Generation;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.selection.EliteOperationSelection;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.selection.ProportionalRouletteWheel;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.selection.ScaledRouletteWheel;
-import com.i3s.app.rdfminer.evolutionary.geva.Operator.selection.TournamentSelect;
+import com.i3s.app.rdfminer.evolutionary.tools.EAOperators;
 import com.i3s.app.rdfminer.evolutionary.tools.EATools;
-import com.i3s.app.rdfminer.evolutionary.types.TypeSelection;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.output.GenerationJSON;
 import com.i3s.app.rdfminer.output.Results;
@@ -27,8 +21,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
+import java.util.*;
+import java.util.concurrent.*;
 
 public class EntityMining {
 
@@ -43,7 +37,6 @@ public class EntityMining {
         start = System.nanoTime();
         // set a save of original population
         // to see how GE will modify it
-
         // set size selection
 //        int sizeSelection = (int) (RDFMiner.parameters.sizeSelection * RDFMiner.parameters.populationSize);
 //        int sizeElite = RDFMiner.parameters.sizeElite * RDFMiner.parameters.populationSize < 1 ?
@@ -80,71 +73,84 @@ public class EntityMining {
                 return newPopulation;
             }
         }
-        // STEP 3 - SELECTION OPERATION
-//        logger.debug("entities.size= " + entities.size());
-        ArrayList<GEIndividual> entitiesAsIndividuals = new ArrayList<>();
-        ArrayList<GEIndividual> selectedIndividuals = new ArrayList<>();
+        // A list of individuals (from entities list)
+        ArrayList<GEIndividual> entitiesI = new ArrayList<>();
         // Use list of individuals instead of list of entities
         // i.e. apply GE process directly on individuals
         for(Entity entity : entities) {
-            entitiesAsIndividuals.add(entity.individual);
+            entitiesI.add(entity.individual);
         }
-        /* SELECTION */
-        switch(RDFMiner.parameters.typeSelection) {
-            default:
-            case TypeSelection.ELITE_OPERATION_SELECTION:
-                EliteOperationSelection eos = new EliteOperationSelection();
-                eos.doOperation(entitiesAsIndividuals);
-//                logger.debug("getSelectedPop.size= " + eos.getSelectedPopulation().size());
-                for(Individual selected : eos.getSelectedPopulation().getAll()) {
-                    selectedIndividuals.add((GEIndividual) selected);
-//                    entitiesAsIndividuals.remove((GEIndividual) selected);
-                }
-                break;
-            case TypeSelection.PROPORTIONAL_ROULETTE_WHEEL:
-                ProportionalRouletteWheel prw = new ProportionalRouletteWheel();
-                prw.doOperation(entitiesAsIndividuals);
-                for(Individual selected : prw.getSelectedPopulation().getAll()) {
-                    selectedIndividuals.add((GEIndividual) selected);
-//                    entitiesAsIndividuals.remove((GEIndividual) selected);
-                }
-                break;
-            case TypeSelection.SCALED_ROULETTE_WHEEL:
-                ScaledRouletteWheel srw = new ScaledRouletteWheel();
-                srw.doOperation(entitiesAsIndividuals);
-                for(Individual selected : srw.getSelectedPopulation().getAll()) {
-                    selectedIndividuals.add((GEIndividual) selected);
-//                    entitiesAsIndividuals.remove((GEIndividual) selected);
-                }
-                break;
-            case TypeSelection.TOURNAMENT_SELECT:
-                TournamentSelect ts = new TournamentSelect();
-                ts.doOperation(entitiesAsIndividuals);
-                for(Individual selected : ts.getSelectedPopulation().getAll()) {
-                    selectedIndividuals.add((GEIndividual) selected);
-//                    entitiesAsIndividuals.remove((GEIndividual) selected);
-                }
-                break;
+        // Elites population
+        logger.info("Searching the best individuals...");
+        ArrayList<GEIndividual> elites = EAOperators.getElitesFromPopulation(entitiesI);
+        for(GEIndividual elite : elites) {
+            logger.debug("#elite: " + elite.getGenotype().get(0) + " ~ Fit= " + elite.getFitness().getDouble());
         }
-        /* STEP 4 - CROSSOVER & MUTATION OPERATION */
-//        logger.debug("selectedIndividuals.size= " + selectedIndividuals.size());
-//        logger.debug("entitiesAsIndividuals.size= " + entitiesAsIndividuals.size());
-        ArrayList<Entity> selectedEntities = EATools.bindIndividualsWithEntities(selectedIndividuals, entities);
-        logger.debug("Selected individuals:");
-        for(Entity selected : selectedEntities) {
-            logger.debug(selected.individual.getGenotype() + ": " + selected.individual.getPhenotype().getStringNoSpace());
+        // Selected population (for replacement)
+        logger.info("Selection of individuals...");
+        ArrayList<GEIndividual> selected = EAOperators.getSelectionFromPopulation(entitiesI);
+        // replacement phasis
+        ArrayList<GEIndividual> replacement = Recombination.perform(generator, elites, selected);
+        // Assessment phasis:
+        // bind individuals and define fitness value for new individuals
+        ArrayList<Entity> newPopulation = new ArrayList<>(EATools.bindIndividualsWithEntities(elites, entities));
+        // iterate on replacement and assess it if the fitness value is null
+        // i.e. instanciate an entity. We'll use the multy threads system
+        // We have a set of threads to compute each tasks
+        ExecutorService executor = Executors.newFixedThreadPool(Global.NB_THREADS);
+        Set<Callable<Entity>> callables = new HashSet<>();
+        for(GEIndividual individual : replacement) {
+            if (individual.getFitness() == null) {
+                callables.add(() -> Fitness.computeEntity(individual, generator));
+            } else {
+                logger.debug(individual.getGenotype().get(0) + ": its fitness is not null without assessment ???");
+            }
         }
-        // individuals to compute
-//        ArrayList<Entity> toCompute = EATools.bindIndividualsWithEntities(entitiesAsIndividuals, entities);
-//        logger.debug("selectedEntities.size= " + selectedEntities.size());
-//        logger.debug("toCompute.size= " + toCompute.size());
-        // Compute GE and add new population on a new list of individuals
+        logger.info(callables.size() + " tasks ready to be launched !");
+        // Submit tasks
+        List<Future<Entity>> futureEntities = new ArrayList<>();
+//        List<Future<ArrayList<Entity>>> futures = executor.invokeAll(entitiesCallables);
+        // submit callables in order to assess them
+        for(Callable<Entity> callable : callables) {
+            futureEntities.add(executor.submit(callable));
+        }
+        // fill the evaluated individuals
+        for (Future<Entity> future : futureEntities) {
+            try {
+                if(RDFMiner.parameters.timeCap != 0) {
+                    // we multiply the timecap by 2 to consider the maximum
+                    // time-cap assessment for 2 childs
+                    newPopulation.add(future.get(RDFMiner.parameters.timeCap, TimeUnit.MINUTES));
+                } else {
+                    newPopulation.add(future.get());
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            } catch (TimeoutException e) {
+                logger.warn("Time-cap reached !");
+            }
+        }
+        executor.shutdown();
+        try {
+            if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                logger.debug("force the shutdown of executor ...");
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+        }
 
-        ArrayList<Entity> newPopulation = Generation.compute(entities, curGeneration, generator);
-//        logger.debug("size computed pop = " + computedPopulation.size());
-        // set new population
-        newPopulation.addAll(selectedEntities);// EATools.renew(curGeneration, computedPopulation, selectedEntities);
-//        logger.debug("size new pop = " + newPopulation.size());
+        // Check if Novelty Search is enabled
+//        if(RDFMiner.parameters.useNoveltySearch) {
+//            // Compute the similarities of each axiom between them, and update the population
+//            NoveltySearch noveltySearch = new NoveltySearch(new CoreseEndpoint(Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES));
+//            try {
+//                evaluatedIndividuals = noveltySearch.update(evaluatedIndividuals);
+//            } catch (URISyntaxException | IOException e) {
+//                logger.error("Error during the computation of similarities ...");
+//                e.printStackTrace();
+//            }
+//        }
         // stats
         setStats(entities, newPopulation, curGeneration);
 //        logger.debug("size new pop= " + newPopulation.size());
@@ -154,7 +160,10 @@ public class EntityMining {
 
     public static void setStats(ArrayList<Entity> originalPopulation, ArrayList<Entity> newPopulation, int curGeneration) {
         for(Entity ent : newPopulation) {
-            logger.debug("newPop(i): " + ent.individual.getPhenotype().getStringNoSpace());
+            logger.debug("newPop(i): " +
+                    Arrays.toString(ent.individual.getGenotype().get(0).toString().replace("Chromosome Contents: ", "").split(","))
+            + " ~ " + ent.individual.getPhenotype().getStringNoSpace());
+
         }
         // set stats
         GenerationJSON generation = new GenerationJSON();
@@ -162,7 +171,7 @@ public class EntityMining {
         long duration = (System.nanoTime() - start) / 1000000;
         generation.setGenerationJSON(originalPopulation, newPopulation, curGeneration, duration);
         // Log usefull stats concerning the algorithm evolution
-        logger.info("Computation time: " + generation.averageFitness + "s");
+        logger.info("Computation time: " + generation.computationTime + " ms.");
         logger.info("Average fitness: " + generation.averageFitness);
         logger.info("Diversity coefficient: " + (generation.diversityCoefficient * 100) + "%");
         logger.info("Population development rate: " + (generation.populationDevelopmentRate * 100) + "%");

@@ -150,17 +150,17 @@ public class CmdLineParameters {
 			"--type-mutation" }, usage = "use as this value as the type of mutation operation (1: Int Flip; 2: Int Flip Byte; 3: Nodal; 4: Sub tree)", metaVar = "TYPE_MUTATION")
 	public int typeMutation = 1;
 
-	@Option(name = "-ses", aliases = {
-			"--size-elite-selection" }, usage = "use as this value as the proportion of elited individuals to select", metaVar = "SIZE_ELITE")
-	public double sizeEliteSelection = 0.2;
+	@Option(name = "-er", aliases = {
+			"--elite-rate" }, usage = "use as this value as the proportion of elited individuals to select", metaVar = "ELITE_RATE")
+	public double eliteSelectionRate = 0.2;
 
-	@Option(name = "-sps", aliases = {
-			"--size-pop-selection" }, usage = "use as this value as the proportion of individuals to select for operations", metaVar = "SIZE_SELECTION")
-	public double sizeSelectedPop = 0.2;
+	@Option(name = "-sr", aliases = {
+			"--selection-rate" }, usage = "use as this value as the proportion of individuals to select for operations", metaVar = "SELECTION_RATE")
+	public double selectionRate = 0.5;
 
-	@Option(name = "-stour", aliases = {
-			"--size-tournament" }, usage = "use as this value as the proportion of individuals to select for operations (Only used if you have choosen the tournament selection)", metaVar = "SIZE_TOURNAMENT")
-	public double sizeTournament = 0.1;
+	@Option(name = "-tr", aliases = {
+			"--tournament-rate" }, usage = "use as this value as the proportion of individuals to select for operations (Only used if you have choosen the tournament selection)", metaVar = "SIZE_TOURNAMENT")
+	public double tournamentSelectionRate = 0.1;
 
 //	@Option(name = "-sezm", aliases = {
 //			"--sizeMutationselect" }, usage = "use as this value as the size of mutation selection operation", metaVar = "SIZE_MUTATIONSELECTIOn")

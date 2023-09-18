@@ -28,7 +28,7 @@ public class GrammaticalEvolution {
 
     private static final Logger logger = Logger.getLogger(GrammaticalEvolution.class.getName());
 
-    public static int nBetterIndividual;
+//    public static int nBetterIndividual;
     public static int nCrossover;
     public static int nMutation;
 
@@ -85,11 +85,16 @@ public class GrammaticalEvolution {
         logger.info("========================================================");
         logger.info("POPULATION SIZE: " + parameters.populationSize);
         logger.info("TOTAL EFFORT : " + parameters.kBase);
-        logger.info("INITIALIZED LENGTH CHROMOSOME: " + parameters.initLenChromosome);
+        logger.info("# GENERATIONS: " + Math.ceil((double) parameters.kBase / parameters.populationSize));
+        logger.info("LENGTH CHROMOSOME: " + parameters.initLenChromosome);
         logger.info("MAXIMUM WRAPPING: " + parameters.maxWrapp);
         logger.info("========================================================");
+        logger.info("ELITE SELECTION RATE: " + parameters.eliteSelectionRate);
         logger.info("TYPE SELECTION: " + TypeSelection.getLabel(parameters.typeSelection));
-        logger.info("SIZE ELITE SELECTION: " + parameters.sizeEliteSelection);
+        logger.info("SELECTION RATE: " + parameters.selectionRate);
+        if (parameters.typeSelection == TypeSelection.TOURNAMENT_SELECT) {
+            logger.info("TOURNAMENT SIZE RATE: " + parameters.tournamentSelectionRate);
+        }
 //        int sizeElite = parameters.sizeElite * parameters.populationSize < 1 ?
 //                1 : (int) (parameters.sizeElite * parameters.populationSize);
 //        logger.info("SIZE ELITE: " + sizeElite);
@@ -131,7 +136,7 @@ public class GrammaticalEvolution {
         logger.info("Initializing candidate population ...");
         // Generate candidate population
         CandidatePopulation canPop = new CandidatePopulation(generator);
-        candidatePopulation = canPop.initialize(cache, curGeneration);
+        candidatePopulation = canPop.initialize(cache);
         // Initialize population
         ArrayList<Entity> entities = Fitness.initializePopulation(candidatePopulation, generator);
         // start GE
@@ -152,7 +157,7 @@ public class GrammaticalEvolution {
             // reset crossover and mutation counter
             nCrossover = 0;
             nMutation = 0;
-            nBetterIndividual = 0;
+//            nBetterIndividual = 0;
         }
         logger.info("Evolutionary process is done...");
         System.exit(0);

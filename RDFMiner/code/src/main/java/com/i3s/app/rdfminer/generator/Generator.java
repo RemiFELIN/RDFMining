@@ -9,6 +9,7 @@ import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Phenotype;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.ContextFreeGrammar;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.DerivationTree;
 import com.i3s.app.rdfminer.grammar.DLGEGrammar;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -20,6 +21,8 @@ import java.net.URISyntaxException;
  * @author Rémi FELIN
  */
 public abstract class Generator {
+
+    private static final Logger logger = Logger.getLogger(Generator.class.getName());
 
     /**
      * The grammar defining the logical language of the axioms.
@@ -79,10 +82,9 @@ public abstract class Generator {
      * Take a GEChromosome and build an instance of GEInidividual, in order to use it in EA
      *
      * @param chromosome instance of GEChromosome
-     * @param generation ID generation
      * @return an individual well formed from chromosome
      */
-    public GEIndividual getIndividualFromChromosome(GEChromosome chromosome, int generation) {
+    public GEIndividual getIndividualFromChromosome(GEChromosome chromosome) {
         boolean valid;
         int i = 1;
 //        System.out.println("maxWrapp= " + grammar.getMaxWraps() + " and valid? " + valid);
@@ -105,13 +107,12 @@ public abstract class Generator {
         individual.setValid(true);
         individual.setUsedCodons(chromosome.getUsedGenes());
         individual.setUsedWraps(grammar.getUsedWraps() - 1);
-        individual.setAge(generation);
+//        individual.setAge(generation);
         // set a random mutation point
         int value = (int) Math.round(Math.random() * individual.getGenotype().get(0).getLength());
         int[] arr = new int[]{value};
         individual.setMutationPoints(arr);
         if (valid) individual.setMapped(true);
-
         return individual;
     }
 

@@ -4,6 +4,7 @@ import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.grammar.DLFactory;
 import org.apache.log4j.Logger;
 
@@ -42,12 +43,12 @@ public class EATools {
 	 * @param canPop a given list to be filtered
 	 * @return the filtered list
 	 */
-	public static ArrayList<Entity> getDistinctPhenotypePopulation(ArrayList<Entity> canPop) {
+	public static ArrayList<Entity> getDistinctGenotypesPopulation(ArrayList<Entity> canPop) {
 		ArrayList<Entity> entities = new ArrayList<>();
-		Set<String> phenotypes = new HashSet<>();
+		Set<String> genotypes = new HashSet<>();
 		for (Entity entity : canPop) {
 //			System.out.println("genotype: " + entity.individual.getGenotype());
-			if (phenotypes.add(entity.individual.getPhenotype().getStringNoSpace())) {
+			if (genotypes.add(entity.individual.getGenotype().toString())) {
 				entities.add(entity);
 			}
 		}
@@ -70,16 +71,16 @@ public class EATools {
 
 	public static ArrayList<Entity> bindIndividualsWithEntities(ArrayList<GEIndividual> individuals, ArrayList<Entity> entities) {
 		ArrayList<Entity> newEntities = new ArrayList<>();
+//		logger.debug("bindIndividualsWithEntities: replacementSize(" + individuals.size() + ")");
 		for(GEIndividual individual : individuals) {
-//			logger.debug("# individual: " + individual);
 			for(Entity entity : entities) {
-//				logger.debug("### Entity: " + entity.individual);
-				if(Objects.equals(individual.getPhenotype().getStringNoSpace(), entity.individual.getPhenotype().getStringNoSpace())) {
+				if(Objects.equals(individual.getGenotype().toString(), entity.individual.getGenotype().toString())) {
 					newEntities.add(entity);
 					break;
 				}
 			}
 		}
+		logger.info(newEntities.size() + " individuals has been binded with existing entities...");
 		return newEntities;
 	}
 
@@ -132,9 +133,33 @@ public class EATools {
 	}
 
 	public static boolean compareIndividuals(GEIndividual parent, GEIndividual offspring) {
-//		logger.debug(parent.getGenotype().get(0).toString());
-//		logger.debug(offspring.getGenotype().get(0).toString());
 		return Objects.equals(parent.getGenotype().get(0).toString(), offspring.getGenotype().get(0).toString());
+	}
+
+	public static boolean isInPopulation(GEIndividual individual, ArrayList<GEIndividual> population) {
+		for (GEIndividual i : population) {
+			if (Objects.equals(individual.getGenotype().toString(), i.getGenotype().toString())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	public static ArrayList<GEIndividual> getCoupleInPopulation(ArrayList<GEIndividual> population, Generator generator) {
+		Random rand = new Random();
+		ArrayList<GEIndividual> couple = new ArrayList<>();
+		int firstIdx = rand.nextInt(population.size());
+		int secondIdx = firstIdx;
+		while (secondIdx == firstIdx) {
+			secondIdx = rand.nextInt(population.size());
+		}
+		// rebuild individuals to apply operators on it without any side effects
+		GEChromosome chromParent1 = population.get(firstIdx).getChromosomes();
+		GEChromosome chromParent2 = population.get(secondIdx).getChromosomes();
+		couple.add(generator.getIndividualFromChromosome(chromParent1));
+		couple.add(generator.getIndividualFromChromosome(chromParent2));
+		return couple;
 	}
 
 }

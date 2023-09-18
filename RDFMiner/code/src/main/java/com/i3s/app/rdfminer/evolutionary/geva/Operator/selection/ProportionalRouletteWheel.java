@@ -61,7 +61,7 @@ public class ProportionalRouletteWheel extends RouletteWheel implements Stochast
      */
     public ProportionalRouletteWheel() {
         super();
-        this.size = (int) (RDFMiner.parameters.sizeSelectedPop * RDFMiner.parameters.populationSize);
+        this.size = (int) (RDFMiner.parameters.selectionRate * RDFMiner.parameters.populationSize);
         this.rng = new MersenneTwisterFast();
     }
 
