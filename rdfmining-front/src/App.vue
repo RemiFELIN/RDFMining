@@ -110,18 +110,4 @@ button {
 .debug {
   color: #4CAF50;
 }
-
-/* 
-.container {
-  overflow-y: auto;
-  height: 95vh;
-}
-button:hover {
-  background-color: #dde9de;
-  color: black;
-}
-
-.disconnect {
-  background-color: #b01313;
-} */
 </style>

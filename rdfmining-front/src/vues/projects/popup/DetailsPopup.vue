@@ -1,176 +1,193 @@
 <template>
-    <CModal :visible="enable" alignment="center" scrollable>
+    <CModal :visible="enable" alignment="center" scrollable size="xl">
         <CModalHeader>
             <CModalTitle>Settings of <b>{{ data.projectName }}</b></CModalTitle>
         </CModalHeader>
         <CModalBody>
-            <h3>Global settings</h3>
-            <br>
-            <!--TASK-->
-            <!-- <CRow class="mb-3">
-                <CFormLabel class="col-sm-4 col-form-label"><b>Task</b></CFormLabel>
-                <CCol sm="8">
-                    <CFormInput :value="data.task" readonly plain-text />
-                </CCol>
-            </CRow> -->
-            <!-- SPARQL Endpoint -->
-            <CRow class="mb-3">
-                <CFormLabel class="col-sm-4 col-form-label"><b>SPARQL Endpoint</b></CFormLabel>
-                <CCol sm="8">
-                    <CFormInput :value="data.targetSparqlEndpoint" readonly plain-text />
-                </CCol>
-            </CRow>
-            <!-- Prefixes -->
-            <CRow class="mb-3">
-                <CFormLabel class="col-sm-4 col-form-label"><b>Prefixes</b></CFormLabel>
-                <CCol sm="8">
-                    <CFormTextarea readonly>
-                        {{ data.prefixes }}
-                    </CFormTextarea>
-                </CCol>
-            </CRow>
-            <!-- Grammatical Evolution -->
-            <div v-if="data.task == 'Mining'">
-                <h3>Grammatical evolution settings</h3>
-                <br>
-                <!-- Axioms ? Shapes ? -->
-                <CRow class="mb-3">
-                    <CFormLabel class="col-sm-4 col-form-label"><b>Type of entities</b></CFormLabel>
-                    <CCol sm="8">
-                        <CFormInput :value="data.mod.includes('-rs') ? 'SHACL Shapes' : 'OWL Axioms'" readonly plain-text />
-                    </CCol>
-                </CRow>
-                <!-- Probabilistic SHACL ? -->
-                <CRow class="mb-3">
-                    <CFormLabel class="col-sm-4 col-form-label"><b>Probabilistic SHACL ?</b></CFormLabel>
-                    <CCol sm="8">
-                        <CFormInput :value="data.settings.shaclProb != 0 ? 'Yes' : 'No'" readonly plain-text />
-                    </CCol>
-                </CRow>
-                <!-- if yes -->
-                <!-- <div v-if="selectedFeature.includes('rs')"> -->
-                <CRow class="mb-3" v-if="data.settings.shaclProb != 0">
-                    <CCol sm="3">
-                        <!-- Alpha -->
-                        <CFormLabel class="col-sm-4 col-form-label"><b>significance level</b></CFormLabel>
-                    </CCol>
-                    <CCol sm="2">
-                        <CFormInput :value="data.settings.shaclAlpha" readonly plain-text />
-                    </CCol>
-                    <CCol sm="3">
-                        <!-- p-value -->
-                        <CFormLabel class="col-sm-4 col-form-label"><b>P-value</b></CFormLabel>
-                    </CCol>
-                    <CCol sm="2">
-                        <CFormInput :value="data.settings.shaclProb" readonly plain-text />
-                    </CCol>
-                </CRow>
-                <!-- BNF Grammar -->
-                <CRow class="mb-3">
-                    <CFormLabel class="col-sm-4 col-form-label"><b>BNF Grammar</b></CFormLabel>
-                    <CCol sm="8">
-                        <CFormTextarea readonly>
-                            {{ data.settings.bnf }}
-                        </CFormTextarea>
-                    </CCol>
-                </CRow>
-                <!-- Chromosome size -->
-                <CRow class="mb-3">
-                    <CFormLabel class="col-sm-4 col-form-label"><b>Chromosome size</b></CFormLabel>
-                    <CCol sm="8">
-                        <CFormInput :value="data.settings.sizeChromosome" readonly plain-text />
-                    </CCol>
-                </CRow>
-                <!-- Pop size / Effort -->
-                <CRow class="mb-3">
-                    <CCol sm="3">
-                        <CFormLabel class="col-sm-4 col-form-label"><b>Population size</b></CFormLabel>
-                    </CCol>
-                    <CCol sm="2">
-                        <CFormInput :value="data.settings.populationSize" readonly plain-text />
-                    </CCol>
-                    <CCol sm="3">
-                        <CFormLabel class="col-sm-4 col-form-label"><b>Effort</b></CFormLabel>
-                    </CCol>
-                    <CCol sm="2">
-                        <CFormInput :value="data.settings.effort" readonly plain-text />
-                    </CCol>
-                </CRow>
-                <!-- Selection / Crossover / Mutation-->
-                <CRow class="mb-3">
-                    <CFormLabel class="col-sm-2 col-form-label"><b>Selection</b></CFormLabel>
-                    <CCol sm="8">
-                        <CFormInput :value="selectionType[parseInt(data.settings.selectionType) - 1].description" readonly plain-text />
-                    </CCol>
-                    <CCol sm="2">
-                        <CFormInput :value="(data.settings.selectionRate * 100) + '%'" readonly plain-text />
-                    </CCol>
-                </CRow>
-                <CRow class="mb-3">
-                    <CFormLabel class="col-sm-2 col-form-label"><b>Crossover</b></CFormLabel>
-                    <CCol sm="8">
-                        <CFormInput :value="crossoverType[parseInt(data.settings.crossoverType) - 1].description" readonly plain-text />
-                    </CCol>
-                    <CCol sm="2">
-                        <CFormInput :value="(data.settings.crossoverRate * 100) + '%'" readonly plain-text />
-                    </CCol>
-                </CRow>
-                <CRow class="mb-3">
-                    <CFormLabel class="col-sm-2 col-form-label"><b>Mutation</b></CFormLabel>
-                    <CCol sm="8">
-                        <CFormInput :value="mutationType[parseInt(data.settings.mutationType) - 1].description" readonly plain-text />
-                    </CCol>
-                    <CCol sm="2">
-                        <CFormInput :value="(data.settings.mutationRate * 100) + '%'" readonly plain-text />
-                    </CCol>
-                </CRow>
-            </div>
-            <!-- Evaluator -->
-            <div v-else>
-                <h3>Assessment settings</h3>
-                <br>
-                <!-- Axioms ? Shapes ? -->
-                <CRow class="mb-3">
-                    <CFormLabel class="col-sm-4 col-form-label"><b>Type of entities</b></CFormLabel>
-                    <CCol sm="8">
-                        <CFormInput :value="data.mod == '-sf' ? 'SHACL Shapes' : 'OWL Axioms'" readonly plain-text />
-                    </CCol>
-                </CRow>
-                <!-- Probabilistic SHACL ? -->
-                <CRow class="mb-3">
-                    <CFormLabel class="col-sm-4 col-form-label"><b>Probabilistic SHACL ?</b></CFormLabel>
-                    <CCol sm="8">
-                        <CFormInput :value="data.settings.shaclProb != 0 ? 'Yes' : 'No'" readonly plain-text />
-                    </CCol>
-                </CRow>
-                <!-- if yes -->
-                <!-- <div v-if="selectedFeature.includes('rs')"> -->
-                <CRow class="mb-3" v-if="data.settings.shaclProb != 0">
-                    <CCol sm="3">
-                        <!-- Alpha -->
-                        <CFormLabel class="col-sm-4 col-form-label"><b>significance level</b></CFormLabel>
-                    </CCol>
-                    <CCol sm="2">
-                        <CFormInput :value="data.settings.shaclAlpha" readonly plain-text />
-                    </CCol>
-                    <CCol sm="3">
-                        <!-- p-value -->
-                        <CFormLabel class="col-sm-4 col-form-label"><b>P-value</b></CFormLabel>
-                    </CCol>
-                    <CCol sm="2">
-                        <CFormInput :value="data.settings.shaclProb" readonly plain-text />
-                    </CCol>
-                </CRow>
-                <!-- Input file -->
-                <CRow class="mb-3">
-                    <CFormLabel class="col-sm-4 col-form-label"><b>Entities provided</b></CFormLabel>
-                    <CCol sm="8">
-                        <CFormTextarea readonly>
-                            {{ data.settings.shapes }}
-                        </CFormTextarea>
-                    </CCol>
-                </CRow>
-            </div>
+            <CCard>
+                <CCardTitle>
+                    Global settings
+                </CCardTitle>
+                <CCardBody>
+                    <!-- SPARQL Endpoint -->
+                    <CRow>
+                        <CCol sm="4">
+                            <CFormLabel>SPARQL Endpoint</CFormLabel>
+                        </CCol>
+                        <CCol sm="8">
+                            <a :href="data.targetSparqlEndpoint">{{ data.targetSparqlEndpoint }}</a>
+                        </CCol>
+                    </CRow>
+                    <!-- Prefixes -->
+                    <CRow>
+                        <CCol sm="4">
+                            <CFormLabel>Prefixes</CFormLabel>
+                        </CCol>
+                        <CCol sm="8">
+                            <CFormTextarea readonly>{{ data.prefixes }}</CFormTextarea>
+                        </CCol>
+                    </CRow>
+                    <!-- Grammatical Evolution -->
+                </CCardBody>
+            </CCard>
+            <br />
+            <CCard v-if="data.task == 'Mining'">
+                <CCardTitle>
+                    Grammatical evolution settings
+                </CCardTitle>
+                <CCardBody>
+                    <!-- Axioms ? Shapes ? -->
+                    <CRow>
+                        <CCol sm="4">
+                            <CFormLabel class="col-form-label">Type of entities</CFormLabel>
+                        </CCol>
+                        <CCol sm="8">
+                            <CFormInput :value="data.mod.includes('-rs') ? 'SHACL Shapes' : 'OWL Axioms'" readonly
+                                plain-text style="font-weight: bold;" />
+                        </CCol>
+                    </CRow>
+                    <!-- Probabilistic SHACL ? -->
+                    <CRow v-if="data.settings.shaclProb != 0">
+                        <CCol sm="4">
+                            <CFormLabel class="col-form-label">Probabilistic SHACL:</CFormLabel>
+                        </CCol>
+                        <CCol sm="2">
+                            <CFormLabel class="col-form-label">Significance level</CFormLabel>
+                        </CCol>
+                        <CCol sm="2">
+                            <CFormInput :value="data.settings.shaclAlpha * 100 + '%'" readonly plain-text />
+                        </CCol>
+                        <CCol sm="2">
+                            <CFormLabel class="col-form-label">P-Value</CFormLabel>
+                        </CCol>
+                        <CCol sm="2">
+                            <CFormInput :value="data.settings.shaclProb * 100 + '%'" readonly plain-text />
+                        </CCol>
+                    </CRow>
+                    <!-- BNF Grammar -->
+                    <CRow>
+                        <CCol sm="4">
+                            <CFormLabel class="col-form-label">BNF Grammar</CFormLabel>
+                        </CCol>
+                        <CCol sm="8">
+                            <CFormTextarea readonly>{{ data.settings.bnf }}</CFormTextarea>
+                        </CCol>
+                    </CRow>
+                    <!-- Chromosome size -->
+                    <CRow>
+                        <CCol sm="4">
+                            <CFormLabel class="col-form-label">Chromosome size</CFormLabel>
+                        </CCol>
+                        <CCol sm="8">
+                            <CFormInput :value="data.settings.sizeChromosome" readonly plain-text />
+                        </CCol>
+                    </CRow>
+                    <!-- Pop size / Effort -->
+                    <CRow>
+                        <CCol sm="4">
+                            <CFormLabel class="col-form-label">Population size</CFormLabel>
+                        </CCol>
+                        <CCol sm="2">
+                            <CFormInput :value="data.settings.populationSize" readonly plain-text />
+                        </CCol>
+                        <CCol sm="4">
+                            <CFormLabel class="col-form-label">Effort</CFormLabel>
+                        </CCol>
+                        <CCol sm="2">
+                            <CFormInput :value="data.settings.effort" readonly plain-text />
+                        </CCol>
+                    </CRow>
+                    <!-- Elite -->
+                    <CRow>
+                        <CCol sm="4">
+                            <CFormLabel class="col-form-label">Elite selection rate</CFormLabel>
+                        </CCol>
+                        <CCol sm="8">
+                            <CFormInput
+                                :value="(data.settings.eliteSelectionRate * 100) + '%'"
+                                readonly plain-text />
+                        </CCol>
+                    </CRow>
+                    <!-- Selection / Crossover / Mutation-->
+                    <CRow>
+                        <CCol sm="4">
+                            <CFormLabel class="col-form-label">Selection</CFormLabel>
+                        </CCol>
+                        <CCol sm="4">
+                            <CFormInput
+                                :value="selectionType[parseInt(data.settings.selectionType) - 1].description + ' (' + (data.settings.selectionRate * 100) + '%)'"
+                                readonly plain-text />
+                        </CCol>
+                        <CCol sm="4">
+                            <CFormInput :value="'Tournament size (' + (data.settings.tournamentSelectionRate * 100) + '% of the population)'" readonly plain-text />
+                        </CCol>
+                    </CRow>
+                    <CRow>
+                        <CCol sm="4">
+                            <CFormLabel class="col-form-label">Crossover</CFormLabel>
+                        </CCol>
+                        <CCol sm="8">
+                            <CFormInput :value="crossoverType[parseInt(data.settings.crossoverType) - 1].description + ' (' + (data.settings.crossoverRate * 100) + '%)'"
+                                readonly plain-text />
+                        </CCol>
+                    </CRow>
+                    <CRow>
+                        <CCol sm="4">
+                            <CFormLabel class="col-form-label">Mutation</CFormLabel>
+                        </CCol>
+                        <CCol sm="8">
+                            <CFormInput :value="mutationType[parseInt(data.settings.mutationType) - 1].description + ' (' + (data.settings.selectionRate * 100) + '%)'" readonly
+                                plain-text />
+                        </CCol>
+                    </CRow>
+                </CCardBody>
+            </CCard>
+
+            <CCard v-else>
+                <CCardTitle>
+                    Assessment settings
+                </CCardTitle>
+                <CCardBody>
+                    <!-- Axioms ? Shapes ? -->
+                    <CRow>
+                        <CCol sm="4">
+                            <CFormLabel class="col-form-label">Type of entities</CFormLabel>
+                        </CCol>
+                        <CCol sm="8">
+                            <CFormInput :value="data.mod.includes('-rs') ? 'SHACL Shapes' : 'OWL Axioms'" readonly
+                                plain-text style="font-weight: bold;" />
+                        </CCol>
+                    </CRow>
+                    <!-- Probabilistic SHACL ? -->
+                    <CRow v-if="data.settings.shaclProb != 0">
+                        <CCol sm="4">
+                            <CFormLabel class="col-form-label">Probabilistic SHACL:</CFormLabel>
+                        </CCol>
+                        <CCol sm="2">
+                            <CFormLabel class="col-form-label">Significance level</CFormLabel>
+                        </CCol>
+                        <CCol sm="2">
+                            <CFormInput :value="data.settings.shaclAlpha * 100 + '%'" readonly plain-text />
+                        </CCol>
+                        <CCol sm="2">
+                            <CFormLabel class="col-form-label">P-Value</CFormLabel>
+                        </CCol>
+                        <CCol sm="2">
+                            <CFormInput :value="data.settings.shaclProb * 100 + '%'" readonly plain-text />
+                        </CCol>
+                    </CRow>
+                    <!-- Input file -->
+                    <CRow>
+                        <CCol sm="4">
+                            <CFormLabel class="col-form-label">Entities provided</CFormLabel>
+                        </CCol>
+                        <CCol sm="8">
+                            <CFormTextarea readonly>{{ data.settings.shapes }}</CFormTextarea>
+                        </CCol>
+                    </CRow>
+                </CCardBody>
+            </CCard>
+
         </CModalBody>
     </CModal>
 </template>
@@ -179,16 +196,16 @@
 // import LoginForm from '@/vues/auth/LoginForm.vue';
 // https://coreui.io/vue/docs/components/modal.html
 import axios from "axios"
-import { CModal, CModalHeader, CModalTitle, CModalBody, CCol, CRow, CFormLabel, CFormInput, CFormTextarea } from "@coreui/vue";
-// import { markRaw } from "vue";
-// import { useCookies } from "vue3-cookies";
-// import { JsonViewer } from "vue3-json-viewer";
-// import "vue3-json-viewer/dist/index.css";
+import {
+    CModal, CModalHeader, CModalTitle, CModalBody, CCol, CRow, CFormLabel, CFormInput,
+    CFormTextarea, CCard, CCardBody, CCardTitle
+} from "@coreui/vue";
 
 export default {
     name: 'DetailsPopup',
     components: {
-        CModal, CModalHeader, CModalTitle, CModalBody, CCol, CRow, CFormLabel, CFormInput, CFormTextarea
+        CModal, CModalHeader, CModalTitle, CModalBody, CCol, CRow, CFormLabel,
+        CFormInput, CFormTextarea, CCard, CCardBody, CCardTitle
     },
     props: {
         enable: {
@@ -205,22 +222,18 @@ export default {
             mutationType: {}
         }
     },
-    watch: {
-        data() {
-            // console.log(this.data)
-        }
-    },
     mounted() {
+        console.log(this.data);
         axios.get("http://localhost:9200/api/params").then(
             (response) => {
-                const data = response.data[0];
+                const params = response.data[0];
+                console.log(params)
                 // selection
-                this.selectionType = data.selection.values;
+                this.selectionType = params.selection.values;
                 // crossover
-                this.crossoverType = data.crossover.values;
+                this.crossoverType = params.crossover.values;
                 // mutation
-                this.mutationType = data.mutation.values;
-                console.log(data.mutation.values);
+                this.mutationType = params.mutation.values;
             }
         ).catch((error) => {
             console.log(error);

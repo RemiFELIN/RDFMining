@@ -1,6 +1,6 @@
 <template>
-    <CRow :xs="{ cols: 1, gutter: 3 }" :md="{ cols: 2 }">
-        <CCol xs>
+    <CRow>
+        <CCol sm="4">
             <CCard class="card">
                 <!-- <CCardImage width="10" height="20" orientation="top" src="../assets/fitness.png"></CCardImage> -->
                 <CCardTitle class="text-center">Entities elapsed time (in sec.)</CCardTitle>
@@ -10,15 +10,18 @@
                 </CCardBody>
             </CCard>
         </CCol>
-        <CCol xs>
-            <CCard class="card">
+        <CCol sm="8">
+            <CCard class="card-progression">
                 <!-- <CCardImage width="10" height="20" orientation="top" src="../assets/fitness.png"></CCardImage> -->
                 <CCardBody>
                     <CCardTitle class="text-center"><b>Progression</b></CCardTitle>
                     <CProgress class="mb-3">
-                        <CProgressBar :value="progression">{{ progression }}%</CProgressBar>
+                        <CProgressBar :value="progression" color="success" :variant="progression == 100 ? '' : 'striped'"
+                            animated><b style="font-size: large;">{{ progression }}%</b></CProgressBar>
                     </CProgress>
                     <CCardTitle class="text-center"><b>Actions</b></CCardTitle>
+                    <CButton color="primary" variant="outline" @click="showDetails">
+                        Check project settings</CButton>
                     <CButton style="margin: 5px;" color="success" variant="outline" :disabled="progression != 100"
                         @click="getResults">Download
                         results (JSON)</CButton>
@@ -28,6 +31,8 @@
             </CCard>
         </CCol>
     </CRow>
+    <!-- Details Popup -->
+    <DetailsPopup :enable="showDetailsPopup" :data="project"></DetailsPopup>
 </template>
 
 <script>
@@ -38,12 +43,13 @@ import { CCard, CCardBody, CCardTitle, CRow, CCol, CProgress, CProgressBar, CBut
 import { toRaw } from 'vue';
 import { useCookies } from "vue3-cookies";
 import axios from 'axios';
+import DetailsPopup from '../projects/popup/DetailsPopup.vue';
 import io from "socket.io-client";
 
 export default {
     name: 'VueGlobalEval',
     components: {
-        CChart, CCard, CCardBody, CCardTitle, CRow, CCol, CProgress, CProgressBar, CButton
+        CChart, CCard, CCardBody, CCardTitle, CRow, CCol, CProgress, CProgressBar, CButton, DetailsPopup
     },
     props: {
         results: {
@@ -61,6 +67,8 @@ export default {
             cookies: useCookies(["token", "id"]).cookies,
             // force refresh of component
             refresh: true,
+            project: {},
+            showDetailsPopup: false,
             // socket io
             socket: io("http://localhost:9200"),
             // entities
@@ -102,12 +110,6 @@ export default {
         if (this.task == "Assessment") {
             // get number of entities
             this.nEntities = toRaw(this.results.nEntities);
-            // deduce x-labels
-            // this.entities_labels = Array.from({ length: this.nEntities }, (_, idx) => idx + 1);
-            //
-            // this.elapsed_time_data = Array(this.nEntities).fill(0);
-            // verify if any results (or all ?) are already defined
-
             if (toRaw(this.results.entities.length) != 0) {
                 //
                 this.curEntities = toRaw(this.results.entities.length);
@@ -118,7 +120,7 @@ export default {
                     this.elapsed_time_data[i] = toRaw(this.results.entities[i].elapsedTime);
                 }
             }
-            console.log(toRaw(this.elapsed_time_data));
+            // console.log(toRaw(this.elapsed_time_data));
             // Individuals with non-null fitness chart
             this.computation_time_chart = {
                 labels: toRaw(this.entities_labels),
@@ -126,35 +128,33 @@ export default {
                     {
                         label: 'Elapsed time',
                         backgroundColor: 'rgba(222, 0, 0, 0.8)',
-                        // borderColor: 'rgba(220, 220, 220, 1)',
-                        // pointBackgroundColor: 'rgba(220, 220, 220, 1)',
-                        // pointBorderColor: '#fff',
                         data: toRaw(this.elapsed_time_data)
                     }
                 ],
             };
             this.options = {
-                // maintainAspectRatio: false,
                 scales: {
-                    // y: {
-                    //     beginAtZero: true
-                    // },
                     x: {
-                        // beginAtZero: true,
-                        // Empirically set
                         display: this.nEntities > 20 ? false : true,
-                        // type: 'linear',
-                        // title: {
-                        //     display: true,
-                        //     text: 'Entities',
-                        //     font: {
-                        //         size: 18
-                        //     }
-                        // },
                     }
                 },
                 plugins: this.plugins
             }
+            // get project
+            axios.get("http://localhost:9200/api/project", {
+                headers: { "x-access-token": this.cookies.get("token") },
+                params: { projectName: this.results.projectName }
+            }).then(
+                (response) => {
+                    // console.log(response.data)
+                    if (response.status === 200) {
+                        console.log(response.data[0]);
+                        this.project = response.data[0];
+                    }
+                }
+            ).catch((error) => {
+                console.log(error);
+            });
             // SOCKET IO
             this.socket.on("update-entities", (data) => {
                 // console.log("socket.io updates generations ... with " + JSON.stringify(data));
@@ -164,13 +164,16 @@ export default {
                 //
                 this.curEntities += 1;
                 //
-                console.log(this.computation_time_chart.datasets[0].data);
+                // console.log(this.computation_time_chart.datasets[0].data);
                 // refresh
                 this.refresh = !this.refresh;
             });
         }
     },
     methods: {
+        showDetails() {
+            this.showDetailsPopup = !this.showDetailsPopup;
+        },
         getChart() {
             return toRaw(this.computation_time_chart);
         },
@@ -225,4 +228,14 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped></style>
+<style scoped>
+.card {
+    height: 100%;
+    width: 100%;
+}
+
+.card-progression {
+    /* height: 50vh; */
+    width: 65vw;
+}
+</style>

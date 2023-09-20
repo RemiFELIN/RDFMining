@@ -1,6 +1,6 @@
 <template>
-    <CRow :xs="{ cols: 1, gutter: 3 }" :md="{ cols: 3 }">
-        <CCol xs>
+    <CRow>
+        <CCol sm="4">
             <CCard class="card">
                 <!-- <CCardImage width="10" height="20" orientation="top" src="../assets/fitness.png"></CCardImage> -->
                 <CCardTitle class="text-center">Individuals with <b>non-null fitness</b></CCardTitle>
@@ -11,7 +11,7 @@
                 </CCardBody>
             </CCard>
         </CCol>
-        <CCol xs>
+        <CCol sm="4">
             <CCard class="card">
                 <!-- <CCardImage width="10" height="20" orientation="top" src="../assets/fitness.png"></CCardImage> -->
                 <CCardTitle class="text-center"><b>Fitness</b> individuals</CCardTitle>
@@ -22,7 +22,7 @@
                 </CCardBody>
             </CCard>
         </CCol>
-        <CCol xs>
+        <CCol sm="4">
             <CCard class="card">
                 <!-- <CCardImage width="10" height="20" orientation="top" src="../assets/fitness.png"></CCardImage> -->
                 <CCardTitle class="text-center"><b>Population</b> evolution</CCardTitle>
@@ -33,21 +33,11 @@
             </CCard>
         </CCol>
     </CRow>
-    <br>
-    <CCard class="text-center" v-if="entities_avalaible">
-        <!-- <CCardImage width="10" height="20" orientation="top" src="../assets/fitness.png"></CCardImage> -->
-        <CCardTitle><b>Overview</b> of extracted entities</CCardTitle>
-        <CCardBody>
-            <!-- Moins d'information dans le Bubble chart de CoreUI (impossible de mettre le phenotype et changer la couleur) -->
-            <!-- <CChart type="bubble" :wrapper="true" :data="bubble_chart" :redraw="true" height="75"></CChart> -->
-            <GChart class="chart" type="BubbleChart" :data="entities_data" :options="bubble_options" />
-        </CCardBody>
-    </CCard>
 </template>
 
 <script>
 // https://developers.google.com/chart/interactive/docs/gallery/areachart?hl=fr#overview
-import { GChart } from 'vue-google-charts'
+// import { GChart } from 'vue-google-charts'
 // import { entities } from '../data/results_1.json'
 import { CChart } from '@coreui/vue-chartjs'
 import { CCard, CCardBody, CCardTitle, CRow, CCol } from '@coreui/vue';
@@ -57,7 +47,7 @@ import io from "socket.io-client";
 export default {
     name: 'VueStatistics',
     components: {
-        GChart, CChart, CCard, CCardBody, CCardTitle, CRow, CCol
+        CChart, CCard, CCardBody, CCardTitle, CRow, CCol
     },
     props: {
         results: {
@@ -133,33 +123,33 @@ export default {
             // CoreUI CCharts: Bubble chart
             // bubble_chart: {},
             // ELAPSED TIME / REFERENCE CARDINALITY (EXCEPTIONS ?)
-            entities_avalaible: false,
-            entities_data: [],
-            bubble_options: {
-                // title: "Overview of entities found",
-                titleTextStyle: { fontSize: 30 },
-                backgroundColor: "#ffffff",
-                hAxis: {
-                    title: "# exceptions",
-                    textStyle: { fontSize: 30 },
-                    titleTextStyle: { fontSize: 20, italic: false, bold: true }
-                },
-                vAxis: {
-                    title: "CPU computation time (ms.)",
-                    textStyle: { fontSize: 30 },
-                    titleTextStyle: { fontSize: 20, italic: false, bold: true }
-                },
-                colorAxis: {
-                    minValue: 0,  
-                    colors: ['#00FF00', '#FF0000']
-                },
-                bubble: { textStyle: { auraColor: 'none', fontSize: 1 } },
-                sizeAxis: { minSize: 20, maxSize: 100 },
-                explorer: {},
-                // colorAxis: { colors: ['#15d600', '#ff0000'] },
-                width: 1500,
-                height: 750,
-            },
+            // entities_avalaible: false,
+            // entities_data: [],
+            // bubble_options: {
+            //     // title: "Overview of entities found",
+            //     titleTextStyle: { fontSize: 30 },
+            //     backgroundColor: "#ffffff",
+            //     hAxis: {
+            //         title: "# exceptions",
+            //         textStyle: { fontSize: 30 },
+            //         titleTextStyle: { fontSize: 20, italic: false, bold: true }
+            //     },
+            //     vAxis: {
+            //         title: "CPU computation time (ms.)",
+            //         textStyle: { fontSize: 30 },
+            //         titleTextStyle: { fontSize: 20, italic: false, bold: true }
+            //     },
+            //     colorAxis: {
+            //         minValue: 0,  
+            //         colors: ['#00FF00', '#FF0000']
+            //     },
+            //     bubble: { textStyle: { auraColor: 'none', fontSize: 1 } },
+            //     sizeAxis: { minSize: 20, maxSize: 100 },
+            //     explorer: {},
+            //     // colorAxis: { colors: ['#15d600', '#ff0000'] },
+            //     width: 1500,
+            //     height: 750,
+            // },
         };
     },
     mounted() {
@@ -273,28 +263,28 @@ export default {
             ]
         };
         //
-        if (toRaw(this.results.entities.length) != 0) {
-            // entities data
-            this.entities_data.push([
-                "phenotype",
-                "numExceptions",
-                "elapsedTime",
-                "Violations Ratio",
-                "referenceCardinality"
-            ]);
-            // iterate on entities found
-            for (let i = 0; i < toRaw(this.results.entities.length); i++) {
-                // console.log(entity.numExceptions / entity.referenceCardinality)
-                this.entities_data.push([
-                    toRaw(this.results.entities[i].phenotype),
-                    toRaw(this.results.entities[i].numExceptions),
-                    toRaw(this.results.entities[i].elapsedTime),
-                    toRaw(this.results.entities[i].numExceptions) / toRaw(this.results.entities[i].referenceCardinality),
-                    toRaw(this.results.entities[i].referenceCardinality)
-                ]);
-            }
-            this.entities_avalaible = true;
-        }
+        // if (toRaw(this.results.entities.length) != 0) {
+        //     // entities data
+        //     this.entities_data.push([
+        //         "phenotype",
+        //         "numExceptions",
+        //         "elapsedTime",
+        //         "Violations Ratio",
+        //         "referenceCardinality"
+        //     ]);
+        //     // iterate on entities found
+        //     for (let i = 0; i < toRaw(this.results.entities.length); i++) {
+        //         // console.log(entity.numExceptions / entity.referenceCardinality)
+        //         this.entities_data.push([
+        //             toRaw(this.results.entities[i].phenotype),
+        //             toRaw(this.results.entities[i].numExceptions),
+        //             toRaw(this.results.entities[i].elapsedTime),
+        //             toRaw(this.results.entities[i].numExceptions) / toRaw(this.results.entities[i].referenceCardinality),
+        //             toRaw(this.results.entities[i].referenceCardinality)
+        //         ]);
+        //     }
+        //     this.entities_avalaible = true;
+        // }
         // SOCKET IO
         this.socket.on("update-generation", (data) => {
             // console.log("socket.io updates generations ... with " + JSON.stringify(data));
@@ -316,18 +306,6 @@ export default {
 <style scoped>
 .card {
     height: 100%;
-}
-
-.chart {
-    display: flex;
-    justify-content: space-around;
     width: 100%;
-}
-
-@media screen and (max-width: 768px) {
-    .chart {
-        flex-direction: column;
-        align-items: center;
-    }
 }
 </style>

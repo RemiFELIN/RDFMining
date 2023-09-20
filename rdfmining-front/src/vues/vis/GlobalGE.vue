@@ -1,6 +1,6 @@
 <template>
-    <CRow :xs="{ cols: 1, gutter: 3 }" :md="{ cols: 2 }">
-        <CCol xs>
+    <CRow>
+        <CCol sm="4">
             <CCard class="card">
                 <!-- <CCardImage width="10" height="20" orientation="top" src="../assets/fitness.png"></CCardImage> -->
                 <CCardTitle class="text-center">Generations computation time (in ms.)</CCardTitle>
@@ -11,40 +11,48 @@
                 </CCardBody>
             </CCard>
         </CCol>
-        <CCol xs>
-            <CCard class="card">
+        <CCol sm="8">
+            <CCard class="card-progression">
                 <!-- <CCardImage width="10" height="20" orientation="top" src="../assets/fitness.png"></CCardImage> -->
                 <CCardBody>
                     <CCardTitle class="text-center"><b>Progression</b></CCardTitle>
-                    <CProgress class="mb-3">
-                        <CProgressBar :value="progression">{{ progression }}%</CProgressBar>
+                    <CProgress class="mb-3" height="50">
+                        <CProgressBar :value="progression" color="success" :variant="progression == 100 ? '' : 'striped'"
+                            animated><b style="font-size: large;">{{ progression }}%</b></CProgressBar>
                     </CProgress>
                     <CCardTitle class="text-center"><b>Actions</b></CCardTitle>
+                    <CButton color="primary" variant="outline" @click="showDetails">
+                        Check project settings</CButton>
                     <CButton style="margin: 5px;" color="success" variant="outline" :disabled="progression != 100"
                         @click="getResults">Download
                         results (JSON)</CButton>
-                    <CButton color="info" variant="outline" :disabled="progression != 100" @click="getSHACLReport">Download
+                    <CButton color="info" variant="outline" :disabled="progression != 100" @click="getSHACLReport">
+                        Download
                         SHACL report (Turtle)</CButton>
                 </CCardBody>
             </CCard>
         </CCol>
     </CRow>
+    <!-- Details Popup -->
+    <DetailsPopup :enable="showDetailsPopup" :data="project"></DetailsPopup>
 </template>
 
 <script>
 // https://developers.google.com/chart/interactive/docs/gallery/areachart?hl=fr#overview
 // import { entities } from '../data/results_1.json'
 import { CChart } from '@coreui/vue-chartjs';
-import { CCard, CCardBody, CCardTitle, CRow, CCol, CProgress, CProgressBar, CButton } from '@coreui/vue';
+import { CCard, CCardBody, CCardTitle, CCol, CProgress, CProgressBar, CButton, CRow } from '@coreui/vue';
 import { toRaw } from 'vue';
 import { useCookies } from "vue3-cookies";
+import DetailsPopup from '../projects/popup/DetailsPopup.vue';
 import axios from 'axios';
 import io from "socket.io-client";
 
 export default {
     name: 'VueGlobalGE',
     components: {
-        CChart, CCard, CCardBody, CCardTitle, CRow, CCol, CProgress, CProgressBar, CButton
+        CChart, CCard, CCardBody, CCardTitle, CCol, CProgress, CProgressBar, CButton,
+        CRow, DetailsPopup
     },
     props: {
         results: {
@@ -62,10 +70,12 @@ export default {
             cookies: useCookies(["token", "id"]).cookies,
             // force refresh of component
             refresh: true,
+            showDetailsPopup: false,
             // socket io
             socket: io("http://localhost:9200"),
             // generations
             nGenerations: 0,
+            project: {},
             // current generation
             curGeneration: 1,
             progression: 0,
@@ -106,7 +116,7 @@ export default {
             this.nGenerations = toRaw(this.results.statistics.nGenerations);
             // deduce x-labels
             this.gen_labels = Array.from({ length: this.nGenerations }, (_, idx) => idx + 1);
-            console.log(this.gen_labels);
+            // console.log(this.gen_labels);
             //
             this.computation_time_data = Array(this.nGenerations).fill(0);
             // verify if any results (or all ?) are already defined
@@ -126,7 +136,7 @@ export default {
                 datasets: [
                     {
                         label: 'Computation time',
-                        backgroundColor: 'rgba(222, 0, 0, 0.8)',
+                        backgroundColor: 'rgba(36, 168, 178, 0.8)',
                         // borderColor: 'rgba(220, 220, 220, 1)',
                         // pointBackgroundColor: 'rgba(220, 220, 220, 1)',
                         // pointBorderColor: '#fff',
@@ -154,6 +164,21 @@ export default {
                 },
                 plugins: this.plugins
             }
+            // get project
+            axios.get("http://localhost:9200/api/project", {
+                headers: { "x-access-token": this.cookies.get("token") },
+                params: { projectName: this.results.projectName }
+            }).then(
+                (response) => {
+                    // console.log(response.data)
+                    if (response.status === 200) {
+                        // console.log(response.data)
+                        this.project = response.data[0];
+                    }
+                }
+            ).catch((error) => {
+                console.log(error);
+            });
             // SOCKET IO
             this.socket.on("update-generation", (data) => {
                 // console.log("socket.io updates generations ... with " + JSON.stringify(data));
@@ -162,13 +187,16 @@ export default {
                 //
                 this.curGeneration += 1;
                 //
-                console.log(this.computation_time_chart.datasets[0].data);
+                // console.log(this.computation_time_chart.datasets[0].data);
                 // refresh
                 this.refresh = !this.refresh;
             });
         }
     },
     methods: {
+        showDetails() {
+            this.showDetailsPopup = !this.showDetailsPopup;
+        },
         getResults() {
             // get logs
             axios.get("http://localhost:9200/api/results", {
@@ -220,4 +248,9 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped></style>
+<style scoped>
+.card {
+    height: 100%;
+    width: 100%;
+}
+</style>

@@ -64,11 +64,13 @@ export default {
         this.results.entities.forEach((entity) => {
             if (this.phenotypes.indexOf(entity.phenotype) == -1) {
                 this.phenotypes.push(entity.phenotype);
-                this.entities.push(entity);
+                // this.entities.push(entity);
+            } else {
+                console.log("~doublon: " + entity.phenotype)
             }
         });
         // Header
-        this.headers = ["SHACL Shape (" + this.phenotypes.length + ")", "Reference Cardinality", "#Exceptions", "#Confirmations", "Likelihood", "Fitness Score", "Acceptance"];
+        this.headers = ["SHACL Shape (" + this.entities.length + ")", "Reference Cardinality", "#Exceptions", "#Confirmations", "Likelihood", "Fitness Score", "Acceptance"];
     }
 }
 </script>

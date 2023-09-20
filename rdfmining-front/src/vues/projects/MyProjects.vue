@@ -11,7 +11,7 @@
         <CAccordionItem :item-key="2">
             <CAccordionHeader>I would like to start a new project !</CAccordionHeader>
             <CAccordionBody>
-                <CreateProject @new="successPopup"></CreateProject>
+                <CreateProject @new="successPopup" :projects="projects"></CreateProject>
             </CAccordionBody>
         </CAccordionItem>
     </CAccordion>
