@@ -65,9 +65,9 @@
 
 <script>
 import io from "socket.io-client";
-import axios from "axios";
 import { CTable, CTableHead, CTableBody, CTableFoot, CTableRow, CTableHeaderCell, CTableDataCell, CSpinner, CButton, CImage } from '@coreui/vue';
-import { useCookies } from 'vue3-cookies'
+import { useCookies } from 'vue3-cookies';
+import { get } from "@/tools/api";
 
 export default {
     name: 'TabProjects',
@@ -89,21 +89,12 @@ export default {
         updateStatus(project, status) {
             project.status = status;
         },
-        redirectVisu(p) {
-            axios.get("http://localhost:9200/api/results", {
-                params: { projectName: p.projectName },
-                headers: { "x-access-token": this.cookies.get("token") }
-            }).then(
-                (response) => {
-                    if (response.status === 200) {
-                        // console.log(response.data);
-                        // redirect on visualisation route with the results ID linked to the project
-                        this.$router.push({ name: "VueVisualisation", params: { resultsId: response.data, task: p.task } });
-                    }
-                }
-            ).catch((error) => {
-                console.log(error);
-            });
+        async redirectVisu(p) {
+            const id = await get("http://localhost:9200/api/results", { projectName: p.projectName });
+            if (id) {
+                // redirect on visualisation route with the results ID linked to the project
+                this.$router.push({ name: "VueVisualisation", params: { resultsId: id, task: p.task } });
+            }
         },
         getColor(status) {
             switch (status) {

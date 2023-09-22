@@ -15,7 +15,7 @@
                 <!-- <CCardImage width="10" height="20" orientation="top" src="../assets/fitness.png"></CCardImage> -->
                 <CCardBody>
                     <CCardTitle class="text-center"><b>Progression</b></CCardTitle>
-                    <CProgress class="mb-3">
+                    <CProgress class="mb-3" height="50">
                         <CProgressBar :value="progression" color="success" :variant="progression == 100 ? '' : 'striped'"
                             animated><b style="font-size: large;">{{ progression }}%</b></CProgressBar>
                     </CProgress>
@@ -41,13 +41,13 @@
 import { CChart } from '@coreui/vue-chartjs';
 import { CCard, CCardBody, CCardTitle, CRow, CCol, CProgress, CProgressBar, CButton } from '@coreui/vue';
 import { toRaw } from 'vue';
-import { useCookies } from "vue3-cookies";
-import axios from 'axios';
-import DetailsPopup from '../projects/popup/DetailsPopup.vue';
+import DetailsPopup from '../../projects/popup/DetailsPopup.vue';
 import io from "socket.io-client";
+import { get } from '@/tools/api';
+import { options } from "../settings/assessment";
 
 export default {
-    name: 'VueGlobalEval',
+    name: 'VisAssessment',
     components: {
         CChart, CCard, CCardBody, CCardTitle, CRow, CCol, CProgress, CProgressBar, CButton, DetailsPopup
     },
@@ -64,7 +64,6 @@ export default {
     },
     data() {
         return {
-            cookies: useCookies(["token", "id"]).cookies,
             // force refresh of component
             refresh: true,
             project: {},
@@ -72,42 +71,22 @@ export default {
             // socket io
             socket: io("http://localhost:9200"),
             // entities
-            options: {},
+            options: options,
             nEntities: 0,
             // current generation
             curEntities: 1,
             progression: 0,
             // n_gen labels
-            entities_labels: [],
+            entitiesLabels: [],
             // options plugin
-            plugins: {
-                legend: {
-                    display: true,
-                    labels: {
-                        font: {
-                            size: 16,
-                        }
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        title: function (context) {
-                            return "Phenotype: " + context[0].label;
-                        },
-                        label: function (context) {
-                            // return context.dataset.label + " value: " + context.formattedValue;
-                            return context.formattedValue + " sec.";
-                        },
-                    }
-                }
-            },
             // CoreUI CCharts: Individuals with non-null fitness
-            elapsed_time_data: [],
-            computation_time_chart: {},
+            elapsedTimeData: [],
+            computationTimeChart: {},
         };
     },
     mounted() {
         if (this.task == "Assessment") {
+            this.getProject();
             // get number of entities
             this.nEntities = toRaw(this.results.nEntities);
             if (toRaw(this.results.entities.length) != 0) {
@@ -116,92 +95,57 @@ export default {
                 this.progression = Math.round((this.curEntities / this.nEntities) * 100);
                 //
                 for (let i = 0; i < toRaw(this.results.entities.length); i++) {
-                    this.entities_labels.push(toRaw(this.results.entities[i].phenotype));
-                    this.elapsed_time_data[i] = toRaw(this.results.entities[i].elapsedTime);
+                    this.entitiesLabels.push(toRaw(this.results.entities[i].phenotype));
+                    this.elapsedTimeData[i] = toRaw(this.results.entities[i].elapsedTime);
                 }
             }
-            // console.log(toRaw(this.elapsed_time_data));
+            // console.log(toRaw(this.elapsedTimeData));
             // Individuals with non-null fitness chart
-            this.computation_time_chart = {
-                labels: toRaw(this.entities_labels),
+            this.computationTimeChart = {
+                labels: toRaw(this.entitiesLabels),
                 datasets: [
                     {
                         label: 'Elapsed time',
                         backgroundColor: 'rgba(222, 0, 0, 0.8)',
-                        data: toRaw(this.elapsed_time_data)
+                        data: toRaw(this.elapsedTimeData)
                     }
                 ],
             };
-            this.options = {
-                scales: {
-                    x: {
-                        display: this.nEntities > 20 ? false : true,
-                    }
-                },
-                plugins: this.plugins
-            }
-            // get project
-            axios.get("http://localhost:9200/api/project", {
-                headers: { "x-access-token": this.cookies.get("token") },
-                params: { projectName: this.results.projectName }
-            }).then(
-                (response) => {
-                    // console.log(response.data)
-                    if (response.status === 200) {
-                        console.log(response.data[0]);
-                        this.project = response.data[0];
-                    }
-                }
-            ).catch((error) => {
-                console.log(error);
-            });
             // SOCKET IO
             this.socket.on("update-entities", (data) => {
                 // console.log("socket.io updates generations ... with " + JSON.stringify(data));
                 // update each data arrays
-                this.computation_time_chart.labels.push(data.phenotype);
-                this.computation_time_chart.datasets[0].data.push(data.elapsedTime);
+                this.computationTimeChart.labels.push(data.phenotype);
+                this.computationTimeChart.datasets[0].data.push(data.elapsedTime);
                 //
                 this.curEntities += 1;
                 //
-                // console.log(this.computation_time_chart.datasets[0].data);
+                // console.log(this.computationTimeChart.datasets[0].data);
                 // refresh
                 this.refresh = !this.refresh;
             });
         }
     },
     methods: {
+        async getProject() {
+            // get project
+            const project = await get("http://localhost:9200/api/project", { projectName: this.results.projectName });
+            // console.log(project);
+            this.project = project[0];
+        },
         showDetails() {
             this.showDetailsPopup = !this.showDetailsPopup;
         },
         getChart() {
-            return toRaw(this.computation_time_chart);
+            return toRaw(this.computationTimeChart);
         },
-        getResults() {
-            // get logs
-            axios.get("http://localhost:9200/api/results", {
-                params: { path: this.path, file: "results" },
-                headers: { "x-access-token": this.cookies.get("token") }
-            }).then(
-                (response) => {
-                    this.download(response.data, "results.json");
-                }
-            ).catch((error) => {
-                console.log(error);
-            });
+        async getResults() {
+            const result = await get("http://localhost:9200/api/results", { path: this.path, file: "results" });
+            this.download(result, "results.json");
         },
-        getSHACLReport() {
-            // get logs
-            axios.get("http://localhost:9200/api/results", {
-                params: { path: this.path, file: "shacl" },
-                headers: { "x-access-token": this.cookies.get("token") }
-            }).then(
-                (response) => {
-                    this.download(response.data, "shacl_report.ttl");
-                }
-            ).catch((error) => {
-                console.log(error);
-            });
+        async getSHACLReport() {
+            const result = await get("http://localhost:9200/api/results", { path: this.path, file: "shacl" });
+            this.download(result, "shacl_report.ttl");
         },
         download(data, name) {
             const blob = new Blob([JSON.stringify(data, null, "\t")], { type: "application/octet-stream" });
@@ -232,10 +176,5 @@ export default {
 .card {
     height: 100%;
     width: 100%;
-}
-
-.card-progression {
-    /* height: 50vh; */
-    width: 65vw;
 }
 </style>

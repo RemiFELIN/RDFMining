@@ -42,7 +42,7 @@
 <script>
 // import LoginForm from '@/vues/auth/LoginForm.vue';
 // https://coreui.io/vue/docs/components/modal.html
-import axios from "axios"
+import { get, post } from "@/tools/api";
 import { CButton, CForm, CFormInput, CRow, CModal, CModalHeader, CModalTitle, CModalBody, CModalFooter } from "@coreui/vue";
 
 export default {
@@ -65,46 +65,25 @@ export default {
         }
     },
     methods: {
-        submit(username, password) {
-            axios.post("http://localhost:9200/api/auth", {
-                    params: {
-                        username: username,
-                        password: password
-                    }
-                }).then(
-                    (response) => {
-                        alert(response.data);
-                        if (response.status === 200) this.$emit("close");
-                    }
-                ).catch((error) => {
-                    console.log(error);
-                });
+        async submit(username, password) {
+            const user = await post("http://localhost:9200/api/auth", {}, {
+                username: username,
+                password: password
+            });
+            if (user) {
+                alert(user);
+                this.$emit("close");
+            }
         }
     },
     watch: {
-        username() {
+        async username() {
             if (this.username != '') {
                 // We'll check if this username does not already exist in our DB
-                axios.get("http://localhost:9200/api/user", {
-                    params : { username: this.username }
-                }).then(
-                    (response) => {
-                        // console.log(response.data)
-                        if (response.status === 200) {
-                            this.isValidUsername = response.data;
-                            // if (response.data.length == 0) {
-                            //     this.isValidUsername = true;
-                            // } else {
-                            //     this.isValidUsername = false;
-                            // }
-                        }
-                    }
-                ).catch((error) => {
-                    console.log(error);
-                });
+                const isExists = await get("http://localhost:9200/api/user", { username: this.username });
+                this.isValidUsername = !isExists;
             }
         }
-
     }
 }
 </script>

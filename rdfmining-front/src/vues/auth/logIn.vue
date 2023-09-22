@@ -1,7 +1,7 @@
 <template>
     <CModal :visible="enable" alignment="center" scrollable>
         <CModalHeader>
-            <CModalTitle>AUTHENTIFICATION</CModalTitle>
+            <CModalTitle>Authentification</CModalTitle>
         </CModalHeader>
         <CModalBody>
             <CForm class="row gx-3 gy-2 align-items-center">
@@ -42,7 +42,7 @@
 <script>
 // import LoginForm from '@/vues/auth/LoginForm.vue';
 // https://coreui.io/vue/docs/components/modal.html
-import axios from "axios"
+import { get } from "@/tools/api";
 import { CButton, CForm, CFormInput, CRow, CModal, CModalHeader, CModalTitle, CModalBody, CModalFooter, CAlert } from "@coreui/vue";
 
 export default {
@@ -74,37 +74,20 @@ export default {
             this.$emit('close');
         },
         // Connection service
-        submit(username, password) {
-            // build a request to the API
-            axios.get("http://localhost:9200/api/login", {
-                params: {
-                    username: username,
-                    password: password
-                }
-            }).then(
-                (response) => {
-                    if (response.status === 200) {
-                        console.log(response.data);
-                        // this.user = { username, password };
-                        // this.username = response.data.username;
-                        // emit auth to App
-                        this.$emit("login", response.data);
-                        // update isConnected status
-                        this.isConnected = true;
-                        // this.$emit('close');
-                    } else if (response.status === 401 || response.status === 500) {
-                        this.errorMessage = response.data.message;
-                    }
-                }
-            ).catch((error) => {
-                // console.log(error);
-                this.errorMessage = error;
+        async submit(username, password) {
+            const user = await get("http://localhost:9200/api/login", { 
+                username: username,
+                password: password
             });
-        },
-        // subscription service
-        subscribe() {
-            // TODO
-        },
+            if (user) {
+                // emit auth to App
+                this.$emit("login", user);
+                // update isConnected status
+                this.isConnected = true;
+            } else {
+                this.errorMessage = "This user does not exist...";
+            }
+        }
     }
 }
 </script>

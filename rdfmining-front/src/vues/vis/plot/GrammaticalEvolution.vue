@@ -5,7 +5,7 @@
                 <!-- <CCardImage width="10" height="20" orientation="top" src="../assets/fitness.png"></CCardImage> -->
                 <CCardTitle class="text-center">Generations computation time (in ms.)</CCardTitle>
                 <CCardBody>
-                    <CChart type="bar" :wrapper="true" :data="computation_time_chart" :options="options" :key="refresh"
+                    <CChart type="bar" :wrapper="true" :data="computationTimeChart" :options="options" :key="refresh"
                         :redraw="true">
                     </CChart>
                 </CCardBody>
@@ -43,13 +43,14 @@
 import { CChart } from '@coreui/vue-chartjs';
 import { CCard, CCardBody, CCardTitle, CCol, CProgress, CProgressBar, CButton, CRow } from '@coreui/vue';
 import { toRaw } from 'vue';
-import { useCookies } from "vue3-cookies";
-import DetailsPopup from '../projects/popup/DetailsPopup.vue';
+import { options } from '../settings/GE';
+import { get } from '@/tools/api';
+import DetailsPopup from '../../projects/popup/DetailsPopup.vue';
 import axios from 'axios';
 import io from "socket.io-client";
 
 export default {
-    name: 'VueGlobalGE',
+    name: 'VisGrammaticalEvolution',
     components: {
         CChart, CCard, CCardBody, CCardTitle, CCol, CProgress, CProgressBar, CButton,
         CRow, DetailsPopup
@@ -67,7 +68,6 @@ export default {
     },
     data() {
         return {
-            cookies: useCookies(["token", "id"]).cookies,
             // force refresh of component
             refresh: true,
             showDetailsPopup: false,
@@ -77,48 +77,27 @@ export default {
             nGenerations: 0,
             project: {},
             // current generation
-            curGeneration: 1,
+            curGeneration: 0,
             progression: 0,
             // n_gen labels
-            gen_labels: [],
-            // options plugin
-            plugins: {
-                legend: {
-                    display: true,
-                    labels: {
-                        font: {
-                            size: 16,
-                        }
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        title: function (context) {
-                            return "Generation " + context[0].label;
-                        },
-                        label: function (context) {
-                            // return context.dataset.label + " value: " + context.formattedValue;
-                            return context.formattedValue + " ms.";
-                        },
-                    }
-                }
-            },
+            labels: [],
             // chart options
-            options: {},
+            options: options,
             // CoreUI CCharts: Individuals with non-null fitness
-            computation_time_data: [],
-            computation_time_chart: {},
+            computationTimeData: [],
+            computationTimeChart: {},
         };
     },
     mounted() {
         if (this.task == "Mining") {
+            this.getProject();
             // get number of generations
             this.nGenerations = toRaw(this.results.statistics.nGenerations);
             // deduce x-labels
-            this.gen_labels = Array.from({ length: this.nGenerations }, (_, idx) => idx + 1);
-            // console.log(this.gen_labels);
+            this.labels = Array.from({ length: this.nGenerations }, (_, idx) => idx + 1);
+            // console.log(this.labels);
             //
-            this.computation_time_data = Array(this.nGenerations).fill(0);
+            this.computationTimeData = Array(this.nGenerations).fill(0);
             // verify if any results (or all ?) are already defined
             if (toRaw(this.results.statistics.generations.length) != 0) {
                 //
@@ -127,73 +106,41 @@ export default {
                 //
                 for (let i = 0; i < toRaw(this.results.statistics.generations.length); i++) {
                     // console.log(toRaw(this.results.statistics.generations[i]));
-                    this.computation_time_data[i] = toRaw(this.results.statistics.generations[i].computationTime);
+                    this.computationTimeData[i] = toRaw(this.results.statistics.generations[i].computationTime);
                 }
             }
             // Individuals with non-null fitness chart
-            this.computation_time_chart = {
-                labels: this.gen_labels,
+            this.computationTimeChart = {
+                labels: this.labels,
                 datasets: [
                     {
                         label: 'Computation time',
                         backgroundColor: 'rgba(36, 168, 178, 0.8)',
-                        // borderColor: 'rgba(220, 220, 220, 1)',
-                        // pointBackgroundColor: 'rgba(220, 220, 220, 1)',
-                        // pointBorderColor: '#fff',
-                        data: this.computation_time_data
+                        data: this.computationTimeData
                     }
                 ],
             };
-            this.options = {
-                // maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    },
-                    x: {
-                        beginAtZero: false,
-                        type: 'linear',
-                        title: {
-                            display: true,
-                            text: 'Generation',
-                            font: {
-                                size: 18
-                            }
-                        },
-                    }
-                },
-                plugins: this.plugins
-            }
-            // get project
-            axios.get("http://localhost:9200/api/project", {
-                headers: { "x-access-token": this.cookies.get("token") },
-                params: { projectName: this.results.projectName }
-            }).then(
-                (response) => {
-                    // console.log(response.data)
-                    if (response.status === 200) {
-                        // console.log(response.data)
-                        this.project = response.data[0];
-                    }
-                }
-            ).catch((error) => {
-                console.log(error);
-            });
             // SOCKET IO
             this.socket.on("update-generation", (data) => {
                 // console.log("socket.io updates generations ... with " + JSON.stringify(data));
                 // update each data arrays
-                this.computation_time_chart.datasets[0].data[data.generation - 1] = data.computationTime;
+                this.computationTimeChart.datasets[0].data[data.generation - 1] = data.computationTime;
                 //
                 this.curGeneration += 1;
                 //
-                // console.log(this.computation_time_chart.datasets[0].data);
+                // console.log(this.computationTimeChart.datasets[0].data);
                 // refresh
                 this.refresh = !this.refresh;
             });
         }
     },
     methods: {
+        async getProject() {
+            // get project
+            const project = await get("http://localhost:9200/api/project", { projectName: this.results.projectName });
+            // console.log(project);
+            this.project = project[0];
+        },
         showDetails() {
             this.showDetailsPopup = !this.showDetailsPopup;
         },

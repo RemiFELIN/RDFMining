@@ -5,29 +5,28 @@
             <CAccordionHeader>Dashboard</CAccordionHeader>
             <CAccordionBody>
                 <!-- <VisuEntities v-if="isReady" :results="results"></VisuEntities> -->
-                <VueGlobalGE v-if="isReady && task=='Mining'" :results="results" :path="path" :task="'Mining'"></VueGlobalGE>
+                <VisGrammaticalEvolution v-if="isReady && task=='Mining'" :results="results" :path="path" :task="'Mining'"></VisGrammaticalEvolution>
                 <br/>
                 <VueStatistics v-if="isReady && task=='Mining'" :results="results"></VueStatistics>
                 <!-- Eval -->
-                <VueGlobalEval v-if="isReady && task=='Assessment'" :results="results" :path="path" :task="'Assessment'"></VueGlobalEval>
+                <VisAssessment v-if="isReady && task=='Assessment'" :results="results" :path="path" :task="'Assessment'"></VisAssessment>
                 <br/>
                 <!-- Bubble vis for entities-->
                 <BubbleEntities v-if="isReady" :results="results"></BubbleEntities>
             </CAccordionBody>
         </CAccordionItem>
-        <CAccordionItem :item-key="3">
+        <CAccordionItem :item-key="2">
             <CAccordionHeader>Entities</CAccordionHeader>
             <CAccordionBody>
                 <VisuEntities v-if="isReady" :results="results"></VisuEntities>
             </CAccordionBody>
         </CAccordionItem>
-        <CAccordionItem :item-key="2" v-if="task=='Mining'">
+        <!-- <CAccordionItem :item-key="2" v-if="task=='Mining'">
             <CAccordionHeader>Statistics</CAccordionHeader>
             <CAccordionBody>
-                
             </CAccordionBody>
-        </CAccordionItem>
-        <CAccordionItem :item-key="4">
+        </CAccordionItem> -->
+        <CAccordionItem :item-key="3">
             <CAccordionHeader>Console log</CAccordionHeader>
             <CAccordionBody>
                 <ConsoleLog v-if="isReady" :path="path"></ConsoleLog>
@@ -39,20 +38,20 @@
 <script>
 import { CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody } from '@coreui/vue';
 import { useCookies } from "vue3-cookies";
-import VueStatistics from './Statistics.vue';
+import VueStatistics from './plot/Statistics.vue';
 import VisuEntities from './Entities.vue';
 import ConsoleLog from './ConsoleLog.vue';
-import VueGlobalGE from './GlobalGE.vue';
-import VueGlobalEval from './GlobalEval.vue';
+import VisGrammaticalEvolution from './plot/GrammaticalEvolution.vue';
+import VisAssessment from './plot/Assessment.vue';
 import axios from 'axios';
 import BubbleEntities from './plot/BubbleEntities.vue';
 
 export default {
     name: 'VueVisualisation',
     components: {
-    VueStatistics, VisuEntities, CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody, ConsoleLog, VueGlobalGE, VueGlobalEval,
-    BubbleEntities
-},
+        VueStatistics, VisuEntities, CAccordion, CAccordionItem, CAccordionHeader, 
+        CAccordionBody, ConsoleLog, VisGrammaticalEvolution, VisAssessment, BubbleEntities
+    },
     data() {
         return {
             cookies: useCookies(["token", "id"]).cookies,

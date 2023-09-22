@@ -16,18 +16,20 @@
                             :feedback-invalid="errorMessage" :invalid="selectedProjectName == '' || alreadyExist" />
                     </CCol>
                 </CRow>
-                <!-- Load parameters from existing project-->
-                <!-- <CRow class="mb-3">
+                <!-- 
+            Load parameters from existing project
+        -->
+                <CRow class="mb-3">
                     <CFormLabel class="col-sm-2 col-form-label">Load parameters from existing project</CFormLabel>
                     <CCol sm="10">
                         <CFormSelect v-model="projectToLoad">
                             <option selected disabled>Select an existing project settings </option>
-                            <option v-for="project in projects" :key="project" :value="project">{{ project.projectName
+                            <option v-for="project in projects" :key="project" :value="project.projectName">{{ project.projectName
                             }}
                             </option>
                         </CFormSelect>
                     </CCol>
-                </CRow> -->
+                </CRow>
                 <!-- 
             Mod selection 
         -->
@@ -246,7 +248,7 @@
                         </CCol>
                     </CRow>
                     <!-- Tournament size (depending of the selection mod) -->
-                    <CRow class="mb-3" v-if="selectedSelection == '4'">
+                    <CRow class="mb-3" v-if="selectedSelection == '3'">
                         <CFormLabel class="col-sm-2 col-form-label"><b>Tournament selection rate</b></CFormLabel>
                         <CCol sm="9">
                             <CFormRange :min="0.05" :max="1" :step="0.05" v-model="tournamentSelectionRate" />
@@ -302,10 +304,10 @@
             -->
                     <CRow class="mb-3">
                         <CFormLabel class="col-sm-2 col-form-label"><b>Some Optimizers</b></CFormLabel>
-                        <CCol sm="5">
+                        <!-- <CCol sm="5">
                             <CFormSwitch :label="crowding.description" v-model="enableCrowding" />
-                        </CCol>
-                        <CCol sm="5">
+                        </CCol> -->
+                        <CCol sm="10">
                             <CFormSwitch :label="noveltySearch.description" v-model="enableNoveltySearch"
                                 :disabled="!selectedFeature.includes('ra')" />
                         </CCol>
@@ -403,29 +405,26 @@
 
 
 <script>
-// import { rdfminer } from '../../data/form.json'
-import axios from "axios"
-import { CCard, CCardBody, CCardTitle, CForm, CRow, CFormLabel, CCol, CFormInput, CFormSelect, CFormTextarea, CFormRange, CAlert, CFormSwitch, CButton } from '@coreui/vue'
-import { markRaw } from "vue";
-// import { toRaw } from "vue";
-import { useCookies } from "vue3-cookies";
+import { CCard, CCardBody, CCardTitle, CForm, CRow, CFormLabel, CCol, 
+    CFormInput, CFormSelect, CFormTextarea, CFormRange, CAlert, CFormSwitch, CButton } from '@coreui/vue'
+import { get, post } from "@/tools/api";
 
 export default {
     name: 'CreateProject',
-    // props: {
-    //     projects: {
-    //         type: Object
-    //     },
-    // },
+    props: {
+        projects: {
+            type: Object
+        },
+    },
     components: {
-        CCard, CCardBody, CCardTitle, CForm, CRow, CFormLabel, CCol, CFormInput, CFormSelect, CFormTextarea, CFormRange, CAlert, CFormSwitch, CButton
+        CCard, CCardBody, CCardTitle, CForm, CRow, CFormLabel, CCol, 
+        CFormInput, CFormSelect, CFormTextarea, CFormRange, CAlert, CFormSwitch, CButton
     },
     data() {
         return {
-            cookies: useCookies(["token", "id"]).cookies,
             validated: null,
             //
-            // projectToLoad: null,
+            projectToLoad: "",
             // project name 
             directory: {},
             selectedProjectName: "",
@@ -487,8 +486,8 @@ export default {
             maxWrap: {},
             selectedMaxWrap: -1,
             // crowding
-            crowding: {},
-            enableCrowding: false,
+            // crowding: {},
+            // enableCrowding: false,
             // novelty search
             noveltySearch: {},
             enableNoveltySearch: false,
@@ -525,35 +524,8 @@ export default {
             }
             reader.readAsText(file);
         },
-        // setValuesFromExistingProject() {
-        //     console.log(this.projectToLoad);
-        //     this.selectedFeature = this.projectToLoad.mod;
-        //     this.selectedPrefixes = this.projectToLoad.prefixes;
-        //     this.selectedTargetEndpoint = this.projectToLoad.targetSparqlEndpoint;
-        //     this.task = this.projectToLoad.task;
-        //     this.selectedBNFTemplate = this.projectToLoad.settings.bnf;
-        //     this.selectedPopulationSize = this.projectToLoad.settings.populationSize;
-        //     this.selectedTotalEffort = this.projectToLoad.settings.effort;
-        //     this.selectedSizeChromosome = this.projectToLoad.settings.sizeChromosome;
-        //     this.selectedMaxWrap = this.projectToLoad.settings.maxWrap;
-        //     this.eliteSelectionRate = this.projectToLoad.settings.eliteSelectionRate;
-        //     this.tournamentSelectionRate = this.projectToLoad.settings.tournamentSelectionRate;
-        //     this.selectedSelection = this.projectToLoad.settings.selectionType;
-        //     this.selectionRate = this.projectToLoad.settings.selectionRate;
-        //     this.selectedMutation = this.projectToLoad.settings.mutationType;
-        //     this.mutationRate = this.projectToLoad.settings.mutationRate;
-        //     this.selectedCrossover = this.projectToLoad.settings.crossoverType;
-        //     this.crossoverRate = this.projectToLoad.settings.crossoverRate;
-        //     this.enableNoveltySearch = this.projectToLoad.settings.noveltySearch;
-        //     this.enableCrowding = this.projectToLoad.settings.crowding;
-        //     this.selectedShaclAlpha = this.projectToLoad.settings.shaclAlpha;
-        //     this.selectedShaclProb = this.projectToLoad.settings.shaclProb;
-        //     this.axioms = this.projectToLoad.settings.axioms;
-        //     this.shapes = this.projectToLoad.settings.shapes;
-        // },
         getForm() {
             return {
-                // userId: this.token.userId,
                 projectName: this.selectedProjectName,
                 mod: this.selectedFeature,
                 prefixes: this.selectedPrefixes,
@@ -574,7 +546,7 @@ export default {
                     crossoverType: this.selectedCrossover,
                     crossoverRate: this.crossoverRate,
                     noveltySearch: this.enableNoveltySearch,
-                    crowding: this.enableCrowding,
+                    // crowding: this.enableCrowding,
                     shaclAlpha: this.selectedShaclAlpha,
                     shaclProb: this.selectedShaclProb,
                     axioms: this.axioms,
@@ -582,36 +554,100 @@ export default {
                 }
             }
         },
-        postProject() {
+        async postProject() {
             // set task field
             this.task = this.selectedFeature.includes('ge') ? "Mining" : "Assessment";
-            // console.log(this.cmdline);
-            // build a request to the API
-            axios.post("http://localhost:9200/api/project",
-                [
-                    this.getForm()
-                ],
-                {
-                    headers: {
-                        "x-access-token": this.cookies.get("token")
-                    }
-                }).then(
-                    (response) => {
-                        if (response.status === 200) {
-                            // console.log("OK !" + response);
-                            this.$emit("new", this.getForm().projectName);
-                        }
-                    }
-                ).catch((error) => {
-                    console.log(error);
-                });
+            const data = await post("http://localhost:9200/api/project", {}, this.getForm());
+            // if it has been pushed into the cluster
+            if (data) {
+                this.$emit("new", data.projectName);
+            }
         },
+        async getProject(pN) {
+            return await get("http://localhost:9200/api/project", { projectName: pN });
+        },
+        async setupParams() {
+            const params = (await get("http://localhost:9200/api/params", {}))[0];
+            this.directory = params.projectName;
+            // features
+            this.features.push(params.axiomsMining, params.axiomsAssessment, params.shapesMining, params.shapesAssessment);
+            // prefixes
+            this.prefixes = params.prefixes;
+            this.prefixesSamples = params.prefixes.values;
+            // this.selectedPrefixes = this.getDefaultValue(data.prefixes);
+            // SPARQL endpoint
+            this.targetSparqlEndpoint = params.targetSparqlEndpoint;
+            this.endpoints = params.targetSparqlEndpoint.values;
+            // BNF grammar
+            this.grammar = params.grammar;
+            this.templates = params.grammar.values;
+            // population size 
+            this.populationSize = params.populationSize;
+            this.selectedPopulationSize = this.getDefaultValue(params.populationSize);
+            // max effort
+            this.effort = params.effort;
+            this.selectedTotalEffort = this.getDefaultValue(params.effort);
+            // selection
+            this.selection = params.selection;
+            this.selectionType = params.selection.values;
+            this.selectionRate = this.getDefaultValue(params.pSelection);
+            // crossover
+            this.crossover = params.crossover;
+            this.crossoverType = params.crossover.values;
+            this.crossoverRate = this.getDefaultValue(params.pCrossover);
+            // mutation
+            this.mutation = params.mutation;
+            this.mutationType = params.mutation.values;
+            this.mutationRate = this.getDefaultValue(params.pMutation);
+            // chromosome size
+            this.sizeChromosome = params.sizeChromosome;
+            this.selectedSizeChromosome = this.getDefaultValue(params.sizeChromosome);
+            // max wrapp
+            this.maxWrap = params.maxWrap;
+            this.selectedMaxWrap = this.getDefaultValue(params.maxWrap);
+            // optimizers
+            // this.crowding = params.crowding;
+            // this.enableCrowding = this.getDefaultValue(params.crowding);
+            this.noveltySearch = params.noveltySearch;
+            this.enableNoveltySearch = this.getDefaultValue(params.noveltySearch);
+            // SHACL: alpha and prob
+            this.shaclAlpha = params.shaclAlpha;
+            this.alphaValues = params.shaclAlpha.values;
+            this.selectedShaclAlpha = this.getDefaultValue(params.shaclAlpha);
+            this.shaclProb = params.shaclProb;
+            this.selectedShaclProb = this.getDefaultValue(params.shaclProb);
+            // assessment 
+            this.axiomsFile = params.axiomsAssessment;
+            this.shapesFile = params.shapesAssessment;
+        }
     },
     watch: {
-        // projectToLoad() {
-        //     console.log(this.projectToLoad)
-        //     this.setValuesFromExistingProject();
-        // },
+        async projectToLoad() {
+            const project = (await this.getProject(this.projectToLoad))[0];
+            console.log(project)
+            this.selectedFeature = project.mod;
+            this.selectedPrefixes = project.prefixes;
+            this.selectedTargetEndpoint = project.targetSparqlEndpoint;
+            this.task = project.task;
+            this.selectedBNFTemplate = project.settings.bnf;
+            this.selectedPopulationSize = project.settings.populationSize;
+            this.selectedTotalEffort = project.settings.effort;
+            this.selectedSizeChromosome = project.settings.sizeChromosome;
+            this.selectedMaxWrap = project.settings.maxWrap;
+            this.eliteSelectionRate = project.settings.eliteSelectionRate;
+            this.tournamentSelectionRate = project.settings.tournamentSelectionRate;
+            this.selectedSelection = project.settings.selectionType;
+            this.selectionRate = project.settings.selectionRate;
+            this.selectedMutation = project.settings.mutationType;
+            this.mutationRate = project.settings.mutationRate;
+            this.selectedCrossover = project.settings.crossoverType;
+            this.crossoverRate = project.settings.crossoverRate;
+            this.enableNoveltySearch = project.settings.noveltySearch;
+            this.selectedShaclAlpha = project.settings.shaclAlpha;
+            this.selectedShaclProb = project.settings.shaclProb;
+            this.axioms = project.settings.axioms;
+            this.shapes = project.settings.shapes;
+        },
         selectedFeature() {
             if (this.selectedFeature.includes("-rs")) {
                 // filtering BNF templates with grammars related to SHACL shapes
@@ -632,103 +668,19 @@ export default {
         selectedPopulationSize() {
             this.updateEffort();
         },
-        selectedProjectName() {
-            if (this.selectedProjectName != '') {
-                // checking project name 
-                // already exists ?
-                axios.get("http://localhost:9200/api/project", {
-                    headers: { "x-access-token": this.cookies.get("token") },
-                    params: { projectName: this.selectedProjectName }
-                }).then(
-                    (response) => {
-                        // console.log(response.data)
-                        if (response.status === 200) {
-                            if (response.data.length == 0) {
-                                // Does not exists ! 
-                                this.alreadyExist = false;
-                            } else {
-                                // error from the server
-                                this.alreadyExist = true;
-                                this.errorMessage = "This project name already exists !"
-                            }
-                        }
-                    }
-                ).catch((error) => {
-                    console.log(error);
-                });
+        async selectedProjectName() {
+            if (this.selectedProjectName == '') {
+                this.errorMessage = "Please, choose a name for your project";
+            } else if ((await this.getProject(this.selectedProjectName)).length != 0) {
+                this.alreadyExist = true;
+                this.errorMessage = "This project name already exists !"
             } else {
-                this.errorMessage = "Please, choose a name for your project"
+                this.alreadyExist = false;
             }
-
         }
     },
-    // beforeUpdated() {
-    //     console.log("updated")
-    //     console.log(this.projects)
-    // },
     mounted() {
-        
-        // get params 
-        axios.get("http://localhost:9200/api/params").then(
-            (response) => {
-                const data = response.data[0];
-                // Mapping variables
-                // directory 
-                this.directory = data.projectName;
-                // features
-                this.features.push(data.axiomsMining, data.axiomsAssessment, data.shapesMining, data.shapesAssessment);
-                // prefixes
-                this.prefixes = data.prefixes;
-                this.prefixesSamples = markRaw(data.prefixes.values);
-                // this.selectedPrefixes = this.getDefaultValue(data.prefixes);
-                // SPARQL endpoint
-                this.targetSparqlEndpoint = data.targetSparqlEndpoint;
-                this.endpoints = markRaw(data.targetSparqlEndpoint.values);
-                // BNF grammar
-                this.grammar = data.grammar;
-                this.templates = markRaw(data.grammar.values);
-                // population size 
-                this.populationSize = data.populationSize;
-                this.selectedPopulationSize = this.getDefaultValue(data.populationSize);
-                // max effort
-                this.effort = data.effort;
-                this.selectedTotalEffort = this.getDefaultValue(data.effort);
-                // selection
-                this.selection = data.selection;
-                this.selectionType = markRaw(data.selection.values);
-                this.selectionRate = this.getDefaultValue(data.pSelection);
-                // crossover
-                this.crossover = data.crossover;
-                this.crossoverType = markRaw(data.crossover.values);
-                this.crossoverRate = this.getDefaultValue(data.pCrossover);
-                // mutation
-                this.mutation = data.mutation;
-                this.mutationType = markRaw(data.mutation.values);
-                this.mutationRate = this.getDefaultValue(data.pMutation);
-                // chromosome size
-                this.sizeChromosome = data.sizeChromosome;
-                this.selectedSizeChromosome = this.getDefaultValue(data.sizeChromosome);
-                // max wrapp
-                this.maxWrap = data.maxWrap;
-                this.selectedMaxWrap = this.getDefaultValue(data.maxWrap);
-                // optimizers
-                this.crowding = data.crowding;
-                this.enableCrowding = this.getDefaultValue(data.crowding);
-                this.noveltySearch = data.noveltySearch;
-                this.enableNoveltySearch = this.getDefaultValue(data.noveltySearch);
-                // SHACL: alpha and prob
-                this.shaclAlpha = data.shaclAlpha;
-                this.alphaValues = markRaw(data.shaclAlpha.values);
-                this.selectedShaclAlpha = this.getDefaultValue(data.shaclAlpha);
-                this.shaclProb = data.shaclProb;
-                this.selectedShaclProb = this.getDefaultValue(data.shaclProb);
-                // assessment 
-                this.axiomsFile = data.axiomsAssessment;
-                this.shapesFile = data.shapesAssessment;
-            }
-        ).catch((error) => {
-            console.log(error);
-        });
+        this.setupParams();
     },
 }
 </script>

@@ -103,9 +103,7 @@
                             <CFormLabel class="col-form-label">Elite selection rate</CFormLabel>
                         </CCol>
                         <CCol sm="8">
-                            <CFormInput
-                                :value="(data.settings.eliteSelectionRate * 100) + '%'"
-                                readonly plain-text />
+                            <CFormInput :value="(data.settings.eliteSelectionRate * 100) + '%'" readonly plain-text />
                         </CCol>
                     </CRow>
                     <!-- Selection / Crossover / Mutation-->
@@ -119,7 +117,9 @@
                                 readonly plain-text />
                         </CCol>
                         <CCol sm="4">
-                            <CFormInput :value="'Tournament size (' + (data.settings.tournamentSelectionRate * 100) + '% of the population)'" readonly plain-text />
+                            <CFormInput
+                                :value="'Tournament size (' + (data.settings.tournamentSelectionRate * 100) + '% of the population)'"
+                                readonly plain-text />
                         </CCol>
                     </CRow>
                     <CRow>
@@ -127,7 +127,8 @@
                             <CFormLabel class="col-form-label">Crossover</CFormLabel>
                         </CCol>
                         <CCol sm="8">
-                            <CFormInput :value="crossoverType[parseInt(data.settings.crossoverType) - 1].description + ' (' + (data.settings.crossoverRate * 100) + '%)'"
+                            <CFormInput
+                                :value="crossoverType[parseInt(data.settings.crossoverType) - 1].description + ' (' + (data.settings.crossoverRate * 100) + '%)'"
                                 readonly plain-text />
                         </CCol>
                     </CRow>
@@ -136,8 +137,9 @@
                             <CFormLabel class="col-form-label">Mutation</CFormLabel>
                         </CCol>
                         <CCol sm="8">
-                            <CFormInput :value="mutationType[parseInt(data.settings.mutationType) - 1].description + ' (' + (data.settings.selectionRate * 100) + '%)'" readonly
-                                plain-text />
+                            <CFormInput
+                                :value="mutationType[parseInt(data.settings.mutationType) - 1].description + ' (' + (data.settings.selectionRate * 100) + '%)'"
+                                readonly plain-text />
                         </CCol>
                     </CRow>
                 </CCardBody>
@@ -195,11 +197,11 @@
 <script>
 // import LoginForm from '@/vues/auth/LoginForm.vue';
 // https://coreui.io/vue/docs/components/modal.html
-import axios from "axios"
 import {
     CModal, CModalHeader, CModalTitle, CModalBody, CCol, CRow, CFormLabel, CFormInput,
     CFormTextarea, CCard, CCardBody, CCardTitle
 } from "@coreui/vue";
+import { get } from "@/tools/api";
 
 export default {
     name: 'DetailsPopup',
@@ -222,23 +224,19 @@ export default {
             mutationType: {}
         }
     },
+    methods: {
+        async setupParams() {
+            const params = (await get("http://localhost:9200/api/params", {}))[0];
+            // selection
+            this.selectionType = params.selection.values;
+            // crossover
+            this.crossoverType = params.crossover.values;
+            // mutation
+            this.mutationType = params.mutation.values;
+        }
+    },
     mounted() {
-        console.log(this.data);
-        axios.get("http://localhost:9200/api/params").then(
-            (response) => {
-                const params = response.data[0];
-                console.log(params)
-                // selection
-                this.selectionType = params.selection.values;
-                // crossover
-                this.crossoverType = params.crossover.values;
-                // mutation
-                this.mutationType = params.mutation.values;
-            }
-        ).catch((error) => {
-            console.log(error);
-        });
-
+        this.setupParams();
     }
 }
 </script>

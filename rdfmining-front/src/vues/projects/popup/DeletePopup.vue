@@ -32,9 +32,10 @@
 <script>
 // import LoginForm from '@/vues/auth/LoginForm.vue';
 // https://coreui.io/vue/docs/components/modal.html
-import axios from "axios"
+import { del } from '@/tools/api';
 import { CButton, CRow, CModal, CModalHeader, CModalTitle, CModalBody, CModalFooter, CAlert } from "@coreui/vue";
 import { useCookies } from "vue3-cookies";
+
 
 export default {
     name: 'DeletePopup',
@@ -66,23 +67,13 @@ export default {
             this.isError = false;
             this.code = "";
         },
-        deleteProject() {
-            axios.delete("http://localhost:9200/api/project", {
-                params: { projectName: this.projectName },
-                headers: { "x-access-token": this.cookies.get("token") }
-            }).then(
-                (response) => {
-                    if (response.data == true) {
-                        this.isDeleted = true;
-                        this.$emit("deleted", this.projectName);
-                    } else {
-                        this.isError = true;
-                        this.code = response.status;
-                    }
-                }
-            ).catch((error) => {
-                console.log(error);
-            });
+        async deleteProject() {
+            this.isDeleted = await del("http://localhost:9200/api/project", { projectName: this.projectName });
+            if (this.isDeleted) {
+                this.$emit("deleted", this.projectName);
+            } else {
+                this.isError = true;
+            }
         },
     },
 }

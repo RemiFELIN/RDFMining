@@ -30,25 +30,17 @@
 <script>
 import CreateProject from './CreateProject.vue';
 import TabProjects from './TabProjects.vue';
-import axios from "axios"
 import DeletePopup from './popup/DeletePopup.vue';
 import DetailsPopup from './popup/DetailsPopup.vue';
 import SuccessPopup from './popup/SuccessPopup.vue';
-import { CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody } from '@coreui/vue';
-import { useCookies } from 'vue3-cookies'
+import { CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody} from '@coreui/vue';
+import { get } from '@/tools/api';
 
 export default {
     name: 'MyProjects',
     components: {
-        DeletePopup,
-        DetailsPopup,
-        SuccessPopup,
-        CreateProject,
-        TabProjects,
-        CAccordion,
-        CAccordionItem,
-        CAccordionHeader,
-        CAccordionBody
+        DeletePopup, DetailsPopup, SuccessPopup, CreateProject, TabProjects,
+        CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody
     },
     // props: {
     //     token: {
@@ -57,7 +49,6 @@ export default {
     // },
     data() {
         return {
-            cookies: useCookies(["token", "id"]).cookies,
             projects: [],
             countProject: 0,
             showTabProjects: true,
@@ -78,8 +69,8 @@ export default {
             this.countProject--;
         },
         deletePopup(projectName) {
-            this.showDeletePopup = !this.showDeletePopup;
             this.selectedProject = projectName;
+            this.showDeletePopup = !this.showDeletePopup;
         },
         detailsPopup(project) {
             // console.log(project)
@@ -87,31 +78,17 @@ export default {
             this.showDetailsPopup = !this.showDetailsPopup;
         },
         successPopup(projectName) {
-            this.refresh();
-            this.showSuccessPopup = !this.showSuccessPopup;
+            this.getProjects();
             this.selectedProject = projectName;
+            this.showSuccessPopup = !this.showSuccessPopup;
         },
-        refresh() {
-            this.countProject = 0;
-            this.projects = [];
-            axios.get("http://localhost:9200/api/projects/", { 
-                headers: { "x-access-token": this.cookies.get("token") },
-            }).then(
-                (response) => {
-                    if (response.status === 200) {
-                        response.data.forEach((project) => {
-                            this.projects.push(project);
-                            this.countProject++;
-                        });
-                    }
-                }
-            ).catch((error) => {
-                console.log(error);
-            });
+        async getProjects() {
+            this.projects = await get("http://localhost:9200/api/projects/", {});
+            this.countProject = this.projects.length;
         }
     },
     mounted() {
-        this.refresh();
+        this.getProjects();
     }
 }
 </script>
