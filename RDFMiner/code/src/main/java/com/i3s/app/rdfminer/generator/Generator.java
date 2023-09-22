@@ -40,7 +40,7 @@ public abstract class Generator {
 
     public boolean generateAxioms = false;
 
-    public final String sparql = "[sparql] ";
+    public final String sparql = "SPARQL ";
 
     /**
      * Load a given file path as a grammar to follow for our future rules
@@ -55,7 +55,7 @@ public abstract class Generator {
             grammar = new DLGEGrammar(filePath);
             grammar.setDerivationTreeType(DerivationTree.class.getName());
             // grammar.setDerivationTreeType(ContextualDerivationTree.class.getName());
-            grammar.setMaxDerivationTreeDepth(1000);
+            grammar.setMaxDerivationTreeDepth(Integer.MAX_VALUE);
             // set max wrapp
             grammar.setMaxWraps(RDFMiner.parameters.maxWrapp);
         }

@@ -84,7 +84,7 @@ public class EntityMining {
         logger.info("Searching the best individuals...");
         ArrayList<GEIndividual> elites = EAOperators.getElitesFromPopulation(entitiesI);
         for(GEIndividual elite : elites) {
-            logger.debug("#elite: " + elite.getGenotype().get(0) + " ~ Fit= " + elite.getFitness().getDouble());
+            logger.debug("#elite: " + elite.getGenotype().get(0) + " ~ " + elite.getPhenotype().getStringNoSpace() + " ~ Fit= " + elite.getFitness().getDouble());
         }
         // Selected population (for replacement)
         logger.info("Selection of individuals...");
@@ -159,12 +159,12 @@ public class EntityMining {
     }
 
     public static void setStats(ArrayList<Entity> originalPopulation, ArrayList<Entity> newPopulation, int curGeneration) {
-        for(Entity ent : newPopulation) {
-            logger.debug("newPop(i): " +
-                    Arrays.toString(ent.individual.getGenotype().get(0).toString().replace("Chromosome Contents: ", "").split(","))
-            + " ~ " + ent.individual.getPhenotype().getStringNoSpace());
-
-        }
+//        for(Entity ent : newPopulation) {
+//            logger.debug("newPop(i): " +
+//                    Arrays.toString(ent.individual.getGenotype().get(0).toString().replace("Chromosome Contents: ", "").split(","))
+//            + " ~ " + ent.individual.getPhenotype().getStringNoSpace());
+//
+//        }
         // set stats
         GenerationJSON generation = new GenerationJSON();
         // get computation time in ms

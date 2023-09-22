@@ -139,8 +139,8 @@ public class CmdLineParameters {
 	public double proMutation = 0.01;
 
 	@Option(name = "-se", aliases = {
-			"--type-select" }, usage = "use as this value as the type of parent selection operation (1: Elite Operation; 2: Proportional Roulette Wheel; 3: Scaled Roulette Wheel; 4: Tournament)", metaVar = "TYPE_SELECTION")
-	public int typeSelection = 1;
+			"--type-select" }, usage = "use as this value as the type of parent selection operation (1: Proportional Roulette Wheel; 2: Scaled Roulette Wheel; 3: Tournament)", metaVar = "TYPE_SELECTION")
+	public int typeSelection = 3;
 
 	@Option(name = "-cr", aliases = {
 			"--type-crossover" }, usage = "use as this value as the type of crossover operation (1: Single Point; 2: Two Point; 3: Sub tree; 4: Customized Swap)", metaVar = "TYPE_CROSSOVER")

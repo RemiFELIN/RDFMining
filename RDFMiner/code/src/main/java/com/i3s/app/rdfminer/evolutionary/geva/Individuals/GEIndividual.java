@@ -70,7 +70,7 @@ public class GEIndividual extends AbstractIndividual {
     /**
      * Mark an individual if this one is selected during the selection process
      */
-    public boolean isSelected = false;
+    public boolean isPartOfElite = false;
 
     int[] mutationPoints;
     int[] crossoverPoints;

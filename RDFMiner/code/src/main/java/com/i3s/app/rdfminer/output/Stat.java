@@ -29,6 +29,8 @@ public class Stat {
 	public String selectionMethod;
 	public String crossoverMethod;
 	public String mutationMethod;
+	public double eliteSelectionSize;
+	public int nGenerations;
 	public double selectionSize;
 	public JSONArray generations;
 
@@ -40,7 +42,9 @@ public class Stat {
 		this.timeCap = RDFMiner.parameters.timeCap;
 		this.crossoverProbability = RDFMiner.parameters.proCrossover;
 		this.mutationProbability = RDFMiner.parameters.proMutation;
-		this.selectionSize = (int) (RDFMiner.parameters.eliteSelectionRate * RDFMiner.parameters.populationSize);
+		this.eliteSelectionSize = (int) (RDFMiner.parameters.eliteSelectionRate * RDFMiner.parameters.populationSize);
+		this.selectionSize = (int) (RDFMiner.parameters.selectionRate * RDFMiner.parameters.populationSize);
+		this.nGenerations = (int) Math.ceil((double) RDFMiner.parameters.kBase / this.populationSize);
 		this.selectionMethod = TypeSelection.getLabel(RDFMiner.parameters.typeSelection);
 		this.crossoverMethod = TypeCrossover.getLabel(RDFMiner.parameters.typeCrossover);
 		this.mutationMethod = TypeMutation.getLabel(RDFMiner.parameters.typeMutation);
@@ -57,9 +61,10 @@ public class Stat {
 		json.put("selectionMethod", this.selectionMethod);
 		json.put("mutationMethod", this.mutationMethod);
 		json.put("crossoverMethod", this.crossoverMethod);
+		json.put("eliteSelectionSize", this.eliteSelectionSize);
 		json.put("selectionSize", this.selectionSize);
 		json.put("generations", this.generations);
-		json.put("nGenerations", Math.ceil((double) RDFMiner.parameters.kBase / this.populationSize));
+		json.put("nGenerations", this.nGenerations);
 		json.put("sparqlTimeout", (this.timeOut == 0 ? JSONObject.NULL : this.timeOut));
 		json.put("timeCap", (this.timeCap == 0 ? JSONObject.NULL : this.timeCap));
 		return json;

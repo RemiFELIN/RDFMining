@@ -59,7 +59,7 @@ public class HypothesisTesting {
             // rejected !
             shape.accepted = false;
         }
-        logger.info("Acceptance of " + shape.absoluteIri + ": " + shape.accepted);
+//        logger.info("Acceptance of " + shape.absoluteIri + ": " + shape.accepted);
     }
 
     public String getAcceptanceTriple() {

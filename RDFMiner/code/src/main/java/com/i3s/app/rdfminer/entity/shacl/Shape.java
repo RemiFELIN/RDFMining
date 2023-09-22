@@ -113,7 +113,7 @@ public class Shape extends Entity {
         // update shape: assess it !
         update(endpoint);
         elapsedTime = getProcessCPUTime() - t0;
-        logger.info("elapsed time = " + elapsedTime + " ms.");
+//        logger.info("elapsed time = " + elapsedTime + " ms.");
     }
 
     public Shape(String content, CoreseEndpoint endpoint) throws URISyntaxException, IOException {
@@ -140,7 +140,7 @@ public class Shape extends Entity {
         // update shape: assess it !
         update(endpoint);
         elapsedTime = getProcessCPUTime() - t0;
-        logger.info("elapsed time = " + elapsedTime + " ms.");
+//        logger.info("elapsed time = " + elapsedTime + " ms.");
     }
 
     public ArrayList<String> getProperties() {
@@ -207,7 +207,7 @@ public class Shape extends Entity {
 
     public void fillParamFromReport(ValidationReport report) {
         String iri = this.absoluteIri.replace("<", "").replace(">", "");
-        logger.info("Extracting informations from SHACL validation for " + iri);
+//        logger.info("Extracting informations from SHACL validation for " + iri);
 //        System.out.println(fullUri);
         this.referenceCardinality = report.referenceCardinalityByShape.get(iri).intValue();
         this.numConfirmations = report.numConfirmationsByShape.get(iri).intValue();

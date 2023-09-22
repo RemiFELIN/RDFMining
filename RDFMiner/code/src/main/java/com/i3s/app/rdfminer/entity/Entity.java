@@ -211,6 +211,7 @@ public class Entity {
             json.put("phenotype", this.individual.getPhenotype().getStringNoSpace());
             json.put("fitness", this.individual.getFitness().getDouble());
             json.put("generation", this.individual.getAge());
+            json.put("elite", this.individual.isPartOfElite);
         } else {
             json.put("phenotype", this.entityAsString);
         }

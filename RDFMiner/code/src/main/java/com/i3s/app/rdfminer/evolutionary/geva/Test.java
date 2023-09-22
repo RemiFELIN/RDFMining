@@ -481,7 +481,7 @@ public class Test {
         Generator generator = null;
         try {
             // /user/rfelin/home/projects/RDFMining/IO/OWL2Axiom-subclassof.bnf
-            generator = new RandomShapeGenerator("/user/rfelin/home/projects/RDFMining/IO/users/64e7594dfbb9f24cf6d7c272/refonte/grammar.bnf");
+            generator = new RandomShapeGenerator("/user/rfelin/home/projects/RDFMining/IO/users/64e7594dfbb9f24cf6d7c272/xp/grammar.bnf");
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
@@ -489,8 +489,8 @@ public class Test {
         chrom.setMaxChromosomeLength(1000);
         // 1000427925,1741643077,
         // 1000427925,1620996495,
-        chrom.add(558085338);
-        chrom.add(2136115903);
+        chrom.add(746431190);
+        chrom.add(2061549156);
         // a sh:NodeShape ; sh:targetClass <http://www.wikidata.org/entity/Q837783>  ;
         // sh:property [  sh:path rdf:type ; sh:hasValue <http://www.wikidata.org/entity/Q5380903>  ;  ]
         GEIndividual ind = generator.getIndividualFromChromosome(chrom);

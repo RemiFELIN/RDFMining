@@ -126,7 +126,7 @@ public class EliteOperationSelection extends SelectionOperation {
                 ((GEIndividual) ind).setMapped(((GEIndividual) (fA[cnt].getIndividual())).isMapped());
                 ((GEIndividual) ind).setUsedCodons(((GEIndividual) (fA[cnt].getIndividual())).getUsedCodons());
                 // this individual is selected
-                ((GEIndividual) ind).isSelected = true;
+                ((GEIndividual) ind).isPartOfElite = true;
             }
             this.selectedPopulation.add(ind);
 //            }
@@ -148,6 +148,8 @@ public class EliteOperationSelection extends SelectionOperation {
     Fitness[] rankPopulation(List<GEIndividual> operands) {
         Fitness[] fAt = new Fitness[operands.size()];
         for (int i = 0; i < fAt.length; i++) {
+            // reset elite indicator for each individuals
+            operands.get(i).isPartOfElite = false;
             fAt[i] = operands.get(i).getFitness();
         }
         //Sort descending
