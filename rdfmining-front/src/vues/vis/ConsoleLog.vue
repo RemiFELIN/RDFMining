@@ -34,7 +34,7 @@ export default {
     },
     mounted() {
         // get logs
-        axios.get("http://localhost:9200/api/logs",
+        axios.get("api/logs",
             { params: { path: this.path } }
         ).then(
             (response) => {

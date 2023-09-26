@@ -83,7 +83,7 @@ export default {
             this.showSuccessPopup = !this.showSuccessPopup;
         },
         async getProjects() {
-            this.projects = await get("http://localhost:9200/api/projects/", {});
+            this.projects = await get("api/projects/", {});
             this.countProject = this.projects.length;
         }
     },

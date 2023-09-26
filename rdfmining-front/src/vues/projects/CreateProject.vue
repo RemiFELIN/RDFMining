@@ -557,17 +557,17 @@ export default {
         async postProject() {
             // set task field
             this.task = this.selectedFeature.includes('ge') ? "Mining" : "Assessment";
-            const data = await post("http://localhost:9200/api/project", {}, this.getForm());
+            const data = await post("api/project", {}, this.getForm());
             // if it has been pushed into the cluster
             if (data) {
                 this.$emit("new", data.projectName);
             }
         },
         async getProject(pN) {
-            return await get("http://localhost:9200/api/project", { projectName: pN });
+            return await get("api/project", { projectName: pN });
         },
         async setupParams() {
-            const params = (await get("http://localhost:9200/api/params", {}))[0];
+            const params = (await get("api/params", {}))[0];
             this.directory = params.projectName;
             // features
             this.features.push(params.axiomsMining, params.axiomsAssessment, params.shapesMining, params.shapesAssessment);

@@ -69,7 +69,7 @@ export default {
         // console.log(this.task);
         // console.log(this.id);
         // get results from server
-        axios.get("http://localhost:9200/api/results", { 
+        axios.get("api/results", { 
             params: { resultsId: this.id },
             headers: { "x-access-token": this.cookies.get("token") } 
         }).then(

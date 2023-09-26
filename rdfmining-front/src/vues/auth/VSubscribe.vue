@@ -66,7 +66,7 @@ export default {
     },
     methods: {
         async submit(username, password) {
-            const user = await post("http://localhost:9200/api/auth", {}, {
+            const user = await post("api/auth", {}, {
                 username: username,
                 password: password
             });
@@ -80,7 +80,7 @@ export default {
         async username() {
             if (this.username != '') {
                 // We'll check if this username does not already exist in our DB
-                const isExists = await get("http://localhost:9200/api/user", { username: this.username });
+                const isExists = await get("api/user", { username: this.username });
                 this.isValidUsername = !isExists;
             }
         }

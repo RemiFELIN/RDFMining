@@ -1,9 +1,11 @@
 import axios from "axios";
 import { getToken } from "./token";
+import { base } from "./env";
 
-export async function get(url, params) {
+export async function get(endpoint, params) {
+    console.log(base + endpoint)
     const r = await axios.get(
-        url, 
+        base + endpoint, 
         { headers: { "x-access-token": getToken() },
         params: params
     }).catch((error) => {
@@ -12,8 +14,8 @@ export async function get(url, params) {
     return await process(r);
 }
 
-export async function post(url, params, data) {
-    const r = await axios.post(url, data, 
+export async function post(endpoint, params, data) {
+    const r = await axios.post(base + endpoint, data, 
         { headers: { "x-access-token": getToken() },
         params: params
     }).catch((error) => {
@@ -22,8 +24,8 @@ export async function post(url, params, data) {
     return await process(r);
 }
 
-export async function del(url, params) {
-    const r = await axios.delete(url, {
+export async function del(endpoint, params) {
+    const r = await axios.delete(base + endpoint, {
         headers: { "x-access-token": getToken() },
         params: params
     }).catch((error) => {

@@ -130,7 +130,7 @@ export default {
     methods: {
         async getProject() {
             // get project
-            const project = await get("http://localhost:9200/api/project", { projectName: this.results.projectName });
+            const project = await get("api/project", { projectName: this.results.projectName });
             // console.log(project);
             this.project = project[0];
         },
@@ -141,11 +141,11 @@ export default {
             return toRaw(this.computationTimeChart);
         },
         async getResults() {
-            const result = await get("http://localhost:9200/api/results", { path: this.path, file: "results" });
+            const result = await get("api/results", { path: this.path, file: "results" });
             this.download(result, "results.json");
         },
         async getSHACLReport() {
-            const result = await get("http://localhost:9200/api/results", { path: this.path, file: "shacl" });
+            const result = await get("api/results", { path: this.path, file: "shacl" });
             this.download(result, "shacl_report.ttl");
         },
         download(data, name) {

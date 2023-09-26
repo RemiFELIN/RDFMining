@@ -90,7 +90,7 @@ export default {
             project.status = status;
         },
         async redirectVisu(p) {
-            const id = await get("http://localhost:9200/api/results", { projectName: p.projectName });
+            const id = await get("api/results", { projectName: p.projectName });
             if (id) {
                 // redirect on visualisation route with the results ID linked to the project
                 this.$router.push({ name: "VueVisualisation", params: { resultsId: id, task: p.task } });

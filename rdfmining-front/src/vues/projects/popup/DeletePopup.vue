@@ -68,7 +68,7 @@ export default {
             this.code = "";
         },
         async deleteProject() {
-            this.isDeleted = await del("http://localhost:9200/api/project", { projectName: this.projectName });
+            this.isDeleted = await del("api/project", { projectName: this.projectName });
             if (this.isDeleted) {
                 this.$emit("deleted", this.projectName);
             } else {

@@ -138,7 +138,7 @@ export default {
     methods: {
         async getProject() {
             // get project
-            const project = await get("http://localhost:9200/api/project", { projectName: this.results.projectName });
+            const project = await get("api/project", { projectName: this.results.projectName });
             // console.log(project);
             this.project = project[0];
         },
@@ -147,7 +147,7 @@ export default {
         },
         getResults() {
             // get logs
-            axios.get("http://localhost:9200/api/results", {
+            axios.get("api/results", {
                 params: { path: this.path, file: "results" },
                 headers: { "x-access-token": this.cookies.get("token") }
             }).then(
@@ -160,7 +160,7 @@ export default {
         },
         getSHACLReport() {
             // get logs
-            axios.get("http://localhost:9200/api/results", {
+            axios.get("api/results", {
                 params: { path: this.path, file: "shacl" },
                 headers: { "x-access-token": this.cookies.get("token") }
             }).then(

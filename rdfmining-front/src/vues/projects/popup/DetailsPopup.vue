@@ -226,7 +226,7 @@ export default {
     },
     methods: {
         async setupParams() {
-            const params = (await get("http://localhost:9200/api/params", {}))[0];
+            const params = (await get("api/params", {}))[0];
             // selection
             this.selectionType = params.selection.values;
             // crossover

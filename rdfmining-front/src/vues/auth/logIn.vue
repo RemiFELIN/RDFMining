@@ -75,7 +75,7 @@ export default {
         },
         // Connection service
         async submit(username, password) {
-            const user = await get("http://localhost:9200/api/login", { 
+            const user = await get("api/login", { 
                 username: username,
                 password: password
             });

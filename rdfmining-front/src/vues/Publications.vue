@@ -47,7 +47,7 @@
 <script>
 // import { publications } from '../data/publications.json'
 import _ from 'lodash';
-import axios from 'axios';
+import { get } from '@/tools/api';
 import { CCard, CCardBody, CCardText, CCardTitle, CCardSubtitle, CCardLink } from '@coreui/vue'
 // import { useCookies } from 'vue3-cookies'
 
@@ -68,21 +68,28 @@ export default {
         // const cookies = useCookies(["token", "id"]).cookies;
         // console.log(cookies.get("token"));
         // build a request to the API
-        axios.get("http://localhost:9200/api/publications").then(
-            (response) => {
-                if (response.status === 200) {
-                    // fill papers list
-                    response.data.forEach((paper) => {
-                        this.papers.push(paper);
-                        // console.log(paper)
-                    })
-                }
-            }
-        ).catch((error) => {
-            console.log(error);
-        });
+        // axios.get("api/publications").then(
+        //     (response) => {
+        //         if (response.status === 200) {
+        //             // fill papers list
+        //             response.data.forEach((paper) => {
+        //                 this.papers.push(paper);
+        //                 // console.log(paper)
+        //             })
+        //         }
+        //     }
+        // ).catch((error) => {
+        //     console.log(error);
+        // });
+        this.getPublications();
     },
     methods: {
+        async getPublications() {
+            // get project
+            const publications = await get("api/publications", {});
+            // console.log(project);
+            this.papers = publications;
+        },
         async copyCitation(citation) {
             try {
                 await navigator.clipboard.writeText(citation);
