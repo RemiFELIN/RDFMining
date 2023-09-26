@@ -1,4 +1,4 @@
-var nodeEnv = process.env.NODE_ENV || "dev";
+var nodeEnv = process.env.NODE_ENV || "development";
 console.log("~~~")
 console.log(nodeEnv)
 console.log("~~~")
