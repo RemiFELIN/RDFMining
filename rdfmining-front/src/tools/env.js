@@ -5,7 +5,7 @@ console.log("~~~")
 let endpoint = "";
 
 if (nodeEnv === "production") {
-    endpoint =  "http://134.59.130.136:9200/";
+    endpoint =  "http://172.19.0.6:9200/";
 } else if (nodeEnv === "development") {
     endpoint =  "http://localhost:9200/";
 }
