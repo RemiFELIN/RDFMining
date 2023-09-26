@@ -29,9 +29,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Mapper;
 
-import java.io.File;
-import java.util.Properties;
-
 import com.i3s.app.rdfminer.evolutionary.geva.Exceptions.BadParameterException;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Phenotype;
@@ -40,6 +37,8 @@ import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Enums;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 
+import java.io.File;
+import java.util.Properties;
 import java.util.Stack;
 
 /**
@@ -258,6 +257,7 @@ public class GEGrammar extends ContextFreeGrammar implements ParameterI {
             this.phenotype.clear();
             this.dT = TreeMill.getDerivationTree(this);
             validMap = dT.derive();
+//            System.out.println("after derive: phen= " + this.phenotype.getStringNoSpace());
             setDerivationTree(dT);
             this.usedCodons = dT.getGeneCnt();
             this.usedWraps = dT.getWrapCount();
@@ -291,6 +291,7 @@ public class GEGrammar extends ContextFreeGrammar implements ParameterI {
                 builder.append(']');
             }
         }
+//        System.out.println("generateNameFromTree: " + builder.toString());
         return builder.toString();
     }
 

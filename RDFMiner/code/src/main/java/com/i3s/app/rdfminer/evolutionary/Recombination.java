@@ -23,7 +23,9 @@ public class Recombination {
                                                   ArrayList<GEIndividual> selectedIndividuals) {
         ArrayList<GEIndividual> replacement = new ArrayList<>();
 //        System.out.println(newPopulation.size());
-        int phasis = 0;
+//        int phasis = 0;
+        // reset nPhasis before starting a new one !
+        GrammaticalEvolution.nRecombinaison = 0;
         // while the new population size is not equals to the target
         int target = RDFMiner.parameters.populationSize - elites.size();
         while (replacement.size() != target)  {
@@ -39,16 +41,16 @@ public class Recombination {
                 GEIndividual offspring = generator.getIndividualFromChromosome(individual.getChromosomes());
                 // if this offspring is very new (i.e. not observed into elites and current remplacement population)
                 // add it into replacement population
-                if (!EATools.isInPopulation(offspring, elites) &&
-                        !EATools.isInPopulation(offspring, replacement) &&
+                if (!offspring.isInPopulation(elites) &&
+                        !offspring.isInPopulation(replacement) &&
                         replacement.size() != target) {
                     replacement.add(offspring);
                 }
             }
-            phasis++;
+            GrammaticalEvolution.nRecombinaison++;
         }
         // return new population
-        logger.info(phasis + " phasis has been required to perform replacement !");
+        logger.info(GrammaticalEvolution.nRecombinaison + " phasis has been required to perform replacement !");
         logger.info(GrammaticalEvolution.nCrossover + " crossover(s) and " + GrammaticalEvolution.nMutation + " mutation(s) has been perform !");
         return replacement;
     }

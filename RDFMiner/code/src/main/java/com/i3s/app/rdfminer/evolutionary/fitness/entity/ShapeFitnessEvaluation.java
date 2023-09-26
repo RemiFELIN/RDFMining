@@ -70,11 +70,7 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
             }
             // write validation report in file
             FileWriter fw = new FileWriter(RDFMiner.outputFolder + Global.SHACL_VALIDATION_REPORT_FILENAME);
-//            fw.write(validationReport.prettifyPrint()); // TODO
             fw.close();
-            // run extended shacl
-//            ExtendedShacl.runWithoutEval(validationReport, shapesManager);
-            // return new population
             return newPop;
         } catch (IOException e) {
             logger.error("I/O exceptions while evaluating SHACL Shapes ...");

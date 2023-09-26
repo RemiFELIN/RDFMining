@@ -29,6 +29,7 @@ public class GrammaticalEvolution {
     private static final Logger logger = Logger.getLogger(GrammaticalEvolution.class.getName());
 
 //    public static int nBetterIndividual;
+    public static int nRecombinaison;
     public static int nCrossover;
     public static int nMutation;
 

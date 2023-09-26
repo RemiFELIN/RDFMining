@@ -35,15 +35,11 @@ public class EntityMining {
             throws ExecutionException, InterruptedException {
         // compute execution time (in ns)
         start = System.nanoTime();
-        // set a save of original population
-        // to see how GE will modify it
-        // set size selection
-//        int sizeSelection = (int) (RDFMiner.parameters.sizeSelection * RDFMiner.parameters.populationSize);
-//        int sizeElite = RDFMiner.parameters.sizeElite * RDFMiner.parameters.populationSize < 1 ?
-//                1 : (int) (RDFMiner.parameters.sizeElite * RDFMiner.parameters.populationSize);
+        // checkpoint ?
+        boolean checkpointReached = (long) RDFMiner.parameters.populationSize * curGeneration >=
+                Math.round((double) (RDFMiner.parameters.kBase * (curCheckpoint + 1)) / RDFMiner.parameters.checkpoint);
         // Checkpoint reached, this is a code to evaluate and save axioms in output file
-        if((long) RDFMiner.parameters.populationSize * curGeneration >=
-                Math.round((double) (RDFMiner.parameters.kBase * (curCheckpoint + 1)) / RDFMiner.parameters.checkpoint)) {
+        if(checkpointReached) {
             ArrayList<Entity> originalPopulation = new ArrayList<>(entities);
             if(RDFMiner.parameters.checkpoint != 1 && curCheckpoint != RDFMiner.parameters.checkpoint - 1) {
                 // INTERMEDIATE step (i.e. checkpoint)
@@ -166,10 +162,9 @@ public class EntityMining {
 //
 //        }
         // set stats
-        GenerationJSON generation = new GenerationJSON();
         // get computation time in ms
         long duration = (System.nanoTime() - start) / 1000000;
-        generation.setGenerationJSON(originalPopulation, newPopulation, curGeneration, duration);
+        GenerationJSON generation = new GenerationJSON(originalPopulation, newPopulation, curGeneration, duration);
         // Log usefull stats concerning the algorithm evolution
         logger.info("Computation time: " + generation.computationTime + " ms.");
         logger.info("Average fitness: " + generation.averageFitness);

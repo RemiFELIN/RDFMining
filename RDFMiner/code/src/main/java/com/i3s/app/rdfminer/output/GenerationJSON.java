@@ -3,6 +3,7 @@ package com.i3s.app.rdfminer.output;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.evolutionary.tools.EATools;
+import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
 import com.i3s.app.rdfminer.statistics.Statistics;
 import org.json.JSONObject;
 
@@ -25,6 +26,9 @@ public class GenerationJSON {
 	public final static String NUM_INDIVIDUALS_WITH_NON_NULL_FITNESS = "numIndividualsWithNonNullFitness";
 	public final static String AVERAGE_SUM_DISTANCE = "averageSumDistance";
 	public final static String COMPUTATION_TIME = "computationTime";
+	public final static String NUM_RECOMBINAISON = "numRecombinaison";
+	public final static String NUM_CROSSOVER = "numCrossover";
+	public final static String NUM_MUTATION = "numMutation";
 
 	public int generation;
 	public double populationDevelopmentRate;
@@ -33,8 +37,11 @@ public class GenerationJSON {
 	public long numIndividualsWithNonNullFitness;
 	public double averageSumDistance;
 	public long computationTime;
+	public int numRecombinaison;
+	public int numCrossover;
+	public int numMutation;
 
-	public void setGenerationJSON(ArrayList<Entity> originalPopulation, ArrayList<Entity> newPopulation, int curGeneration, long computationTime) {
+	public GenerationJSON(ArrayList<Entity> originalPopulation, ArrayList<Entity> newPopulation, int curGeneration, long computationTime) {
 //		Statistics stat = new Statistics();
 		this.generation = curGeneration;
 		this.computationTime = computationTime;
@@ -42,6 +49,9 @@ public class GenerationJSON {
 		this.diversityCoefficient = (double) EATools.getDistinctGenotypesPopulation(newPopulation).size() / newPopulation.size();
 		this.averageFitness = Statistics.computeAverageFitness(newPopulation);
 		this.numIndividualsWithNonNullFitness = Statistics.getEntitiesWithNonNullFitness(newPopulation);
+		this.numRecombinaison = GrammaticalEvolution.nRecombinaison;
+		this.numCrossover = GrammaticalEvolution.nCrossover;
+		this.numMutation = GrammaticalEvolution.nMutation;
 		if(RDFMiner.parameters.useNoveltySearch) {
 			this.averageSumDistance = Statistics.getAverageSumDistance(newPopulation);
 		}
@@ -55,6 +65,9 @@ public class GenerationJSON {
 		json.put(DIVERSITY_COEFFICIENT, this.diversityCoefficient);
 		json.put(AVERAGE_FITNESS, this.averageFitness);
 		json.put(NUM_INDIVIDUALS_WITH_NON_NULL_FITNESS, this.numIndividualsWithNonNullFitness);
+		json.put(NUM_RECOMBINAISON, this.numRecombinaison);
+		json.put(NUM_CROSSOVER, this.numCrossover);
+		json.put(NUM_MUTATION, this.numMutation);
 		json.put(AVERAGE_SUM_DISTANCE,
 				(RDFMiner.parameters.useNoveltySearch ? this.averageSumDistance : JSONObject.NULL));
 		return json;

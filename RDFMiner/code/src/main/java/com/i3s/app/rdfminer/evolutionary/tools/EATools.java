@@ -136,15 +136,6 @@ public class EATools {
 		return Objects.equals(parent.getGenotype().get(0).toString(), offspring.getGenotype().get(0).toString());
 	}
 
-	public static boolean isInPopulation(GEIndividual individual, ArrayList<GEIndividual> population) {
-		for (GEIndividual i : population) {
-			if (Objects.equals(individual.getGenotype().toString(), i.getGenotype().toString())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 
 	public static ArrayList<GEIndividual> getCoupleInPopulation(ArrayList<GEIndividual> population, Generator generator) {
 		Random rand = new Random();

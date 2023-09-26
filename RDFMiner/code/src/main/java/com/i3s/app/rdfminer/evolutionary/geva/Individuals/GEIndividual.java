@@ -43,6 +43,7 @@ import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Mapper;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -327,6 +328,20 @@ public class GEIndividual extends AbstractIndividual {
             phenotypes.add(matcher.group(1));
         }
         return new ArrayList<>(phenotypes);
+    }
+
+    public boolean isInPopulation(ArrayList<GEIndividual> population) {
+        for (GEIndividual i : population) {
+            // check if individual is not already observed into population
+            // it implies to check both of genotype and phenotype characters as different genotype can result
+            // to the same phenotype
+            if (Objects.equals(this.getGenotype().toString(), i.getGenotype().toString()) &&
+                    Objects.equals(this.getPhenotype().getStringNoSpace(), i.getPhenotype().getStringNoSpace())
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

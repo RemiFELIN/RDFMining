@@ -132,6 +132,7 @@ public class EliteOperationSelection extends SelectionOperation {
 //            }
             cnt++;
         }
+        //
         //System.out.println("E:"+this.selectedPopulation);
     }
 
