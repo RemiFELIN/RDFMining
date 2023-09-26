@@ -17,7 +17,8 @@ import { GChart } from 'vue-google-charts'
 import { CCard, CCardBody, CCardTitle, CSpinner } from '@coreui/vue';
 import { toRaw } from 'vue';
 import { bubbleOptions, headers } from '../settings/bubble';
-import io from "socket.io-client";
+// import io from "socket.io-client";
+import { socket } from '@/tools/socket';
 
 export default {
     name: 'BubbleEntities',
@@ -34,7 +35,7 @@ export default {
             // force refresh of component
             refresh: true,
             // socket io
-            socket: io("http://localhost:9200"),
+            socket: socket,
             // CoreUI CCharts: Bubble chart
             // bubble_chart: {},
             // ELAPSED TIME / REFERENCE CARDINALITY (EXCEPTIONS ?)

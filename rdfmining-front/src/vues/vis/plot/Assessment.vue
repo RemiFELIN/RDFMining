@@ -42,9 +42,10 @@ import { CChart } from '@coreui/vue-chartjs';
 import { CCard, CCardBody, CCardTitle, CRow, CCol, CProgress, CProgressBar, CButton } from '@coreui/vue';
 import { toRaw } from 'vue';
 import DetailsPopup from '../../projects/popup/DetailsPopup.vue';
-import io from "socket.io-client";
+// import io from "socket.io-client";
 import { get } from '@/tools/api';
 import { options } from "../settings/assessment";
+import { socket } from '@/tools/socket';
 
 export default {
     name: 'VisAssessment',
@@ -69,7 +70,7 @@ export default {
             project: {},
             showDetailsPopup: false,
             // socket io
-            socket: io("http://localhost:9200"),
+            socket: socket,
             // entities
             options: options,
             nEntities: 0,

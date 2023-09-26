@@ -42,7 +42,8 @@
 import { CChart } from '@coreui/vue-chartjs'
 import { CCard, CCardBody, CCardTitle, CRow, CCol } from '@coreui/vue';
 import { toRaw } from 'vue';
-import io from "socket.io-client";
+// import io from "socket.io-client";
+import { socket } from '@/tools/socket';
 
 export default {
     name: 'VueStatistics',
@@ -59,7 +60,7 @@ export default {
             // force refresh of component
             refresh: true,
             // socket io
-            socket: io("http://localhost:9200"),
+            socket: socket,
             // generations
             nGenerations: 0,
             // n_gen labels

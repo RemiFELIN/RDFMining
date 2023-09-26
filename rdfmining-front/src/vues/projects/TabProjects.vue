@@ -64,10 +64,10 @@
 
 
 <script>
-import io from "socket.io-client";
 import { CTable, CTableHead, CTableBody, CTableFoot, CTableRow, CTableHeaderCell, CTableDataCell, CSpinner, CButton, CImage } from '@coreui/vue';
 import { useCookies } from 'vue3-cookies';
 import { get } from "@/tools/api";
+import { socket } from "@/tools/socket";
 
 export default {
     name: 'TabProjects',
@@ -126,7 +126,7 @@ export default {
     data() {
         return {
             cookies: useCookies(["token", "id"]).cookies,
-            socket: io("http://localhost:9200"),
+            socket: socket,
             status: {
                 0: { text: "Pending...", color: "red" },
                 1: { text: "In progress", color: "orange" },

@@ -47,7 +47,8 @@ import { options } from '../settings/GE';
 import { get } from '@/tools/api';
 import DetailsPopup from '../../projects/popup/DetailsPopup.vue';
 import axios from 'axios';
-import io from "socket.io-client";
+// import io from "socket.io-client";
+import { socket } from '@/tools/socket';
 
 export default {
     name: 'VisGrammaticalEvolution',
@@ -72,7 +73,7 @@ export default {
             refresh: true,
             showDetailsPopup: false,
             // socket io
-            socket: io("http://localhost:9200"),
+            socket: socket,
             // generations
             nGenerations: 0,
             project: {},
