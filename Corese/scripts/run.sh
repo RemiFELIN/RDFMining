@@ -39,7 +39,7 @@ touch $PROFILE
 echo "# Content available in the default dataset at /sparql" > $PROFILE
 echo "st:user a st:Server; st:content st:loadcontent ." >> $PROFILE
 echo "# List endpoints allowed in federated queries + where STTL is allowed to get html templates" >> $PROFILE
-echo -n "st:access st:namespace <http://localhost:9200/sparql> , <http://134.59.130.136:8890/sparql> , <http://172.19.0.4:9100/sparql>" >> $PROFILE
+echo -n "st:access st:namespace <http://localhost:9200/sparql> , <http://134.59.130.136:8890/sparql> , <http://corese:9100/sparql>" >> $PROFILE
 if [ -f "$SPARQL_ENDPOINTS" ]; then 
     echo "SPARQL Endpoint provided ! set SPARQL Endpoint !" >> $LOG
     # read file in input

@@ -133,7 +133,7 @@ rdfmining_virtuoso_1   /bin/bash /virtuoso/script ...   Up      1111/tcp, 8890/t
 
 > **WARNING**   by default, RDFMiner uses this endpoint as default value of **-target** parameter when it's not provide by user.
 
-- 1% of full instance of *DBPedia 2015.04* (english version), which is available from the following endpoint: http://172.19.0.2:9000/sparql
+- 1% of full instance of *DBPedia 2015.04* (english version), which is available from the following endpoint: http://virtuoso:9000/sparql
 
 > **WARNING**   by default, RDFMiner uses the value of **-target** as default value of **-train** parameter when it's not provide by user. It's not optimal in the evolutionary discovery context because you will consider all the instances for each OWL Axioms or SHACL Shapes assessment (if the dataset of the **-target** value contains a very large set of triples).
 
@@ -149,7 +149,7 @@ Here are some practical examples depending of the choosen context:
 
 > **INFO** BNF Grammar file of complex SubClassOf axioms: *OWL2Axiom-complex-subclassof.bnf*
 
-> **EXAMPLE** docker-compose exec -T rdfminer ./rdfminer/scripts/run.sh -ge -ra -l -train "http://172.19.0.2:9000/sparql" -g /rdfminer/io/OWL2Axiom-complex-subclassof.bnf -dir test_complex_subclassof/ -ps 20 -kb 100 -cr 1 -pc 0.7 -pm 0.01 -div 1 -mxw 1 -se 2 -t 500
+> **EXAMPLE** docker-compose exec -T rdfminer ./rdfminer/scripts/run.sh -ge -ra -l -train "http://virtuoso:9000/sparql" -g /rdfminer/io/OWL2Axiom-complex-subclassof.bnf -dir test_complex_subclassof/ -ps 20 -kb 100 -cr 1 -pc 0.7 -pm 0.01 -div 1 -mxw 1 -se 2 -t 500
 
 > **INFO** The **-l** provides a efficient way to assess SubClassOf axioms, based on SPARQL Queries optimisation.
 
@@ -159,7 +159,7 @@ Here are some practical examples depending of the choosen context:
 
 > **INFO** BNF Grammar file of complex DisjointClasses axioms: *OWL2Axiom-complex-disjoint.bnf*
 
-> **EXAMPLE** docker-compose exec -T rdfminer ./rdfminer/scripts/run.sh -ge -ra -l -train "http://172.19.0.2:9000/sparql" -g /rdfminer/io/OWL2Axiom-complex-subclassof.bnf -dir test_complex_subclassof/ -ps 50 -kb 100 -cr 1 -pc 0.7 -pm 0.01 -div 1 -mxw 1 -se 2
+> **EXAMPLE** docker-compose exec -T rdfminer ./rdfminer/scripts/run.sh -ge -ra -l -train "http://virtuoso:9000/sparql" -g /rdfminer/io/OWL2Axiom-complex-subclassof.bnf -dir test_complex_subclassof/ -ps 50 -kb 100 -cr 1 -pc 0.7 -pm 0.01 -div 1 -mxw 1 -se 2
 
 ### OWL Axioms evaluation
 

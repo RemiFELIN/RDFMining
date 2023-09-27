@@ -53,7 +53,7 @@
                 "description": "DBPedia 2015.04 [10%] (Virtuoso)"
             },
             {
-                "value": "http://172.19.0.4:9100/sparql",
+                "value": "http://corese:9100/sparql",
                 "description": "Local server"
             },
             {
@@ -71,7 +71,7 @@
                 "description": "DBPedia 2015.04 (Virtuoso)"
             },
             {
-                "value": "http://172.19.0.4:9100/sparql",
+                "value": "http://corese:9100/sparql",
                 "description": "Local server"
             },
             {

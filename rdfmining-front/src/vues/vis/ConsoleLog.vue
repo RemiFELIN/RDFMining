@@ -14,8 +14,8 @@
 <script>
 // import LoginForm from '@/vues/auth/LoginForm.vue';
 // https://coreui.io/vue/docs/components/modal.html
-import axios from "axios"
 import { CRow, CCol, CFormTextarea, CFormLabel } from "@coreui/vue";
+import { get } from "@/tools/api";
 
 export default {
     name: 'ConsoleLog',
@@ -34,18 +34,12 @@ export default {
     },
     mounted() {
         // get logs
-        axios.get("api/logs",
-            { params: { path: this.path } }
-        ).then(
-            (response) => {
-                this.logsContent = response.data;
-            }
-        ).catch((error) => {
-            console.log(error);
-        });
+        this.getLogs();
     },
     methods: {
-
+        async getLogs() {
+            this.logsContent = await get("api/logs", { path: this.path });
+        }
     },
 }
 </script>

@@ -3,9 +3,9 @@ import { getToken } from "./token";
 import { base } from "./env";
 
 export async function get(endpoint, params) {
-    console.log(base + endpoint)
+    console.log(base + "/" + endpoint)
     const r = await axios.get(
-        base + endpoint, 
+        base + "/" + endpoint, 
         { headers: { "x-access-token": getToken() },
         params: params
     }).catch((error) => {
@@ -15,7 +15,7 @@ export async function get(endpoint, params) {
 }
 
 export async function post(endpoint, params, data) {
-    const r = await axios.post(base + endpoint, data, 
+    const r = await axios.post(base + "/" + endpoint, data, 
         { headers: { "x-access-token": getToken() },
         params: params
     }).catch((error) => {
@@ -25,7 +25,7 @@ export async function post(endpoint, params, data) {
 }
 
 export async function del(endpoint, params) {
-    const r = await axios.delete(base + endpoint, {
+    const r = await axios.delete(base + "/" + endpoint, {
         headers: { "x-access-token": getToken() },
         params: params
     }).catch((error) => {

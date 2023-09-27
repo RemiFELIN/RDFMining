@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Automatically generate a YML file to build the whole architecture using docker-compose command
-# It will scan the workspace absolute path of the current machine 
+# It will scan the workspace absolute path of the current machine
 # avoid any modification of it by users
 
 # Define the YML file to generate IF IT DOES NOT EXISTS
@@ -14,12 +14,12 @@ function addLineToYML() {
             echo -n ' ' >> $YML_FILE
         done
         echo -e $2 >> $YML_FILE
-    else 
+    else
         echo -e $1 >> $YML_FILE
     fi
 }
 
-if [ ! -f "$(pwd)/../$YML_FILE" ]; then 
+if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [generate_yml.sh] INFO - Generate docker-compose.yml to build RDFMining ..."
     # get the absolute path of the workspace
     cd ..
@@ -36,9 +36,9 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     VIRTUOSO_SERVER_PORT=9000
     CORESE_SERVER_PORT=9100
     RDFMINER_FRONT_PORT=8080
-    # 
+    #
     #   EDIT docker-compose.yml
-    # 
+    #
     addLineToYML "version: '3.8'"
     addLineToYML "services:"
     #
@@ -49,6 +49,7 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     addLineToYML 3 "   rdfminer:"
     addLineToYML 6 "       restart: always"
     addLineToYML 6 "       image: rdfminer:"$RDFMINER_VERSION
+    addLineToYML 6 "       hostname: rdfminer"
     addLineToYML 6 "       build:"
     addLineToYML 9 "          context: ./RDFMiner/."
     addLineToYML 6 "       depends_on:"
@@ -62,9 +63,9 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     # addLineToYML 9 "          - type: bind"
     # addLineToYML 11 "            source: "$WORKSPACE_ABSOLUTE_PATH"RDFMiner/caches"
     # addLineToYML 11 "            target: /rdfminer/caches"
-    addLineToYML 6 "       networks:"
-    addLineToYML 9 "          rdfmining_network:"
-    addLineToYML 12 "               ipv4_address: 172.19.0.3"
+    # addLineToYML 6 "       networks:"
+    # addLineToYML 9 "          rdfmining_network:"
+    # addLineToYML 12 "               ipv4_address: 172.19.0.3"
     #
     #   Virtuoso service
     #
@@ -73,6 +74,7 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     addLineToYML 3 "   virtuoso:"
     addLineToYML 6 "       restart: always"
     addLineToYML 6 "       image: virtuoso:"$VIRTUOSO_VERSION
+    addLineToYML 6 "       hostname: virtuoso"
     addLineToYML 6 "       build:"
     addLineToYML 9 "          context: ./Virtuoso/."
     addLineToYML 6 "       ports:"
@@ -81,9 +83,9 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     addLineToYML 9 "          - type: bind"
     addLineToYML 11 "            source: "$WORKSPACE_ABSOLUTE_PATH"Virtuoso/data"
     addLineToYML 11 "            target: /data"
-    addLineToYML 6 "       networks:"
-    addLineToYML 9 "          rdfmining_network:"
-    addLineToYML 12 "               ipv4_address: 172.19.0.2"
+    # addLineToYML 6 "       networks:"
+    # addLineToYML 9 "          rdfmining_network:"
+    # addLineToYML 12 "               ipv4_address: 172.19.0.2"
     #
     #   Corese service
     #
@@ -93,7 +95,8 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     addLineToYML 3 "   corese:"
     addLineToYML 6 "       restart: always"
     addLineToYML 6 "       image: corese:"$CORESE_VERSION
-    addLineToYML 6 "       build:" 
+    addLineToYML 6 "       hostname: corese"
+    addLineToYML 6 "       build:"
     addLineToYML 9 "          context: ./Corese/."
     addLineToYML 6 "       ports:"
     addLineToYML 9 "          - '"$CORESE_SERVER_PORT":"$CORESE_SERVER_PORT"'"
@@ -107,10 +110,10 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     addLineToYML 9 "          - type: bind"
     addLineToYML 11 "            source: "$WORKSPACE_ABSOLUTE_PATH"Corese/config"
     addLineToYML 11 "            target: /usr/local/corese/config"
-    addLineToYML 6 "       networks:"
-    addLineToYML 9 "          rdfmining_network:"
-    addLineToYML 12 "               ipv4_address: 172.19.0.4"
-    # 
+    # addLineToYML 6 "       networks:"
+    # addLineToYML 9 "          rdfmining_network:"
+    # addLineToYML 12 "               ipv4_address: corese"
+    #
     #   RDFMiner Server v1.0
     # https://nodejs.org/fr/docs/guides/nodejs-docker-webapp
     #
@@ -119,8 +122,11 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     addLineToYML 3 "   front:"
     addLineToYML 6 "       restart: always"
     addLineToYML 6 "       image: front:"$RDFMINER_FRONT_VERSION
-    addLineToYML 6 "       build:" 
+    addLineToYML 6 "       hostname: front"
+    addLineToYML 6 "       build:"
     addLineToYML 9 "          context: ./rdfmining-front/."
+    addLineToYML 6 "       ports:"
+    addLineToYML 9 "          - '"$RDFMINER_FRONT_PORT":"$RDFMINER_FRONT_PORT"'"
     addLineToYML 6 "       volumes:"
     addLineToYML 9 "          - type: bind"
     addLineToYML 11 "            source: "$WORKSPACE_ABSOLUTE_PATH"rdfmining-front/node_modules"
@@ -128,20 +134,18 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     # addLineToYML 9 "          - type: bind"
     # addLineToYML 11 "            source: "$WORKSPACE_ABSOLUTE_PATH"rdfmining-server/logs"
     # addLineToYML 11 "            target: /server/logs"
-    addLineToYML 6 "       ports:"
-    addLineToYML 9 "          - '"$RDFMINER_FRONT_PORT":"$RDFMINER_FRONT_PORT"'"
-    addLineToYML 6 "       networks:"
-    addLineToYML 9 "          rdfmining_network:"
-    addLineToYML 12 "               ipv4_address: 172.19.0.5"
+    # addLineToYML 6 "       networks:"
+    # addLineToYML 9 "          rdfmining_network:"
+    # addLineToYML 12 "               ipv4_address: 172.19.0.5"
     #
     #   Define networks architecture
-    # 
-    addLineToYML "networks:"
-    addLineToYML 3 "   rdfmining_network:"
-    addLineToYML 6 "       ipam:"
-    addLineToYML 9 "          config:"
-    addLineToYML 12 "               - subnet: 172.19.0.0/24"
-
+    #
+    # addLineToYML "networks:"
+    # addLineToYML 3 "   rdfmining_network:"
+    # addLineToYML 6 "       ipam:"
+    # addLineToYML 9 "          config:"
+    # addLineToYML 12 "               - subnet: 172.19.0.0/24"
+    
     # move file into workspace folder
     mv $YML_FILE $WORKSPACE_ABSOLUTE_PATH
     # Finish
