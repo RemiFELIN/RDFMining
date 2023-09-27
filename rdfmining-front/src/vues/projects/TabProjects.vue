@@ -67,7 +67,7 @@
 import { CTable, CTableHead, CTableBody, CTableFoot, CTableRow, CTableHeaderCell, CTableDataCell, CSpinner, CButton, CImage } from '@coreui/vue';
 import { useCookies } from 'vue3-cookies';
 import { get } from "@/tools/api";
-import { socket } from "@/tools/socket";
+import { socket } from "@/tools/env";
 
 export default {
     name: 'TabProjects',

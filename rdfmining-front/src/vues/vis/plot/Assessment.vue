@@ -45,7 +45,7 @@ import DetailsPopup from '../../projects/popup/DetailsPopup.vue';
 // import io from "socket.io-client";
 import { get } from '@/tools/api';
 import { options } from "../settings/assessment";
-import { socket } from '@/tools/socket';
+import { socket } from '@/tools/env';
 
 export default {
     name: 'VisAssessment',

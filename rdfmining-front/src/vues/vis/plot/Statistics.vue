@@ -43,7 +43,7 @@ import { CChart } from '@coreui/vue-chartjs'
 import { CCard, CCardBody, CCardTitle, CRow, CCol } from '@coreui/vue';
 import { toRaw } from 'vue';
 // import io from "socket.io-client";
-import { socket } from '@/tools/socket';
+import { socket } from '@/tools/env';
 
 export default {
     name: 'VueStatistics',

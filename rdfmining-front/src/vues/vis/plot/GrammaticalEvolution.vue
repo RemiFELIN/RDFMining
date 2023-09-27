@@ -48,7 +48,7 @@ import { get } from '@/tools/api';
 import DetailsPopup from '../../projects/popup/DetailsPopup.vue';
 import axios from 'axios';
 // import io from "socket.io-client";
-import { socket } from '@/tools/socket';
+import { socket } from '@/tools/env';
 
 export default {
     name: 'VisGrammaticalEvolution',

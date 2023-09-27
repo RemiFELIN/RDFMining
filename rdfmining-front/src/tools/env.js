@@ -1,9 +1,11 @@
+import io from "socket.io-client";
+
 var nodeEnv = process.env.NODE_ENV || "development";
 console.log("~~~")
 console.log(nodeEnv)
 console.log("~~~")
-let endpoint = "";
 
+let endpoint = "";
 if (nodeEnv === "production") {
     endpoint =  "http://172.19.0.6:9200/";
 } else if (nodeEnv === "development") {
@@ -11,3 +13,4 @@ if (nodeEnv === "production") {
 }
 
 export const base = endpoint;
+export const socket = io(endpoint);

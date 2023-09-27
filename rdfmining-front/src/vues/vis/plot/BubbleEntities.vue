@@ -18,7 +18,7 @@ import { CCard, CCardBody, CCardTitle, CSpinner } from '@coreui/vue';
 import { toRaw } from 'vue';
 import { bubbleOptions, headers } from '../settings/bubble';
 // import io from "socket.io-client";
-import { socket } from '@/tools/socket';
+import { socket } from '@/tools/env';
 
 export default {
     name: 'BubbleEntities',
