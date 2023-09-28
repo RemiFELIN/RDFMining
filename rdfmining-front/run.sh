@@ -1,2 +1,2 @@
 #!/bin/bash
-cd app/ && npm run serve
+cd app/ && npm run serve:prod
