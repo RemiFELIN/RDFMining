@@ -14,4 +14,4 @@ if (nodeEnv === "production") {
 }
 
 export const base = endpoint;
-export const socket = io(base);
+export const socket = nodeEnv === "production" ? io(undefined) : io(base);
