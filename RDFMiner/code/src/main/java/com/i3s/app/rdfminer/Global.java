@@ -61,7 +61,7 @@ public class Global {
     /**
      * RDFMiner Server IP Address
      */
-    public static final String RDFMINER_SERVER_IP = "http://localhost:9200/";
+    public static final String RDFMINER_SERVER_IP = RDFMiner.parameters.production ? "http://server:9200/" : "http://localhost:9200/";
 
     /**
      * default prefixes used to perform queries with the remote {@link Global#TARGET_SPARQL_ENDPOINT

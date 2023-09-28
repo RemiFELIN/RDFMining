@@ -17,6 +17,9 @@ import java.util.List;
  */
 public class CmdLineParameters {
 
+	@Option(name = "-prod", aliases = { "--production" }, usage = "use RDFMiner in production", metaVar = "PRODUCTION")
+	public boolean production = false;
+
 	@Option(name = "-h", aliases = { "--help" }, metaVar = "HELP")
 	public boolean help;
 
