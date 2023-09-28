@@ -8,9 +8,9 @@ console.log("~~~")
 
 let endpoint = "";
 if (nodeEnv === "production") {
-    endpoint =  "http://134.59.130.136/";
+    endpoint =  "http://134.59.130.136";
 } else if (nodeEnv === "development") {
-    endpoint =  "http://localhost:9200/";
+    endpoint =  "http://localhost:9200";
 }
 
 export const base = endpoint;
