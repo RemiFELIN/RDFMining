@@ -43,7 +43,7 @@ public class Recombination {
                 // add it into replacement population
                 if (!offspring.isInPopulation(elites) &&
                         !offspring.isInPopulation(replacement) &&
-                        replacement.size() != target) {
+                        replacement.size() != target && !offspring.isTrivial()) {
                     replacement.add(offspring);
                 }
             }

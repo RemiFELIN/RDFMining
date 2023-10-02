@@ -40,6 +40,7 @@ import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFi
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.Fitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.GEGrammar;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Mapper;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -57,6 +58,8 @@ import java.util.regex.Pattern;
  */
 @SuppressWarnings({"CloneDoesntCallSuperClone"})
 public class GEIndividual extends AbstractIndividual {
+
+    private static final Logger logger = Logger.getLogger(GEIndividual.class.getName());
 
     private Genotype genotype;
     private Phenotype phenotype;
@@ -342,6 +345,28 @@ public class GEIndividual extends AbstractIndividual {
             }
         }
         return false;
+    }
+
+    public boolean isTrivial() {
+        // check if its codons (chromosomes) are not composed of the same codon
+        // if true, it can return a trivial entity because it will probably return the same value
+        // for instance: subClassOf( dbo:Humans dbo:Humans ) if chrom: [1234,1234,]
+        ArrayList<Integer> uniques = new ArrayList<>();
+        String genotype = this.genotype.get(0).toString().replace("Chromosome Contents: ", "");
+//        System.out.println("genotype: " + genotype);
+        for(String i : genotype.split(",")) {
+//            System.out.println("adding " + i + " ...");
+            int value = Integer.parseInt(i);
+            if(!uniques.contains(value)) {
+                uniques.add(value);
+            }
+        }
+        // compare listes size
+        if (uniques.size() == this.getChromosomes().size()) {
+            return false;
+        }
+        logger.debug(this.getGenotype().toString() +  " is trivial !");
+        return true;
     }
 
     /**
