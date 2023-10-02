@@ -46,7 +46,7 @@ import { toRaw } from 'vue';
 import { options } from '../settings/GE';
 import { get } from '@/tools/api';
 import DetailsPopup from '../../projects/popup/DetailsPopup.vue';
-import axios from 'axios';
+// import axios from 'axios';
 // import io from "socket.io-client";
 import { socket } from '@/tools/env';
 
@@ -145,31 +145,35 @@ export default {
         showDetails() {
             this.showDetailsPopup = !this.showDetailsPopup;
         },
-        getResults() {
+        async getResults() {
             // get logs
-            axios.get("api/results", {
-                params: { path: this.path, file: "results" },
-                headers: { "x-access-token": this.cookies.get("token") }
-            }).then(
-                (response) => {
-                    this.download(response.data, "results.json");
-                }
-            ).catch((error) => {
-                console.log(error);
-            });
+            const results = await get("api/results", { path: this.path, file: "results" });
+            this.download(results, "results.json");
+            // axios.get("api/results", {
+            //     params: { path: this.path, file: "results" },
+            //     headers: { "x-access-token": this.cookies.get("token") }
+            // }).then(
+            //     (response) => {
+            //         this.download(response.data, "results.json");
+            //     }
+            // ).catch((error) => {
+            //     console.log(error);
+            // });
         },
-        getSHACLReport() {
+        async getSHACLReport() {
             // get logs
-            axios.get("api/results", {
-                params: { path: this.path, file: "shacl" },
-                headers: { "x-access-token": this.cookies.get("token") }
-            }).then(
-                (response) => {
-                    this.download(response.data, "shacl_report.ttl");
-                }
-            ).catch((error) => {
-                console.log(error);
-            });
+            const results = await get("api/results", { path: this.path, file: "shacl" });
+            this.download(results, "shacl_report.ttl");
+            // axios.get("api/results", {
+            //     params: { path: this.path, file: "shacl" },
+            //     headers: { "x-access-token": this.cookies.get("token") }
+            // }).then(
+            //     (response) => {
+            //         this.download(response.data, "shacl_report.ttl");
+            //     }
+            // ).catch((error) => {
+            //     console.log(error);
+            // });
         },
         download(data, name) {
             const blob = new Blob([JSON.stringify(data, null, "\t")], { type: "application/octet-stream" });
