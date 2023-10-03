@@ -338,9 +338,7 @@ public class GEIndividual extends AbstractIndividual {
             // check if individual is not already observed into population
             // it implies to check both of genotype and phenotype characters as different genotype can result
             // to the same phenotype
-            if (Objects.equals(this.getGenotype().toString(), i.getGenotype().toString()) &&
-                    Objects.equals(this.getPhenotype().getStringNoSpace(), i.getPhenotype().getStringNoSpace())
-            ) {
+            if (Objects.equals(this.getPhenotype().getStringNoSpace(), i.getPhenotype().getStringNoSpace())) {
                 return true;
             }
         }
