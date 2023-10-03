@@ -36,39 +36,39 @@ public class EntityMining {
         // compute execution time (in ns)
         start = System.nanoTime();
         // checkpoint ?
-        boolean checkpointReached = (long) RDFMiner.parameters.populationSize * curGeneration >=
-                Math.round((double) (RDFMiner.parameters.kBase * (curCheckpoint + 1)) / RDFMiner.parameters.checkpoint);
+//        boolean checkpointReached = (long) RDFMiner.parameters.populationSize * curGeneration >=
+//                Math.round((double) (RDFMiner.parameters.kBase * (curCheckpoint + 1)) / RDFMiner.parameters.checkpoint);
         // Checkpoint reached, this is a code to evaluate and save axioms in output file
-        if(checkpointReached) {
-            ArrayList<Entity> originalPopulation = new ArrayList<>(entities);
-            if(RDFMiner.parameters.checkpoint != 1 && curCheckpoint != RDFMiner.parameters.checkpoint - 1) {
-                // INTERMEDIATE step (i.e. checkpoint)
-                logger.info("Checkpoint n°" + (curCheckpoint + 1) + " reached !");
-                // evaluate distinct genotype and avoid additional useless computation
-                ArrayList<Entity> newPopulation = Fitness.computePopulation(entities, generator);
-                // stats
-                setStats(originalPopulation, newPopulation, curGeneration);
-                // return final pop
-                return newPopulation;
-            } else {
-                // FINAL step
-                logger.info("Final assessment !");
-                // evaluate distinct genotype and avoid additional useless computation
-                ArrayList<Entity> newPopulation = Fitness.computePopulation(entities, generator);
-                // stats
-                setStats(originalPopulation, newPopulation, curGeneration);
-                // fill content in json output file
-                for(Entity entity : newPopulation) {
-                    // add this entity is its fitness is not equal to 0
-//                    if(entity.individual.getFitness().getDouble() != 0) {
-                    RDFMiner.content.add(entity.toJSON());
-//                    }
-                }
-                logger.info(RDFMiner.content.size() + " entities has been added in " + Global.RESULTS_FILENAME);
-                // return final pop
-                return newPopulation;
-            }
-        }
+//        if(checkpointReached) {
+//            ArrayList<Entity> originalPopulation = new ArrayList<>(entities);
+//            if(RDFMiner.parameters.checkpoint != 1 && curCheckpoint != RDFMiner.parameters.checkpoint - 1) {
+//                // INTERMEDIATE step (i.e. checkpoint)
+//                logger.info("Checkpoint n°" + (curCheckpoint + 1) + " reached !");
+//                // evaluate distinct genotype and avoid additional useless computation
+//                ArrayList<Entity> newPopulation = Fitness.computePopulation(entities, generator);
+//                // stats
+//                setStats(originalPopulation, newPopulation, curGeneration);
+//                // return final pop
+//                return newPopulation;
+//            } else {
+//                // FINAL step
+//                logger.info("Final assessment !");
+//                // evaluate distinct genotype and avoid additional useless computation
+//                ArrayList<Entity> newPopulation = Fitness.computePopulation(entities, generator);
+//                // stats
+//                setStats(originalPopulation, newPopulation, curGeneration);
+//                // fill content in json output file
+//                for(Entity entity : newPopulation) {
+//                    // add this entity is its fitness is not equal to 0
+////                    if(entity.individual.getFitness().getDouble() != 0) {
+//                    RDFMiner.content.add(entity.toJSON());
+////                    }
+//                }
+//                logger.info(RDFMiner.content.size() + " entities has been added in " + Global.RESULTS_FILENAME);
+//                // return final pop
+//                return newPopulation;
+//            }
+//        }
         // A list of individuals (from entities list)
         ArrayList<GEIndividual> entitiesI = new ArrayList<>();
         // Use list of individuals instead of list of entities

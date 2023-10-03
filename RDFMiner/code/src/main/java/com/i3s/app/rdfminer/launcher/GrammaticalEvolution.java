@@ -160,6 +160,11 @@ public class GrammaticalEvolution {
             nMutation = 0;
 //            nBetterIndividual = 0;
         }
+        // fill content in json output file
+        for(Entity entity : entities) {
+            RDFMiner.content.add(entity.toJSON());
+        }
+        logger.info(RDFMiner.content.size() + " entities has been added in " + Global.RESULTS_FILENAME);
         logger.info("Evolutionary process is done...");
         System.exit(0);
     }
