@@ -28,13 +28,12 @@ public class EntityMining {
 
     private static final Logger logger = Logger.getLogger(EntityMining.class.getName());
 
-    private static long start;
+//    private static long start;
 
     public static ArrayList<Entity> run(Generator generator, ArrayList<Entity> entities,
-                                        int curGeneration, int curCheckpoint)
-            throws ExecutionException, InterruptedException {
+                                        int curGeneration, int curCheckpoint) {
         // compute execution time (in ns)
-        start = System.nanoTime();
+//        start = System.nanoTime();
         // checkpoint ?
 //        boolean checkpointReached = (long) RDFMiner.parameters.populationSize * curGeneration >=
 //                Math.round((double) (RDFMiner.parameters.kBase * (curCheckpoint + 1)) / RDFMiner.parameters.checkpoint);
@@ -163,10 +162,14 @@ public class EntityMining {
 //        }
         // set stats
         // get computation time in ms
-        long duration = (System.nanoTime() - start) / 1000000;
-        GenerationJSON generation = new GenerationJSON(originalPopulation, newPopulation, curGeneration, duration);
+        ArrayList<Long> durations = new ArrayList<>();
+        for(Entity entity : newPopulation) {
+            durations.add(entity.elapsedTime);
+        }
+        long duration = durations.stream().mapToLong(a -> a).sum();
+        GenerationJSON generation = new GenerationJSON(originalPopulation, newPopulation, curGeneration, durations);
         // Log usefull stats concerning the algorithm evolution
-        logger.info("Computation time: " + generation.computationTime + " ms.");
+        logger.info("Computation time: " + duration + " ms.");
         logger.info("Average fitness: " + generation.averageFitness);
         logger.info("Diversity coefficient: " + (generation.diversityCoefficient * 100) + "%");
         logger.info("Population development rate: " + (generation.populationDevelopmentRate * 100) + "%");
