@@ -51,7 +51,7 @@ public class HypothesisTesting {
             // apply statistic test X2
             shape.pValue = (Math.pow(shape.numExceptions - nExcTheo, 2) / nExcTheo) +
                     (Math.pow(shape.numConfirmations - nConfTheo, 2) / nConfTheo);
-            logger.info("Hypothesis testing of " + shape.absoluteIri + ": pVal=" + shape.pValue);
+//            logger.info("Hypothesis testing of " + shape.absoluteIri + ": pVal=" + shape.pValue);
             double critical = new ChiSquaredDistribution(1).inverseCumulativeProbability(1 - RDFMiner.parameters.alpha);
             // test value and accept it if it's lower than critical value
             shape.accepted = shape.pValue <= critical;

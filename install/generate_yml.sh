@@ -53,7 +53,7 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     addLineToYML 6 "       build:"
     addLineToYML 9 "          context: ./RDFMiner/."
     addLineToYML 6 "       depends_on:"
-    addLineToYML 9 "          - virtuoso"
+    # addLineToYML 9 "          - virtuoso"
     addLineToYML 9 "          - corese"
     addLineToYML 6 "       command: launch"
     addLineToYML 6 "       volumes:"
@@ -117,20 +117,20 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     #   RDFMiner Server v1.0
     # https://nodejs.org/fr/docs/guides/nodejs-docker-webapp
     #
-    addLineToYML 3 "   # RDFMiner frontend v"$RDFMINER_FRONT_VERSION
-    addLineToYML 3 "   # Developped by Rémi Felin"
-    addLineToYML 3 "   front:"
-    addLineToYML 6 "       restart: always"
-    addLineToYML 6 "       image: front:"$RDFMINER_FRONT_VERSION
-    addLineToYML 6 "       hostname: front"
-    addLineToYML 6 "       build:"
-    addLineToYML 9 "          context: ./rdfmining-front/."
-    addLineToYML 6 "       ports:"
-    addLineToYML 9 "          - '"$RDFMINER_FRONT_PORT":"$RDFMINER_FRONT_PORT"'"
-    addLineToYML 6 "       volumes:"
-    addLineToYML 9 "          - type: bind"
-    addLineToYML 11 "            source: "$WORKSPACE_ABSOLUTE_PATH"rdfmining-front/node_modules"
-    addLineToYML 11 "            target: /rdfmining-front/node_modules"
+    # addLineToYML 3 "   # RDFMiner frontend v"$RDFMINER_FRONT_VERSION
+    # addLineToYML 3 "   # Developped by Rémi Felin"
+    # addLineToYML 3 "   front:"
+    # addLineToYML 6 "       restart: always"
+    # addLineToYML 6 "       image: front:"$RDFMINER_FRONT_VERSION
+    # addLineToYML 6 "       hostname: front"
+    # addLineToYML 6 "       build:"
+    # addLineToYML 9 "          context: ./rdfmining-front/."
+    # addLineToYML 6 "       ports:"
+    # addLineToYML 9 "          - '"$RDFMINER_FRONT_PORT":"$RDFMINER_FRONT_PORT"'"
+    # addLineToYML 6 "       volumes:"
+    # addLineToYML 9 "          - type: bind"
+    # addLineToYML 11 "            source: "$WORKSPACE_ABSOLUTE_PATH"rdfmining-front/node_modules"
+    # addLineToYML 11 "            target: /rdfmining-front/node_modules"
     # addLineToYML 9 "          - type: bind"
     # addLineToYML 11 "            source: "$WORKSPACE_ABSOLUTE_PATH"rdfmining-server/logs"
     # addLineToYML 11 "            target: /server/logs"

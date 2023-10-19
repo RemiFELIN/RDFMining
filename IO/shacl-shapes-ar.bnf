@@ -1,0 +1,15 @@
+# RDFMiner v1.4
+# Test of SHACL Shapes generation v1.0
+# Example:
+#   a sh:NodeShape ; 
+#   sh:targetClass Class ;
+#   sh:property [ sh:path rdf:type ; sh:hasValue Class ; ] .
+#   The subject of the given shape will be generate randomly using Java code
+#---------------------------------------------------------------
+Shape := ' a ' NodeShape
+NodeShape := 'sh:NodeShape ; ' ShapeBody
+ShapeBody := 'sh:targetClass ' Class ' ; ' ShapeProperty
+ShapeProperty := ' sh:property [ ' PropertyBody ' ] . '
+PropertyBody := ' sh:path rdf:type ; sh:hasValue ' Class ' ; '
+#---------------------------------------------------------------
+Class := 'SPARQL ?x a ?Class .'
