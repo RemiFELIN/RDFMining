@@ -19,7 +19,7 @@ done
 for i in {1..10}
 do 
     mkdir ../IO/users/admin/pop500_$i/
-    cp ../IO/shacl-shapes-ar.bnf ../IO/users/admin/pop200_$i/grammar.bnf
+    cp ../IO/shacl-shapes-ar.bnf ../IO/users/admin/pop500_$i/grammar.bnf
     chmod +x ../IO/users/admin/pop500_$i/grammar.bnf
     docker-compose exec -T rdfminer ./rdfminer/scripts/run.sh \
     -user admin -dir pop500_$i \
@@ -34,7 +34,7 @@ done
 for i in {1..10}
 do 
     mkdir ../IO/users/admin/pop1000_$i/
-    cp ../IO/shacl-shapes-ar.bnf ../IO/users/admin/pop200_$i/grammar.bnf
+    cp ../IO/shacl-shapes-ar.bnf ../IO/users/admin/pop1000_$i/grammar.bnf
     chmod +x ../IO/users/admin/pop1000_$i/grammar.bnf
     docker-compose exec -T rdfminer ./rdfminer/scripts/run.sh \
     -user admin -dir pop1000_$i \
