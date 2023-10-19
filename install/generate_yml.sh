@@ -69,20 +69,20 @@ if [ ! -f "$(pwd)/../$YML_FILE" ]; then
     #
     #   Virtuoso service
     #
-    addLineToYML 3 "   # OpenLink Virtuoso v"$VIRTUOSO_VERSION
-    addLineToYML 3 "   # Used by RDFMiner to load and query a training dataset"
-    addLineToYML 3 "   virtuoso:"
-    addLineToYML 6 "       restart: always"
-    addLineToYML 6 "       image: virtuoso:"$VIRTUOSO_VERSION
-    addLineToYML 6 "       hostname: virtuoso"
-    addLineToYML 6 "       build:"
-    addLineToYML 9 "          context: ./Virtuoso/."
-    addLineToYML 6 "       ports:"
-    addLineToYML 9 "          - '"$VIRTUOSO_SERVER_PORT":"$VIRTUOSO_SERVER_PORT"'"
-    addLineToYML 6 "       volumes:"
-    addLineToYML 9 "          - type: bind"
-    addLineToYML 11 "            source: "$WORKSPACE_ABSOLUTE_PATH"Virtuoso/data"
-    addLineToYML 11 "            target: /data"
+    # addLineToYML 3 "   # OpenLink Virtuoso v"$VIRTUOSO_VERSION
+    # addLineToYML 3 "   # Used by RDFMiner to load and query a training dataset"
+    # addLineToYML 3 "   virtuoso:"
+    # addLineToYML 6 "       restart: always"
+    # addLineToYML 6 "       image: virtuoso:"$VIRTUOSO_VERSION
+    # addLineToYML 6 "       hostname: virtuoso"
+    # addLineToYML 6 "       build:"
+    # addLineToYML 9 "          context: ./Virtuoso/."
+    # addLineToYML 6 "       ports:"
+    # addLineToYML 9 "          - '"$VIRTUOSO_SERVER_PORT":"$VIRTUOSO_SERVER_PORT"'"
+    # addLineToYML 6 "       volumes:"
+    # addLineToYML 9 "          - type: bind"
+    # addLineToYML 11 "            source: "$WORKSPACE_ABSOLUTE_PATH"Virtuoso/data"
+    # addLineToYML 11 "            target: /data"
     # addLineToYML 6 "       networks:"
     # addLineToYML 9 "          rdfmining_network:"
     # addLineToYML 12 "               ipv4_address: 172.19.0.2"

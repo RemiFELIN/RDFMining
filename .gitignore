@@ -12,11 +12,9 @@ buildNumber.properties
 .classpath
 .project
 .settings
-RDFMiner/io/
 *.cache
 *.idea
 .vscode
-IO/
 Corese/jar/*
 Corese/log/*
 Corese/src/corese/git_folder
@@ -25,5 +23,11 @@ Corese/src/corese/git_folder
 *.so
 .dba_pwd_set
 docker-compose.yml
-Corese/data/
+# Corese/data/
 rdfmining-server/node_modules/
+# Corese persistent data
+*.dat
+*.idn
+*.jrnl
+*.lock
+*.log

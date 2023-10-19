@@ -85,12 +85,12 @@ public class Evaluator {
 			}
 		} else {
 			Global.AXIOMS_FILE = Global.OUTPUT_PATH + RDFMiner.parameters.axiomFile;
-			logger.info("Reading axioms from file " + RDFMiner.parameters.axiomFile + "...");
+			logger.info("Reading axioms from file " + Global.AXIOMS_FILE + "...");
 			try {
 				// Try to read the status file:
 				axiomFile = new BufferedReader(new FileReader(Global.AXIOMS_FILE));
 			} catch (IOException e) {
-				logger.error("Could not open file " + RDFMiner.parameters.axiomFile);
+				logger.error("Could not open file " + Global.AXIOMS_FILE);
 				return;
 			}
 		}
@@ -232,12 +232,12 @@ public class Evaluator {
 
 		if (RDFMiner.parameters.shapeFile != null) {
 			Global.SHAPES_FILE = Global.OUTPUT_PATH + RDFMiner.parameters.shapeFile;
-			logger.info("Reading SHACL Shapes from file " + RDFMiner.parameters.shapeFile + "...");
+			logger.info("Reading SHACL Shapes from file " + Global.SHAPES_FILE + "...");
 			try {
 				// Try to read the status file:
 				shapesContent = Files.asCharSource(new File(Global.SHAPES_FILE), Charsets.UTF_8).read();
 			} catch (IOException e) {
-				logger.error("Could not open file " + RDFMiner.parameters.shapeFile);
+				logger.error("Could not open file " + Global.SHAPES_FILE);
 				return;
 			}
 		} else {
