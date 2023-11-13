@@ -1,18 +1,23 @@
-# EGC 2024 - Extraction probabiliste de formes SHACL à l'aide d'algorithmes évolutionnaires
+# EuroGP 2024 - An Algorithm Based on Grammatical Evolution for SHACL Constraints Discovering
 
-Ce dépôt a pour but de partager l'ensemble du code nécessaire à la réalisation des expériences, le jeu de données RDF ainsi que les résultats obtenus.
+## RDF dataset: Covid-on-the-web
 
-## Jeu de données RDF: Covid-on-the-web
+The RDF dataset used to performe experiments are stored into **Corese/data/**: *covidontheweb_data.ttl*
 
-Le jeu de données RDF utilisé dans le cadre de nos expériences se trouve dans le dossier **Corese/data/**: *covidontheweb_data.ttl*
+## Results
 
-## Résultats
+All results are stored into **results/**
 
-Les résultats expérimentaux sont présentés dans le dossier **resultats/**
+- **covid-on-the-web**:
+  - $\|\mathcal{P}\|/E$ choice: **V1_[POPULATION_SIZE]\_[EFFORT]_[i]**
+  - Selection ($\mathcal{R}$) pressure: 
+    - **V2_Roulette_[SELECTION_RATE]_[i]**
+    - **V2_Tournament_[SELECTION_RATE]\_[TOURNAMENT_RATE]_[i]** 
+- **solution-space-analysis**: used to estimate the **recall** $R(x)$ measure.
+- **acceptable-shapes**: all the $1,766$ distinct and acceptable shapes discovered from all the experiments + details (CSV format).
 
 
-## Comment utiliser le code 
-*documentation en anglais
+## How to reproduce the experiments 
 
 ### Requirements
 
@@ -33,8 +38,6 @@ Les résultats expérimentaux sont présentés dans le dossier **resultats/**
 1. Clone this repository
 2. Execute the installation script such as: ```cd install/ && ./install.sh```
 > **INFO:** it will take some time !
-<!-- 3. Once the build phase is completed, we need to create and start **rdfminer** service : ```sudo docker-compose up -d rdfminer```
-> You can check if it's correctly launched with the following command : ```sudo docker-compose ps``` -->
 
 ### How to launch experiments (on Linux/MAC)
 
