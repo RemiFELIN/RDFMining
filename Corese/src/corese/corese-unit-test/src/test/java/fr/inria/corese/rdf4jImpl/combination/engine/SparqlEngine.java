@@ -16,11 +16,11 @@ import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 
 import fr.inria.corese.core.Graph;
-import fr.inria.corese.core.api.DataManager;
 import fr.inria.corese.core.query.QueryProcess;
+import fr.inria.corese.core.storage.api.dataManager.DataManager;
 import fr.inria.corese.kgram.core.Mappings;
-import fr.inria.corese.rdf4j.CoreseModel;
-import fr.inria.corese.rdf4j.Rdf4jDataManager;
+import fr.inria.corese.rdf4j.CoreseGraphModel;
+import fr.inria.corese.rdf4j.Rdf4jModelDataManagerBuilder;
 import fr.inria.corese.sparql.exceptions.EngineException;
 
 public class SparqlEngine {
@@ -130,7 +130,7 @@ public class SparqlEngine {
     }
 
     public static SelectResults coreseSelectQuery(String query, Model model) {
-        DataManager dataManage = new Rdf4jDataManager(model);
+        DataManager dataManage = new Rdf4jModelDataManagerBuilder().model(model).build();
         return SparqlEngine.coreseSelectQuery(query, QueryProcess.create(dataManage));
     }
 
@@ -155,12 +155,12 @@ public class SparqlEngine {
     }
 
     public static Model coreseConstructQuery(String query, Model model) {
-        DataManager dataManage = new Rdf4jDataManager(model);
+        DataManager dataManage = new Rdf4jModelDataManagerBuilder().model(model).build();
         return SparqlEngine.coreseConstructQuery(query, QueryProcess.create(dataManage));
     }
 
     private static Model coreseConstructQuery(String query, QueryProcess exec) {
-        Mappings map = null;
+        Mappings map = new Mappings();
         try {
             map = exec.query(query);
         } catch (EngineException e) {
@@ -168,7 +168,7 @@ public class SparqlEngine {
             e.printStackTrace();
         }
 
-        return new CoreseModel((Graph) map.getGraph());
+        return new CoreseGraphModel((Graph) map.getGraph());
     }
 
     /**
@@ -180,12 +180,12 @@ public class SparqlEngine {
     }
 
     public static Boolean coreseAskQuery(String query, Model model) {
-        DataManager dataManage = new Rdf4jDataManager(model);
+        DataManager dataManage = new Rdf4jModelDataManagerBuilder().model(model).build();
         return SparqlEngine.coreseAskQuery(query, QueryProcess.create(dataManage));
     }
 
     private static Boolean coreseAskQuery(String query, QueryProcess exec) {
-        Mappings map = null;
+        Mappings map = new Mappings();
         try {
             map = exec.query(query);
         } catch (EngineException e) {
@@ -202,14 +202,14 @@ public class SparqlEngine {
 
     public static Model coreseUpdateQuery(String query, Graph graph) {
         SparqlEngine.coreseUpdateQuery(query, QueryProcess.create(graph));
-        return new CoreseModel(graph);
+        return new CoreseGraphModel(graph);
 
     }
 
     public static Model coreseUpdateQuery(String query, Model model) {
-        DataManager dataManage = new Rdf4jDataManager(model);
+        DataManager dataManage = new Rdf4jModelDataManagerBuilder().model(model).build();
         SparqlEngine.coreseUpdateQuery(query, QueryProcess.create(dataManage));
-        return new CoreseModel(model);
+        return new CoreseGraphModel(model);
     }
 
     private static void coreseUpdateQuery(String query, QueryProcess exec) {

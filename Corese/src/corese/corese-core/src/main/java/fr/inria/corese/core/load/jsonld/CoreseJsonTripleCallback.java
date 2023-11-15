@@ -2,12 +2,14 @@ package fr.inria.corese.core.load.jsonld;
 
 import java.util.List;
 
-import com.github.jsonldjava.core.JsonLdTripleCallback ;
+import com.github.jsonldjava.core.JsonLdTripleCallback;
 import com.github.jsonldjava.core.RDFDataset;
 
 import fr.inria.corese.core.Graph;
 import fr.inria.corese.core.load.AddTripleHelper;
+import fr.inria.corese.core.load.AddTripleHelperDataManager;
 import fr.inria.corese.core.load.ILoadSerialization;
+import fr.inria.corese.core.storage.api.dataManager.DataManager;
 import fr.inria.corese.kgram.api.core.Node;
 
 /**
@@ -20,36 +22,41 @@ import fr.inria.corese.kgram.api.core.Node;
 public class CoreseJsonTripleCallback implements JsonLdTripleCallback {
 
     private AddTripleHelper helper;
+    String source;
     private Graph graph;
+    private DataManager dataManager;
     private Node graphSource, defaultGraphSource;
     private final static String JSONLD_DEFAULT_GRAPH = "@default";
     private final static String JSONLD_BNODE_PREFIX = ":_";
 
-    public CoreseJsonTripleCallback(Graph graph, String source) {
+    public CoreseJsonTripleCallback(Graph graph, DataManager man, String source) {
         this.graph = graph;
-
-        helper = AddTripleHelper.create(this.graph);
-        //get default graph source
-        defaultGraphSource = helper.getGraphSource(graph, source);
-        graphSource = defaultGraphSource;
+        this.source = source;
+        setDataManager(man);
+        if (man == null) {
+            helper = AddTripleHelper.create(graph);
+        } else {
+            helper = new AddTripleHelperDataManager(graph, man);
+        }
     }
 
     @Override
     public Object call(RDFDataset dataset) {
 
+        // get default graph source
+        defaultGraphSource = helper.getGraphSource(source);
+        graphSource = defaultGraphSource;
+
         for (String graphName : dataset.graphNames()) {
 
-            //add graphs
+            // add graphs
             if (JSONLD_DEFAULT_GRAPH.equals(graphName)) {
                 graphSource = defaultGraphSource;
-            } else if (graphName.startsWith(JSONLD_BNODE_PREFIX)) {
-                graphSource = graph.addBlank(helper.getID(graphName));
-                graph.addGraphNode(graphSource);
             } else {
-                graphSource = graph.addGraph(graphName);
+                graphSource = getHelper().graphNode(graphName);
             }
 
-            //add all triples to this graph
+            // add all triples to this graph
             final List<RDFDataset.Quad> quads = dataset.getQuads(graphName);
             for (final RDFDataset.Quad quad : quads) {
 
@@ -67,7 +74,7 @@ public class CoreseJsonTripleCallback implements JsonLdTripleCallback {
                     tripleType = ILoadSerialization.NON_LITERAL;
                 }
 
-                helper.addTriple(subject, predicate, object, lang, type, tripleType, graphSource);
+                getHelper().addTriple(subject, predicate, object, lang, type, tripleType, graphSource);
             }
         }
 
@@ -81,7 +88,23 @@ public class CoreseJsonTripleCallback implements JsonLdTripleCallback {
      * @param limit
      */
     public void setHelper(boolean renameBNode, int limit) {
-        helper.setRenameBlankNode(renameBNode);
-        helper.setLimit(limit);
+        getHelper().setRenameBlankNode(renameBNode);
+        getHelper().setLimit(limit);
+    }
+
+    public AddTripleHelper getHelper() {
+        return helper;
+    }
+
+    public void setHelper(AddTripleHelper helper) {
+        this.helper = helper;
+    }
+
+    public DataManager getDataManager() {
+        return dataManager;
+    }
+
+    public void setDataManager(DataManager dataManager) {
+        this.dataManager = dataManager;
     }
 }

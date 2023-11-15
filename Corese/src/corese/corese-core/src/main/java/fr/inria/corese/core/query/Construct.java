@@ -347,7 +347,7 @@ public class Construct
                 if (edge != null) {
                     // RuleEngine loop index
                     edge.setEdgeIndex(loopIndex);
-                    
+
                     if (isDelete) {
                         boolean accept = true;
                         if (AccessRight.isActive()&&getAccessRight() != null) {
@@ -598,8 +598,6 @@ public class Construct
     /**
      * Given queryNode return target node in map
      * If node exist in graph, return graph node
-     * additionalNode = true means node is not subject/object, 
-     * it may be rdf star triple reference
      * rec == true: recursive call for nested triple
      * <<_:b p o t>> q v
      */

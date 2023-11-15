@@ -1,23 +1,45 @@
 package fr.inria.corese.jenaImpl.combination.engine;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.jena.query.Dataset;
 
 import com.google.common.collect.Lists;
 
 import fr.inria.corese.core.Graph;
+import fr.inria.corese.jena.JenaTdb1DataManager;
+import fr.inria.corese.jena.JenaTdb1DataManagerBuilder;
 import fr.inria.corese.kgram.api.core.Edge;
-import fr.inria.corese.storage.jenatdb1.JenaDataManager;
+import fr.inria.corese.kgram.api.core.Node;
 
 public class CompareGraphDataset {
 
-    public static boolean compareGraph(Dataset jena_dataset, Graph corese_graph) {
+    @SuppressWarnings("unchecked")
+    public static boolean compareGraph(Dataset dataset, Graph corese_graph) {
 
-        ArrayList<Edge> jena_edges;
-        try (JenaDataManager dm = new JenaDataManager(jena_dataset)) {
+        ArrayList<Edge> jena_edges = new ArrayList<>();
+        try (JenaTdb1DataManager dm = new JenaTdb1DataManagerBuilder().dataset(dataset).storagePath(null).build();) {
             // Get edges from Jena
-            jena_edges = Lists.newArrayList(dm.choose(null, null, null, null));
+            Method method = dm.getClass().getDeclaredMethod("chooseQuadDuplicatesWrite", Node.class, Node.class,
+                    Node.class, List.class);
+            method.setAccessible(true);
+
+            Iterator<Edge> r = (Iterator<Edge>) method.invoke(dm, null, null, null, null);
+            jena_edges = Lists.newArrayList(r);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
         }
 
         // Get edges from Corese

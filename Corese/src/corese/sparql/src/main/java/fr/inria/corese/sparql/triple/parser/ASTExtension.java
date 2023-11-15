@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ASTExtension implements Extension {
 
+    private static ASTExtension singleton;
     public static int FUNCTION_PARAMETER_MAX = 15;
     private static Logger logger = LoggerFactory.getLogger(ASTExtension.class);
     static final String NL = System.getProperty("line.separator");
@@ -93,6 +94,10 @@ public class ASTExtension implements Extension {
     private Hierarchy hierarchy;
     ArrayList<Function> funList;
     private boolean debug = false;
+    
+    static {
+        setSingleton(new ASTExtension());
+    }
 
     public ASTExtension() {
         maps = new FunMap[FUNCTION_PARAMETER_MAX];
@@ -155,14 +160,18 @@ public class ASTExtension implements Extension {
     void defineFunction(Function exp) { 
         Term fun = exp.getSignature(); 
         Function def = get(fun.getLabel(), fun.arity());
-        // TODO à décommenter
-        // if  (def != null && exp != def) {
-            // logger.info("Redefine function: " +fun.getLabel());
-            // logger.info(def.toString());
-            // logger.info(exp.toString());
-        // }
-        getMap(fun).put(fun.getLabel(), exp);
-        getMap(fun).setMetadata(exp);
+//        if  (def != null && exp != def) {
+//            logger.info("Redefine function: " +fun.getLabel());
+//            logger.info(def.toString());
+//            logger.info(exp.toString());
+//        }
+        if (getMap(fun) == null) {
+            logger.error("Undefined function: " + fun);
+        }
+        else {
+            getMap(fun).put(fun.getLabel(), exp);
+            getMap(fun).setMetadata(exp);
+        }
     }
     
     void defineMethodFunction(Function exp) {       
@@ -297,6 +306,9 @@ public class ASTExtension implements Extension {
     @Override
     public Function getMethod(String label, IDatatype type, IDatatype[] param) {
         if (getActualHierarchy() != null && param.length > 0) {
+            if (isDebug()) {
+                    System.out.println("ASTExtension: " + label + " " + type);
+            }
             for (String atype : getActualHierarchy().getSuperTypes(param[0],  type)) {
                 ASTExtension ext = getMethodExtension(atype);
                 if (isDebug()) {
@@ -453,6 +465,14 @@ public class ASTExtension implements Extension {
             }
         }
         return list;
+    }
+
+    public static ASTExtension getSingleton() {
+        return singleton;
+    }
+
+    public static void setSingleton(ASTExtension aSingleton) {
+        singleton = aSingleton;
     }
 
 }

@@ -5,8 +5,6 @@ import static fr.inria.corese.kgram.api.core.PointerType.TRIPLE;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import org.eclipse.rdf4j.model.Statement;
-
 import fr.inria.corese.core.GraphObject;
 import fr.inria.corese.kgram.api.core.Edge;
 import fr.inria.corese.kgram.api.core.Node;
@@ -23,8 +21,6 @@ import fr.inria.corese.sparql.triple.parser.AccessRight;
  */
 public abstract class EdgeTop extends GraphObject implements Edge {
     private byte level = AccessRight.DEFAULT;
-    private static final long serialVersionUID = 2087591563645988076L;
-    public static boolean DISPLAY_EDGE_AS_RDF4J = false;
     public static final String NL = System.getProperty("line.separator");
     private boolean nested = false;
     // created by values, bind or triple()
@@ -65,7 +61,7 @@ public abstract class EdgeTop extends GraphObject implements Edge {
     public Node getEdgeNode() {
         return null;
     }
-    
+
     @Override
     public Node getProperty() {
         return getEdgeNode();
@@ -78,7 +74,6 @@ public abstract class EdgeTop extends GraphObject implements Edge {
     public void setProperty(Node pred) {
         setEdgeNode(pred);
     }
-
 
     public void setTag(Node node) {
     }
@@ -108,7 +103,7 @@ public abstract class EdgeTop extends GraphObject implements Edge {
     }
 
     ArrayList<IDatatype> getNodeList() {
-        ArrayList<IDatatype> list = new ArrayList();
+        ArrayList<IDatatype> list = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             list.add(getValue(null, i));
         }
@@ -143,32 +138,32 @@ public abstract class EdgeTop extends GraphObject implements Edge {
     public Edge getEdge() {
         return this;
     }
-    
+
     @Override
     public Node getNode() {
         return DatatypeMap.createObject(this.toString(), this);
-    } 
-    
+    }
+
     @Override
     public boolean contains(Node node) {
         return getNode(0).same(node) || getNode(1).same(node);
     }
-    
+
     @Override
     public int nbGraphNode() {
         return 2;
     }
-    
+
     @Override
     public int nbNode() {
         return 2;
     }
-    
+
     @Override
     public String getEdgeLabel() {
         return getEdgeNode().getLabel();
     }
-     
+
     @Override
     public Node getEdgeVariable() {
         return null;
@@ -181,7 +176,7 @@ public abstract class EdgeTop extends GraphObject implements Edge {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getSubject(), this.getPredicate(), this.getObject(), this.getContext());
+        return Objects.hash(this.getSubjectNode(), this.getPropertyNode(), this.getObjectNode(), this.getGraphNode());
     }
 
     @Override
@@ -189,42 +184,23 @@ public abstract class EdgeTop extends GraphObject implements Edge {
         if (this == o) {
             return true;
         }
-        if (o instanceof Statement) {
-            return equals((Statement)o);
+        if (!(o instanceof Edge)) {
+            return false;
         }
-        return false;
+        Edge t = (Edge) o;
+        return Objects.equals(getSubjectNode(), t.getSubjectNode())
+                && Objects.equals(getPropertyNode(), t.getPropertyNode())
+                && Objects.equals(getObjectNode(), t.getObjectNode())
+                && Objects.equals(getGraphNode(), t.getGraphNode());
     }
-    
-    public boolean equals(Statement t) {
-        return getObject().equals(t.getObject())
-                && getSubject().equals(t.getSubject())
-                && getPredicate().equals(t.getPredicate())
-                && Objects.equals(this.getContext(), t.getContext());
-    }
-    
+
     @Override
     public String toString() {
-        if (DISPLAY_EDGE_AS_RDF4J) {
-            return toRDF4JString();
-        }
         return toRDFString();
     }
-    
+
     public String toRDFString() {
-        return String.format("%s %s %s %s", getGraphValue(), getSubjectValue(), getPredicateValue(), getObjectValue());                
-    }
-    
-    public String toRDF4JString() {
-        StringBuilder sb = new StringBuilder(256);
-
-        sb.append("(" + getSubject() + ", " + getPredicate() + ", " + getObject()
-                + (getContext() == null ? "" : ", " + getContext()) + ")");
-
-        if (getContext() != null) {
-            sb.append(" [").append(getContext()).append("]");
-        }
-
-        return sb.toString();
+        return String.format("%s %s %s %s", getGraphValue(), getSubjectValue(), getPredicateValue(), getObjectValue());
     }
 
     @Override

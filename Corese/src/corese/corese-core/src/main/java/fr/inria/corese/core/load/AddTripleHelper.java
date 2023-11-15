@@ -1,12 +1,14 @@
 package fr.inria.corese.core.load;
 
-import fr.inria.corese.sparql.triple.parser.NSManager;
-import fr.inria.corese.kgram.api.core.Node;
-import fr.inria.corese.core.Graph;
 import java.util.ArrayList;
 import java.util.Hashtable;
+
 import org.semarglproject.vocab.core.RDF;
+
+import fr.inria.corese.core.Graph;
 import fr.inria.corese.kgram.api.core.Edge;
+import fr.inria.corese.kgram.api.core.Node;
+import fr.inria.corese.sparql.triple.parser.NSManager;
 
 /**
  * Helper class to aid the parsers (ex.jsonld, rdfa) for adding triples to
@@ -17,8 +19,9 @@ import fr.inria.corese.kgram.api.core.Edge;
  * @date Feb 12 2014 re-factored
  */
 public class AddTripleHelper implements ILoadSerialization {
+    private final static String JSONLD_BNODE_PREFIX = ":_";
 
-    protected Graph graph;
+    private Graph graph;
     Node source;
     Stack stack;
     NSManager nsm;
@@ -29,7 +32,7 @@ public class AddTripleHelper implements ILoadSerialization {
     private int limit = Integer.MAX_VALUE;
 
     public void graph(String src) {
-        source = graph.addGraph(src);
+        source = addGraph(src);
     }
 
     public void setRenameBlankNode(boolean b) {
@@ -56,7 +59,7 @@ public class AddTripleHelper implements ILoadSerialization {
 
     public AddTripleHelper(Graph graph) {
         this.graph = graph;
-        this.blank = new Hashtable<String, String>();
+        this.blank = new Hashtable<>();
         nsm = NSManager.create();
         this.stack = new Stack();
     }
@@ -66,9 +69,10 @@ public class AddTripleHelper implements ILoadSerialization {
     }
 
     @Override
-    public void addTriple(String subj, String pred, String obj, String lang, String type, int literalType, Node source) {
+    public void addTriple(String subj, String pred, String obj, String lang, String type, int literalType,
+            Node source) {
         if (source == null) {
-            source = graph.addDefaultGraphNode();
+            source = addDefaultGraphNode();
         }
 
         Node s = getSubject(subj);
@@ -85,8 +89,8 @@ public class AddTripleHelper implements ILoadSerialization {
                 break;
         }
 
-        Edge e = graph.create(source, s, p, o);
-        graph.addEdge(e);
+        Edge e = create(source, s, p, o);
+        addEdge(e);
     }
 
     // get the node of a literal according to the content, lang and type
@@ -95,42 +99,53 @@ public class AddTripleHelper implements ILoadSerialization {
         type = isEmpty(type) ? null : nsm.toNamespace(type);
         lang = isEmpty(lang) ? null : lang;
 
-        return graph.addLiteral(property, value, type, lang);
+        return addLiteral(property, value, type, lang);
     }
 
-    //get the node of "object"
+    // get the node of "object"
     private Node getNode(String obj) {
         if (isBlankNode(obj)) {
-            return graph.addBlank(getID(obj));
+            return addBlank(getID(obj));
         } else {
-            return graph.addResource(obj);
+            return addResource(obj);
         }
     }
 
     // get the node of property (precidate)
     private Node getProperty(String pred) {
-        return graph.addProperty(pred);
+        return addProperty(pred);
     }
 
-    //get the node of subject
+    // get the node of subject
     private Node getSubject(String subj) {
         if (isBlankNode(subj)) {
-            return graph.addBlank(getID(subj));
+            return addBlank(getID(subj));
         } else {
             if (null == resource || !subj.equals(resource)) {
                 resource = subj;
-                node = graph.addResource(resource);
+                node = addResource(resource);
             }
             return node;
         }
     }
 
-    //Check if a given string is empty (null or length ==0)
+    public Node graphNode(String graphName) {
+        Node graphSource;
+        if (graphName.startsWith(JSONLD_BNODE_PREFIX)) {
+            graphSource = addBlank(getID(graphName));
+            addGraphNode(graphSource);
+        } else {
+            graphSource = addGraph(graphName);
+        }
+        return graphSource;
+    }
+
+    // Check if a given string is empty (null or length ==0)
     private boolean isEmpty(String s) {
         return s == null || s.isEmpty();
     }
 
-    //Check if a node is blank (starting with "_:")
+    // Check if a node is blank (starting with "_:")
     private boolean isBlankNode(String node) {
         return node.startsWith(RDF.BNODE_PREFIX);
     }
@@ -146,54 +161,75 @@ public class AddTripleHelper implements ILoadSerialization {
         if (isRenameBlankNode()) {
             id = blank.get(b);
             if (id == null) {
-                id = graph.newBlankID();
+                id = blankNode();
                 blank.put(b, id);
             }
         }
         return id;
     }
 
+    String blankNode() {
+        return getGraph().newBlankID();
+    }
+
     /**
      * Get the default graph source according to the status of graph and source
      *
-     * @param graph Graph that will be filled in
+     * @param graph  Graph that will be filled in
      * @param source The particular name to add nodes to
      *
      * @return
      */
-    public Node getGraphSource(Graph graph, String source) {
+    public Node getGraphSource(String source) {
         if (source == null) {
-            return graph.addDefaultGraphNode();
+            return addDefaultGraphNode();
         } else {
-            return graph.addGraph(source);
+            return addGraph(source);
         }
     }
 
-    public Node getGraphSource2(Graph graph, String source) {
-        Node defaultGraphSource;
-
-        if (!hasGraphsOrDefault(this.graph)) {
-            defaultGraphSource = this.graph.addDefaultGraphNode();
-        } else {
-            if (source == null) {
-                defaultGraphSource = this.graph.addDefaultGraphNode();
-            } else {
-                defaultGraphSource = this.graph.addGraph(source);
-            }
-        }
-        
-        return defaultGraphSource;
+    Node addGraph(String name) {
+        return getGraph().addGraph(name);
     }
 
-    //check if one graph contains graphs or default graph
-    private boolean hasGraphsOrDefault(Graph g) {
-        boolean hasGraphs = false, hasDefault = false;
-        for (Object n : g.getGraphNodes()) {
-            hasGraphs = true;
-            break;
-        }
-        hasDefault = g.getDefaultGraphNode() != null;
-
-        return hasGraphs || hasDefault;
+    Node addDefaultGraphNode() {
+        return getGraph().addDefaultGraphNode();
     }
+
+    void addGraphNode(Node node) {
+        getGraph().addGraphNode(node);
+    }
+
+    Edge create(Node g, Node s, Node p, Node o) {
+        return getGraph().create(g, s, p, o);
+    }
+
+    Edge addEdge(Edge e) {
+        return getGraph().addEdge(e);
+    }
+
+    Node addProperty(String p) {
+        return getGraph().addProperty(p);
+    }
+
+    Node addLiteral(String predicate, String value, String type, String lang) {
+        return getGraph().addLiteral(predicate, value, type, lang);
+    }
+
+    Node addResource(String name) {
+        return getGraph().addResource(name);
+    }
+
+    Node addBlank(String id) {
+        return getGraph().addBlank(id);
+    }
+
+    public Graph getGraph() {
+        return graph;
+    }
+
+    public void setGraph(Graph graph) {
+        this.graph = graph;
+    }
+
 }

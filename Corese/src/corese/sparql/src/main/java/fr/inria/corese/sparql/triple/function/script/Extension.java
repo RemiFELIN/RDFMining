@@ -9,7 +9,6 @@ import fr.inria.corese.kgram.api.core.Expr;
 import fr.inria.corese.kgram.api.query.Environment;
 import fr.inria.corese.sparql.exceptions.EngineException;
 import fr.inria.corese.kgram.api.query.Producer;
-import fr.inria.corese.sparql.api.ComputerEval;
 import java.util.List;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -68,7 +67,7 @@ public class Extension extends LDScript {
             synchronized (this) {
                 // public functions are shared ...
                 if (function == null) {
-                    function = eval.getDefine(this, env);
+                    function = getDefine(this, env);
                     if (function == null) {
                         logger.error("Undefined function: " + this.getLabel() + " " + this);
                         return null;
@@ -137,9 +136,10 @@ public class Extension extends LDScript {
             }
             IDatatype dt = null;
             if (isSystem) {
-                ComputerEval cc = eval.getComputerEval(env, p, function);
+                //fr.inria.corese.kgram.core.Eval cc = eval.getComputerEval(env, p, function);
+                fr.inria.corese.kgram.core.Eval cc = getComputerEval(eval.getEvaluator(), env, p, function);
                 // PRAGMA: b = cc.getEnvironment().getBind()
-                dt = body.eval(cc.getComputer(), b, cc.getEnvironment(), p);
+                dt = body.eval(cc.getEvaluator(), b, cc.getEnvironment(), p);
             } else {
                 dt = body.eval(eval, b, env, p);
             }
@@ -177,7 +177,7 @@ public class Extension extends LDScript {
     @Override
     public IDatatype eval(Computer eval, Binding b, Environment env, Producer p, IDatatype[] param) throws EngineException {
         if (function == null) {
-            function = eval.getDefine(this, env);
+            function = getDefine(this, env);
             if (function == null) {
                 logger.error("Undefined function: " + this);
                 return null;
@@ -188,9 +188,10 @@ public class Extension extends LDScript {
         IDatatype dt;
         b.set(function, fun.getExpList(), param);
         if (function.isSystem()) {
-            ComputerEval cc = eval.getComputerEval(env, p, function);
+            //fr.inria.corese.kgram.core.Eval cc = eval.getComputerEval(env, p, function);
+            fr.inria.corese.kgram.core.Eval cc = getComputerEval(eval.getEvaluator(), env, p, function);
             // PRAGMA: b = cc.getEnvironment().getBind()
-            dt = function.getBody().eval(cc.getComputer(), b, cc.getEnvironment(), p);
+            dt = function.getBody().eval(cc.getEvaluator(), b, cc.getEnvironment(), p);
         } else {
             dt = function.getBody().eval(eval, b, env, p);
         }

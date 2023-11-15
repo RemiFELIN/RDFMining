@@ -82,6 +82,9 @@ public class LoadProcess extends WorkflowProcess {
     public Data run(Data data) throws EngineException {
         Graph g = data.getGraph();
         Load ld = Load.create(g);
+        if (data.getDataManager()!=null) {
+            ld.setDataManager(data.getDataManager());
+        }
         boolean isURL = true;
         try {
             if (getProcessor() != null) {

@@ -461,7 +461,8 @@ public class Memory extends PointerObject implements Environment {
                             // do nothing
                         }
                         else {
-                            node = eval.eval(f, this, p);
+                            //node = eval.eval(f, this, p);
+                            node = kgram.eval(f, this, p);
                             kgram.getVisitor().select(kgram, f.getExp(), node==null?null:node.getDatatypeValue());
                             // bind fun(?x) as ?y
                             boolean success = push(e.getNode(), node);
@@ -575,7 +576,8 @@ public class Memory extends PointerObject implements Environment {
             if (nodes[n] == null) {
                 Filter f = e.getFilter();
                 if (f != null && !e.isAggregate()) {
-                    nodes[n] = eval.eval(f, this, p);
+                    //nodes[n] = eval.eval(f, this, p);
+                    nodes[n] = kgram.eval(f, this, p);
                 }
 
             }
@@ -857,19 +859,25 @@ public class Memory extends PointerObject implements Environment {
     }
 
     boolean push(Mapping res, int n, boolean isEdge) {
+        return push(res, n, isEdge, true);
+    }
+    
+    boolean push(Mapping res, int n, boolean isEdge, boolean isBlank) {
         int k = 0;
         for (Node qNode : res.getQueryNodes()) {
             if (qNode != null && qNode.getIndex() >= 0) {
                 // use case: skip select fun() as var
                 // when var has no index
-                Node node = res.getNode(k);
-                if (push(qNode, node, n)) {
-                } 
-                else {
-                    for (int i = 0; i < k; i++) {
-                        pop(res.getQueryNode(i));
+                if (!qNode.isBlank() || isBlank) {
+                    // do not push service bnode
+                    Node node = res.getNode(k);
+                    if (push(qNode, node, n)) {
+                    } else {
+                        for (int i = 0; i < k; i++) {
+                            pop(res.getQueryNode(i));
+                        }
+                        return false;
                     }
-                    return false;
                 }
             }
             k++;

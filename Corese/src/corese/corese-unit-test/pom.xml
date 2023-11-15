@@ -24,6 +24,10 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.13.2</version>
@@ -43,7 +47,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>corese-storage</artifactId>
+      <artifactId>corese-jena</artifactId>
       <version>${revision}</version>
     </dependency>
     <dependency>
@@ -60,13 +64,13 @@
     <dependency>
       <groupId>org.apache.jena</groupId>
       <artifactId>jena-tdb</artifactId>
-      <version>4.4.0</version>
+      <version>4.8.0</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.jena</groupId>
       <artifactId>jena-arq</artifactId>
-      <version>4.4.0</version>
+      <version>4.8.0</version>
     </dependency>
 
   </dependencies>
@@ -93,7 +97,8 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.22.1</version>
           <configuration>
-            <skipTests>true</skipTests>
+            <skipTests>
+              true</skipTests>
           </configuration>
         </plugin>
         <plugin>

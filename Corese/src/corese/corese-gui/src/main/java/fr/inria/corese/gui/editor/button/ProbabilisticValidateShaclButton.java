@@ -57,6 +57,7 @@ public class ProbabilisticValidateShaclButton extends Button {
 
             // Eval
             Shacl shacl = new Shacl(coreseGraph, shapeGraph);
+            shacl.setDataManager(mainFrame.getMyCorese().getDataManager());
             Graph result;
             try {
                 // run the probabilistic evaluation

@@ -120,7 +120,7 @@ function xsd:boolean sh:result(report, subReport, name, sh, cst, dt:graph shape,
         # Extended SHACL 
         if(extended == true && sh:isAViolation(sev)) {
             # fill the list of exceptions 
-            sh:log("report.rq", "sh:result", concat("exception ~> ", foc));
+            # sh:log("report.rq", "sh:result", concat("exception ~> ", foc));
             xt:add(exceptions, res);
         } ;
         
@@ -134,7 +134,7 @@ function xsd:boolean sh:result(report, subReport, name, sh, cst, dt:graph shape,
 
 # Extended SHACL Report component
 function sh:addExtendedShaclReport(report, exceptions) {
-    sh:log("core.rq", "sh:binomial", "extended report !");
+    # sh:log("core.rq", "sh:binomial", "extended report !");
     set(summary = bnode());
     sh:store(report, abnode, psh:summary, summary);
     sh:store(report, summary, rdf:type, psh:ValidationSummary);

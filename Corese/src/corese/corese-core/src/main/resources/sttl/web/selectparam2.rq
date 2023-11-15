@@ -21,7 +21,12 @@ format {
             
   group { 
     format { 
-        us:format (coalesce(st:get(?uri) = if (isURI(?value), ?value, str(?value)), false))                        
+        us:format (coalesce(
+           # st:get(?uri) = if (isURI(?value), ?value, str(?value)),
+            if (isURI(?value),
+                st:get(?uri) = ?value || st:get(?uri) = str(?value),
+                st:get(?uri) = str(?value)),
+            false))                        
         ?value ?value
     } 
 }
@@ -52,6 +57,18 @@ where {
         bind (st:get(?gname) as ?gg)
         filter bound(?gg)
         
+          { ?select st:relation ?p 
+           graph ?gg { 
+            select distinct ?p ?value 
+            where { 
+                {?x ?p ?value}
+                union
+                {?value ?p ?x}
+                filter (! isBlank(?value)) 
+            }  
+            order by ?value }
+        }
+        union 
         { ?select st:predicate ?p 
            graph ?gg { 
             select distinct ?p ?value 

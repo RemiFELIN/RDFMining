@@ -9,12 +9,13 @@ import fr.inria.corese.sparql.triple.parser.Access.Level;
 
 /**
  * interface of fr.inria.corese.core.query.PluginImpl
+ * see fr.inria.corese.sparql.triple.function.proxy.GraphSpecificFunction
  * 
  * @author Olivier Corby - INRIA - 2018
  */
 public interface GraphProcessor {
     
-    IDatatype load(IDatatype dtfile, IDatatype graph, IDatatype expectedFormat, IDatatype requiredFormat, Level level)
+    IDatatype load(Producer p, IDatatype dtfile, IDatatype graph, IDatatype expectedFormat, IDatatype requiredFormat, Level level)
             throws EngineException;
     
     IDatatype write(IDatatype dtfile, IDatatype dt); 
@@ -52,17 +53,9 @@ public interface GraphProcessor {
     
     IDatatype triple(Environment env,  Producer p, IDatatype subj, IDatatype pred, IDatatype obj);
     IDatatype value(Environment env,  Producer p, IDatatype graph, IDatatype node, IDatatype predicate, int n);
-    IDatatype edge(Environment env,   Producer p, IDatatype subj, IDatatype pred, IDatatype obj);   
-    IDatatype edge(Environment env,   Producer p, IDatatype subj, IDatatype pred, IDatatype obj, IDatatype graph);
-    IDatatype subjects(Environment env,  Producer p, IDatatype subj, IDatatype pred, IDatatype obj, IDatatype graph);
-    IDatatype objects(Environment env,   Producer p, IDatatype subj, IDatatype pred, IDatatype obj, IDatatype graph);
-    IDatatype exists(Environment env, Producer p, IDatatype subj, IDatatype pred, IDatatype obj);
     IDatatype insert(Environment env, Producer p, IDatatype[] param);
     IDatatype delete(Environment env, Producer p, IDatatype[] param);
     
-    IDatatype degree(Environment env, Producer p, IDatatype node, IDatatype pred, IDatatype index);
-    IDatatype mindegree(Environment env, Producer p, IDatatype node, IDatatype pred, IDatatype index, IDatatype min);
-
     IDatatype entailment(Environment env, Producer p, IDatatype graph) throws EngineException;
     
     IDatatype shape(Expr exp, Environment env, Producer p, IDatatype[] param);

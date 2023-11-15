@@ -38,11 +38,13 @@ import jakarta.servlet.http.HttpServletRequest;
 public class ServiceOnline {
 
     static private final Logger logger = LogManager.getLogger(ServiceOnline.class);
+    static final int ERROR = 500;
+    private static final String headerAccept = "Access-Control-Allow-Origin";
 
     static final String SERVICE = "/service/"; 
     
     static {
-        Manager.getManager().init();
+        //Manager.getManager().init();
     }
     
     QuerySolverVisitorServer visitor;
@@ -201,6 +203,37 @@ public class ServiceOnline {
             @PathParam("serv")      String serv,
             @FormDataParam("profile")   String profile, // query + transform
             @FormDataParam("uri")       String resource, // query + transform
+            @FormDataParam("mode")      List<String> modeList,
+            @FormDataParam("param")     List<String> paramList,
+            @FormDataParam("arg")       List<String> argList,
+            @FormDataParam("format")    String format,
+            @FormDataParam("access")    String access,
+            @FormDataParam("query")     String query, // SPARQL query
+            @FormDataParam("name")      String name, // SPARQL query name (in webapp/query)
+            @FormDataParam("value")     String value, // values clause that may complement query
+            @FormDataParam("transform") String transform, // Transformation URI to post process result
+            @FormDataParam("default-graph-uri") List<FormDataBodyPart> defaultGraphUris,
+            @FormDataParam("named-graph-uri")   List<FormDataBodyPart> namedGraphUris) {
+
+    	//if (logger.isDebugEnabled())
+    	logger.info(
+        String.format("POST multipart/form-data serv: %s profile: %s uri: %s mode: %s param: %s arg: %s query: %s name: %s value: %s"
+                + " transform: %s from: %s named: %s", 
+                serv, profile, resource, modeList, 
+                paramList, argList, query, name, value, transform, 
+                defaultGraphUris, namedGraphUris));
+        
+        return process(request, serv, profile, resource, 
+                null, modeList, null, paramList, null, argList,
+                format, access, query, name, value, transform, toStringList(defaultGraphUris), toStringList(namedGraphUris));
+    }
+    
+    
+    public Response postMD(
+            @jakarta.ws.rs.core.Context HttpServletRequest request,
+            @PathParam("serv")      String serv,
+            @FormDataParam("profile")   String profile, // query + transform
+            @FormDataParam("uri")       String resource, // query + transform
             @FormDataParam("mode")      String mode,
             @FormDataParam("param")     String param,
             @FormDataParam("arg")       String arg,
@@ -219,39 +252,158 @@ public class ServiceOnline {
     				+ ", transform: " + transform + ", defaultGraphUris: " + defaultGraphUris + ", namedGraphUris: " + namedGraphUris);
         return get(request, serv, profile, resource, mode, param, arg, format, access, query, name, value, transform, toStringList(defaultGraphUris), toStringList(namedGraphUris));
     }
+    
+    
 
+    
+    
     @GET
     //@Produces(MediaType.TEXT_HTML)
     public Response get(
-     @jakarta.ws.rs.core.Context HttpServletRequest request,
-            @PathParam("serv")      String serv,
-            @QueryParam("profile")  String profile, // query + transform
-            @QueryParam("uri")      String resource, // URI of resource focus
-            @QueryParam("mode")     String mode, 
-            @QueryParam("param")    String param, 
-            @QueryParam("arg")      String arg,
-            @QueryParam("format")   String format, 
-            @QueryParam("access")    String access, 
-            @QueryParam("query")    String query, // SPARQL query
-            @QueryParam("name")     String name, // SPARQL query name (in webapp/query or path or URL)
-            @QueryParam("value")    String value, // values clause that may complement query           
+             @jakarta.ws.rs.core.Context HttpServletRequest request,
+            @PathParam("serv") String serv,
+            @QueryParam("profile") String profile, // query + transform
+            @QueryParam("uri") String resource, // URI of resource focus
+            @QueryParam("mode") List<String> mode,
+            @QueryParam("param") List<String> param,
+            @QueryParam("arg") List<String> arg,
+            @QueryParam("format") String format,
+            @QueryParam("access") String access,
+            @QueryParam("query") String query, // SPARQL query
+            @QueryParam("name") String name, // SPARQL query name (in webapp/query or path or URL)
+            @QueryParam("value") String value, // values clause that may complement query           
             @QueryParam("transform") String transform, // Transformation URI to post process result
             @QueryParam("default-graph-uri") List<String> defaultGraphUris,
-            @QueryParam("named-graph-uri")  List<String> namedGraphUris) {
-    	
-    	//if (logger.isDebugEnabled())
-    		logger.debug("GET. serv: " + serv + ", profile: " + profile + ", uri: " + resource + ", mode: " + mode 
-    				+ ", param: " + param + ", arg: " + arg +", query: " + query + ", name: " + name + ", value: " + value 
-    				+ ", transform: " + transform + ", defaultGraphUris: " + defaultGraphUris + ", namedGraphUris: " + namedGraphUris);
+            @QueryParam("named-graph-uri") List<String> namedGraphUris) {
 
+        //if (logger.isDebugEnabled())
+        logger.info("GET. serv: " + serv + ", profile: " + profile + ", uri: " + resource + ", mode: " + mode
+                + ", param: " + param + ", arg: " + arg + ", query: " + query + ", name: " + name + ", value: " + value
+                + ", transform: " + transform + ", defaultGraphUris: " + defaultGraphUris + ", namedGraphUris: " + namedGraphUris);
+
+        return process(request, serv, profile, resource, null, mode, null, param, null, arg, format, access, query, name, value, transform, defaultGraphUris, namedGraphUris);
+    }
+    
+    
+    //@GET
+    //@Produces(MediaType.TEXT_HTML)
+    public Response get(
+            @jakarta.ws.rs.core.Context HttpServletRequest request,
+            @PathParam("serv") String serv,
+            @QueryParam("profile") String profile, // query + transform
+            @QueryParam("uri") String resource, // URI of resource focus
+            @QueryParam("mode") String mode,
+            @QueryParam("param") String param,
+            @QueryParam("arg") String arg,
+            @QueryParam("format") String format,
+            @QueryParam("access") String access,
+            @QueryParam("query") String query, // SPARQL query
+            @QueryParam("name") String name, // SPARQL query name (in webapp/query or path or URL)
+            @QueryParam("value") String value, // values clause that may complement query           
+            @QueryParam("transform") String transform, // Transformation URI to post process result
+            @QueryParam("default-graph-uri") List<String> defaultGraphUris,
+            @QueryParam("named-graph-uri") List<String> namedGraphUris) {
+
+        //if (logger.isDebugEnabled())
+        logger.info("GET. serv: " + serv + ", profile: " + profile + ", uri: " + resource + ", mode: " + mode
+                + ", param: " + param + ", arg: " + arg + ", query: " + query + ", name: " + name + ", value: " + value
+                + ", transform: " + transform + ", defaultGraphUris: " + defaultGraphUris + ", namedGraphUris: " + namedGraphUris);
+
+        return process(request, serv, profile, resource, mode, param, arg, format, access, query, name, value, transform, defaultGraphUris, namedGraphUris);
+    }
+    
+    Response process(
+            HttpServletRequest request,
+            String serv,
+            String profile, // query + transform
+            String resource, // URI of resource focus
+            String mode, 
+            String param, 
+            String arg,
+            String format, 
+            String access, 
+            String query, // SPARQL query
+            String name, // SPARQL query name (in webapp/query or path or URL)
+            String value, // values clause that may complement query           
+            String transform, // Transformation URI to post process result
+            List<String> defaultGraphUris,
+            List<String> namedGraphUris) 
+    {
+        return process(request, serv, profile, resource, 
+                mode, null, param, null, arg, null,
+                format, access, query, name, value, transform, defaultGraphUris, namedGraphUris);
+    }
+    
+     Response processList(
+            HttpServletRequest request,
+            String serv,
+            String profile, // query + transform
+            String resource, // URI of resource focus
+            String mode, 
+            String param, 
+            String arg,
+            String format, 
+            String access, 
+            String query, // SPARQL query
+            String name, // SPARQL query name (in webapp/query or path or URL)
+            String value, // values clause that may complement query           
+            String transform, // Transformation URI to post process result
+            List<String> defaultGraphUris,
+            List<String> namedGraphUris) 
+    {
+        List<String> modeList = mode==null?null:List.of(mode);
+        List<String> paramList = param==null?null:List.of(param);
+        List<String> argList = arg==null?null:List.of(arg);
+        return process(request, serv, profile, resource, 
+                mode, modeList, param, paramList, arg, argList,
+                format, access, query, name, value, transform, defaultGraphUris, namedGraphUris);
+    }
+    
+    Response process(
+            HttpServletRequest request,
+            String serv,
+            String profile, // query + transform
+            String resource, // URI of resource focus
+            String mode,
+            List<String> modeList,
+            String param, 
+            List<String> paramList,
+            String arg,
+            List<String> argList,
+            String format, 
+            String access, 
+            String query, // SPARQL query
+            String name, // SPARQL query name (in webapp/query or path or URL)
+            String value, // values clause that may complement query           
+            String transform, // Transformation URI to post process result
+            List<String> defaultGraphUris,
+            List<String> namedGraphUris) 
+    {
+        
+        if (! Manager.getManager().isInitDone()) {
+            return Response.status(ERROR).header(headerAccept, "*").entity("Server not initialized").build();
+        }
+        
+        if (mode == null && modeList!=null && ! modeList.isEmpty()) {
+            mode = modeList.get(0);
+        }
+        if (param == null && paramList!=null && ! paramList.isEmpty()) {
+            param = paramList.get(0);
+        } 
+        if (arg == null && argList!=null && ! argList.isEmpty()) {
+            arg = argList.get(0);
+        }        
     	// Dataset URI of the service
         String uri = getManager().getURI(serv);        
         Param par = new Param(SERVICE + serv, getProfile(uri, profile, transform), transform, resource, name, query);
         par.setValue(value);
         par.setServer(uri);
         par.setMode(mode);
+        par.setModeList(modeList);
         par.setParam(param);
+        par.setParamList(paramList);
         par.setArg(arg);
+        par.setArgList(argList);
         // when URL parameter, write: format=application%2Fsparql-results%2Bjson
         par.setFormat(format);
         par.setKey(access);

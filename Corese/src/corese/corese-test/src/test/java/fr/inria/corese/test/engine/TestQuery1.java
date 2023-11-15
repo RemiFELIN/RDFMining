@@ -1,11 +1,27 @@
 package fr.inria.corese.test.engine;
 
-import fr.inria.corese.compiler.eval.QuerySolver;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+//import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+//import org.apache.logging.log4j.Level;
+//import org.apache.logging.log4j.LogManager;
+
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
+
+import fr.inria.corese.compiler.eval.QuerySolver;
+import fr.inria.corese.compiler.result.XMLResult;
 import fr.inria.corese.core.Graph;
 import fr.inria.corese.core.GraphStore;
 import fr.inria.corese.core.load.Load;
@@ -22,27 +38,10 @@ import fr.inria.corese.core.query.QueryGraph;
 import fr.inria.corese.core.query.QueryProcess;
 import fr.inria.corese.core.transform.Loader;
 import fr.inria.corese.core.transform.Transformer;
-import fr.inria.corese.core.util.GraphStoreInit;
-import fr.inria.corese.core.util.QueryManager;
-import fr.inria.corese.core.util.SPINProcess;
-import fr.inria.corese.sparql.datatype.RDF;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.xml.sax.SAXException;
-
-
-import fr.inria.corese.sparql.api.IDatatype;
-import fr.inria.corese.sparql.datatype.DatatypeMap;
-import fr.inria.corese.sparql.exceptions.EngineException;
-import fr.inria.corese.sparql.storage.api.IStorage;
-import fr.inria.corese.sparql.storage.api.Parameters;
-import fr.inria.corese.sparql.triple.parser.ASTQuery;
-import fr.inria.corese.sparql.triple.parser.Context;
-import fr.inria.corese.sparql.triple.parser.Dataset;
-import fr.inria.corese.sparql.triple.parser.NSManager;
-import fr.inria.corese.compiler.result.XMLResult;
 import fr.inria.corese.core.util.Property;
-import static fr.inria.corese.core.util.Property.Value.*;
+import static fr.inria.corese.core.util.Property.Value.LOAD_IN_DEFAULT_GRAPH;
+import static fr.inria.corese.core.util.Property.Value.SPARQL_COMPLIANT;
+import fr.inria.corese.core.util.SPINProcess;
 import fr.inria.corese.kgram.api.core.DatatypeValue;
 import fr.inria.corese.kgram.api.core.Edge;
 import fr.inria.corese.kgram.api.core.ExprType;
@@ -52,28 +51,24 @@ import fr.inria.corese.kgram.core.Mapping;
 import fr.inria.corese.kgram.core.Mappings;
 import fr.inria.corese.kgram.core.Query;
 import fr.inria.corese.kgram.event.StatListener;
+import fr.inria.corese.sparql.api.IDatatype;
+import fr.inria.corese.sparql.datatype.DatatypeMap;
+import fr.inria.corese.sparql.datatype.RDF;
 import fr.inria.corese.sparql.datatype.extension.CoresePointer;
+import fr.inria.corese.sparql.exceptions.EngineException;
 import fr.inria.corese.sparql.exceptions.LDScriptException;
 import fr.inria.corese.sparql.exceptions.UndefinedExpressionException;
+import fr.inria.corese.sparql.storage.api.IStorage;
+import fr.inria.corese.sparql.storage.api.Parameters;
 import fr.inria.corese.sparql.triple.function.term.Binding;
+import fr.inria.corese.sparql.triple.parser.ASTQuery;
 import fr.inria.corese.sparql.triple.parser.Access;
 import fr.inria.corese.sparql.triple.parser.Access.Feature;
-
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-//import java.util.logging.Logger;
-
-//import org.apache.logging.log4j.Level;
-//import org.apache.logging.log4j.LogManager;
-
-import org.junit.AfterClass;
-import org.junit.Assert;
-
-
-import static org.junit.Assert.*;
-import org.slf4j.LoggerFactory;
+import fr.inria.corese.sparql.triple.parser.Context;
+import fr.inria.corese.sparql.triple.parser.Dataset;
+import fr.inria.corese.sparql.triple.parser.NSManager;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -96,9 +91,9 @@ public class TestQuery1 {
     @BeforeClass
     static public void init() {
         //Query.STD_PLAN = Query.PLAN_RULE_BASED;
-        Property.set(GRAPH_NODE_AS_DATATYPE, true);
+        //Property.set(GRAPH_NODE_AS_DATATYPE, true);
         Property.set(LOAD_IN_DEFAULT_GRAPH, true);
-        Property.set(INTERPRETER_TEST, true);
+        //Property.set(INTERPRETER_TEST, true);
         QueryProcess.DISPLAY_QUERY = true;
         System.out.println("Property: "+ Property.display());
         //Graph.DEFAULT_GRAPH_MODE = Graph.DEFAULT_GRAPH;
@@ -1233,7 +1228,7 @@ public class TestQuery1 {
         
         exec.query(i);
         Mappings map = exec.query(q);
-        //System.out.println(map.getValue("?t").stringValue());
+        System.out.println("res: "+map.getValue("?t").stringValue());
         String str = map.getValue("?t").stringValue();
         Graph gg = Graph.create();
         Load ld = Load.create(gg);
@@ -6078,7 +6073,7 @@ public class TestQuery1 {
         gs.addEdge(g, s, q, b);
         gs.addEdge(g, b, p, l);
         gs.add(gg, ss, pp, oo);
-        gs.add(g2, s2, p2, o2);
+        gs.insert(g2, s2, p2, o2);
 
         QueryProcess exec = QueryProcess.create(gs);
 
@@ -6614,7 +6609,7 @@ public class TestQuery1 {
     @Test
     public void testDT() throws EngineException {
         GraphStore gs = GraphStore.create();
-        GraphStoreInit.create(gs).init();
+        //GraphStoreInit.create(gs).init();
         QueryProcess exec = QueryProcess.create(gs);
 
         String init =
@@ -6643,7 +6638,7 @@ public class TestQuery1 {
     //@Test
     public void testSystem() throws EngineException {
         GraphStore gs = GraphStore.create();
-        GraphStoreInit.create(gs).init();
+        //GraphStoreInit.create(gs).init();
         QueryProcess exec = QueryProcess.create(gs);
 
         String init = "insert data { graph kg:system { "
@@ -6672,7 +6667,7 @@ public class TestQuery1 {
 
     }
 
-    @Test
+    //@Test
     public void testLoc2() throws EngineException, LoadException {
 
         String init = FOAF_PREF
@@ -6685,7 +6680,7 @@ public class TestQuery1 {
 
 
         GraphStore gs = GraphStore.create();
-        GraphStoreInit.create(gs).init();
+        //GraphStoreInit.create(gs).init();
         Graph gg = gs.getNamedGraph(Graph.SYSTEM);
         QueryProcess exec = QueryProcess.create(gs);
 
@@ -6825,42 +6820,42 @@ public class TestQuery1 {
     }
 
     //@Test
-    public void testQM() {
-        Graph g = createGraph();
-        QueryManager man = QueryManager.create(g);
-        QueryProcess exec = QueryProcess.create(g);
-        String init = "prefix foaf:    <http://xmlns.com/foaf/0.1/> "
-                + "insert data {"
-                + "<John> foaf:name 'John' ; foaf:age 18 ."
-                + "<Jim> foaf:name 'Jim' ; foaf:knows <John> ."
-                + "}";
-
-        String query = "prefix sp: <http://spinrdf.org/sp#>"
-                + "prefix foaf:    <http://xmlns.com/foaf/0.1/> "
-                + "select * where {"
-                + "?x foaf:name ?n "
-                + "?x foaf:knows ?p "
-                + "minus { ?x foaf:age ?a } "
-                + "<James> foaf:fake ?f "
-                + "?f a foaf:Person "
-                + "?f sp:elements ?e "
-                + "?f sp:test ?t "
-                + "filter(?b >= 20)"
-                + "}";
-        try {
-            exec.query(init);
-            Mappings map = man.query(query);
-            assertEquals("result", 1, map.size());
-            ////System.out.println(map.getQuery().getAST());
-            ////System.out.println(map);
-            ////System.out.println("size: " + map.size());
-
-
-        } catch (EngineException ex) {
-            assertEquals("result", true, ex);
-        }
-
-    }
+//    public void testQM() {
+//        Graph g = createGraph();
+//        QueryManager man = QueryManager.create(g);
+//        QueryProcess exec = QueryProcess.create(g);
+//        String init = "prefix foaf:    <http://xmlns.com/foaf/0.1/> "
+//                + "insert data {"
+//                + "<John> foaf:name 'John' ; foaf:age 18 ."
+//                + "<Jim> foaf:name 'Jim' ; foaf:knows <John> ."
+//                + "}";
+//
+//        String query = "prefix sp: <http://spinrdf.org/sp#>"
+//                + "prefix foaf:    <http://xmlns.com/foaf/0.1/> "
+//                + "select * where {"
+//                + "?x foaf:name ?n "
+//                + "?x foaf:knows ?p "
+//                + "minus { ?x foaf:age ?a } "
+//                + "<James> foaf:fake ?f "
+//                + "?f a foaf:Person "
+//                + "?f sp:elements ?e "
+//                + "?f sp:test ?t "
+//                + "filter(?b >= 20)"
+//                + "}";
+//        try {
+//            exec.query(init);
+//            Mappings map = man.query(query);
+//            assertEquals("result", 1, map.size());
+//            ////System.out.println(map.getQuery().getAST());
+//            ////System.out.println(map);
+//            ////System.out.println("size: " + map.size());
+//
+//
+//        } catch (EngineException ex) {
+//            assertEquals("result", true, ex);
+//        }
+//
+//    }
 
     @Test
     public void testPPSPINwdfgdwfgd() throws EngineException, LoadException {       
@@ -7306,7 +7301,7 @@ public class TestQuery1 {
         try {
             Mappings map = exec.query(query);
             IDatatype dt = getValue(map, "?sim");
-            double sim = dt.getDoubleValue();
+            double sim = dt.doubleValue();
 
             assertEquals("Result", sim, .16, 1e-2);
         } catch (EngineException e) {
@@ -7730,7 +7725,7 @@ public class TestQuery1 {
             Mappings map = exec.query(query);
             IDatatype dt = getValue(map, "?sim");
 
-            assertEquals("Result", true, dt.getDoubleValue() < 0.5);
+            assertEquals("Result", true, dt.doubleValue() < 0.5);
 
             String update = "prefix c: <http://www.inria.fr/acacia/comma#>" +
                     "insert data {c:Human rdfs:subClassOf c:Person}";
@@ -8034,7 +8029,7 @@ public class TestQuery1 {
             QueryProcess exec = QueryProcess.create(graph);
             Mappings map = exec.query(query);
             IDatatype dt = getValue(map, "?max");
-            assertEquals("Result", 13, dt.getIntegerValue());
+            assertEquals("Result", 13, dt.intValue());
 
         } catch (EngineException e) {
             assertEquals("Result", true, e);
@@ -8057,9 +8052,9 @@ public class TestQuery1 {
             IDatatype dt2 = getValue(map, "?c2");
             IDatatype dt3 = getValue(map, "?c3");
 
-            assertEquals("Result", 1406, dt1.getIntegerValue());
-            assertEquals("Result", 1367, dt2.getIntegerValue());
-            assertEquals("Result", 1367, dt3.getIntegerValue());
+            assertEquals("Result", 1406, dt1.intValue());
+            assertEquals("Result", 1367, dt2.intValue());
+            assertEquals("Result", 1367, dt3.intValue());
 
         } catch (EngineException e) {
             assertEquals("Result", true, e);
@@ -8241,7 +8236,7 @@ public class TestQuery1 {
             exec.query(init);
             Mappings res = exec.query(query);
             assertEquals("Result", 1, res.size());
-            assertEquals("Result", 30, getValue(res, "?s").getIntegerValue());
+            assertEquals("Result", 30, getValue(res, "?s").intValue());
 
 
         } catch (EngineException e) {

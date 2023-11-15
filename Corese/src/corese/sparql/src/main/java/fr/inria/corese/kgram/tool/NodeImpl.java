@@ -1,15 +1,16 @@
 package fr.inria.corese.kgram.tool;
 
+import java.util.Objects;
+
 import fr.inria.corese.kgram.api.core.Edge;
+import fr.inria.corese.kgram.api.core.Node;
+import fr.inria.corese.kgram.api.core.TripleStore;
+import fr.inria.corese.kgram.path.Path;
 import fr.inria.corese.sparql.api.IDatatype;
 import fr.inria.corese.sparql.triple.cst.RDFS;
 import fr.inria.corese.sparql.triple.parser.Atom;
 import fr.inria.corese.sparql.triple.parser.Constant;
 import fr.inria.corese.sparql.triple.parser.Variable;
-import fr.inria.corese.kgram.api.core.Node;
-import static fr.inria.corese.kgram.api.core.Node.INITKEY;
-import fr.inria.corese.kgram.api.core.TripleStore;
-import fr.inria.corese.kgram.path.Path;
 
 public class NodeImpl implements Node {
 
@@ -136,13 +137,13 @@ public class NodeImpl implements Node {
         return getValue().sameTerm(getValue(n));
     }
     
-    boolean sameVariable(Node n){      
+    boolean sameVariable(Node n) {
         return isVariable() && n.isVariable() && getLabel().equals(n.getLabel());
     }
 
     @Override
     public boolean match(Node n) {
-       if (isVariable() || n.isVariable()) {
+        if (isVariable() || n.isVariable()) {
             return sameVariable(n);
         }
         return getValue().match(getValue(n));
@@ -155,13 +156,13 @@ public class NodeImpl implements Node {
         }
         return false;
     }
-    
-     public boolean equals(Node n) {
+
+    public boolean equals(Node n) {
         if (isVariable() || n.isVariable()) {
             return sameVariable(n);
         }
         return getValue().equals(getValue(n));
-     }
+    }
 
     @Override
     public void setIndex(int n) {

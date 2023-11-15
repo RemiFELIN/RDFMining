@@ -1,14 +1,15 @@
 package fr.inria.corese.core.logic;
 
-import java.util.Hashtable;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.inria.corese.kgram.api.core.Node;
 import fr.inria.corese.core.Graph;
+import fr.inria.corese.core.storage.api.dataManager.DataManager;
+import fr.inria.corese.kgram.api.core.Node;
 
 /**
  * Semantic distance & similarity with Corese 2.4 Algorithm Extended to property
@@ -40,6 +41,8 @@ public class Distance {
     private static int FIRST_STEP = 5;
 
     private Graph graph;
+    private DataManager dataManager;
+    private BrokerDistance broker;
     Node root, subEntityOf, sameAs, equivAs;
     NodeList topList;
     List<Node> topLevel;
@@ -53,62 +56,70 @@ public class Distance {
             isExtended = true,
             hasSame = false,
             hasEquiv = false;
-    
-    private String subClassOf = RDFS.SUBCLASSOF;
-    private String broader    = SKOS.BROADER;
 
-    private Hashtable<Node, Node> table;
-    private Hashtable<Node, Integer> depth;
+    private String subClassOf = RDFS.SUBCLASSOF;
+    private String broader = SKOS.BROADER;
+
+    private Hashtable<String, Node> table;
+    private Hashtable<String, Integer> depth;
 
     static Logger logger = LoggerFactory.getLogger(Distance.class);
 
-    void init(List<Node> top, boolean isProp) {
-        isProperty = isProp;
-
-        if (isProperty) {
-            subEntityOf = getGraph().getPropertyNode(RDFS.SUBPROPERTYOF);
-            equivAs = getGraph().getPropertyNode(OWL.EQUIVALENTPROPERTY);
-            setStep(PSTEP);
-        } else {
-            subEntityOf = getGraph().getPropertyNode(getSubClassOf());
-            if (subEntityOf == null) {
-                subEntityOf = getGraph().getPropertyNode(getBroader());
-            }
-            equivAs = getGraph().getPropertyNode(OWL.EQUIVALENTCLASS);
-            //setStep(CSTEP);
-        }
-
-        // rdfs:Resource or owl:Thing
-        topList = new NodeList(top);
-        topLevel = new ArrayList<>(); 
-        // top level classes which are subClassOf nobody
-        if (subEntityOf != null) {
-            topLevel = graph.getTopLevel(subEntityOf);
-        }
-        table = new Hashtable<>();
-        depth = new Hashtable<>();
-        sameAs = getGraph().getPropertyNode(OWL.SAMEAS);
-        hasSame = sameAs != null;
-        hasEquiv = equivAs != null;
-        // reset all depth
-        reset();
-        init();
-    }
-    
-    public void start() {
-        ArrayList<Node> top = new ArrayList<>();
-        top.add(getGraph().getTopClass());
-        init(top, false);
-    }
-    
     public Distance(Graph g) {
         graph = g;
+        setBroker(new BrokerDistance(g));
+    }
+
+    public Distance(DataManager man) {
+        setDataManager(man);
+        setGraph(Graph.create());
+        setBroker(new BrokerDistanceDataManager(getGraph(), man));
     }
 
     public static Distance classDistance(Graph g) {
         Distance dist = new Distance(g);
         dist.start();
         return dist;
+    }
+
+    public void start() {
+        ArrayList<Node> top = new ArrayList<>();
+        top.add(getBroker().getTopLevel(RDFS.RESOURCE, OWL.THING, RDFS.RESOURCE));
+        init(top, false);
+    }
+
+    void init(List<Node> top, boolean isProp) {
+        isProperty = isProp;
+
+        if (isProperty) {
+            subEntityOf = getBroker().getPropertyNode(RDFS.SUBPROPERTYOF);
+            equivAs = getBroker().getPropertyNode(OWL.EQUIVALENTPROPERTY);
+            setStep(PSTEP);
+        } else {
+            subEntityOf = getBroker().getPropertyNode(getSubClassOf());
+            if (subEntityOf == null) {
+                subEntityOf = getBroker().getPropertyNode(getBroader());
+            }
+            equivAs = getBroker().getPropertyNode(OWL.EQUIVALENTCLASS);
+            // setStep(CSTEP);
+        }
+
+        // rdfs:Resource or owl:Thing
+        topList = new NodeList(top);
+        topLevel = new ArrayList<>();
+        // top level classes y s.t.
+        // x subEntityOf y and not(y subEntityOf z)
+        if (subEntityOf != null) {
+            topLevel = getBroker().getTopLevelList(subEntityOf);
+        }
+        table = new Hashtable<>();
+        depth = new Hashtable<>();
+        sameAs = getBroker().getPropertyNode(OWL.SAMEAS);
+        hasSame = sameAs != null;
+        hasEquiv = equivAs != null;
+        // reset all depth
+        reset();
+        init();
     }
 
     /**
@@ -143,14 +154,12 @@ public class Distance {
     }
 
     public Integer getDepth(Node n) {
-        //Integer d = (Integer) n.getProperty(Node.DEPTH) ;
-        Integer d = depth.get(n);
+        Integer d = depth.get(n.getLabel());
         return d;
     }
 
     void setDepth(Node n, Integer i) {
-        //n.setProperty(Node.DEPTH, i);
-        depth.put(n, i);
+        depth.put(n.getLabel(), i);
     }
 
     void init() {
@@ -171,12 +180,12 @@ public class Distance {
         }
         initDepthTopLevel();
     }
-    
+
     /**
      * depth of hierarchy of classes that are subClassOf nobody
      * depth of such top level classes is 1
      * Hence we emulate subClassOf rdfs:Resource
-     * */
+     */
     void initDepthTopLevel() {
         for (Node node : topLevel) {
             initDepth(node, 1);
@@ -188,7 +197,7 @@ public class Distance {
         table.clear();
         depth(sup);
         if (depthMax == 0) {
-            // in case there is no rdfs:subClassOf, choose  max depth 1
+            // in case there is no rdfs:subClassOf, choose max depth 1
             depthMax = 1;
         }
         setDmax(depthMax);
@@ -220,29 +229,29 @@ public class Distance {
     }
 
     boolean visited(Node node) {
-        return table.containsKey(node);
+        return table.containsKey(node.getLabel());
     }
 
     void visit(Node node) {
-        table.put(node, node);
+        table.put(node.getLabel(), node);
     }
 
     void leave(Node node) {
-        table.remove(node);
+        table.remove(node.getLabel());
     }
 
     void reset() {
         depth.clear();
     }
 
-//    void reset(Node sup) {
-//        setDepth(sup, null);
-//        for (Node sub : getSubEntities(sup)) {
-//            if (sub != null) {
-//                reset(sub);
-//            }
-//        }
-//    }
+    // void reset(Node sup) {
+    // setDepth(sup, null);
+    // for (Node sub : getSubEntities(sup)) {
+    // if (sub != null) {
+    // reset(sub);
+    // }
+    // }
+    // }
 
     /**
      * Used by semantic distance Node with no depth (not in subClassOf hierarchy
@@ -283,7 +292,7 @@ public class Distance {
 
     public double similarity(double distance, int num) {
         double dist = distance / (dmax * num);
-        double sim = 1 / (1 + (K * dist)); //  1/1+0=1 1/1+1 = 1/2    1/1+2 = 1/3
+        double sim = 1 / (1 + (K * dist)); // 1/1+0=1 1/1+1 = 1/2 1/1+2 = 1/3
         return sim;
     }
 
@@ -295,7 +304,7 @@ public class Distance {
         }
         return false;
     }
-    
+
     boolean isTopLevel(Node n) {
         return topLevel.contains(n);
     }
@@ -307,7 +316,7 @@ public class Distance {
         if (subEntityOf == null) {
             return topList;
         }
-        Iterable<Node> it = getGraph().getNodes(subEntityOf, node, 0);
+        Iterable<Node> it = getBroker().getNodeList(subEntityOf, node, 0);
         if (!it.iterator().hasNext()) {
             return topList;
         }
@@ -318,7 +327,7 @@ public class Distance {
         if (subEntityOf == null) {
             return new ArrayList<>();
         }
-        return getGraph().getNodes(subEntityOf, node, 1);
+        return getBroker().getNodeList(subEntityOf, node, 1);
     }
 
     /**
@@ -365,7 +374,7 @@ public class Distance {
         }
     }
 
-    class Table extends Hashtable<Node, Double> {
+    class MyTable extends Hashtable<Node, Double> {
 
         boolean hasRoot = false;
         boolean change = true;
@@ -382,11 +391,43 @@ public class Distance {
         public boolean contains(Node n) {
             return containsKey(n);
         }
-        
+
         public void setChange(boolean b) {
             change = b;
         }
-        
+
+        public boolean isChange() {
+            return change;
+        }
+
+    }
+
+    class Table extends Hashtable<String, Double> {
+
+        boolean hasRoot = false;
+        boolean change = true;
+
+        // @Override
+        public Double put(Node n, Double d) {
+            setChange(true);
+            if (isRoot(n)) {
+                hasRoot = true;
+            }
+            return super.put(n.getLabel(), d);
+        }
+
+        public Double get(Node n) {
+            return super.get(n.getLabel());
+        }
+
+        public boolean contains(Node n) {
+            return containsKey(n.getLabel());
+        }
+
+        public void setChange(boolean b) {
+            change = b;
+        }
+
         public boolean isChange() {
             return change;
         }
@@ -394,11 +435,10 @@ public class Distance {
     }
 
     /**
-     * isDist = true  : return distance Double
-     * isDist = false : return common ancestor Node 
+     * isDist = true : return distance Double
+     * isDist = false : return common ancestor Node
      */
     Object distance(Node n1, Node n2, boolean isDist) {
-
         Table distanceTable1 = new Table();
         Table distanceTable2 = new Table();
 
@@ -436,20 +476,18 @@ public class Distance {
                 return result(null, 0.0, isDist);
             }
         }
-        
+
         if (maxDepth1 == 1) {
             if (isTopLevel(n1)) {
                 endC1 = true;
-            } 
+            }
         }
 
         if (maxDepth2 == 1) {
             if (isTopLevel(n2)) {
                 endC2 = true;
-            } 
+            }
         }
-        
-        
 
         if (distanceTable1.contains(n2)) {
             end = true;
@@ -457,15 +495,15 @@ public class Distance {
 
         while (!end) {
 
-            //if (!distanceTable1.isChange() && !distanceTable2.isChange()) 
+            // if (!distanceTable1.isChange() && !distanceTable2.isChange())
             if (count++ > 10000) {
                 logger.debug("** Node distance suspect a loop " + n1 + " " + n2);
                 break;
             }
-            
+
             distanceTable1.setChange(false);
             distanceTable2.setChange(false);
-            
+
             if (!endC1 && maxDepth1 >= maxDepth2) {
                 // distance from current to their fathers
                 endC1 = distance(ancestorList1, distanceTable1, maxDepth2);
@@ -474,7 +512,7 @@ public class Distance {
 
             // on ne considere comme candidat a type commun que ceux qui sont
             // aussi profond que le plus profond des types deja parcourus
-            // dit autrement, on ne considere  un type commun qu'apres avoir explore
+            // dit autrement, on ne considere un type commun qu'apres avoir explore
             // tous les types plus profonds que lui de maniere a trouver en premier
             // le type commun le plus profond
             double dd;
@@ -560,12 +598,12 @@ public class Distance {
     }
 
     double distance(Node node, Node pred, Table ta, Table tb) {
-        for (Node same : getGraph().getNodes(pred, node, 0)) {
+        for (Node same : getBroker().getNodeList(pred, node, 0)) {
             if (ta.contains(same)) {
                 return ta.get(same) + tb.get(node);
             }
         }
-        for (Node same : getGraph().getNodes(pred, node, 1)) {
+        for (Node same : getBroker().getNodeList(pred, node, 1)) {
             if (ta.contains(same)) {
                 return ta.get(same) + tb.get(node);
             }
@@ -575,12 +613,12 @@ public class Distance {
     }
 
     int getMax(NodeList v) {
-        if (v.size() == 0) {
+        if (v.isEmpty()) {
             return 0;
         }
         Node ct = v.get(0);
         if (ct != null) {
-            return getDDepth(ct); //.depth;
+            return getDDepth(ct); // .depth;
         } else {
             return 0;
         }
@@ -592,7 +630,8 @@ public class Distance {
 
     /**
      * compute distance from each current to its fathers
-     * <br>side effect : set current to (current's) father list store in ht the
+     * <br>
+     * side effect : set current to (current's) father list store in ht the
      * distance from source type to each father max is the deepest depth of the
      * other list of current should stay below this minimal depth to target the
      * deepest common ancestor first
@@ -615,10 +654,10 @@ public class Distance {
             ancestorList.remove(node);
             i = distanceTable.get(node);
             // distance of the fathers of ct
-            
+
             for (Node sup : getSuperEntities(node)) {
                 d = i + ((step) ? step(sup) : 1);
-                
+
                 if (distanceTable.get(sup) == null) {
                     fatherList.add(sup);
                     distanceTable.put(sup, d);
@@ -638,7 +677,7 @@ public class Distance {
                 endC1 = true;
             }
         }
-        
+
         return endC1;
     }
 
@@ -696,6 +735,22 @@ public class Distance {
      */
     public void setGraph(Graph graph) {
         this.graph = graph;
+    }
+
+    public BrokerDistance getBroker() {
+        return broker;
+    }
+
+    public void setBroker(BrokerDistance broker) {
+        this.broker = broker;
+    }
+
+    public DataManager getDataManager() {
+        return dataManager;
+    }
+
+    public void setDataManager(DataManager dataManager) {
+        this.dataManager = dataManager;
     }
 
 }

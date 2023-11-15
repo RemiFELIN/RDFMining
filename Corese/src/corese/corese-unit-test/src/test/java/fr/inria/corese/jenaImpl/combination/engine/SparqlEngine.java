@@ -1,14 +1,13 @@
 package fr.inria.corese.jenaImpl.combination.engine;
 
-
 import org.apache.jena.query.Dataset;
 
 import fr.inria.corese.core.Graph;
-import fr.inria.corese.core.api.DataManager;
 import fr.inria.corese.core.query.QueryProcess;
+import fr.inria.corese.core.storage.api.dataManager.DataManager;
+import fr.inria.corese.jena.JenaTdb1DataManagerBuilder;
 import fr.inria.corese.kgram.core.Mappings;
 import fr.inria.corese.sparql.exceptions.EngineException;
-import fr.inria.corese.storage.jenatdb1.JenaDataManager;
 
 public class SparqlEngine {
 
@@ -21,7 +20,7 @@ public class SparqlEngine {
     }
 
     public static SelectResults selectQuery(String query, Dataset dataset) {
-        DataManager dataManage = new JenaDataManager(dataset);
+        DataManager dataManage = new JenaTdb1DataManagerBuilder().dataset(dataset).storagePath(null).build();
         return SparqlEngine.coreseSelectQuery(query, QueryProcess.create(dataManage));
     }
 
@@ -46,19 +45,18 @@ public class SparqlEngine {
     }
 
     public static Graph constructQuery(String query, Dataset dataset) {
-        DataManager dataManage = new JenaDataManager(dataset);
+        DataManager dataManage = new JenaTdb1DataManagerBuilder().dataset(dataset).storagePath(null).build();
         return SparqlEngine.coreseConstructQuery(query, QueryProcess.create(dataManage));
     }
 
     private static Graph coreseConstructQuery(String query, QueryProcess exec) {
-        Mappings map = null;
+        Mappings map = new Mappings();
         try {
             map = exec.query(query);
         } catch (EngineException e) {
             System.err.println("Error: Unable to run query" + query);
             e.printStackTrace();
         }
-
         return (Graph) map.getGraph();
     }
 
@@ -71,12 +69,12 @@ public class SparqlEngine {
     }
 
     public static Boolean askQuery(String query, Dataset dataset) {
-        DataManager dataManage = new JenaDataManager(dataset);
+        DataManager dataManage = new JenaTdb1DataManagerBuilder().dataset(dataset).storagePath(null).build();
         return SparqlEngine.coreseAskQuery(query, QueryProcess.create(dataManage));
     }
 
     private static Boolean coreseAskQuery(String query, QueryProcess exec) {
-        Mappings map = null;
+        Mappings map = new Mappings();
         try {
             map = exec.query(query);
         } catch (EngineException e) {
@@ -98,7 +96,7 @@ public class SparqlEngine {
     }
 
     public static Dataset updateQuery(String query, Dataset dataset) {
-        DataManager dataManage = new JenaDataManager(dataset);
+        DataManager dataManage = new JenaTdb1DataManagerBuilder().dataset(dataset).storagePath(null).build();
         SparqlEngine.coreseUpdateQuery(query, QueryProcess.create(dataManage));
         return dataset;
     }

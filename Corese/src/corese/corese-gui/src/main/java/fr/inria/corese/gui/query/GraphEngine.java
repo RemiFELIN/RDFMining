@@ -1,6 +1,14 @@
 package fr.inria.corese.gui.query;
 
+import static fr.inria.corese.core.util.Property.Value.ACCESS_RIGHT;
+import static fr.inria.corese.core.util.Property.Value.GRAPH_NODE_AS_DATATYPE;
+import static fr.inria.corese.core.util.Property.Value.GUI_INDEX_MAX;
+import static fr.inria.corese.core.util.Property.Value.LOAD_IN_DEFAULT_GRAPH;
+import static fr.inria.corese.core.util.Property.Value.RDF_STAR;
+import static fr.inria.corese.core.util.Property.Value.REENTRANT_QUERY;
+
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -13,18 +21,17 @@ import fr.inria.corese.compiler.eval.QuerySolverVisitor;
 import fr.inria.corese.core.Event;
 import fr.inria.corese.core.Graph;
 import fr.inria.corese.core.GraphStore;
-import fr.inria.corese.core.api.DataManager;
 import fr.inria.corese.core.load.Build;
 import fr.inria.corese.core.load.Load;
 import fr.inria.corese.core.load.LoadException;
 import fr.inria.corese.core.query.QueryEngine;
 import fr.inria.corese.core.query.QueryProcess;
-import fr.inria.corese.core.query.StorageFactory;
 import fr.inria.corese.core.rule.Cleaner;
 import fr.inria.corese.core.rule.RuleEngine;
+import fr.inria.corese.core.storage.api.dataManager.DataManager;
 import fr.inria.corese.core.util.Parameter;
 import fr.inria.corese.core.util.Property;
-import static fr.inria.corese.core.util.Property.Value.*;
+import fr.inria.corese.core.util.Tool;
 import fr.inria.corese.gui.core.Command;
 import fr.inria.corese.kgram.core.Mappings;
 import fr.inria.corese.sparql.api.IDatatype;
@@ -32,10 +39,6 @@ import fr.inria.corese.sparql.exceptions.EngineException;
 import fr.inria.corese.sparql.triple.parser.ASTQuery;
 import fr.inria.corese.sparql.triple.parser.Access;
 import fr.inria.corese.sparql.triple.parser.Constant;
-import static fr.inria.corese.core.util.Property.Value.ACCESS_LEVEL;
-import fr.inria.corese.core.util.Tool;
-//import fr.inria.corese.storage.jenatdb1.JenaDataManager;
-import java.io.IOException;
 
 /**
  * Lite implementation of IEngine using kgraph and kgram
@@ -54,24 +57,22 @@ public class GraphEngine {
     QueryProcess exec;
     private QuerySolverVisitor visitor;
     Build build;
-    private DataManager dataManager;
+    // manage db or dataset storage access
+    private DatasetManagerGui datasetManager;
 
     private boolean isListGroup = false,
             isDebug = false, linkedFunction = false;
 
     GraphEngine(boolean b) {
-        //DatatypeMap.setLiteralAsString(false);
         graph = GraphStore.create(b);
         qengine = QueryEngine.create(graph);
-        
-        if (Property.stringValue(STORAGE_PATH) != null) {
-//            setDataManager(new JenaDataManager(Property.pathValue(STORAGE_PATH)));
-            StorageFactory.defineDataManager(Property.pathValue(STORAGE_PATH), getDataManager());
-            logger.info("storage dataset: " + Property.pathValue(STORAGE_PATH));
-        }
-        
+        init();
+    }
+
+    void init() {
+        datasetManager = new DatasetManagerGui().init();
         exec = createQueryProcess();
-        
+
         try {
             setVisitor(new QuerySolverVisitor(exec.getCreateEval()));
         } catch (EngineException ex) {
@@ -85,12 +86,11 @@ public class GraphEngine {
     public void finish() {
         graph.getEventManager().process(Event.Finish);
     }
-    
+
     public void init(Command cmd) {
         setOption(cmd);
         Property.init(getGraph());
     }
-
 
     public void setOption(Command cmd) {
         for (String key : cmd.keySet()) {
@@ -105,27 +105,26 @@ public class GraphEngine {
                 case Command.METADATA:
                     graph.setMetadata(true);
                     break;
-                    
+
                 case Command.LINKED_FUNCTION:
                     setLinkedFunction(true);
                     break;
                 case Command.READ_FILE:
                     setReadFile(true);
                     break;
-                    
+
                 case Command.STRING:
                     Constant.setString(true);
-                    break;                               
+                    break;
                 case Command.PARAM:
                     param(cmd.get(key));
                     break;
-               
+
                 case Command.LOAD:
                     System.out.println("load: " + cmd.get(key));
                     loadDirProtect(cmd.get(key));
                     break;
 
-                    
                 case Command.REENTRANT:
                     Property.set(REENTRANT_QUERY, true);
                     break;
@@ -139,11 +138,8 @@ public class GraphEngine {
                     Property.set(GRAPH_NODE_AS_DATATYPE, true);
                 case Command.RDF_STAR:
                     Property.set(RDF_STAR, true);
-                    break;                   
-                case Command.SUPER_USER:
-                    Property.set(ACCESS_LEVEL, false);
                     break;
-                
+
             }
         }
     }
@@ -164,10 +160,10 @@ public class GraphEngine {
     public static GraphEngine create(boolean rdfs) {
         return new GraphEngine(rdfs);
     }
-    
+
     public void graphIndex() {
         int max = 10;
-        if (Property.intValue(GUI_INDEX_MAX) !=null) {
+        if (Property.intValue(GUI_INDEX_MAX) != null) {
             max = Property.intValue(GUI_INDEX_MAX);
         }
         Graph g = getGraph();
@@ -192,39 +188,39 @@ public class GraphEngine {
     public Graph getGraph() {
         return graph;
     }
-    
+
     public void cleanOWL() {
         try {
             Cleaner clean = new Cleaner(getGraph());
             clean.process();
-        } catch (IOException | EngineException | LoadException ex) {           
+        } catch (IOException | EngineException | LoadException ex) {
             logger.error(ex.getMessage());
         }
     }
-    
+
     public QueryProcess createQueryProcess() {
         QueryProcess qp;
-        
-        if (Property.stringValue(STORAGE_PATH)==null || 
-            Property.booleanValue(STORAGE_SERVICE)) {
+
+        if (getDatasetManager() == null || getDatasetManager().isDataset()) {
             logger.info("std dataset");
             qp = createBasicQueryProcess();
-        }
-        else {
+        } else {
             qp = createStorageQueryProcess();
         }
-        
+
         return qp;
     }
-    
+
+    // db storage mode
     public QueryProcess createStorageQueryProcess() {
-        QueryProcess qp = QueryProcess.create(getDataManager());
+        QueryProcess qp = getDatasetManager().createQueryProcess(graph);
         Load load = Load.create();
-        load.setDataManager(getDataManager());
+        load.setDataManager(getDatasetManager().getDataManager());
         qp.setLoader(load);
         return qp;
     }
 
+    // graph dataset mode
     public QueryProcess createBasicQueryProcess() {
         QueryProcess qp = QueryProcess.create(graph, true);
         qp.setLoader(loader());
@@ -235,10 +231,12 @@ public class GraphEngine {
 
     public Load loader() {
         Load load = Load.create(graph);
+        if (getDatasetManager() != null) {
+            load = getDatasetManager().createLoad(graph);
+        }
         load.setEngine(qengine);
         return load;
     }
-
 
     public void load(String path) throws EngineException, LoadException {
         Load ld = loader();
@@ -248,10 +246,10 @@ public class GraphEngine {
             setRuleEngine(ld.getRuleEngine());
         }
     }
-    
+
     public void loadString(String rdf) throws EngineException, LoadException {
         Load ld = loader();
-        ld.loadString(rdf, ld.TURTLE_FORMAT);       
+        ld.loadString(rdf, ld.TURTLE_FORMAT);
     }
 
     public void loadDirProtect(String path) {
@@ -290,7 +288,7 @@ public class GraphEngine {
         graph.process(getRuleEngine());
         return true;
     }
-    
+
     public boolean runRule(String path) throws EngineException, LoadException {
         logger.info("Load rule: " + path);
         load(path);
@@ -302,7 +300,7 @@ public class GraphEngine {
 
     // TODO: clean timestamp, clean graph index
     public void setOWLRL(int owl, boolean trace) throws EngineException {
-        setOwlEngine(RuleEngine.create(graph));
+        setOwlEngine(getDatasetManager().createRuleEngine(graph));
         getOwlEngine().setProfile(owl);
         getOwlEngine().setTrace(trace);
         Date d1 = new Date();
@@ -365,37 +363,37 @@ public class GraphEngine {
 
     }
 
-//	public Mappings SPARQLProve(String query) throws EngineException {
-//		LBind res = bengine.SPARQLProve(query);
-//		if (res == null) return  null;
-//		Mappings lMap = translate(res);
-//		return lMap;
-//	}
-//	
-//	
-//	
-//	Mappings translate(LBind lb){
-//		ASTQuery ast = lb.getAST();
-//		Query query = exec.compile(ast);
-//		Mappings lMap =  Mappings.create(query);
-//		for (Bind b : lb){
-//			List<Node> list = new ArrayList<Node>();
-//			
-//			for (Node qNode : query.getSelect()){
-//				IDatatype dt = b.getDatatypeValue(qNode.getLabel());
-//				if (dt == null){
-//					list.add(null);
-//				}
-//				else {
-//					Node node = graph.getNode(dt, true, false);
-//					list.add(node);
-//				}
-//			}
-//			Mapping map = Mapping.create(query.getSelect(), list);
-//			lMap.add(map);
-//		}
-//		return lMap;
-//	}
+    // public Mappings SPARQLProve(String query) throws EngineException {
+    // LBind res = bengine.SPARQLProve(query);
+    // if (res == null) return null;
+    // Mappings lMap = translate(res);
+    // return lMap;
+    // }
+    //
+    //
+    //
+    // Mappings translate(LBind lb){
+    // ASTQuery ast = lb.getAST();
+    // Query query = exec.compile(ast);
+    // Mappings lMap = Mappings.create(query);
+    // for (Bind b : lb){
+    // List<Node> list = new ArrayList<Node>();
+    //
+    // for (Node qNode : query.getSelect()){
+    // IDatatype dt = b.getDatatypeValue(qNode.getLabel());
+    // if (dt == null){
+    // list.add(null);
+    // }
+    // else {
+    // Node node = graph.getNode(dt, true, false);
+    // list.add(node);
+    // }
+    // }
+    // Mapping map = Mapping.create(query.getSelect(), list);
+    // lMap.add(map);
+    // }
+    // return lMap;
+    // }
     public Mappings SPARQLProve(ASTQuery ast) throws EngineException {
 
         return null;
@@ -500,7 +498,7 @@ public class GraphEngine {
     public void setReadFile(boolean b) {
         Access.setReadFile(b);
     }
-    
+
     public RuleEngine getRuleEngine(String path) {
         if (path == null) {
             return getOwlEngine();
@@ -524,12 +522,16 @@ public class GraphEngine {
         this.rengine = rengine;
     }
 
-    public DataManager getDataManager() {
-        return dataManager;
+    public DatasetManagerGui getDatasetManager() {
+        return datasetManager;
     }
 
-    public void setDataManager(DataManager dataManager) {
-        this.dataManager = dataManager;
+    public void setDatasetManager(DatasetManagerGui datasetManager) {
+        this.datasetManager = datasetManager;
+    }
+
+    public DataManager getDataManager() {
+        return getDatasetManager().getDataManager();
     }
 
 }

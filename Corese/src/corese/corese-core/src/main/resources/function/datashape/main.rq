@@ -15,13 +15,12 @@ prefix psh: <http://ns.inria.fr/probabilistic-shacl/>
 
 #
 # main function
-# Current graph is RDF graph
-# shape is SHACL Shape graph (they can be the same graph)
+# Current graph is RDF and shacl graph
 # return validation report graph
 #
 function dt:graph sh:shacl() {
    if (sh:trace(), xt:print("shacl:"), true);
-   sh:java(false);
+#    sh:java(false);
    set(extended = false);
    sh:shacl(xt:graph(), sh:focus(xt:graph()))
 }
@@ -31,7 +30,7 @@ function dt:graph sh:shacl() {
 #
 function dt:graph sh:extendedshacl(dt:graph shape, m, p) {
     if (sh:trace(), xt:print("shacl:"), true);
-    sh:java(false);
+    # sh:java(false);
     set(mode = xsd:integer(m));
     set(extended = true);
     set(prob = p);
@@ -49,6 +48,12 @@ function dt:graph sh:shex() {
    sh:shexSemantics(true);
    sh:shacl()
 }
+
+function dt:graph sh:shex(dt:graph shape) {
+   sh:shexSemantics(true);
+   sh:shacl(shape) 
+}
+
 
 function sh:shexSemantics(bool) {
    set(shaclshex=bool);
@@ -68,7 +73,7 @@ function dt:graph sh:shacljava() {
 function dt:graph sh:shacl(dt:graph shape) {
    sh:log("main.rq", "sh:shacl", "start a standard SHACL eval ...");
    if (sh:trace(), xt:print("shacl:"), true);
-   sh:java(false);
+#    sh:java(false);
    set(extended = false);
    sh:shacl(shape, sh:focus(shape))
 }
@@ -81,7 +86,7 @@ function dt:graph sh:shex(dt:graph shape) {
 
 function dt:graph sh:shaclshape(sh) {
    if (sh:trace(), xt:print("shaclshape:", sh), true);
-   sh:java(false);
+#    sh:java(false);
    set(extended = false);
    sh:shacl(xt:graph(), sh:focus(xt:graph(), sh))
 }
@@ -91,14 +96,14 @@ function dt:graph sh:shaclshape(sh) {
 #
 function dt:graph sh:shaclshape(sh, node) {
    if (sh:trace(), xt:print("shaclshape:", sh, node), true);
-   sh:java(false);
+#    sh:java(false);
    set(extended = false);
    sh:shacl(xt:graph(), xt:list(xt:list(sh, xt:list(node))))
 }
 
 function dt:graph sh:shaclnode(node) {
    if (sh:trace(), xt:print("shaclnode:", node), true);
-   sh:java(false);
+#    sh:java(false);
    set(extended = false);
    sh:shacl(xt:graph(), sh:focusnode(xt:graph(), node))
 }

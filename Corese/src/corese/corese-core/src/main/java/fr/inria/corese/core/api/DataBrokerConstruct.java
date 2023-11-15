@@ -22,6 +22,19 @@ import fr.inria.corese.sparql.triple.update.Basic;
  */
 public interface DataBrokerConstruct extends DataBroker {
 
+    default void startRuleEngine() {
+        System.out.println("DataBrokerConstruct startRuleEngine");
+    }
+
+    default void endRuleEngine() {
+    }
+
+    default void startRule() {
+    }
+
+    default void endRule() {
+    }
+
     default Node getNode(Node gNode, IDatatype dt) {
         return dt;
     }
@@ -40,40 +53,43 @@ public interface DataBrokerConstruct extends DataBroker {
     }
 
     default boolean exist(Node property, Node subject, Node object) {
-        return false;
+        return getDataManager().exist(subject, property, object);
     }
-    
-    
+
     /**
      * Edge may be an rdf star triple, asserted or nested
      * RDF star triple design
-     * <<s p o>> q v   -> <<edge(s p o t)>>  t q v
-     * s p o {| q v |} -> edge(s p o t)      t q v
-     * g1 s p o t  g2 s p o t
+     * <<s p o>> q v   -> <<edge(s p o t)>> t q v
+     * s p o {| q v |} -> edge(s p o t)     t q v
+     * g1 s p o t g2 s p o t
      * t is additional Node, similar to subject/object
      * every occurrence of triple s p o (whatever graph g) has same reference node t
      * edge.hasReferenceNode() == true
      * edge.getReferenceNode() = t
      * t.getEdge() = s p o t
      * t.isTriple() == true
-     * edge.isNested()   == true |false
+     * edge.isNested() == true |false
      * edge.isAsserted() == false|true
      * IDatatype dt = t.getDatatypeValue()
      * dt.isTriple() == true|false
      * dt.getEdge() = s p o t
      * 
      * operation find, insert, delete may have as argument a rdf star edge
-     * where subject/object may be a reference node and/or edge may have reference node 
+     * where subject/object may be a reference node and/or edge may have reference
+     * node
      * DataManager must process these subject/object/reference using the api above
      * for example: find/insert/delete t q v where t = <<s p o>>
-     * Note that it can be recursive: t = <<<<s p o>> r u>> 
+     * Note that it can be recursive: t = <<<<s p o>> r u>>
      * .
      */
-    
+
     default Edge find(Edge edge) {
         return edge;
     }
-   
+
+    default String blankNode() {
+        return DatatypeMap.blankID();
+    }
 
     /**
      * Return null if edge already exists
@@ -95,7 +111,10 @@ public interface DataBrokerConstruct extends DataBroker {
 
     default List<Edge> delete(Edge edge) {
         List<Edge> result = new ArrayList<>();
-        getDataManager().delete(edge).forEach(result::add);
+        Iterable<Edge> it = getDataManager().delete(edge);
+        if (it != null) {
+            it.forEach(result::add);
+        }
         return result;
     }
 
@@ -132,15 +151,24 @@ public interface DataBrokerConstruct extends DataBroker {
     }
 
     default boolean add(String source, String target, boolean silent) {
-        return getDataManager().add(DatatypeMap.createResource(source), DatatypeMap.createResource(target), silent);
+        return getDataManager().addGraph(
+                DatatypeMap.createResource(source),
+                DatatypeMap.createResource(target),
+                silent);
     }
 
     default boolean move(String source, String target, boolean silent) {
-        return getDataManager().move(DatatypeMap.createResource(source), DatatypeMap.createResource(target), silent);
+        return getDataManager().moveGraph(
+                DatatypeMap.createResource(source),
+                DatatypeMap.createResource(target),
+                silent);
     }
 
     default boolean copy(String source, String target, boolean silent) {
-        return getDataManager().copy(DatatypeMap.createResource(source), DatatypeMap.createResource(target), silent);
+        return getDataManager().copyGraph(
+                DatatypeMap.createResource(source),
+                DatatypeMap.createResource(target),
+                silent);
     }
 
     default void addGraph(String uri) {

@@ -78,6 +78,22 @@ public class GraphManager {
      * Construct Graph Manager
      *     
      **********************************************************/
+    
+    public void startRuleEngine() {
+        getDataBroker().startRuleEngine();
+    }
+    
+    public void endRuleEngine() {
+        getDataBroker().endRuleEngine();
+    }
+    
+    public void startRule() {
+        getDataBroker().startRule();
+    }
+    
+    public void endRule() {
+        getDataBroker().endRule();
+    }
 
     /**
      * Before construct/insert/delete starts
@@ -179,6 +195,9 @@ public class GraphManager {
         return getDataBroker().exist(property, subject, object);
     }
     
+    // find occurrence of (instantiated query) edge in target graph
+    // in order to get its reference node if any
+    // use case: rdf star
     public Edge find(Edge edge) {
         return getDataBroker().find(edge);
     }
@@ -242,7 +261,7 @@ public class GraphManager {
     }
 
     public String newBlankID() {
-        return getGraph().newBlankID();
+        return getDataBroker().blankNode();
     }
 
     public IDatatype createBlank(String str) {
@@ -250,7 +269,7 @@ public class GraphManager {
     }
     
     public IDatatype createBlank() {
-        return getGraph().createBlank(getGraph().newBlankID());
+        return getGraph().createBlank(newBlankID());
     }
     
     public IDatatype createTripleReference() {

@@ -21,6 +21,7 @@ import fr.inria.corese.sparql.datatype.extension.CoreseList;
 import fr.inria.corese.sparql.datatype.extension.CoreseJSON;
 import fr.inria.corese.sparql.datatype.extension.CoreseXML;
 import fr.inria.corese.sparql.datatype.extension.CoresePointer;
+import fr.inria.corese.sparql.triple.parser.HashMapList;
 import fr.inria.corese.sparql.triple.parser.NSManager;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -32,7 +33,6 @@ import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -899,6 +899,19 @@ public class DatatypeMap implements Cst, RDF, DatatypeValueFactory {
         return newList(list);
     }
    
+    public static List<Node> toNodeList(IDatatype dt) {
+        ArrayList<Node> list = new ArrayList<>();
+        if (dt.isList()) {
+            for (IDatatype val : dt) {
+                list.add(val);
+            }
+        }
+        else {
+            list.add(dt);
+        }
+        return list;
+    }
+   
    public static List<String> toStringList(IDatatype dt) {
        ArrayList<String> list = new ArrayList<>();
        if (dt.isList()) {
@@ -919,6 +932,14 @@ public class DatatypeMap implements Cst, RDF, DatatypeValueFactory {
         }
         return newList(list);
     }
+   
+   public static IDatatype newResourceList(List<String> alist) {
+        ArrayList<IDatatype> list = new ArrayList<>();
+        for (String str : alist) {
+            list.add(newResource(str));
+        }
+        return newList(list);
+    }
     
     public static IDatatype newList(List<IDatatype> l) {
         return new CoreseList(l);
@@ -930,6 +951,10 @@ public class DatatypeMap implements Cst, RDF, DatatypeValueFactory {
             l.add( node.getDatatypeValue());
         }
         return newList(l);
+    }
+    
+    public static IDatatype cast(HashMapList<String> map) {
+        return CoreseMap.cast(map);
     }
           
     public static IDatatype[] toArray(IDatatype dt) {
@@ -1034,7 +1059,7 @@ public class DatatypeMap implements Cst, RDF, DatatypeValueFactory {
         return new CoreseBlankNode(blankID());
     }
     
-    static String blankID() {
+    public static String blankID() {
         return BLANK + COUNT++;
     }
     

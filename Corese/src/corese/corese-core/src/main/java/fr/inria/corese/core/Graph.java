@@ -247,6 +247,8 @@ public class Graph extends GraphObject implements
             entailGraph;
     // List of predefined (graph) Node  
     private ArrayList<Node> systemNode;
+    List<Edge> emptyEdgeList;
+
     // Manager of sparql edge iterator with possible default graph specification
     DataStore dataStore;
     // @todo external memory literal value manager
@@ -474,6 +476,10 @@ public class Graph extends GraphObject implements
     public void setDefaultGraphMode(int defaultGraph) {
         this.defaultGraphMode = defaultGraph;
     }
+    
+    public TreeNode treeNode() {
+        return new TreeNode();
+    }
 
     /**
      * With CompareNode: manage 1, 01, 1.0 as different Node (with same index)
@@ -597,6 +603,7 @@ public class Graph extends GraphObject implements
         dataStore = new DataStore(this);
         eventManager = new EventManager(this);
         eventManager.setVerbose(VERBOSE);
+        emptyEdgeList = new ArrayList<>(0);
     }
 
     /**
@@ -1352,7 +1359,7 @@ public class Graph extends GraphObject implements
     
     @Override
     public IDatatype set(IDatatype key, IDatatype value) {
-        add(addBlank().getDatatypeValue(), key, value);
+        insert(addBlank().getDatatypeValue(), key, value);
         return value;
     }
       
@@ -1418,17 +1425,24 @@ public class Graph extends GraphObject implements
     }
 
     /**
-     * for testing DataManager create and insert nodes in graph and then insert
+     * DataManager create and insert nodes in graph and then insert
      * edge
      *
      */
-    public Edge addEdgeWithTargetNode(Edge ee) {
+    public Edge insertEdgeWithTargetNode(Edge ee) {
         ee.setGraph(basicAddGraph(ee.getGraph().getLabel()));
         ee.setProperty(basicAddProperty(ee.getProperty().getLabel()));
         ee.setNode(0, addNode(ee.getNode(0)));
         ee.setNode(1, addNode(ee.getNode(1)));
         Edge res = addEdge(ee);
         return res;
+    }
+    
+    public Iterable<Edge> deleteEdgeWithTargetNode(Edge edge) {
+        return delete(
+                edge.getGraphNode(), edge.getSubjectNode(),
+                edge.getPropertyNode(),
+                edge.getObjectNode());
     }
 
     public void addEdgeNode(Edge ee) {
@@ -1468,7 +1482,6 @@ public class Graph extends GraphObject implements
     }
 
     public Edge addEdge(Edge edge) {
-        //System.out.println("graph add: " + edge);
         return addEdge(edge, true);
     }
 
@@ -1481,23 +1494,6 @@ public class Graph extends GraphObject implements
         return ent;
     }
 
-//    public int add(List<Edge> lin) {
-//        return add(lin, null, true);
-//    }
-//
-//    public int add(List<Edge> lin, List<Edge> lout, boolean duplicate) {
-//        int n = 0;
-//        for (Edge ee : lin) {
-//            Edge ent = addEdge(ee, duplicate);
-//            if (ent != null) {
-//                n++;
-//                if (lout != null) {
-//                    lout.add(ent);
-//                }
-//            }
-//        }
-//        return n;
-//    }
 
     public void addOpt(Node p, List<Edge> list) {
         if (list.isEmpty()) {
@@ -1657,6 +1653,17 @@ public class Graph extends GraphObject implements
         return create(getCreateNode(source), getCreateNode(predicate), list);
     }
     
+    // rdf star 
+    // triple(s, p, o)  
+    // filter bind <<s p o>>
+    public IDatatype createTriple(IDatatype s, IDatatype p, IDatatype o) {
+        IDatatype ref = createTripleReference();
+        Edge e = create(getDefaultGraphDatatypeValue(), s, p, o, ref);
+        e.setCreated(true);
+        e.setNested(true);
+        return ref;
+    }
+    
     List<Node> list(Node... list) {
         ArrayList<Node> alist = new ArrayList<>();
         alist.addAll(Arrays.asList(list));
@@ -1729,6 +1736,16 @@ public class Graph extends GraphObject implements
             n = createNode(RDFS.RESOURCE);
         }
         return n;
+    }
+    
+     public Node getTopClass(String defaut, String... nameList) {
+        for (String name : nameList) {
+            Node n = getNode(name);
+            if (n != null) {
+                return n;
+            }
+        }
+        return createNode(defaut);
     }
 
     public Node getTopProperty() {
@@ -2121,7 +2138,7 @@ public class Graph extends GraphObject implements
     /**
      * Assign an index to Literal Node Assign same index to same number values:
      * same datatype with same value and different label have same index 1, 01,
-     * 1.0 have same index: they join with SPARQL 1, 1 double have different
+     * 1.0 have same index: they join with SPARQL; 1, 1 double have different
      * index, they do not join
      */
     void indexLiteralNode(IDatatype dt, Node node) {
@@ -2241,6 +2258,40 @@ public class Graph extends GraphObject implements
         }
         return null;
     }
+    
+    // DataManager api
+    
+    public Iterable<Edge> iterate(Node s, Node p, Node o, List<Node> from) {
+        DataProducer dp = new DataProducer(this);
+        if (from != null && !from.isEmpty()) {
+            dp.fromSelect(from);
+        }
+        return dp.iterate(s, p, o);
+    }
+    
+    public Iterable<Edge> insert(Node s, Node p, Node o, List<Node> contexts) {
+        if (contexts==null||contexts.isEmpty()) {
+            Edge edge = insert(s, p, o);
+        }
+        else {
+            for (Node g : contexts) {
+                Edge edge = insert(g, s, p, o);
+            }
+        }
+        return emptyEdgeList;
+    }
+    
+    public Iterable<Edge> delete(Node s, Node p, Node o, List<Node> contexts) {
+        if (contexts == null || contexts.isEmpty()) {
+            List<Edge> edge = delete(s, p, o);
+        } else {
+            for (Node g : contexts) {
+                List<Edge> edge = delete(g, s, p, o);
+            }
+        }
+        return emptyEdgeList;
+    }
+    
 
     @Override
     public Node value(Node subj, Node pred, int n) {
@@ -2487,11 +2538,11 @@ public class Graph extends GraphObject implements
         return  n.getValue();
     }
 
-    boolean isTopRelation(Node predicate) {
+    public static boolean isTopRelation(Node predicate) {
         return isTopRelation(predicate.getLabel());
     }
 
-    boolean isTopRelation(String predicate) {
+    static boolean isTopRelation(String predicate) {
         return predicate.equals(TOPREL);
     }
 
@@ -2785,6 +2836,9 @@ public class Graph extends GraphObject implements
     // return iterable of NodeGraph(node, graph)
     // MUST perform n.getNode() to get the node
     public Iterable<Node> getNodeGraphIterator(Node gNode) {
+        if (gNode == null) {
+            return getNodeGraphIterator();
+        }
         indexNode();
         return getNodeGraphIndex().getNodes(gNode);
     }
@@ -2802,6 +2856,17 @@ public class Graph extends GraphObject implements
      * May infer datatype from property range
      */
     public Node addLiteral(String pred, String label, String datatype, String lang) {
+        IDatatype dt = createLiteral(pred, label, datatype, lang);
+        if (dt == null) {
+            return null;
+        }
+        return addNode(dt);
+    }
+    
+    /**
+     * May infer datatype from property range
+     */
+    public IDatatype createLiteral(String pred, String label, String datatype, String lang) {
         String range = null;
         if (lang == null
                 && getEntailment() != null && getEntailment().isDatatypeInference()) {
@@ -2817,11 +2882,7 @@ public class Graph extends GraphObject implements
             }
         }
 
-        IDatatype dt = DatatypeMap.createLiteral(label, datatype, lang);
-        if (dt == null) {
-            return null;
-        }
-        return addNode(dt);
+        return  DatatypeMap.createLiteral(label, datatype, lang);
     }
 
     public String newBlankID() {
@@ -2836,7 +2897,7 @@ public class Graph extends GraphObject implements
         return TRIPLE_REF + triplerefid++;
     }
 
-    String blankID() {
+    synchronized String blankID() {
         return BLANK + blankid++;
     }
 
@@ -3393,25 +3454,50 @@ public class Graph extends GraphObject implements
 
     /**
      * Add edge and add it's nodes
+     * Node MUST be graph node
      */
     public Edge add(Node source, Node subject, Node predicate, Node value) {
         Edge e = fac.create(source, subject, predicate, value);
         Edge ee = addEdgeWithNode(e);
         return ee;
     }
+    
+    // Node MAY not be graph node
+    // It will be replaced by graph node
+    public Edge insert(Node s, Node p, Node o) {
+        return insert(null, s, p, o);
+    }
+    
+    // Node MAY not be graph node
+    // It will be replaced by graph node
+    public Edge insert(Node g, Node s, Node p, Node o) {
+        if (g == null) {
+            g = addDefaultGraphNode();
+        }
+        Edge e = fac.create(g, s, p, o);
+        return insertEdgeWithTargetNode(e);
+    }
 
     /**
      * Add edge and add it's nodes
+     * xt:insert
      */
-    public Edge add(IDatatype subject, IDatatype predicate, IDatatype value) {
-        Node def = addDefaultGraphNode();
-        return add( def.getValue(), subject, predicate, value);
+    public Edge insert(IDatatype subject, IDatatype predicate, IDatatype value) {
+        return insert(null, subject, predicate, value);
     }
 
-    public Edge add(IDatatype source, IDatatype subject, IDatatype predicate, IDatatype value) {
-        Edge e = fac.create(createNode(source), createNode(subject), createNode(predicate), createNode(value));
-        Edge ee = addEdgeWithNode(e);
-        return ee;
+    public Edge insert(IDatatype source, IDatatype subject, IDatatype predicate, IDatatype value) {
+        return insert(source==null?addDefaultGraphNode():createNode(source), 
+                createNode(subject), createNode(predicate), createNode(value));        
+    }
+    
+    public List<Edge> delete(Node s, Node p, Node o) {
+        return delete(null, s.getDatatypeValue(), p.getDatatypeValue(), o.getDatatypeValue());
+    }
+
+    public List<Edge> delete(Node g, Node s, Node p, Node o) {       
+        return delete(g==null?null:g.getDatatypeValue(), 
+                s.getDatatypeValue(), p.getDatatypeValue(), o.getDatatypeValue());
     }
 
     public List<Edge> delete(IDatatype subject, IDatatype predicate, IDatatype value) {

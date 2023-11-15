@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=4.3.0
+VERSION=4.4.1
 CORESE=/usr/local/corese
 JAR=$CORESE/corese-server-$VERSION.jar
 PROFILE=$CORESE/config/corese-profile.ttl

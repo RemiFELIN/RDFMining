@@ -3,7 +3,7 @@ FROM openjdk:11.0.7-jdk-buster
 RUN apt-get update -y
 # RUN apt-get install -y wget
 
-ENV VERSION=4.3.0
+ENV VERSION=4.4.1
 ENV CORESE=/usr/local/corese
 RUN mkdir -p $CORESE
 WORKDIR $CORESE

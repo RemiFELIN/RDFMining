@@ -2,48 +2,26 @@
 package fr.inria.corese.server.webservice;
 
 import fr.inria.corese.sparql.api.IDatatype;
+import fr.inria.corese.sparql.datatype.DatatypeMap;
 import fr.inria.corese.sparql.triple.parser.Access;
 import fr.inria.corese.sparql.triple.parser.Access.Level;
 import fr.inria.corese.sparql.triple.parser.Context;
 import fr.inria.corese.sparql.triple.parser.NSManager;
+import fr.inria.corese.sparql.triple.parser.URLParam;
 import java.util.List;
 import jakarta.servlet.http.HttpServletRequest;
-
+import java.util.ArrayList;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 /**
  *
  * @author Olivier Corby, Wimmics INRIA I3S, 2015
  *
  */
 public class Param {
-
-    /**
-     * @return the hostname
-     */
-    public String getHostname() {
-        return hostname;
-    }
-
-    /**
-     * @param hostname the hostname to set
-     */
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
-    }
-
-    /**
-     * @return the ajax
-     */
-    public boolean isAjax() {
-        return ajax;
-    }
-
-    /**
-     * @param ajax the ajax to set
-     */
-    public void setAjax(boolean ajax) {
-        this.ajax = ajax;
-    }
-    static NSManager nsm;
+    //static NSManager nsm;
+    private static Logger logger = LogManager.getLogger(Param.class);
+    
     private String service;
     private String server;
     private String hostname;
@@ -51,6 +29,9 @@ public class Param {
     private String transform;
     private String uri;
     private String mode;
+    private List<String> modeList;
+    private List<String> paramList;
+    private List<String> argList;
     private String param;
     private String arg;
     private String format;
@@ -70,7 +51,7 @@ public class Param {
     private HttpServletRequest request;   
     
     static {
-        nsm = NSManager.create();
+        //nsm = NSManager.create();
     }
 
     public Param(String s) {
@@ -94,26 +75,54 @@ public class Param {
         return str;
     }
     
-    String ns (String str){
-        return nsm.toNamespace(str);                              
-    }
+//    String ns (String str){
+//        return nsm().toNamespace(str);                              
+//    }
+    
+//    NSManager nsm() {
+//        return nsm;
+//    }
     
     Context createContext() {
-        Context ctx= getContext();
+        Context ctx = getContext();
         if (ctx == null){
             ctx = new Context();
         }
+        NSManager nsm = ctx.nsm();
+        // define prefix using service definition: 
+        // st:param [ st:prefix ((pref ns)) ]
+        if (ctx.get(Context.STL_PREFIX)!=null) {
+            for (IDatatype def : ctx.get(Context.STL_PREFIX)) {
+                IDatatype pref = def.get(0);
+                IDatatype ns = def.get(1);
+                logger.info("prefix " + pref.getLabel() + ": " + ns);
+                nsm.definePrefix(pref.getLabel(), ns.getLabel());
+            }
+        }
         if (getProfile() != null) {
-            ctx.setProfile(ns(getProfile()));
+            ctx.setProfile(nsm.toNamespace(getProfile()));
         }
         if (getTransform() != null) {
-            ctx.setTransform(ns(getTransform()));
+            ctx.setTransform(nsm.toNamespace(getTransform()));
         }
         if (getUri() != null) {
-            ctx.setURI(ns(getUri()));
+            ctx.setURI(nsm.toNamespace(getUri()));
         }
         if (getMode() != null) {
-            ctx.setMode(ns(getMode()));
+            ctx.setMode(nsm.toNamespace(getMode()));
+        }
+        if (getModeList()!=null) {
+            ArrayList<String> list = new ArrayList<>();
+            for (String mode : getModeList()) {
+                list.add(nsm.toNamespace(mode));
+            }
+            ctx.set(URLParam.MODE, DatatypeMap.newResourceList(list));
+        }
+        if (getParamList()!=null) {
+            ctx.set(URLParam.PARAM, DatatypeMap.newStringList(getParamList()));
+        }
+        if (getArgList()!=null) {
+            ctx.set(URLParam.ARG, DatatypeMap.newStringList(getArgList()));
         }
         if (getParam()!= null) {
             ctx.setParam(getParam());
@@ -122,7 +131,7 @@ public class Param {
             ctx.set(Context.STL_ARG, getArg());
         }
         if (getFormat()!= null) {
-            ctx.setFormat(ns(getFormat()));
+            ctx.setFormat(nsm.toNamespace(getFormat()));
         }
         if (getQuery() != null) {
             ctx.setQueryString(getQuery());
@@ -439,6 +448,46 @@ public class Param {
      */
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public List<String> getModeList() {
+        return modeList;
+    }
+
+    public void setModeList(List<String> modeList) {
+        this.modeList = modeList;
+    }
+
+    public List<String> getParamList() {
+        return paramList;
+    }
+
+    public void setParamList(List<String> paramList) {
+        this.paramList = paramList;
+    }
+
+    public List<String> getArgList() {
+        return argList;
+    }
+
+    public void setArgList(List<String> argList) {
+        this.argList = argList;
+    }
+    
+    public String getHostname() {
+        return hostname;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    public boolean isAjax() {
+        return ajax;
+    }
+
+    public void setAjax(boolean ajax) {
+        this.ajax = ajax;
     }
 
 }

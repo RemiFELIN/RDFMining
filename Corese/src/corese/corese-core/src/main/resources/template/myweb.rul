@@ -1,0 +1,908 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+SPARQL Template Transformation
+Olivier Corby - Wimmics - Inria UNS CNRS I3S
+Fri Jun 21 13:43:42 CEST 2019
+-->
+<rdf:RDF  xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+  xmlns='http://ns.inria.fr/sparql-template/'>
+<rule>
+<body>
+<![CDATA[
+#
+# Argument  ?n is the name of query (st:minus)
+# ?q actual query, ?t query template, ?s query solution
+# generate a sequence of html select according to query st:select specifications
+#
+#prefix ft: <http://ns.inria.fr/sparql-template/format/mytutorial/>
+#prefix ft: </opt/corese/demo/format/mytutorial/>
+prefix ft: </user/corby/home/AAServer/data/format/mytutorial/>
+
+template st:selecttable(?n, ?q, ?t, ?s, ?qt) {
+   format { 
+        ft:table.html
+        group { 
+            # silent input for key
+            if (strlen(?mykey)>0, st:format(ft:silent.html, ?myname, ?mykey), "")
+
+            if (?type = st:silent,   #strlen(?myvalue)>0, 
+                # std silent input
+                st:format(ft:silent.html, ?myname, ?myvalue),
+                
+            if (?type = st:text, 
+               st:format(?format, ?idhide, ?title, 
+                    st:format(ft:text.html, coalesce(?id, ?myname), ?myname, us:getValue(?myname, us:index(?mykey, ?index)))),
+                        
+            if (?type = st:box,
+                st:format(?format, ?idhide, ?title, 
+                    st:format(ft:divleft.html,
+                    if (?myvalue = us:getValue(?myname, us:index(?mykey, ?index)),
+                        st:format(ft:boxchecked.html, ?myname, ?myvalue), 
+                        st:format(ft:box.html, ?myname, ?myvalue)))),                        
+                    
+            # else html select
+                st:format(?format, ?idhide, ?title, 
+                    st:call-template(st:selectparam, ?n, ?elem, ?select, 
+                        # 2 index + 1 because st:select with st:key generates 1 silent input + 1 html select
+                        # and the key (of silent input) is also in the parameter value list (key value key value)
+                        # hence we need to consider (and skip) the index of the key in the value list
+                        # key   -> silent input
+                        # value -> html select
+                        us:index(?mykey, ?index))))))
+        }      
+    }
+}
+where {
+    bind (st:get(st:context) as ?g)
+    graph ?g { 
+    
+        {select ?n 
+        # list of html select specifications
+        (aggregate(xt:list(?n, ?elem, ?select, ?mytitle, ?type, ?myrepeat, ?myname, ?myvalue, ?mykey)) 
+        as ?list)
+        where {
+            ?qt st:name ?n 
+            optional { 
+                ?qt st:select ?elem . 
+                ?elem st:select? ?select . 
+                ?select st:name ?myname
+                optional { ?select st:title ?title }
+                # st:type st:oper | st:arg | st:silent | st:text
+                optional { ?select st:type ?atype }
+                # index of html select value in parameter value list
+                # repeat oper+arg sequence n times
+                optional { ?select st:repeat ?repeat }
+                # generate silent input with name=name value=value 
+                optional { ?select st:type st:silent  ; st:value ?value }
+                optional { ?select st:type st:box  ; st:value ?value }
+                # generate silent input with name=name value=key in addition to html select
+                # use case: param = (key value key value) and value is in (next) html select
+                optional { ?select st:key ?key }
+                        
+                bind (coalesce(?title, "") as ?mytitle)
+                bind (coalesce(?repeat, 0) as ?myrepeat)
+                bind (coalesce(?value, "") as ?myvalue)
+                bind (coalesce(?key, "")   as ?mykey)
+                bind (coalesce(?atype, st:select) as ?type)
+                }
+            }
+        }
+
+        # us:expand repeat (oper arg) n times when select oper has st:repeat n
+        # values iterate html select specifications, possibly with additional oper+arg
+        values (?n ?elem ?select ?title ?type  ?repeat ?myname ?myvalue ?mykey ?index) { unnest(us:expand(?list)) }
+        
+        # generate an id in html element with display:none
+        # button show/hide toggle display 
+        optional { ?elem st:hide   ?hide }
+        optional { ?elem st:hidden ?hidden }
+        optional { ?elem st:id   ?id }
+        optional { ?select st:kind ?akind }
+        bind (coalesce(?akind, st:std) as ?kind)
+        
+        bind (coalesce(
+                    if (?kind = st:oper, ft:selectparameterrowoper.html,
+                    if (?kind = st:arg,  ft:selectparameterrowarg.html,
+                    if (?type in (st:select, st:text, st:radio, st:box), ft:selectparameterrowsimple.html,
+                        ft:selectparameterrow.html))), 
+                    ft:selectparameterrowsimple.html) 
+                as ?format)
+                
+        bind (# st:get(st:show) is managed by function us:extract in function.rq
+            if (bound(?hide), 
+                # generate an id on table tr element that contain this element, 
+                # the id is used to set/unset style="display:none" with a button
+                st:format(if (!?hide || st:get(st:show, true), ft:id.html, ft:idhidden.html), us:idCounter()), 
+            if (bound(?hidden), st:format(ft:hidden.html),
+            "")) 
+            as ?idhide)
+    }
+}
+]]>
+</body>
+</rule>
+
+
+<rule>
+<body>
+<![CDATA[
+prefix ft: </user/corby/home/AAServer/data/format/mytutorial/>
+
+template st:button(?qt) {
+    format { ft:button.html ?idhide ?name ?value }
+}    
+where {
+    bind (st:get(st:context) as ?g)
+    graph ?g { 
+        ?qt st:button ?elem .
+        ?elem st:name ?name ; st:onClick ?value
+        
+        optional { ?elem st:hide   ?hide }
+        optional { ?elem st:hidden ?hidden }
+        
+        bind ( # st:get(st:show) is managed by function us:extract in function.rq
+            if (bound(?hide), 
+                # generate an id on table tr element that contain this element, 
+                # the id is used to set/unset style="display:none" with a button
+                st:format(if (!?hide || st:get(st:show, true), ft:id.html, ft:idhidden.html), us:idCounter()), 
+            if (bound(?hidden), st:format(ft:hidden.html),
+            "")) 
+        as ?idhide)
+    }
+}
+]]>
+</body>
+</rule>
+
+
+<rule>
+<body>
+<![CDATA[
+#
+# SPARQL Tutorial
+# st:get(st:uri) is the URI of a query to execute 
+# Transformation is used 1) to select and execute query and 2) to display the result of the query
+# RDF graph is either RDF dataset or Query Result
+# Query definitions are stored in st:context named graph 
+# Transformation is used by server with a profile, see mapprofile.ttl
+# Transformation exploits a workflow.ttl dataset with predefined queries and html select definitions
+# associated to queries
+# Transformation generates html select, according to specifications, that enable user to
+# select parameter value such as a type. The query takes these parameter value into account
+# Parameter value are passed to query using the Context and st:get/st:set
+# Parameter value are managed as list of string value.
+#
+template st:start {
+
+  st:call-template(st:head)
+    
+  st:call-template(st:selectform, ?uri)
+  
+  st:call-template(st:display, ?uri)
+  
+  #st:call-template(st:result)
+  # when query is template, TransformerProcess set ?templateResult global variable
+  coalesce(us:templateResult(), st:call-template(st:result))
+
+
+  st:call-template(st:tail)
+
+}
+where {
+
+  bind (coalesce(st:get(st:uri), st:intro) as ?uri)
+  bind (if (st:get(st:display, st:result), xt:print(us:templateResult()), true) as ?tmp)
+
+}
+
+
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+template st:content {
+  
+  st:call-template(st:content2, "Data:",   st:data)
+  st:call-template(st:content2, "Schema:", st:schema)
+  st:call-template(st:content2, "Query:",  st:context)
+}
+where {
+    
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+#
+# Display result of query
+# RDF graph is a result graph
+#
+
+prefix spq: <http://ns.inria.fr/sparql-template/sparql#>
+template st:result {
+
+   st:apply-templates-with(?sttl)
+    
+}
+where {
+  bind (st:get(st:query) as ?query)
+  bind (coalesce(st:get(st:sttl), spq:result)  as ?sttl)
+  filter bound(?query)
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+prefix ft: </user/corby/home/AAServer/data/format/mytutorial/>
+##prefix ft: </opt/corese/demo/format/mytutorial/>
+#prefix ft: <http://ns.inria.fr/sparql-template/format/mytutorial/>
+template st:prev(?t) {
+
+format {
+  ft:prev.html
+  st:plink(?n)
+  }
+  
+}
+where {
+  bind (st:get(st:context) as ?g)
+  
+  graph ?g {
+    ?q1 st:name ?t ; st:index ?i ; st:query ?text
+    bind (?i - 1 as ?j)
+    ?q2 st:index ?j ; st:query ?text2 ;
+	st:name ?n 
+  }
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+prefix ft: </user/corby/home/AAServer/data/format/mytutorial/>
+#prefix ft: </opt/corese/demo/format/mytutorial/>
+#prefix ft: <http://ns.inria.fr/sparql-template/format/mytutorial/>
+template st:tail {
+format {
+  ft:tail.html
+  
+  st:call-template(st:content)
+}
+}
+where {
+    bind (st:get(st:context) as ?g)
+    graph ?g {
+       ?ds a st:Dataset
+    }
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+prefix ft: </user/corby/home/AAServer/data/format/mytutorial/>
+#prefix ft: </opt/corese/demo/format/mytutorial/>
+#prefix ft: <http://ns.inria.fr/sparql-template/format/mytutorial/>
+template st:next(?t) {
+
+format {
+  ft:next.html
+  st:plink(?n)
+ }
+    
+}
+where {
+  bind (st:get(st:context) as ?g)
+  
+  graph ?g {
+    ?q1 st:name ?t ; st:index ?i ; st:query ?text
+    bind (?i + 1 as ?j)
+    ?q2 st:index ?j ; st:query ?text2 ;
+	st:name ?n 
+  }
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+template st:profile {
+   
+}
+where {}
+
+function us:idCounter() {
+    coalesce (set (idCounter = idCounter + 1), set(idCounter = 1))
+}
+ 
+  function st:proto() {
+    coalesce(st:get(st:protocol), st:std)
+  }
+  
+function us:templateResult() {
+    return(?templateResult)
+}
+
+# alist = ((name select title format index repeat))
+# when repeat > 1, repeat ith oper select and i+1th arg select n times
+# modify alist with generated additional html select
+
+function us:expand (alist) {
+    letdyn (res = xt:list(), skip = false, num = 0, mylist = alist, prev = "", ind = 0) {
+        map (function(elem) {
+            let ((name aelem aselect title atype repeat myname myvalue mykey) = elem) {
+                if (myname != prev) {
+                    set (ind = 0);
+                    set (prev = myname)
+                } ;
+                if (skip) {
+                    # skip arg html select specification that has been processed by repeat below
+                    set(skip = false)
+                }
+                else if (repeat <= 1) {
+                    xt:add(elem, ind);
+                    #xt:print("elem:", elem);
+                    xt:add(res, elem);
+                    set (ind = ind + 1)
+                }
+                else {
+                    # skip next arg html select because it is processed here
+                    set (skip = true);
+                    let ((name2 elem2 aselect2 title2 type2 repeat2 myname2 myvalue2 mykey2) = xt:get(mylist, num+1)) {
+                        for (i in xt:iota(0, repeat - 1)) {
+                            # generate additional oper html select
+                            xt:add(res, xt:list(name, aelem, aselect, title, atype, repeat, myname, myvalue, mykey, ind));
+                            set (ind = ind + 1);
+                            # generate additional arg html select
+                            xt:add(res, xt:list(name2, elem2, aselect2, title2, type2, repeat2, myname2, myvalue2, mykey2, ind));
+                            set (ind = ind + 1)
+                        }
+                    }
+                } ;
+                set (num = num + 1)
+            }
+        },
+        alist);
+        
+        return (res)
+    } 
+}
+
+
+# st:get(?name)      name=mode   when parameter string list
+# st:get(?paramURI)  paramURI=st:mode when parameter string (first value of list)  
+# compute if option value equal to current param value 
+function us:equal(name, paramURI, index, value) {
+    coalesce(
+        # option is selected or not
+        if (index >= 0 && xt:size(st:get(name)) > index, 
+            # compare current option value with param value at position=index in param value list st:get(?name)
+            str(value) = str(xt:get(st:get(name), index)),
+            if (isURI(value),
+                st:get(paramURI) = value || st:get(paramURI) = str(value),
+                st:get(paramURI) = str(value))),
+        false)
+}
+
+function us:getValue(name, index) {
+   coalesce( if (index >= 0 && xt:size(st:get(name)) > index, xt:get(st:get(name), index), ""), "")
+}
+
+# 2 index + 1 because st:select with st:key generates 1 silent input + 1 html select
+# and the key (of silent input) is also in the parameter value list (key value key value)
+# hence we need to consider (and skip) the index of the key in the value list
+# key   -> silent input
+# value -> html select
+function us:index(?key, ?index) {
+    if (strlen(?key)>0, 2 * ?index + 1, ?index)
+}
+
+# alist = (($name$ pattern))
+# replace $name$ by pattern in text
+function us:replace(text, alist) {
+    letdyn (atext = text) {
+        map (function ((name, pattern)) { 
+            set (atext = xt:replace(atext, name, pattern)) }, alist) ;
+        return (atext)
+    }
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+#
+# Select a query name to display and execute
+# query name bound to uri param
+# Generate query names list from context graph
+#
+prefix ft: </user/corby/home/AAServer/data/format/mytutorial/>
+#prefix ft: </opt/corese/demo/format/mytutorial/>
+#prefix ft: <http://ns.inria.fr/sparql-template/format/mytutorial/>
+template st:selectform(?t) {
+
+format {
+
+  ft:selectform.html
+  
+  st:get(st:service) 
+  st:get(st:profile)   
+  st:call-template(st:prev, ?t)  
+  st:call-template(st:list, ?t)  
+  st:call-template(st:next, ?t)
+}
+}
+where {
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+#
+# Generate a form with a SPARQL query ?q to submit
+# Argument  ?n is the name of query (st:minus)
+# ?q actual query, ?t query template, ?s query solution
+#
+prefix ft: </user/corby/home/AAServer/data/format/mytutorial/>
+#prefix ft: </opt/corese/demo/format/mytutorial/>
+#prefix ft: <http://ns.inria.fr/sparql-template/format/mytutorial/>
+
+template st:form(?n, ?q, ?t, ?s, ?qt) {
+   format { ft:form.html
+    st:get(st:service) 
+    st:get(st:profile)
+    str(?t) 
+    str(?s) 
+    ?n 
+    if (?s = st:null, "", st:format(ft:nav.html))
+    ?ui
+    # show/hide html elements declared with st:hide
+    concat(?button, 
+        if (?button = "", "", "<br/>"), 
+        if (?submit && ?id, st:call-template(st:moreless, ?qt), ""))
+    if (?submit, st:format(ft:submit.html), "")
+    if (?text, "", st:format(ft:hidden.html))
+    coalesce(st:get(st:col), 60) coalesce(st:get(st:row), 20)
+    str(?q)
+    ?fun
+    }
+}
+where {
+    bind (coalesce(st:get(st:submit), true) as ?submit)
+    bind (coalesce(st:get(st:text), st:get(st:textDefault), true) as ?text)
+    bind (st:get(st:context) as ?g)
+    
+    graph ?g {  
+        ?qt st:name ?n
+        bind (exists { ?qt st:select [st:hide ?id] } as ?id)
+        optional { [] st:javascript ?afun }
+    }
+    
+    bind (coalesce (?afun, "") as ?fun)
+    bind (st:call-template(st:selecttable, ?n, ?q, ?t, ?s, ?qt) as ?ui)
+    bind (st:call-template(st:button, ?qt) as ?button)
+    
+    bind (if (st:get(st:display, st:ui), xt:print(?ui, ?fun), true) as ?apr)
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+#
+# Generate more less button for st:select with st:hide 
+# These button show/hide html tag with id
+#
+prefix ft: </user/corby/home/AAServer/data/format/mytutorial/>
+#prefix ft: </opt/corese/demo/format/mytutorial/>
+#prefix ft: <http://ns.inria.fr/sparql-template/format/mytutorial/>
+
+template st:moreless(?qt) {
+     format { ft:moreless.html ?amore ?aless }
+}
+where {
+    {select ?qt (count(?id) as ?nb) (xt:iota(1, ?nb) as ?alist)
+    where {
+        bind (st:get(st:context) as ?g)
+        
+        graph ?g {  
+            ?qt (st:select|st:button)/st:hide ?id 
+        }
+    }}
+    bind (reduce(rq:concat, maplist(us:more, ?alist)) as ?amore)
+    bind (reduce(rq:concat, maplist(us:less, ?alist)) as ?aless)
+}
+
+function us:more(id) {
+    st:format('more("i%s");', id)
+}
+function us:less(id) {
+    st:format('less("i%s");', id)
+}
+]]>
+</body>
+</rule>
+
+
+<rule>
+<body>
+<![CDATA[
+#
+# Generate query names list from context graph
+#
+prefix ft: </user/corby/home/AAServer/data/format/mytutorial/>
+#prefix ft: </opt/corese/demo/format/mytutorial/>
+#prefix ft: <http://ns.inria.fr/sparql-template/format/mytutorial/>
+template st:list(?t) {
+
+format {
+  if (?q = ?t, ft:optionselected.html, ft:option.html) 
+  
+  ?q
+  str(?i)
+  str(?title)
+}
+   
+}
+where {
+  bind (st:get(st:context) as ?g)
+  graph ?g {
+  values ?qt {st:Query sw:Query}
+    [] a ?qt ;
+      st:index ?i ;
+      st:name ?q ;
+      rdfs:label ?title
+      filter coalesce(xt:member(?q, st:get(st:queries)), true)
+  }
+}
+order by ?i
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+template st:content2(?t, ?p) {
+
+  str(?t) "<br/>"  
+  
+  group distinct { 
+    "<a href='" str(?d) "'>" str(?d) "</a>" 
+    ; separator="<br/>"
+  } 
+  
+  "<br/>"
+ 
+}
+where {
+  bind (st:get(st:context) as ?g)
+  graph ?g {
+    ?ds a st:Dataset
+    ?ds ?p [ st:uri ?d ]
+  }
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+#
+# Generate html select option sequence, ?n = query name 
+# ?select is the URI/bnode of the selector 
+# Use a context graph for select values
+# context graph has a sw:name st:graphName in content workflow (see tutohal service in profile.ttl)
+# specify context graph with st:param [ st:export true ; st:contextlist(st:graphName) ]
+# index is the index of the selector if any
+# use case: mode with value list managed as st:get("mode") in context
+#
+prefix ft: </user/corby/home/AAServer/data/format/mytutorial/>
+#prefix ft: </opt/corese/demo/format/mytutorial/>
+#prefix ft: <http://ns.inria.fr/sparql-template/format/mytutorial/>
+
+template st:selectparam(?n, ?elem, ?select, ?index) {
+    if (?type = st:radio,
+        st:call-template(st:radioformat,  ?select, coalesce(?id, ?name), ?name, ?insert, bound(?oper), ?mylist), 
+        st:call-template(st:selectformat, ?select, coalesce(?id, ?name), ?name, ?insert, bound(?oper), ?mylist)) 
+}
+where {
+  {select ?id ?name ?n ?elem ?select ?type ?oper ?index ?default ?label ?selectedDefault ?insert
+    (aggregate(xt:list(?value, ?displayValue, ?selected)) as ?alist)
+   where {
+        bind (st:get(st:context) as ?g)
+        
+        # ?name = "mode" ; ?uri = st:mode ; st:get(st:mode) = current value of parameter mode
+        
+        graph ?g { 
+            ?select st:name ?name 
+            optional { ?elem st:id ?id ; st:select? ?select}
+            optional { ?select st:type ?atype }
+            optional { ?select st:strip ?astrip }
+            optional { ?select st:uri ?myuri } 
+            optional { ?select st:kind st:oper, ?oper }
+            optional { ?select st:default ?default optional { ?select st:defaultLabel ?label } }
+            optional { ?select st:action ?action }
+            
+            bind (coalesce(?atype, st:select) as ?type)
+            bind (coalesce(?astrip, false) as ?strip)
+            bind (coalesce(?action = st:insert, false) as ?insert)
+            bind (coalesce(?myuri, uri(concat(st:, ?name))) as ?uri)
+            bind (coalesce(us:equal(?name, ?uri, ?index, ?default), false) as ?selectedDefault)
+        }
+        
+        {
+            graph ?g {
+                {?select st:value/st:enum?/rdf:rest*/rdf:first ?value filter (! isBlank(?value))}
+                union 
+                {?select st:value/st:enum?/rdf:rest*/rdf:first (?value ?vname)}
+            }
+        }
+        union 
+        {
+            graph ?g { 
+                ?select st:graph ?gname 
+                
+                # get graph object ?gg in context corresponding to graph name ?gname
+                bind (st:get(?gname) as ?gg)
+                filter bound(?gg)
+                
+                { ?select st:relation ?p 
+                graph ?gg { 
+                    select distinct ?p ?value 
+                    where { 
+                        {?x ?p ?value}
+                        union
+                        {?value ?p ?x}
+                        filter (! isBlank(?value)) 
+                    }  
+                    order by ?value }
+                }
+                union 
+                { ?select st:predicate ?p 
+                graph ?gg { 
+                    select distinct ?p ?value 
+                    where { ?x ?p ?value  filter (! isBlank(?value)) }  
+                    order by ?value }
+                }
+                union 
+                { ?select st:predicate [ ?p ?object ] 
+                graph ?gg { 
+                    select distinct ?p ?object ?value 
+                    where { ?value ?p ?object } 
+                    order by ?value }
+                }
+            }            
+        }
+        union
+        {
+            graph ?g { 
+                ?select st:graph ?gname ; st:function ?fun 
+                
+                # get graph object ?gg in context corresponding to graph name ?gname
+                bind (st:get(?gname) as ?gg)
+                filter bound(?gg)
+                
+                values ?value { unnest (xt:focus(?gg, funcall(?fun))) }
+                
+            }
+        }
+            union
+        {
+            graph ?g { 
+                ?select st:function ?fun 
+                filter not exists {?select st:graph ?gname}
+                values (?value ?vname) { unnest (maplist(us:prepare, funcall(?fun))) }
+            }    
+        }
+        
+        bind (if (?strip, 
+                    coalesce (us:mystrip(?vname), ?vname, us:mystrip(?value), ?value), 
+                    coalesce(?vname, ?value)) 
+            as ?displayValue)
+                    
+        bind (us:equal(?name, ?uri, ?index, ?value) as ?selected)
+  }}
+  
+  bind (if (bound(?default), xt:cons(xt:list(?default, coalesce(?label, "Any"), ?selectedDefault), ?alist), ?alist)
+  as ?mylist)
+  
+}
+
+function us:option(?b) {
+    if (?b, ft:valueselected.html, ft:value.html)
+}
+
+function us:prepare(value) {
+    if (isExtension(value), value, xt:list(value, value))
+}
+
+function us:mystrip(value) {
+    if (isURI(value), strafter(value, xt:namespace(value)), value)
+}
+]]>
+</body>
+</rule>
+
+
+<rule>
+<body>
+<![CDATA[
+prefix ft: </user/corby/home/AAServer/data/format/mytutorial/>
+#prefix ft: </opt/corese/demo/format/mytutorial/>
+#prefix ft: <http://ns.inria.fr/sparql-template/format/mytutorial/>
+
+template st:selectformat(?select, ?id, ?name, ?insert, ?oper, ?alist) {
+
+    format {
+        #if (?insert, ft:selectparameterinsert.html, ft:selectparameter.html)
+        ft:selectparameter.html
+        if (?oper, "myselectoper", "myselectarg")
+        ?id ?name
+        coalesce(?js, "")
+            
+        group { 
+            # generate one option
+            format { us:option(?selected) ?value ?display } 
+        }
+    }
+
+}
+where {
+    bind (st:get(st:context) as ?g)
+    graph ?g { 
+        values ?select { undef }
+        optional { ?select st:onChange ?js }
+    }
+    values (?id ?name ?insert ?oper ?alist) {(undef undef undef undef undef)}
+    values (?value ?display ?selected) { unnest(?alist) }
+}
+
+function us:option(?b) {
+    if (?b, ft:valueselected.html, ft:value.html)
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+prefix ft: </user/corby/home/AAServer/data/format/mytutorial/>
+#prefix ft: </opt/corese/demo/format/mytutorial/>
+#prefix ft: <http://ns.inria.fr/sparql-template/format/mytutorial/>
+
+template st:radioformat(?select, ?id, ?name, ?insert, ?oper, ?alist) {
+format {
+    ft:divleft.html
+        group { 
+            # generate one option
+            format { us:option(?selected) ?display ?id ?name ?value coalesce(?js, "") } 
+        }
+}
+}
+where {
+    bind (st:get(st:context) as ?g)
+    graph ?g { 
+        values ?select { undef }
+        optional { ?select st:onChange ?js }
+    }
+    values (?id ?name ?insert ?oper ?alist) { (undef undef undef undef undef) }
+    values (?value ?display ?selected) { unnest(?alist) }
+}
+
+function us:option(?b) {
+    if (?b, ft:radioselected.html, ft:radio.html)
+}
+]]>
+</body>
+</rule>
+
+
+
+<rule>
+<body>
+<![CDATA[
+prefix ft: </user/corby/home/AAServer/data/format/mytutorial/>
+#prefix ft: </opt/corese/demo/format/mytutorial/>
+#prefix ft: <http://ns.inria.fr/sparql-template/format/mytutorial/>
+template st:head {
+   
+  format {
+    ft:head.html  str(?title)
+  }
+  
+}
+where {
+  bind (coalesce(st:get(st:title), "Tutorial") as ?title)
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+#
+# ?n is the st:name of a query
+# get definition of query in context graph
+# display query and eventually result of query
+# st:get(st:query) is user query
+# ?q is tutorial query
+#
+prefix ft: </user/corby/home/AAServer/data/format/mytutorial/>
+#prefix ft: </opt/corese/demo/format/mytutorial/>
+#prefix ft: <http://ns.inria.fr/sparql-template/format/mytutorial/>
+template st:display(?n) {
+
+format {
+   ft:display.html
+
+   str(?l)
+   str(?c)   
+   if (bound(?r), st:format(ft:documentation.html, str(?r)), "")
+   
+   st:call-template(st:form, 
+     ?n,
+     coalesce(st:get(st:query), str(?myq)), 
+     str(?myq), 
+     coalesce(?s, st:null),
+     ?qt
+     ) 
+ }
+      
+}
+where {
+  
+  {select * (aggregate(xt:list(?pname, ?pattern)) as ?alist)
+   where {
+   # named graph that contains definition of queries
+    bind (st:get(st:context) as ?g)
+    graph ?g {
+        ?qt st:name    ?n ;
+        rdfs:label   ?l ;
+        rdfs:comment ?c ;
+        st:query/st:value?  ?q   filter isLiteral(?q)
+        optional { 
+            ?qt st:query/st:value? ?q 
+            [ st:name ?pname ; st:pattern ?pattern ] 
+            filter contains(?q, ?pname)
+        }
+        optional { ?qt st:reference ?r }
+        optional { ?qt st:solution  ?s }
+        optional { ?qt sw:body  ?s }
+        filter(lang(?c) = (coalesce(st:get(st:lang), "fr")))
+    }
+  }}
+  
+  #bind (if (bound(?pattern), xt:replace(?q, ?pname, ?pattern), ?q) as ?myq)
+  bind (us:replace(?q, ?alist) as ?myq)
+}
+]]>
+</body>
+</rule>
+
+</rdf:RDF>

@@ -3,6 +3,7 @@ module fr.inria.corese.corese_server {
     requires fr.inria.corese.corese_core;
     requires fr.inria.corese.compiler;
     requires fr.inria.corese.shex;
+    requires fr.inria.corese.corese_rdf4j;
 
     requires org.eclipse.jetty.server;
     requires org.eclipse.jetty.servlets;
@@ -18,8 +19,6 @@ module fr.inria.corese.corese_server {
 
     requires jakarta.ws.rs;
 
-    requires jena.arq;
-
     requires org.apache.logging.log4j;
 
     requires commons.cli;
@@ -31,5 +30,7 @@ module fr.inria.corese.corese_server {
     requires org.jsoup;
 
     requires org.slf4j;
+
+    requires fr.inria.corese.corese_storage;
 
 }

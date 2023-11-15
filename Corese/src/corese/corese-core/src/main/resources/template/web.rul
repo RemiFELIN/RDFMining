@@ -18,7 +18,7 @@ prefix ft: <http://ns.inria.fr/sparql-template/format/tutorial/>
 template st:selecttable(?n, ?q, ?t, ?s, ?qt) {
    
    format { 
-        "<table>%s</table>"
+        ft:table.html
         group { st:call-template(st:selectparam2, ?n, ?select) }
    }
    
@@ -53,7 +53,10 @@ template st:start {
   
   st:call-template(st:display, ?uri)
   
-  st:call-template(st:result)
+  #st:call-template(st:result)
+  # when query is template, TransformerProcess set ?templateResult global variable
+  coalesce(us:templateResult(), st:call-template(st:result))
+
 
   st:call-template(st:tail)
 
@@ -63,6 +66,8 @@ where {
   bind (coalesce(st:get(st:uri), st:intro) as ?uri)
 
 }
+
+
 ]]>
 </body>
 </rule>
@@ -191,7 +196,9 @@ where {}
     coalesce(st:get(st:protocol), st:std)
   }
   
-
+function us:templateResult() {
+    return(?templateResult)
+}
 ]]>
 </body>
 </rule>
@@ -374,7 +381,14 @@ format {
             
   group { 
     format { 
-        us:format (coalesce(st:get(?uri) = if (isURI(?value), ?value, str(?value)), false))                        
+        us:format (coalesce(
+        #st:get(?uri) = if (isURI(?value), ?value, str(?value)), 
+        
+        if (isURI(?value),
+                st:get(?uri) = ?value || st:get(?uri) = str(?value),
+                st:get(?uri) = str(?value)),
+        
+        false))                        
         ?value ?value
     } 
 }
@@ -405,6 +419,18 @@ where {
         bind (st:get(?gname) as ?gg)
         filter bound(?gg)
         
+         { ?select st:relation ?p 
+           graph ?gg { 
+            select distinct ?p ?value 
+            where { 
+                {?x ?p ?value}
+                union
+                {?value ?p ?x}
+                filter (! isBlank(?value)) 
+            }  
+            order by ?value }
+        }
+        union 
         { ?select st:predicate ?p 
            graph ?gg { 
             select distinct ?p ?value 

@@ -226,6 +226,8 @@ public class NSManager extends ASTObject {
             nsm.definePrefix(p, getNamespace(p));
         }
         nsm.setRecord(isRecord());
+        // for defining prefix of pretty printed qname 
+        nsm.setRecordedPrefix(getRecordedPrefix());
         return nsm;
     }
 
@@ -713,8 +715,8 @@ public class NSManager extends ASTObject {
             str = new URL(path).toString();
         } catch (MalformedURLException ex) {
             try {
-                str = new File(path).toURL().toString();
-            } catch (MalformedURLException ex1) {
+                str = new File(path).toURI().toASCIIString();
+            } catch (Exception ex1) {
                 return path;
             }
         }
@@ -982,6 +984,14 @@ public class NSManager extends ASTObject {
     
     public static void defineDefaultPrefix(String p, String ns) {
         def.put(ns, p);
+    }
+    
+    public HashMap<String, String> getRecordedPrefix(){
+        return trecord;
+    }
+    
+    public void setRecordedPrefix(HashMap<String, String> map){
+        trecord = map;
     }
 
 }
