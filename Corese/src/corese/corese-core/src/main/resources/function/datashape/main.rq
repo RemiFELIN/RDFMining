@@ -20,10 +20,58 @@ prefix psh: <http://ns.inria.fr/probabilistic-shacl/>
 #
 function dt:graph sh:shacl() {
    if (sh:trace(), xt:print("shacl:"), true);
-#    sh:java(false);
    set(extended = false);
    sh:shacl(xt:graph(), sh:focus(xt:graph()))
 }
+
+# shape is shacl graph
+function dt:graph sh:shacl(dt:graph shape) {
+   if (sh:trace(), xt:print("shacl:"), true);
+   set(extended = false);
+   sh:shacl(shape, sh:focus(shape))
+}
+
+
+
+# Current graph is RDF and shacl graph
+function dt:graph sh:shaclshape(sh) {
+   sh:shaclShapeGraph(xt:graph(), sh)
+}
+
+# Current graph is RDF and shacl graph
+function dt:graph sh:shaclShapeGraph(shacl, sh) {
+   if (sh:trace(), xt:print("shaclshape:", sh), true);
+   set(extended = false);
+   sh:shacl(shacl, sh:focus(shacl, sh))
+}
+
+#
+# Current graph is RDF and shacl graph
+# evaluate sh(node) even if node is not into sh target
+#
+function dt:graph sh:shaclshape(sh, node) {
+   sh:shaclShapeGraph(xt:graph(), sh, node)
+}
+
+function dt:graph sh:shaclShapeGraph(shacl, sh, node) {
+   if (sh:trace(), xt:print("shaclshape:", sh, node), true);
+   set(extended = false);
+   sh:shacl(shacl, xt:list(xt:list(sh, xt:list(node))))
+}
+
+
+
+# Current graph is RDF and shacl graph
+function dt:graph sh:shaclnode(node) {
+   sh:shaclNodeGraph(xt:graph(), node)
+}
+
+function dt:graph sh:shaclNodeGraph(shacl, node) {
+   if (sh:trace(), xt:print("shaclnode:", node), true);
+   set(extended = false);
+   sh:shacl(shacl, sh:focusnode(shacl, node))
+}
+
 
 #
 # extended shacl function : probabilistic or possibilistic mode
@@ -66,47 +114,9 @@ function sh:isShex() {
 function dt:graph sh:shacljava() {
    if (sh:trace(), xt:print("shacl:"), true);
    sh:java(true);
-   set(extended = false);
    sh:shacl(xt:graph(), sh:focus(xt:graph()))
 }
 
-function dt:graph sh:shacl(dt:graph shape) {
-   sh:log("main.rq", "sh:shacl", "start a standard SHACL eval ...");
-   if (sh:trace(), xt:print("shacl:"), true);
-#    sh:java(false);
-   set(extended = false);
-   sh:shacl(shape, sh:focus(shape))
-}
-
-function dt:graph sh:shex(dt:graph shape) {
-   sh:shexSemantics(true);
-   sh:shacl(shape) 
-}
-
-
-function dt:graph sh:shaclshape(sh) {
-   if (sh:trace(), xt:print("shaclshape:", sh), true);
-#    sh:java(false);
-   set(extended = false);
-   sh:shacl(xt:graph(), sh:focus(xt:graph(), sh))
-}
-
-#
-# evaluate sh(node) even if node is not into sh target
-#
-function dt:graph sh:shaclshape(sh, node) {
-   if (sh:trace(), xt:print("shaclshape:", sh, node), true);
-#    sh:java(false);
-   set(extended = false);
-   sh:shacl(xt:graph(), xt:list(xt:list(sh, xt:list(node))))
-}
-
-function dt:graph sh:shaclnode(node) {
-   if (sh:trace(), xt:print("shaclnode:", node), true);
-#    sh:java(false);
-   set(extended = false);
-   sh:shacl(xt:graph(), sh:focusnode(xt:graph(), node))
-}
 
 #
 # focus = mappings or list(sh=nodeShape; list=targetNodeList)
@@ -116,7 +126,7 @@ function dt:graph sh:shacl(dt:graph shape, focus) {
     xt:event("@beforeShacl", focus);
     sh:start(shape) ;
     let (suc = sh:shacleval(shape, focus)) {
-        # sh:success(suc);
+        sh:success(suc);
         sh:finish() ;
         xt:event("@afterShacl", sh:validationReport());
         return (sh:validationReport())
@@ -130,16 +140,16 @@ function sh:shacleval(shape, focus) {
     # now, we will calculate the total number of instances in the dataset
     if (extended) {
         set(numInstances = sh:getNumInstances());
-        sh:log("main.rq", "sh:shacleval", concat("n_triples=", numInstances));
     } ;
-    # sh:log("main.rq", "sh:shacleval", "start...");
     let (suc = true) {
         for ((sh list) in focus) {
-            if (sh:trace(), xt:print("target:", coalesce(sh, "undef"), xt:size(list), list), true);
-            # sh:log("main.rq", "sh:shacleval", concat("focus ", sh));
+            if (sh:trace(), 
+                xt:print("target:", coalesce(sh, "undef"), xt:size(list), list), true);
+            # set the final report as global variable
+            set(rep = sh:validationReport());
+            set(abnode = sh:bnodeid());
             if (bound(sh) && xt:size(list) > 0) {
                 sh:log("main.rq", "sh:shacleval", concat("xt:size(list)=", xt:size(list)));
-                set(abnode = sh:bnodeid());
                 if(extended) {
                     # sh:log("main.rq", "sh:shacleval", concat("referenceCardinality=", xt:size(list)));
                     set(referenceCardinality = 0);
@@ -149,8 +159,6 @@ function sh:shacleval(shape, focus) {
                     # For each shape, we will create a list of exceptions
                     set(exceptions = xt:list());
                 } ;
-                # set the final report as global variable
-                set(rep = sh:validationReport());
                 # start core function
                 let (res = sh:core(rep, sh, true, list)) {
                     set(result = res);
@@ -165,11 +173,6 @@ function sh:shacleval(shape, focus) {
             else {
                 sh:log("main.rq", "sh:shacleval", "The current shape is not considered ...");
             } ;
-        } ;
-        # if the RDF graph is conform, we set the report to conform such as :
-        if(coalesce(!fail, true)) {
-            # sh:log("main.rq", "debug", concat("fail is ", fail));
-            sh:success(true, rep);
         } ;
         return (suc)
     }

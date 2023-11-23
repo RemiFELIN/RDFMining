@@ -1,7 +1,5 @@
 # Content available in the default dataset at /sparql
 st:user a st:Server; st:content st:loadcontent .
-# List endpoints allowed in federated queries + where STTL is allowed to get html templates
-st:access st:namespace <http://localhost:9200/sparql> , <http://134.59.130.136:8890/sparql> , <http://corese:9100/sparql> , <http://172.19.0.2:9000/sparql> .
 st:loadcontent a sw:Workflow; sw:body (
   [ a sw:Load; sw:path </usr/local/corese/data/GOSP.dat> ]
   [ a sw:Load; sw:path </usr/local/corese/data/GOSP.idn> ]
@@ -21,7 +19,6 @@ st:loadcontent a sw:Workflow; sw:body (
   [ a sw:Load; sw:path </usr/local/corese/data/SPO.idn> ]
   [ a sw:Load; sw:path </usr/local/corese/data/SPOG.dat> ]
   [ a sw:Load; sw:path </usr/local/corese/data/SPOG.idn> ]
-  [ a sw:Load; sw:path </usr/local/corese/data/covidontheweb_data.ttl> ]
   [ a sw:Load; sw:path </usr/local/corese/data/journal.jrnl> ]
   [ a sw:Load; sw:path </usr/local/corese/data/node2id.dat> ]
   [ a sw:Load; sw:path </usr/local/corese/data/node2id.idn> ]

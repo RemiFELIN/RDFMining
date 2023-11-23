@@ -33,28 +33,6 @@ function sh:path(report, sh, vis, nodeList, path, present) {
     }
 }
 
-# SHACL Extended path
-# shape: shacl graph with a given mode
-# sh: current shape
-# vis: true if report is needed
-# nodeList:  list of target nodes of shape sh
-# path: path expression
-# present=true: fail when path is empty, use case: qualified value shape
-# shapeName: the name of the given shape
-# mode: integer (1=probabilistic; 2=possibilistic)
-# referenceCardinality: the support of a shape
-# 
-# function sh:path(report, sh, vis, nodeList, path, present, shapeName, mode, referenceCardinality) {
-#     sh:log("path.rq", "sh:path", "start...");
-#     if (sh:trace(), xt:print("path:", sh, path, nodeList), true);
-#     let (b1 = sh:pathBasic(report, sh, vis, nodeList, path, present, shapeName, mode, referenceCardinality), b6 = sh:sparql(report, sh, vis, nodeList, path)) {
-#         sh:log("path.rq", "sh:path", concat("b1=", b1));
-#         sh:log("path.rq", "sh:path", concat("b6=", b6));
-#         return (b1 && b6)
-#     }
-# }
-
-
 
 #
 # nodeList: target node list 
@@ -74,8 +52,7 @@ function sh:pathBasic(report, sh, vis, s, p, present) {
         b1 = xt:size(cstList1) > 0,
         b2 = xt:size(cstList2) > 0,
         b3 = xt:size(cstList3) > 0,
-        b4 = xt:size(cstList4) > 0
-    ) {
+        b4 = xt:size(cstList4) > 0) {
 
         # sh:log("path.rq", "sh:pathBasic", concat("b1=", b1));
         # sh:log("path.rq", "sh:pathBasic", concat("b2=", b2));
@@ -223,10 +200,16 @@ function sh:pathBasic(report, sh, vis, s, p, present) {
     }
 }
 
+
+
+# *******************************************
+
+
 #
 # Retrieve properties of constraint sh using a query, do it once
 # they are stored as a list in a map by sh:getConstraint defined in core.rq
 #
+
 function sh:getPathShape(shape, sh, shapeList) {
     let (select ?shape ?sh ?shapeList 
     (aggregate (xt:list(?oper, ?arg)) as ?list) 
@@ -327,9 +310,7 @@ function sh:uniqueLang (report, sh, vis, s, p, v, nodeList){
 
 
 function sh:hasValue (report, sh, vis, s, p, v, nodeList) {
-    # sh:log("path.rq", "sh:hasValue", "start...");
     let (suc = sh:hasValueList(v, nodeList)) {
-        # -> 8 args
         sh:report(report, sh:hasValue, sh, s, p, v, suc, vis) ;
         return (suc)
     }

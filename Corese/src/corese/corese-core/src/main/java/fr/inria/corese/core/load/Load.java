@@ -1283,7 +1283,7 @@ public class Load
     public void setDataManager(DataManager dataManager) {
         this.dataManager = dataManager;
     }
-    
+
     public Graph getGraph() {
         return graph;
     }

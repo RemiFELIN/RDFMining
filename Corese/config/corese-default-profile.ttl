@@ -1,4 +1,0 @@
-# Content available in the default dataset at /sparql
-st:user a st:Server; st:content st:loadcontent .
-# List endpoints allowed in federated queries + where STTL is allowed to get html templates
-st:access st:namespace <http://localhost:9200/sparql> , <http://134.59.130.136:8890/sparql> , <tutu> , <tata> , <toto> .

@@ -2,7 +2,7 @@
 
 # Current version of tools used
 RDFMINING_VERSION=1.4
-CORESE_VERSION=4.3.0
+CORESE_VERSION=4.4.1
 SPIN_VERSION=2.0.0
 
 # Clean shell files
@@ -28,7 +28,7 @@ mv -f corese-rdf4j/target/corese-rdf4j-$CORESE_VERSION.jar ../../../RDFMiner/dep
 # Import Corese-server in Corese jar folder
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Extract Corese-server        v$CORESE_VERSION"
 mkdir -p ../../jar/
-mv -f corese-server/target/corese-server-$CORESE_VERSION-jar-with-dependencies.jar ../../jar/corese-server-$CORESE_VERSION.jar
+mv -f corese-server/target/corese-server-$CORESE_VERSION.jar ../../jar/corese-server-$CORESE_VERSION.jar
 cd ../../..
 # Download SPIN 2.0.0 from http://topquadrant.com/repository/spin/
 SPIN_PATH="./RDFMiner/dep/org/topbraid/spin/2.0.0/"
@@ -43,6 +43,7 @@ mkdir -p ./Corese/data/
 mkdir -p ./Corese/log/
 mkdir -p ./Virtuoso/data/
 mkdir -p ./RDFMiner/caches/
+mkdir -p ./rdfmining-front/node_modules/
 # Build services
 echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Build services ..."
 # Read params provided by user
@@ -61,5 +62,5 @@ echo $(date +"%Y-%m-%d %H:%M:%S,%3N")" [install.sh] INFO - Build services ..."
 # fi
 ./install/services/build_rdfminer.sh
 ./install/services/build_corese.sh
-./install/services/build_virtuoso.sh
+# ./install/services/build_virtuoso.sh
 ./install/services/build_front.sh

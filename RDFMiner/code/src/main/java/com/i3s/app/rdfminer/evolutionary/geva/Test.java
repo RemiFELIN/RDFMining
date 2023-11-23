@@ -3,6 +3,7 @@ package com.i3s.app.rdfminer.evolutionary.geva;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
+import com.i3s.app.rdfminer.entity.shacl.Shape;
 import com.i3s.app.rdfminer.evolutionary.fitness.Fitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
@@ -18,6 +19,7 @@ import com.i3s.app.rdfminer.evolutionary.individual.CandidatePopulation;
 import com.i3s.app.rdfminer.generator.Generator;
 import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.generator.shacl.RandomShapeGenerator;
+import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -475,13 +477,13 @@ public class Test {
 
     }
 
-    public static void testGetIndividualFromChromosome() {
+    public static void testGetIndividualFromChromosome() throws URISyntaxException, IOException {
         RDFMiner.parameters.initLenChromosome = 2;
         RDFMiner.parameters.populationSize = 1;
         Generator generator = null;
         try {
             // /user/rfelin/home/projects/RDFMining/IO/OWL2Axiom-subclassof.bnf
-            generator = new RandomShapeGenerator("/user/rfelin/home/projects/RDFMining/IO/users/64e7594dfbb9f24cf6d7c272/xp/grammar.bnf");
+            generator = new RandomShapeGenerator("/user/rfelin/home/projects/eurogp_2024/results/V1_100_5000_1/grammar.bnf");
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
@@ -496,9 +498,13 @@ public class Test {
         GEIndividual ind = generator.getIndividualFromChromosome(chrom);
         System.out.println(ind.getPhenotype().getStringNoSpace());
         System.out.println(ind.getChromosomes());
+        // initi shape
+        Shape shape = new Shape(ind, new CoreseEndpoint("http://localhost:9100/sparql", Global.PREFIXES));
+        System.out.println(shape.referenceCardinality+ " " + shape.numExceptions);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws URISyntaxException, IOException {
+        System.loadLibrary(Global.SO_LIBRARY);
         testGetIndividualFromChromosome();
 //        generateRandomPhenotypes();
 //        testSinglePointCrossoverOnRealPopulation();
