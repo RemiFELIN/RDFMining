@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.util.Literals;
 import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.query.BooleanQuery;
 import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.repository.Repository;
@@ -24,6 +25,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -168,6 +170,25 @@ public class ValidationReport {
             db.shutDown();
         }
         return results;
+    }
+
+    public boolean hasNoNodesToAssess() {
+        try(RepositoryConnection con = db.getConnection()) {
+            // add the model
+            con.add(this.model);
+            // init query
+            String request = RequestBuilder.ask("?x psh:summary ?y", true);
+            // prepare query
+            BooleanQuery query = con.prepareBooleanQuery(request);
+            // launch and get result
+            if (Objects.equals(query.evaluate(), false)) {
+                return true;
+            }
+        } finally {
+            // shutdown the DB and frees up memory space
+            db.shutDown();
+        }
+        return false;
     }
 
     public int getNumSummary() {

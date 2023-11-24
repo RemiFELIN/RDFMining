@@ -12,7 +12,6 @@ import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.query.BindingSet;
-import org.eclipse.rdf4j.query.BooleanQuery;
 import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.repository.Repository;
@@ -27,7 +26,6 @@ import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * A class of SHACL Shape: see <em><a href="https://www.w3.org/TR/shacl/#constraints-section">
@@ -245,27 +243,6 @@ public class Shape extends Entity {
         }
     }
 
-    private boolean hasNoNodesToAssess() {
-        try(RepositoryConnection con = db.getConnection()) {
-            // add the model
-            con.add(this.model);
-            // init query
-            String request = RequestBuilder.ask("?x psh:summary ?y", true);
-            /*String request = RequestBuilder.ask(addFederatedQuery(sparql), true);// "\nASK WHERE { " + addFederatedQuery(sparql) + " }";
-            String resultAsJSON = query(Format.JSON, request);
-            return ResultParser.getResultFromAskQuery(resultAsJSON)*/;
-            BooleanQuery query = con.prepareBooleanQuery(request);
-            // launch and get result
-            if (Objects.equals(query.evaluate(), false)) {
-                return true;
-            }
-        } finally {
-            // shutdown the DB and frees up memory space
-            db.shutDown();
-        }
-        return false;
-    }
-
     @Override
     public void update(CoreseEndpoint endpoint) throws URISyntaxException, IOException {
         String content = this.individual == null ? Global.PREFIXES + this : Global.PREFIXES + this.relativeIri + this;
@@ -274,7 +251,7 @@ public class Shape extends Entity {
         String report = endpoint.getValidationReportFromServer(content);
         // read evaluation report
         this.validationReport = new ValidationReport(report);
-        if (this.hasNoNodesToAssess()) {
+        if (this.validationReport.hasNoNodesToAssess()) {
             this.referenceCardinality = 0;
             this.numConfirmations = 0;
             this.numExceptions = 0;
