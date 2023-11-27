@@ -176,6 +176,9 @@ public class CmdLineParameters {
 	@Option(name = "-kb", aliases = { "--K_Base" }, usage = "KBase", metaVar = "K_BASE")
 	public int kBase = 5000;
 
+	@Option(name = "-time", aliases = { "--time" }, usage = "time allocated for the mining (in min)", metaVar = "TIME")
+	public int maxTime = 180;
+
 	@Option(name = "-ckp", aliases = { "--Checkpoint" }, usage = "Checkpoint", metaVar = "CHECK_POINT")
 	public int checkpoint = 1;
 

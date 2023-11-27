@@ -12,4 +12,4 @@ ShapeBody := 'sh:targetClass ' Class ' ; ' ShapeProperty
 ShapeProperty := ' sh:property [ ' PropertyBody ' ] . '
 PropertyBody := ' sh:path rdf:type ; sh:hasValue ' Class ' ; '
 #---------------------------------------------------------------
-Class := '[sparql] ?x a ?Class .'
+Class := 'SPARQL ?x a ?Class .'

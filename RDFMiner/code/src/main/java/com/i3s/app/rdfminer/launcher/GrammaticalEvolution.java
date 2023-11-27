@@ -79,13 +79,18 @@ public class GrammaticalEvolution {
             System.exit(1);
         }
 
+        // Max time to spent for GE
+        // convert time min to ms
+        long limitTime = parameters.maxTime * 60000L;
+
         /* GRAMMATICAL EVOLUTIONARY */
         /* Parameters as the inputs of GE */
         logger.info("========================================================");
         logger.info("PARAMETERS AS THE INPUTS OF GE");
         logger.info("========================================================");
         logger.info("POPULATION SIZE: " + parameters.populationSize);
-        logger.info("TOTAL EFFORT : " + parameters.kBase);
+        logger.info("LIMIT TIME: " + parameters.maxTime + " min.");
+//        logger.info("TOTAL EFFORT : " + parameters.kBase);
         logger.info("# GENERATIONS: " + Math.ceil((double) parameters.kBase / parameters.populationSize));
         logger.info("LENGTH CHROMOSOME: " + parameters.initLenChromosome);
         logger.info("MAXIMUM WRAPPING: " + parameters.maxWrapp);
@@ -140,8 +145,12 @@ public class GrammaticalEvolution {
         candidatePopulation = canPop.initialize(cache);
         // Initialize population
         ArrayList<Entity> entities = Fitness.initializePopulation(candidatePopulation, generator);
+        // start time
+        long start = System.currentTimeMillis();
+        long maxTime = start + limitTime;
+        long chrono = start;
         // start GE
-        while (curCheckpoint < parameters.checkpoint) {
+        while (chrono <= maxTime) {
             System.out.println("\n--------------------------------------------------------\n");
             logger.info("Generation: " + curGeneration);
             // Grammatical evolution of OWL Axioms
@@ -150,16 +159,21 @@ public class GrammaticalEvolution {
             editCache(CACHE_PATH, entities, curGeneration, curCheckpoint);
             // update checkpoint
 //            System.out.println(parameters.populationSize * curGeneration + " >= " + Math.round((parameters.kBase * (curCheckpoint + 1)) / parameters.checkpoint) );
-            if (parameters.populationSize * curGeneration >= Math.round((parameters.kBase * (curCheckpoint + 1)) / parameters.checkpoint) ) {
-                curCheckpoint++;
-            }
+//            if (parameters.populationSize * curGeneration >= Math.round((parameters.kBase * (curCheckpoint + 1)) / parameters.checkpoint) ) {
+//                curCheckpoint++;
+//            }
             // Turn to the next generation
             curGeneration++;
             // reset crossover and mutation counter
             nCrossover = 0;
             nMutation = 0;
 //            nBetterIndividual = 0;
+            // capture the current time in ms
+            logger.info("Time spent for this generation: " + (System.currentTimeMillis() - chrono) + " ms.");
+            chrono = System.currentTimeMillis();
         }
+        logger.info("End of GE ! Time spent: " + ((chrono - start) / 60000) + " min");
+        // end of the process ...
         // fill content in json output file
         for(Entity entity : entities) {
             RDFMiner.content.add(entity.toJSON());

@@ -349,22 +349,22 @@ public class GEIndividual extends AbstractIndividual {
         // check if its codons (chromosomes) are not composed of the same codon
         // if true, it can return a trivial entity because it will probably return the same value
         // for instance: subClassOf( dbo:Humans dbo:Humans ) if chrom: [1234,1234,]
-        ArrayList<Integer> uniques = new ArrayList<>();
-        String genotype = this.genotype.get(0).toString().replace("Chromosome Contents: ", "");
-//        System.out.println("genotype: " + genotype);
-        for(String i : genotype.split(",")) {
+        // subsequently, we limit the scope of this feature for individuals with |Codons| == 2
+        if (this.getUsedCodons() == 2) {
+            ArrayList<Integer> uniques = new ArrayList<>();
+            String genotype = this.genotype.get(0).toString().replace("Chromosome Contents: ", "");
+            for(String i : genotype.split(",")) {
 //            System.out.println("adding " + i + " ...");
-            int value = Integer.parseInt(i);
-            if(!uniques.contains(value)) {
-                uniques.add(value);
+                int value = Integer.parseInt(i);
+                if(!uniques.contains(value)) {
+                    uniques.add(value);
+                }
             }
+            // compare listes size
+            return uniques.size() != this.getChromosomes().size();
+//            logger.debug(this.getGenotype().toString() +  " is trivial !");
         }
-        // compare listes size
-        if (uniques.size() == this.getChromosomes().size()) {
-            return false;
-        }
-        logger.debug(this.getGenotype().toString() +  " is trivial !");
-        return true;
+        return false;
     }
 
     /**
