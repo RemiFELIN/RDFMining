@@ -82,8 +82,27 @@ function dt:graph sh:extendedshacl(dt:graph shape, m, p) {
     set(mode = xsd:integer(m));
     set(extended = true);
     set(prob = p);
+    set(numInstances = 0);
     if (mode == 1, 
         sh:log("main.rq", "sh:extendedshacl", concat("Probabilistic mode used with p=", prob)),
+        if(mode == 2, 
+            sh:log("main.rq", "sh:extendedshacl", "Possibilistic mode"), 
+            sh:log("main.rq", "sh:extendedshacl", "ERROR this ID is not found !")
+        )
+    );
+    sh:shacl(shape, sh:focus(shape));
+}
+
+function dt:graph sh:extendedshacl(dt:graph shape, m, p, nTriples) {
+    if (sh:trace(), xt:print("shacl:"), true);
+    # sh:java(false);
+    set(mode = xsd:integer(m));
+    set(extended = true);
+    set(prob = p);
+    set(numInstances = nTriples);
+    sh:log("main.rq", "sh:extendedshacl", concat("Number of triples= ", numInstances));
+    if (mode == 1, 
+        sh:log("main.rq", "sh:extendedshacl", concat("Probabilistic mode used with p= ", prob)),
         if(mode == 2, 
             sh:log("main.rq", "sh:extendedshacl", "Possibilistic mode"), 
             sh:log("main.rq", "sh:extendedshacl", "ERROR this ID is not found !")
@@ -137,8 +156,8 @@ function dt:graph sh:shacl(dt:graph shape, focus) {
 # focus = mappings or list(sh=nodeShape; list=targetNodeList)
 #
 function sh:shacleval(shape, focus) {
-    # now, we will calculate the total number of instances in the dataset
-    if (extended) {
+    # now, we will calculate the total number of instances in the dataset if it is not provided !
+    if (extended && numInstances == 0) {
         set(numInstances = sh:getNumInstances());
     } ;
     let (suc = true) {

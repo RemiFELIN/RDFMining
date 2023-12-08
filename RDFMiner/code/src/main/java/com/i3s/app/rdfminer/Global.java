@@ -64,6 +64,11 @@ public class Global {
     public static final String RDFMINER_SERVER_IP = RDFMiner.parameters.production ? "http://server:9200/" : "http://localhost:9200/";
 
     /**
+     * Number of RDF triples available on the tested SPARQL endpoint
+     */
+    public static int nTriples;
+
+    /**
      * default prefixes used to perform queries with the remote {@link Global#TARGET_SPARQL_ENDPOINT
      * SPARQL endpoint}
      */

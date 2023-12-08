@@ -133,7 +133,29 @@ public class CoreseEndpoint {
     }
 
     /**
-     * <i>SELECT (count(distinct ?x) as ?n) WHERE { ... }</i> in SERVICE clause
+     * <i>SELECT (count(var) as ?n) WHERE { ... }</i> in SERVICE clause
+     */
+    public int count(String var, String sparql) throws URISyntaxException, IOException {
+        // "SELECT (count(distinct ?x) as ?n) WHERE { " + sparql + " }"));
+        String request = buildSelectAllQuery(addFederatedQuery(RequestBuilder.select("(count(" + var + ") as ?n)", sparql, this.timeout, false)));
+        String resultAsJSON = query(Format.JSON, request);
+        if(resultAsJSON.contains("Read timed out") || resultAsJSON.contains("connect timed out")) {
+            // time out
+            // i.e. SocketTimeoutException from Corese server
+            return -1;
+        }
+        try {
+            return Integer.parseInt(Objects.requireNonNull(ResultParser.getResultsFromVariable("n", resultAsJSON)).get(0));
+        } catch (NullPointerException e) {
+            logger.error("Error during the counting ...");
+            logger.error("Result as JSON: " + resultAsJSON);
+        }
+        // return an error
+        return -1;
+    }
+
+    /**
+     * <i>SELECT (count(*) as ?n) WHERE { ?s ?p ?o }</i> in SERVICE clause
      */
     public int countAllFromCoreseTripleStore() throws URISyntaxException, IOException {
         // "SELECT (count(distinct ?x) as ?n) WHERE { " + sparql + " }"));
@@ -208,6 +230,7 @@ public class CoreseEndpoint {
         if(RDFMiner.parameters.useProbabilisticShaclMode) {
             params.put("mode", CoreseService.PROBABILISTIC_SHACL_EVALUATION);
             params.put("p", RDFMiner.parameters.probShaclP);
+            params.put("n-triples", String.valueOf(Global.nTriples));
         } else {
             params.put("mode", CoreseService.SHACL_EVALUATION);
         }

@@ -102,5 +102,5 @@ java \
     -lp \
     -pp file://$PROFILE \
     -init $PROPERTIES \
-    # -su # super user
+    -su # super user
 

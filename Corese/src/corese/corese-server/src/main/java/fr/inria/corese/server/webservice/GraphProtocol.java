@@ -39,7 +39,7 @@ public class GraphProtocol  {
         if (name != null) {
             query = String.format(pattern, NSManager.nsm().toNamespace(graph));
         }
-        return new SPARQLRestAPI().myGetResult(request, name, null, null, null, null, query, access, null, null, format, null);
+        return new SPARQLRestAPI().myGetResult(request, name, null, null, null, null, query, access, null, null, format, null, null);
     }
     
     Response post(HttpServletRequest request, String name, String graph, String pattern, String access, int format) {
@@ -50,7 +50,7 @@ public class GraphProtocol  {
         else {
             query = String.format(NAMED_GRAPH_INSERT, NSManager.nsm().toNamespace(graph), pattern);
         }
-        return new SPARQLRestAPI().myGetResult(request, name, null, null, null, null, query, access, null, null, format, null);
+        return new SPARQLRestAPI().myGetResult(request, name, null, null, null, null, query, access, null, null, format, null, null);
     }
     
     String getQuery(String name) {

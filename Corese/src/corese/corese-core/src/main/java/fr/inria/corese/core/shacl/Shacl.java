@@ -227,6 +227,11 @@ public class Shacl {
         setShacl(shacl);
         return eval(EXTENDED_SHACL, shacl, mode, p);
     }
+
+    public Graph eval(Graph shacl, int mode, IDatatype p, IDatatype nTriples) throws EngineException {
+        setShacl(shacl);
+        return eval(EXTENDED_SHACL, shacl, mode, p, nTriples);
+    }
     
     /**
      * Evaluate shape/node

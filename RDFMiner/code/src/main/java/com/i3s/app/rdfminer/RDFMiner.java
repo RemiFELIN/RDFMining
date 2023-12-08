@@ -10,6 +10,7 @@ import com.i3s.app.rdfminer.output.Results;
 import com.i3s.app.rdfminer.output.SimilarityMap;
 import com.i3s.app.rdfminer.output.Stat;
 import com.i3s.app.rdfminer.parameters.CmdLineParameters;
+import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
@@ -199,6 +200,14 @@ public class RDFMiner {
 		} else {
 			logger.info("RDFMiner will use the default prefixes to perform SPARQL queries ...");
 		}
+
+		// compute the number of triples published on the considered SPARQL endpoint
+		// usefull to compute 'one time' the number of triples (because it is redundant and can be very long ...)
+		// use it to provide it to Corese and compute the generality for each shape
+		CoreseEndpoint endpoint = new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
+		logger.info("COUNT the total number of triples available through the SPARQL endpoint: " + Global.TARGET_SPARQL_ENDPOINT);
+		Global.nTriples = endpoint.count("*", "?s ?p ?o");
+		logger.info("COUNT #RDF triples: " + Global.nTriples);
 
 		// Novelty search
 		if(parameters.useNoveltySearch) {

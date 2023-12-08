@@ -222,9 +222,10 @@ public class Entity {
         json.put("exceptions", new JSONArray(this.exceptions.stream().limit(100).collect(Collectors.toList())));
         json.put("confirmations", new JSONArray(this.confirmations));
         json.put("elapsedTime", this.elapsedTime);
-        if (RDFMiner.parameters.useClassicShaclMode) {
-            json.put("likelihood", this.likelihood.doubleValue());
-        } else if (RDFMiner.parameters.useProbabilisticShaclMode) {
+//        if (RDFMiner.parameters.useClassicShaclMode) {
+//            json.put("likelihood", this.likelihood.doubleValue());
+        if (RDFMiner.parameters.useProbabilisticShaclMode) {
+            json.put("generality", this.generality);
             json.put("likelihood", this.likelihood.doubleValue());
             json.put("pValue", this.pValue.doubleValue());
             json.put("acceptance", this.accepted);
@@ -232,7 +233,6 @@ public class Entity {
             json.put("possibility", this.possibility().doubleValue());
             json.put("necessity",this.necessity().doubleValue());
             json.put("isTimeOut", this.isTimeout);
-            json.put("generality", this.generality);
             json.put("ari", this.ari);
         }
         return json;

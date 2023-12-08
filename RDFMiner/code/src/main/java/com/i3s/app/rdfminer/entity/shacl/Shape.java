@@ -213,7 +213,7 @@ public class Shape extends Entity {
         this.numConfirmations = report.numConfirmationsByShape.get(iri).intValue();
         this.numExceptions = report.numExceptionsByShape.get(iri).intValue();
         this.likelihood = report.likelihoodByShape.get(iri);
-//        this.generality = report.generalityByShape.get(parsedUri);
+        this.generality = (double) report.generalityByShape.get(iri);
         if(report.exceptionsByShape.get(iri) != null) {
             this.exceptions = new ArrayList<>(report.exceptionsByShape.get(iri));
         }
@@ -256,6 +256,7 @@ public class Shape extends Entity {
             this.numConfirmations = 0;
             this.numExceptions = 0;
             this.likelihood = 0;
+            this.generality = 0;
             if(this.individual != null) this.individual.setFitness(new BasicFitness(0, this.individual));
         } else {
             // add results

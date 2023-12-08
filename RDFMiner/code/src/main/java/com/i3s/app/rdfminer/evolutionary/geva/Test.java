@@ -478,8 +478,9 @@ public class Test {
     }
 
     public static void testGetIndividualFromChromosome() throws URISyntaxException, IOException {
-        RDFMiner.parameters.initLenChromosome = 2;
+        RDFMiner.parameters.initLenChromosome = 3;
         RDFMiner.parameters.populationSize = 1;
+        RDFMiner.parameters.useProbabilisticShaclMode = true;
         Generator generator = null;
         try {
             // /user/rfelin/home/projects/RDFMining/IO/OWL2Axiom-subclassof.bnf
@@ -487,15 +488,18 @@ public class Test {
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
-        GEChromosome chrom = new GEChromosome(2);
+        GEChromosome chrom = new GEChromosome(RDFMiner.parameters.initLenChromosome);
         chrom.setMaxChromosomeLength(1000);
         // 1000427925,1741643077,
         // 1000427925,1620996495,
+        chrom.add(746431190);
         chrom.add(746431190);
         chrom.add(2061549156);
         // a sh:NodeShape ; sh:targetClass <http://www.wikidata.org/entity/Q837783>  ;
         // sh:property [  sh:path rdf:type ; sh:hasValue <http://www.wikidata.org/entity/Q5380903>  ;  ]
         GEIndividual ind = generator.getIndividualFromChromosome(chrom);
+        System.out.println(ind.isTrivial());
+        System.out.println(ind.getUsedCodons());
         System.out.println(ind.getPhenotype().getStringNoSpace());
         System.out.println(ind.getChromosomes());
         // initi shape

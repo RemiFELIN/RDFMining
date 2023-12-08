@@ -404,6 +404,7 @@ public class TripleStore implements URLParam {
         Graph shacl = Graph.create();
         Load ld = Load.create(shacl);
         double p = 0.2;
+        Integer nTriples = null;
         try {
             if(ds.getContext().get(URLParam.CONTENT) != null) {
                 InputStream stream = new ByteArrayInputStream(ds.getContext().get(URLParam.CONTENT).stringValue().getBytes(StandardCharsets.UTF_8));
@@ -421,6 +422,13 @@ public class TripleStore implements URLParam {
             } else {
                 logger.warn("The prob-shacl validator will use the default p value: p=" + p);
             }
+            // Manage n triples param
+            if(ds.getContext().get(URLParam.N_TRIPLES) != null) {
+                nTriples = Integer.parseInt(ds.getContext().get(URLParam.N_TRIPLES).getLabel());
+                logger.info("n-triples=" + nTriples);
+            } else {
+                logger.info("The number of triples available in the RDF graph is not provided !");
+            }
 
         } catch (LoadException ex) {
             logger.error(ex.getMessage());
@@ -428,7 +436,15 @@ public class TripleStore implements URLParam {
         }
         Shacl sh = new Shacl(getGraph());
         sh.setDataManager(getDataManager());
-        Graph res = sh.eval(shacl, Shacl.PROBABILISTIC_MODE, DatatypeMap.createLiteral(String.valueOf(p), RDF.xsddouble));
+        Graph res;
+        if (nTriples != null) {
+            res = sh.eval(shacl, Shacl.PROBABILISTIC_MODE,
+                    DatatypeMap.createLiteral(String.valueOf(p), RDF.xsddouble),
+                    DatatypeMap.createLiteral(String.valueOf(nTriples), RDF.xsdinteger));
+        } else {
+            res = sh.eval(shacl, Shacl.PROBABILISTIC_MODE,
+                    DatatypeMap.createLiteral(String.valueOf(p), RDF.xsddouble));
+        }
         QueryProcess exec = QueryProcess.create(res);
         exec.setDebug(ds.getContext().isDebug());
         Mappings map = exec.query(query);

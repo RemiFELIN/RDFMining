@@ -206,7 +206,7 @@ public class EATest {
         return (double) (distinctsGenotype.size() - init.size()) * 100 / init.size();
     }
 
-    public static void main(String[] args) {
+    public static void execRefonte() {
         // init
         RDFMiner.parameters.selectionRate = 0.5;
         RDFMiner.parameters.eliteSelectionRate = 0.2;
@@ -253,6 +253,27 @@ public class EATest {
             System.out.println(individual.getChromosomes());
         }
         System.out.println(">>> Differences ratio: " + EATest.getDifferenceRatio(initialPopulation, finalPopulation) + "%");
+    }
+
+    public static void testStopCriterionOnTime() throws InterruptedException {
+        // start time measure
+        long start = System.currentTimeMillis();
+        long max = start + 3 * 60000; // 3 minutes !
+        long ckp = 0;
+        int i = 1;
+        while (ckp <= max) {
+            System.out.println("* Generation " + i + " ...");
+            // sleep 30 seconds ...
+            Thread.sleep(30000);
+            ckp = System.currentTimeMillis();
+            System.out.println(ckp);
+            i++;
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+//        execRefonte();
+        testStopCriterionOnTime();
     }
 
 }
