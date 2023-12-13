@@ -44,7 +44,7 @@ public class Stat {
 		this.mutationProbability = RDFMiner.parameters.proMutation;
 		this.eliteSelectionSize = (int) (RDFMiner.parameters.eliteSelectionRate * RDFMiner.parameters.populationSize);
 		this.selectionSize = (int) (RDFMiner.parameters.selectionRate * RDFMiner.parameters.populationSize);
-		this.nGenerations = (int) Math.ceil((double) RDFMiner.parameters.kBase / this.populationSize);
+		this.nGenerations = (int) Math.ceil((double) RDFMiner.parameters.effort / this.populationSize);
 		this.selectionMethod = TypeSelection.getLabel(RDFMiner.parameters.typeSelection);
 		this.crossoverMethod = TypeCrossover.getLabel(RDFMiner.parameters.typeCrossover);
 		this.mutationMethod = TypeMutation.getLabel(RDFMiner.parameters.typeMutation);

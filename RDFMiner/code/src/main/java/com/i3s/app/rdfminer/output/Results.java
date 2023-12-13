@@ -1,6 +1,6 @@
 package com.i3s.app.rdfminer.output;
 
-import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.Endpoint;
 import com.i3s.app.rdfminer.RDFMiner;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -72,7 +72,7 @@ public class Results {
 
     public void saveResult() {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpPost post = new HttpPost(Global.RDFMINER_SERVER_IP + "api/results");
+            HttpPost post = new HttpPost(Endpoint.API_RESULTS);
             // specify the POST body to send to the server as part of the request
             post.setEntity(new StringEntity(this.toJSON().toString(), ContentType.APPLICATION_JSON));
             logger.info("POST request: sending results ...");

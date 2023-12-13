@@ -112,6 +112,9 @@ public class CmdLineParameters {
 	// **************************************************//
 	// List of parameters as the input for GE operation //
 	// **************************************************//
+	@Option(name = "-stop", aliases = {
+			"--stop-criterion" }, usage = "the stop criterion type (1: clock-world time; 2: effort)", metaVar = "STOP_CRITERION")
+	public int stopCriterion = 1;
 
 	@Option(name = "-ge", aliases = {
 			"--grammatical-evolution" }, usage = "activate the grammatical evolution for the entities extraction", metaVar = "GRAMMATICAL_EVOLUTION")
@@ -173,8 +176,8 @@ public class CmdLineParameters {
 			"--diversity" }, usage = "use as this value as the chose of diversity method", metaVar = "DIVER_METHOD")
 	public int diversity = 0; // 0- not use; 1- crowding method
 
-	@Option(name = "-kb", aliases = { "--K_Base" }, usage = "KBase", metaVar = "K_BASE")
-	public int kBase = 5000;
+	@Option(name = "-kb", aliases = { "--K_Base" }, usage = "effort invested for the GE", metaVar = "EFFORT")
+	public int effort = 5000;
 
 	@Option(name = "-time", aliases = { "--time" }, usage = "time allocated for the mining (in min)", metaVar = "TIME")
 	public int maxTime = 180;

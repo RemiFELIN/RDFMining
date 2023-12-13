@@ -1,5 +1,6 @@
 package com.i3s.app.rdfminer.evolutionary;
 
+import com.i3s.app.rdfminer.Endpoint;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
@@ -185,8 +186,7 @@ public class EntityMining {
             toSend.put(Results.USER_ID, RDFMiner.parameters.username);
             toSend.put(Results.PROJECT_NAME, RDFMiner.parameters.directory);
             toSend.put(Results.STATISTICS, RDFMiner.stats.toJSON());
-            //
-            HttpPut put = new HttpPut(Global.RDFMINER_SERVER_IP + "api/results");
+            HttpPut put = new HttpPut(Endpoint.API_RESULTS);
 //            System.out.println("update generations:");
 //            System.out.println(toSend.toString(2));
             put.setEntity(new StringEntity(toSend.toString(), ContentType.APPLICATION_JSON));

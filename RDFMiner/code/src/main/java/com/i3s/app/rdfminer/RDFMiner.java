@@ -224,7 +224,7 @@ public class RDFMiner {
 		// Grammar-based genetic programming
 		if(parameters.grammaticalEvolution) {
 			try {
-				GrammaticalEvolution.run(parameters);
+				GrammaticalEvolution.run();
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.exit(0);
@@ -241,10 +241,7 @@ public class RDFMiner {
 			toSend.put(Results.USER_ID, RDFMiner.parameters.username);
 			toSend.put(Results.PROJECT_NAME, RDFMiner.parameters.directory);
 			toSend.put(Results.ENTITIES, RDFMiner.content);
-			//
-//			System.out.println("update entities:");
-//			System.out.println(toSend.toString(2));
-			HttpPut put = new HttpPut(Global.RDFMINER_SERVER_IP + "api/results");
+			HttpPut put = new HttpPut(Endpoint.API_RESULTS);
 			put.setEntity(new StringEntity(toSend.toString(), ContentType.APPLICATION_JSON));
 			logger.info("PUT request: updating entities ...");
 			HttpResponse response = httpClient.execute(put);

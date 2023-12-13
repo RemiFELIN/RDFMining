@@ -7,6 +7,9 @@ import com.i3s.app.rdfminer.evolutionary.EntityMining;
 import com.i3s.app.rdfminer.evolutionary.fitness.Fitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.individual.CandidatePopulation;
+import com.i3s.app.rdfminer.evolutionary.stopCriterion.ClockWorldStop;
+import com.i3s.app.rdfminer.evolutionary.stopCriterion.EffortStop;
+import com.i3s.app.rdfminer.evolutionary.stopCriterion.StopCriterion;
 import com.i3s.app.rdfminer.evolutionary.types.TypeCrossover;
 import com.i3s.app.rdfminer.evolutionary.types.TypeMutation;
 import com.i3s.app.rdfminer.evolutionary.types.TypeSelection;
@@ -16,7 +19,6 @@ import com.i3s.app.rdfminer.generator.shacl.RandomShapeGenerator;
 import com.i3s.app.rdfminer.output.Cache;
 import com.i3s.app.rdfminer.output.IndividualJSON;
 import com.i3s.app.rdfminer.output.Results;
-import com.i3s.app.rdfminer.parameters.CmdLineParameters;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -35,9 +37,8 @@ public class GrammaticalEvolution {
 
     /**
      * The second version of RDFMiner launcher, with Grammar Evolutionary
-     * @param parameters all parameters given in the execution of JAR
      */
-    public static void run(CmdLineParameters parameters) throws Exception {
+    public static void run() throws Exception {
 
         // ShutDownHook
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -51,14 +52,14 @@ public class GrammaticalEvolution {
         RDFMiner.results.saveResult();
 
         Generator generator = null;
-        if (parameters.axiomFile == null) {
-            Global.GRAMMAR_FILE = Global.OUTPUT_PATH + parameters.grammarFile;
-            if (parameters.useRandomAxiomGenerator) {
+        if (RDFMiner.parameters.axiomFile == null) {
+            Global.GRAMMAR_FILE = Global.OUTPUT_PATH + RDFMiner.parameters.grammarFile;
+            if (RDFMiner.parameters.useRandomAxiomGenerator) {
                 // if a randomly generated Axiom already exists then continue
                 // to generate a new Axioms based on BNF
                 logger.info("Initializing the random axiom generator with grammar: " + Global.GRAMMAR_FILE);
                 generator = new RandomAxiomGenerator(Global.GRAMMAR_FILE, true);
-            } else if (parameters.useRandomShaclShapeGenerator) {
+            } else if (RDFMiner.parameters.useRandomShaclShapeGenerator) {
                 // launch random SHACL Shapes generator
                 logger.info("Initializing the random SHACL Shapes generator with grammar: " + Global.GRAMMAR_FILE + "...");
                 generator = new RandomShapeGenerator(Global.GRAMMAR_FILE);
@@ -81,44 +82,44 @@ public class GrammaticalEvolution {
 
         // Max time to spent for GE
         // convert time min to ms
-        long limitTime = parameters.maxTime * 60000L;
+        long limitTime = RDFMiner.parameters.maxTime * 60000L;
 
         /* GRAMMATICAL EVOLUTIONARY */
         /* Parameters as the inputs of GE */
         logger.info("========================================================");
         logger.info("PARAMETERS AS THE INPUTS OF GE");
         logger.info("========================================================");
-        logger.info("POPULATION SIZE: " + parameters.populationSize);
-        logger.info("LIMIT TIME: " + parameters.maxTime + " min.");
+        logger.info("POPULATION SIZE: " + RDFMiner.parameters.populationSize);
+        logger.info("LIMIT TIME: " + RDFMiner.parameters.maxTime + " min.");
 //        logger.info("TOTAL EFFORT : " + parameters.kBase);
-        logger.info("# GENERATIONS: " + Math.ceil((double) parameters.kBase / parameters.populationSize));
-        logger.info("LENGTH CHROMOSOME: " + parameters.initLenChromosome);
-        logger.info("MAXIMUM WRAPPING: " + parameters.maxWrapp);
+        logger.info("# GENERATIONS: " + Math.ceil((double) RDFMiner.parameters.effort / RDFMiner.parameters.populationSize));
+        logger.info("LENGTH CHROMOSOME: " + RDFMiner.parameters.initLenChromosome);
+        logger.info("MAXIMUM WRAPPING: " + RDFMiner.parameters.maxWrapp);
         logger.info("========================================================");
-        logger.info("ELITE SELECTION RATE: " + parameters.eliteSelectionRate);
-        logger.info("TYPE SELECTION: " + TypeSelection.getLabel(parameters.typeSelection));
-        logger.info("SELECTION RATE: " + parameters.selectionRate);
-        if (parameters.typeSelection == TypeSelection.TOURNAMENT_SELECT) {
-            logger.info("TOURNAMENT SIZE RATE: " + parameters.tournamentSelectionRate);
+        logger.info("ELITE SELECTION RATE: " + RDFMiner.parameters.eliteSelectionRate);
+        logger.info("TYPE SELECTION: " + TypeSelection.getLabel(RDFMiner.parameters.typeSelection));
+        logger.info("SELECTION RATE: " + RDFMiner.parameters.selectionRate);
+        if (RDFMiner.parameters.typeSelection == TypeSelection.TOURNAMENT_SELECT) {
+            logger.info("TOURNAMENT SIZE RATE: " + RDFMiner.parameters.tournamentSelectionRate);
         }
 //        int sizeElite = parameters.sizeElite * parameters.populationSize < 1 ?
 //                1 : (int) (parameters.sizeElite * parameters.populationSize);
 //        logger.info("SIZE ELITE: " + sizeElite);
         logger.info("========================================================");
-        logger.info("TYPE CROSSOVER: " + TypeCrossover.getLabel(parameters.typeCrossover));
-        logger.info("CROSSOVER PROBABILITY: " + parameters.proCrossover);
+        logger.info("TYPE CROSSOVER: " + TypeCrossover.getLabel(RDFMiner.parameters.typeCrossover));
+        logger.info("CROSSOVER PROBABILITY: " + RDFMiner.parameters.proCrossover);
         logger.info("========================================================");
-        logger.info("TYPE MUTATION: " + TypeMutation.getLabel(parameters.typeMutation));
-        logger.info("MUTATION PROBABILITY: " + parameters.proMutation);
+        logger.info("TYPE MUTATION: " + TypeMutation.getLabel(RDFMiner.parameters.typeMutation));
+        logger.info("MUTATION PROBABILITY: " + RDFMiner.parameters.proMutation);
         logger.info("========================================================");
         logger.info("TARGET SPARQL ENDPOINT: " + Global.TARGET_SPARQL_ENDPOINT);
         logger.info("TRAINING SPARQL ENDPOINT: " + Global.TRAINING_SPARQL_ENDPOINT);
-        logger.info("SPARQL TIMEOUT: " + (parameters.sparqlTimeOut == 0 ? "Not used" : parameters.sparqlTimeOut + " ms."));
-        logger.info("TIME-CAP: " + (parameters.timeCap == 0 ? "Not used" : parameters.timeCap + " min."));
+        logger.info("SPARQL TIMEOUT: " + (RDFMiner.parameters.sparqlTimeOut == 0 ? "Not used" : RDFMiner.parameters.sparqlTimeOut + " ms."));
+        logger.info("TIME-CAP: " + (RDFMiner.parameters.timeCap == 0 ? "Not used" : RDFMiner.parameters.timeCap + " min."));
         logger.info("NUMBER OF THREAD(S) USED: " + Global.NB_THREADS);
         logger.info("========================================================");
-        if(parameters.checkpoint != 1) {
-            logger.info("# CHECKPOINT: " + parameters.checkpoint);
+        if(RDFMiner.parameters.checkpoint != 1) {
+            logger.info("# CHECKPOINT: " + RDFMiner.parameters.checkpoint);
             logger.info("========================================================");
         }
 
@@ -145,34 +146,34 @@ public class GrammaticalEvolution {
         candidatePopulation = canPop.initialize(cache);
         // Initialize population
         ArrayList<Entity> entities = Fitness.initializePopulation(candidatePopulation, generator);
-        // start time
-        long start = System.currentTimeMillis();
-        long maxTime = start + limitTime;
-        long chrono = start;
+
+        // Stop Criterion
+        StopCriterion stopCriterion;
+        // select the way to stop GE
+        switch (RDFMiner.parameters.stopCriterion) {
+            default:
+            case 1:
+                stopCriterion = new ClockWorldStop();
+                break;
+            case 2:
+                stopCriterion = new EffortStop();
+                break;
+        }
+        // start
+        stopCriterion.start();
         // start GE
-        while (chrono <= maxTime) {
+        while (!stopCriterion.isFinish()) {
             System.out.println("\n--------------------------------------------------------\n");
-            logger.info("Generation: " + curGeneration);
-            // Grammatical evolution of OWL Axioms
-            // i.e. run a generation
+            logger.info("Generation: " + stopCriterion.getCurGeneration());
+            // running a generation ...
             entities = EntityMining.run(generator, entities, curGeneration, curCheckpoint);
             editCache(CACHE_PATH, entities, curGeneration, curCheckpoint);
-            // update checkpoint
-//            System.out.println(parameters.populationSize * curGeneration + " >= " + Math.round((parameters.kBase * (curCheckpoint + 1)) / parameters.checkpoint) );
-//            if (parameters.populationSize * curGeneration >= Math.round((parameters.kBase * (curCheckpoint + 1)) / parameters.checkpoint) ) {
-//                curCheckpoint++;
-//            }
-            // Turn to the next generation
-            curGeneration++;
             // reset crossover and mutation counter
             nCrossover = 0;
             nMutation = 0;
-//            nBetterIndividual = 0;
-            // capture the current time in ms
-            logger.info("Time spent for this generation: " + (System.currentTimeMillis() - chrono) + " ms.");
-            chrono = System.currentTimeMillis();
+            // update
+            stopCriterion.update();
         }
-        logger.info("End of GE ! Time spent: " + ((chrono - start) / 60000) + " min");
         // end of the process ...
         // fill content in json output file
         for(Entity entity : entities) {
