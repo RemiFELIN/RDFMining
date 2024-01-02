@@ -24,7 +24,8 @@
                     <CCol sm="10">
                         <CFormSelect v-model="projectToLoad">
                             <option selected disabled>Select an existing project settings </option>
-                            <option v-for="project in projects" :key="project" :value="project.projectName">{{ project.projectName
+                            <option v-for="project in projects" :key="project" :value="project.projectName">{{
+                                project.projectName
                             }}
                             </option>
                         </CFormSelect>
@@ -110,7 +111,7 @@
                             </CCol>
                             <CCol sm="2">
                                 <!-- Alpha -->
-                                <CFormSelect v-model="selectedShaclAlpha" required>
+                                <CFormSelect v-model="selectedShaclAlpha" :disabled="selectedShaclProb == 0" required>
                                     <option selected disabled>Select the required significance level</option>
                                     <option v-for="alpha in alphaValues" :key="alpha" :value="alpha.value">{{
                                         alpha.description
@@ -202,7 +203,7 @@
                     <!-- 
                 Total effort
             -->
-                    <CRow class="mb-3">
+                    <!-- <CRow class="mb-3">
                         <CFormLabel class="col-sm-2 col-form-label"><b>{{ effort.description }}</b></CFormLabel>
                         <CCol sm="9">
                             <CFormRange :min="minEffort" :max="maxEffort" :step="10" v-model="selectedTotalEffort" />
@@ -213,7 +214,7 @@
                     </CRow>
                     <CAlert color="success">
                         You will perform <b>{{ numberOfGenerations }} generation(s) !</b>
-                    </CAlert>
+                    </CAlert> -->
                     <!-- 
                 Elite Selection
             -->
@@ -312,6 +313,43 @@
                                 :disabled="!selectedFeature.includes('ra')" />
                         </CCol>
                     </CRow>
+                    <!--
+                Stop criterion
+            -->
+                    <CRow class="mb-3">
+                        <CFormLabel class="col-sm-2 col-form-label"><b>{{ stopCriterion.description }}</b></CFormLabel>
+                        <CCol sm="3">
+                            <!-- stop criterion type -->
+                            <CFormSelect aria-label="select-stop-criterion" v-model="selectedStopCriterion"
+                                feedback-invalid="Please select a stop criterion" required
+                                :invalid="selectedStopCriterion == ''">
+                                <option selected disabled>Select the required stop criterion</option>
+                                <option v-for="criterion in stopCriterionType" :key="criterion" :value="criterion.value">{{
+                                    criterion.description }}
+                                </option>
+                            </CFormSelect>
+                            <!-- <br /> -->
+                        </CCol>
+                        <CCol sm="1" v-if="selectedStopCriterion == '2'">
+                            <CFormLabel>{{ effort.description }}</CFormLabel>
+                        </CCol>
+                        <CCol sm="1" v-if="selectedStopCriterion == '1'">
+                            <CFormLabel>{{ time.description }}</CFormLabel>
+                        </CCol>
+                        <CCol sm="5" v-if="selectedStopCriterion == '2'">
+                            <CFormRange :min="minEffort" :max="maxEffort" :step="10" v-model="selectedTotalEffort" />
+                        </CCol>
+                        <CCol sm="5" v-if="selectedStopCriterion == '1'">
+                            <CFormRange :min=10 :max=180 :step="5" v-model="selectedTime" />
+                        </CCol>
+                        <CCol sm="1" v-if="selectedStopCriterion == '2'">
+                            <CFormLabel class="col-form-label"><b>{{ selectedTotalEffort }}</b></CFormLabel>
+                        </CCol>
+                        <CCol sm="1" v-if="selectedStopCriterion == '1'">
+                            <CFormLabel class="col-form-label"><b>{{ selectedTime }}</b></CFormLabel>
+                        </CCol>
+                    </CRow>
+
                 </CCardBody>
             </CCard>
         </div>
@@ -405,8 +443,10 @@
 
 
 <script>
-import { CCard, CCardBody, CCardTitle, CForm, CRow, CFormLabel, CCol, 
-    CFormInput, CFormSelect, CFormTextarea, CFormRange, CAlert, CFormSwitch, CButton } from '@coreui/vue'
+import {
+    CCard, CCardBody, CCardTitle, CForm, CRow, CFormLabel, CCol,
+    CFormInput, CFormSelect, CFormTextarea, CFormRange, CAlert, CFormSwitch, CButton
+} from '@coreui/vue'
 import { get, post } from "@/tools/api";
 
 export default {
@@ -417,7 +457,7 @@ export default {
         },
     },
     components: {
-        CCard, CCardBody, CCardTitle, CForm, CRow, CFormLabel, CCol, 
+        CCard, CCardBody, CCardTitle, CForm, CRow, CFormLabel, CCol,
         CFormInput, CFormSelect, CFormTextarea, CFormRange, CAlert, CFormSwitch, CButton
     },
     data() {
@@ -452,14 +492,21 @@ export default {
             templates: [],
             filteredTemplates: [],
             selectedBNFTemplate: "",
-            // pop size
-            populationSize: {},
-            selectedPopulationSize: 0,
+            // stop criterion
+            stopCriterion: {},
+            stopCriterionType: [],
+            selectedStopCriterion: "",
+            // clock-world time
+            time: {},
+            selectedTime: -1,
             // total effort 
             effort: {},
             minEffort: 0,
             maxEffort: 0,
             selectedTotalEffort: -1,
+            // pop size
+            populationSize: {},
+            selectedPopulationSize: 0,
             // ngen
             numberOfGenerations: 200,
             // selection 
@@ -535,6 +582,8 @@ export default {
                     bnf: this.selectedBNFTemplate,
                     populationSize: this.selectedPopulationSize,
                     effort: this.selectedTotalEffort,
+                    stopCriterionType: this.selectedStopCriterion,
+                    time: this.selectedTime,
                     sizeChromosome: this.selectedSizeChromosome,
                     maxWrap: this.selectedMaxWrap,
                     eliteSelectionRate: this.eliteSelectionRate,
@@ -545,8 +594,7 @@ export default {
                     mutationRate: this.mutationRate,
                     crossoverType: this.selectedCrossover,
                     crossoverRate: this.crossoverRate,
-                    noveltySearch: this.enableNoveltySearch,
-                    // crowding: this.enableCrowding,
+                    // noveltySearch: this.enableNoveltySearch,
                     shaclAlpha: this.selectedShaclAlpha,
                     shaclProb: this.selectedShaclProb,
                     axioms: this.axioms,
@@ -581,12 +629,18 @@ export default {
             // BNF grammar
             this.grammar = params.grammar;
             this.templates = params.grammar.values;
-            // population size 
-            this.populationSize = params.populationSize;
-            this.selectedPopulationSize = this.getDefaultValue(params.populationSize);
+            // stop criterion
+            this.stopCriterion = params.stopCriterion;
+            this.stopCriterionType = params.stopCriterion.values;
+            // clock-world time 
+            this.time = params.time;
+            this.selectedTime = this.getDefaultValue(params.time);
             // max effort
             this.effort = params.effort;
             this.selectedTotalEffort = this.getDefaultValue(params.effort);
+            // population size 
+            this.populationSize = params.populationSize;
+            this.selectedPopulationSize = this.getDefaultValue(params.populationSize);
             // selection
             this.selection = params.selection;
             this.selectionType = params.selection.values;
@@ -624,7 +678,6 @@ export default {
     watch: {
         async projectToLoad() {
             const project = (await this.getProject(this.projectToLoad))[0];
-            console.log(project)
             this.selectedFeature = project.mod;
             this.selectedPrefixes = project.prefixes;
             this.selectedTargetEndpoint = project.targetSparqlEndpoint;
@@ -632,6 +685,8 @@ export default {
             this.selectedBNFTemplate = project.settings.bnf;
             this.selectedPopulationSize = project.settings.populationSize;
             this.selectedTotalEffort = project.settings.effort;
+            this.selectedStopCriterion = project.settings.stopCriterionType;
+            this.selectedTime = project.settings.time;
             this.selectedSizeChromosome = project.settings.sizeChromosome;
             this.selectedMaxWrap = project.settings.maxWrap;
             this.eliteSelectionRate = project.settings.eliteSelectionRate;
