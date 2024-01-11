@@ -630,8 +630,8 @@ export default {
             this.grammar = params.grammar;
             this.templates = params.grammar.values;
             // stop criterion
-            this.stopCriterion = params.stopCriterion;
-            this.stopCriterionType = params.stopCriterion.values;
+            this.stopCriterion = params.stopCriterionType;
+            this.stopCriterionType = params.stopCriterionType.values;
             // clock-world time 
             this.time = params.time;
             this.selectedTime = this.getDefaultValue(params.time);
