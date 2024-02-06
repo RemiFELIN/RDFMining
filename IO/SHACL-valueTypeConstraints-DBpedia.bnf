@@ -1,0 +1,65 @@
+# RDFMiner v1.4
+# SHACL Shapes generation v1.0 based on SHACL W3C Recommandation : https://www.w3.org/TR/shacl/ 
+# @author Rémi FELIN
+
+# The subject of the given shape will be generate randomly using Java code
+# For all SHACL Shapes, we consider this base : <id> a sh:NodeShape ;
+Shape := ' a ' NodeShape
+NodeShape := 'sh:NodeShape ; ' ShapeBody
+###########################################################################
+# TARGETS
+# 
+# It exists 5 ways to target RDF Triples using SHACL
+# - Node targets            ->  sh:targetNode
+# - Class-based targets     ->  sh:targetClass
+# - Implicit Class targets      (Not yet considered)
+# - Subjects-of targets     ->  sh:targetSubjectsOf
+# - Objects-of targets      ->  sh:targetObjectsOf
+###########################################################################
+ShapeBody := ClassTarget | SubjectsOfTarget | ObjectsOfTarget 
+# In this version, because 'NodeTarget' will consider only one triple. It is not yet considered (until multi-node target) 
+# NodeTarget
+# NodeTarget := 'sh:targetNode ' Node ' ; ' ShapeProperty
+ClassTarget := 'sh:targetClass ' Class ' ; ' ShapeProperty
+SubjectsOfTarget := 'sh:targetSubjectsOf ' Property ' ; ' ShapeProperty
+# Here, we will directly target the objects using ObjectsOfTarget, as a consequence we will 
+# specify the ValueTypeConstraintComponent fragment
+ObjectsOfTarget := 'sh:targetObjectsOf ' Property ' ; ' ValueTypeConstraintComponent ' . '
+###########################################################################
+# CORE CONSTRAINT COMPONENTS
+# 
+# It exists 8 families of constraints 
+# - Value Type Constraint Components
+# - Cardinality Constraint Components
+# - Value Range Constraint Components
+# - String-based Constraint Components
+# - Property Pair Constraint Components
+# - Logical Constraint Components
+# - Shape-based Constraint Components
+# - Other Constraint Components
+#
+# In this document, we will consider the first one :
+# Value type Constraint Components
+###########################################################################
+ShapeProperty := 'sh:property [ ' PropertyBody ' ] . '
+PropertyBody := 'sh:path ' Property ' ; ' ValueTypeConstraintComponent ' ; '
+# 
+ValueTypeConstraintComponent := ClassConstraint | DatatypeConstraint | NodeKindConstraint
+# Constraint Component IRI: sh:ClassConstraintComponent
+# The condition specified by sh:class is that each value node is a SHACL instance of a given type.
+ClassConstraint := 'sh:class ' Class
+# Constraint Component IRI: sh:DatatypeConstraintComponent
+# sh:datatype specifies a condition to be satisfied with regards to the datatype of each value node.
+DatatypeConstraint := 'sh:datatype ' DataType
+# Constraint Component IRI: sh:NodeKindConstraintComponent
+# sh:nodeKind specifies a condition to be satisfied by the RDF node kind of each value node.
+NodeKindConstraint := 'sh:nodeKind ' NodeKind
+# It can be: sh:BlankNode, sh:IRI, sh:Literal, sh:BlankNodeOrIRI, sh:BlankNodeOrLiteral and sh:IRIOrLiteral
+NodeKind := 'sh:BlankNode' | 'sh:IRI' | 'sh:Literal'
+# sh:hasValue ' Class ' ; '
+
+# Primitives : 
+# Node (Where we fix a LIMIT in SPARQL Queries)
+Class := 'SPARQL ?x a ?Class . ?Class a owl:Class .'
+Property := 'SPARQL ?Property a rdf:Property .'
+DataType := 'SPARQL ?dt a rdfs:Datatype . FILTER(!CONTAINS(STR(?dt), "http://dbpedia.org/datatype"))'

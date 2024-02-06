@@ -1,0 +1,331 @@
+{
+    "prefixes": {
+        "cmd": "-p",
+        "description": "Set of prefixes (to be used in SPARQL queries)",
+        "values": [
+            {
+                "value": "PREFIX :         <http://www.example.com/myDataGraph#>\n PREFIX owl:      <http://www.w3.org/2002/07/owl#>\n PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>\n PREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#>\n PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n PREFIX foaf:     <http://xmlns.com/foaf/0.1/>\n PREFIX dc:       <http://purl.org/dc/elements/1.1/>\n PREFIX dbr:      <http://dbpedia.org/resource/>\n PREFIX dbp:      <http://dbpedia.org/property/>\n PREFIX dbpedia:  <http://dbpedia.org/>\n PREFIX skos:     <http://www.w3.org/2004/02/skos/core#>\n PREFIX dbo:      <http://dbpedia.org/ontology/>\n PREFIX ex:       <http://example.org/demo#> \n PREFIX sp:       <http://spinrdf.org/sp#> \n PREFIX sh:       <http://www.w3.org/ns/shacl#> \n PREFIX dct:      <http://purl.org/dc/terms/> \n PREFIX psh:      <http://ns.inria.fr/probabilistic-shacl/> ",
+                "description": "default"
+            }
+        ]
+    },
+    "grammar": {
+        "cmd": "-g",
+        "description": "BNF Grammar to be used for candidate generation",
+        "values": [
+            {
+                "description": "[OWL Axioms] Atomic SubClassOf",
+                "value": "# Set of productions for generating Axioms: SubClassOf(Class, Class)\n# Extracted and adapted from the complete grammar of the functional-style syntax defined in\n# http://www.w3.org/TR/2012/REC-owl2-syntax-20121211/\nAxiom := ClassAxiom\nClassAxiom := SubClassOf\nSubClassOf := 'SubClassOf' '(' Class ' ' Class ')'\n#---------------------------------------------------------------\nClass := '[sparql] ?Class a owl:Class .'\n"
+            },
+            {
+                "description": "[OWL Axioms] Complex SubClassOf",
+                "value": "# Set of productions for generating Axioms: SubClassOf(subClassExpression, superClassExpression)\n# Extracted and adapted from the complete grammar of the functional-style syntax defined in\n# http://www.w3.org/TR/2012/REC-owl2-syntax-20121211/\nAxiom := ClassAxiom\nClassAxiom := SubClassOf\nSubClassOf := 'SubClassOf' '(' subClassExpression ' ' superClassExpression ')'\n#---------------------------------------------------------------\nsubClassExpression := ObjectSomeValuesFrom | ObjectAllValuesFrom | ObjectIntersectionOf | Class\nsuperClassExpression := ObjectSomeValuesFrom | ObjectAllValuesFrom | ObjectIntersectionOf | Class\n#---------------------------------------------------------------\nObjectIntersectionOf := 'ObjectIntersectionOf' '(' Class ' ' Class ')'\nObjectSomeValuesFrom := 'ObjectSomeValuesFrom' '(' Property ' ' Class ')'\nObjectAllValuesFrom := 'ObjectAllValuesFrom' '(' Property ' ' Class ')'\n#---------------------------------------------------------------\nClass := '[sparql] ?Class a owl:Class .'\nProperty := '[sparql] ?s ?Property ?o . FILTER ( isIRI(?o) ) .'"
+            },
+            {
+                "description": "[OWL Axioms] Atomic DisjointClasses",
+                "value": "# Set of productions for generating Axioms: DisjointClass(Class, Class)\n# Extracted and adapted from the complete grammar of the functional-style syntax defined in# http://www.w3.org/TR/2012/REC-owl2-syntax-20121211/\nAxiom := ClassAxiom\nClassAxiom := DisjointClasses\nDisjointClasses := 'DisjointClasses' '(' Class ' ' Class ')'\n#--------------------------------------------------------------\nClass := '[sparql] ?Class a owl:Class .'"
+            },
+            {
+                "description": "[OWL Axioms] Complex DisjointClasses",
+                "value": "# Set of productions for generating Axioms: DisjointClass(ClassExpression, ClassExpression)\n# Extracted and adapted from the complete grammar of the functional-style syntax defined in\n# http://www.w3.org/TR/2012/REC-owl2-syntax-20121211/\nAxiom := ClassAxiom\nClassAxiom := DisjointClasses\nDisjointClasses := 'DisjointClasses' '(' ClassExpression ' ' ClassExpression ')'\n#---------------------------------------------------------------\nClassExpression := ObjectSomeValuesFrom | ObjectAllValuesFrom | ObjectIntersectionOf | Class\n#--------------------------------------------------------------\nObjectIntersectionOf := 'ObjectIntersectionOf' '(' Class ' ' Class ')'\nObjectSomeValuesFrom := 'ObjectSomeValuesFrom' '(' Property ' ' Class ')'\nObjectAllValuesFrom := 'ObjectAllValuesFrom' '(' Property ' ' Class ')'\n#--------------------------------------------------------------\nClass := '[sparql] ?Class a owl:Class .'\nProperty := '[sparql] ?s ?Property ?o . FILTER ( isIRI(?o) ) .'"
+            },
+            {
+                "description": "[SHACL Shapes] HasValue Constraints",
+                "value": "# RDFMiner v1.4\n# Test of SHACL Shapes generation v1.0\n# Example:\n#   a sh:NodeShape ;\n#   sh:targetClass Class ;\n#   sh:property [ sh:path rdf:type ; sh:hasValue Class ; ] .\n#   The subject of the given shape will be generate randomly using Java code\n#---------------------------------------------------------------\nShape := ' a ' NodeShape\nNodeShape := 'sh:NodeShape ; ' ShapeBody\nShapeBody := 'sh:targetClass ' Class ' ; ' ShapeProperty\nShapeProperty := ' sh:property [ ' PropertyBody ' ] . '\nPropertyBody := ' sh:path rdf:type ; sh:hasValue ' Class ' ; '\n#---------------------------------------------------------------\nClass := '[sparql] ?x a ?Class .'\n"
+            },
+            {
+                "description": "[SHACL Shapes] Value Type Constraints",
+                "value": "# SHACL Shapes generation v1.0 based on SHACL W3C Recommandation : https://www.w3.org/TR/shacl/\n# The subject of the given shape will be generate randomly using Java code\nShape := ' a ' NodeShape\nNodeShape := 'sh:NodeShape ; ' ShapeBody\n#---------------------------------------------------------------\nShapeBody := ClassTarget | SubjectsOfTarget | ObjectsOfTarget # | NodeTarget\n# In this version, because 'NodeTarget' will consider only one triple. It is not yet considered (until multi-node target)\n# But you can choose to enable it by uncommenting the line below and the rule above\n# NodeTarget := 'sh:targetNode ' Node ' ; ' ShapeProperty\nClassTarget := 'sh:targetClass ' Class ' ; ' ShapeProperty\nSubjectsOfTarget := 'sh:targetSubjectsOf ' Property ' ; ' ShapeProperty\n# Here, we will directly target the objects using ObjectsOfTarget, as a consequence we will specify the ValueTypeConstraintComponent fragment\nObjectsOfTarget := 'sh:targetObjectsOf ' Property ' ; ' ValueTypeConstraintComponent ' . '\n#---------------------------------------------------------------\n# Value type Constraint Components\n#---------------------------------------------------------------\nShapeProperty := 'sh:property [ ' PropertyBody ' ] . '\nPropertyBody := 'sh:path ' Property ' ; ' ValueTypeConstraintComponent ' ; '\n# \nValueTypeConstraintComponent := ClassConstraint | DatatypeConstraint | NodeKindConstraint\n# Constraint Component IRI: sh:ClassConstraintComponent\n# The condition specified by sh:class is that each value node is a SHACL instance of a given type.\nClassConstraint := 'sh:class ' Class\n# Constraint Component IRI: sh:DatatypeConstraintComponent\n# sh:datatype specifies a condition to be satisfied with regards to the datatype of each value node.\nDatatypeConstraint := 'sh:datatype ' DataType\n# Constraint Component IRI: sh:NodeKindConstraintComponent\n# sh:nodeKind specifies a condition to be satisfied by the RDF node kind of each value node.\nNodeKindConstraint := 'sh:nodeKind ' NodeKind\n# It can be: sh:BlankNode, sh:IRI, sh:Literal sh:BlankNodeOrIRI, sh:BlankNodeOrLiteral and sh:IRIOrLiteral\nNodeKind := 'sh:BlankNode' | 'sh:IRI' | 'sh:Literal' | 'sh:BlankNodeOrIRI' | 'sh:BlankNodeOrLiteral' | 'sh:IRIOrLiteral'\n# sh:hasValue ' Class ' ; '\nClass := '[sparql] ?x a ?Class .'\nProperty := '[sparql] ?subj ?Property ?obj . FILTER ( isIRI(?Property) ) .'\nDataType := '[sparql] { SELECT distinct ?o WHERE { ?s ?p ?o . FILTER ( isLiteral(?o) ) } } BIND( datatype(?o) as ?DataType ) .'\n"
+            }
+        ]
+    },
+    "directory": {
+        "cmd": "-dir",
+        "description": "Output directory",
+        "values": []
+    },
+    "trainSparqlEndpoint": {
+        "cmd": "-train",
+        "description": "SPARQL endpoint (which contains the training dataset)",
+        "values": [
+            {
+                "value": "http://172.19.0.2:9000/sparql",
+                "description": "DBPedia 2015.04 [10%] (Virtuoso)"
+            },
+            {
+                "value": "http://corese:9100/sparql",
+                "description": "Local server"
+            },
+            {
+                "value": "",
+                "description": "Add my SPARQL endpoint"
+            }
+        ]
+    },
+    "targetSparqlEndpoint": {
+        "cmd": "-target",
+        "description": "SPARQL endpoint (which contains the entire dataset)",
+        "values": [
+            {
+                "value": "http://134.59.130.136:8890/sparql",
+                "description": "DBPedia 2015.04 (Virtuoso)"
+            },
+            {
+                "value": "http://corese:9100/sparql",
+                "description": "Local server"
+            },
+            {
+                "value": "",
+                "description": "Add my SPARQL endpoint"
+            }
+        ]
+    },
+    "typeSelection": {
+        "cmd": "-se",
+        "description": "Type of parent selection operation",
+        "values": [
+            {
+                "value": 1,
+                "description": "Elite Operation Selection"
+            },
+            {
+                "value": 2,
+                "description": "Proportional Roulette Wheel Selection"
+            },
+            {
+                "value": 3,
+                "description": "Scaled Roulette Wheel Selection"
+            },
+            {
+                "value": 4,
+                "description": "Tournament Selection"
+            }
+        ]
+    },
+    "typeCrossover": {
+        "cmd": "-cr",
+        "description": "Type of parent crossover operation",
+        "values": [
+            {
+                "value": 1,
+                "description": "Single Point Crossover"
+            },
+            {
+                "value": 2,
+                "description": "Two Point Crossover"
+            },
+            {
+                "value": 3,
+                "description": "Sub Tree Crossover"
+            },
+            {
+                "value": 4,
+                "description": "Customized Crossover"
+            }
+        ]
+    },
+    "typeMutation": {
+        "cmd": "-mu",
+        "description": "Type of parent mutation operation",
+        "values": [
+            {
+                "value": 1,
+                "description": "Int Flip Mutation"
+            },
+            {
+                "value": 2,
+                "description": "Int Flip Byte Mutation"
+            },
+            {
+                "value": 3,
+                "description": "Nodal Mutation"
+            },
+            {
+                "value": 4,
+                "description": "Sub Tree Mutation"
+            }
+        ]
+    },
+    "kbase": {
+        "cmd": "-kb",
+        "description": "Total effort",
+        "values": [
+            {
+                "value": 10000,
+                "description": "default"
+            }
+        ]
+    },
+    "sparqlTimeout": {
+        "cmd": "-st",
+        "description": "Timeout for SPARQL query (in ms.)",
+        "values": [
+            {
+                "value": 1000000000,
+                "description": "default"
+            }
+        ]
+    },
+    "timeCap": {
+        "cmd": "-tc",
+        "description": "Timec-cap for OWL axioms assessment (in min.)",
+        "values": [
+            {
+                "value": 20,
+                "description": "default"
+            }
+        ]
+    },
+    "populationSize": {
+        "cmd": "-ps",
+        "description": "Population size",
+        "values": [
+            {
+                "value": 200,
+                "description": "default"
+            }
+        ]
+    },
+    "lenChromosome": {
+        "cmd": "-init",
+        "description": "Chromosome size",
+        "values": [
+            {
+                "value": 2,
+                "description": "default"
+            }
+        ]
+    },
+    "maxWrapp": {
+        "cmd": "-mxw",
+        "description": "Max wrap",
+        "values": [
+            {
+                "value": 10,
+                "description": "default"
+            }
+        ]
+    },
+    "pCrossover": {
+        "cmd": "-pc",
+        "description": "Crossover probability",
+        "values": [
+            {
+                "value": 0.75,
+                "description": "default"
+            }
+        ]
+    },
+    "pMutation": {
+        "cmd": "-pm",
+        "description": "Mutation probability",
+        "values": [
+            {
+                "value": 0.01,
+                "description": "default"
+            }
+        ]
+    },
+    "sizeSelection": {
+        "cmd": "-sez",
+        "description": "Selection size",
+        "values": [
+            {
+                "value": 0.1,
+                "description": "default"
+            }
+        ]
+    },
+    "crowding": {
+        "cmd": "-div",
+        "description": "Crowding method (boost the population diversity)",
+        "values": [
+            {
+                "value": false,
+                "description": "default"
+            }
+        ]
+    },
+    "novelty": {
+        "cmd": "-ns",
+        "description": "Novelty Search (Experimental: only for SubClassOf axioms)",
+        "values": [
+            {
+                "value": false,
+                "description": "default"
+            }
+        ]
+    },
+    "shapesMining": {
+        "cmd": "-ge -rs",
+        "description": "SHACL Shapes Discovering",
+        "values": []
+    },
+    "shapesAssessment": {
+        "cmd": "-sf",
+        "description": "SHACL Shapes Assessment",
+        "values": [
+            {
+                "description": "Sample of SHACL Shapes (HasValue constraints)",
+                "value": "PREFIX :             <http://www.example.com/myDataGraph#>\n PREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#>\n PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n PREFIX sh:       <http://www.w3.org/ns/shacl#>\n \n :1 a sh:NodeShape ;\n     sh:targetClass <http://www.wikidata.org/entity/Q271779> ;\n     sh:property [\n         sh:path rdf:type ;\n         sh:hasValue <http://www.wikidata.org/entity/Q104541>;\n ] .\n \n :2 a sh:NodeShape ;\n     sh:targetClass <http://www.wikidata.org/entity/Q104541> ;\n     sh:property [\n          sh:path rdf:type ;\n           sh:hasValue <http://www.wikidata.org/entity/Q271779>;\n ] .\n"
+            },
+            {
+                "value": "",
+                "description": "Add my SHACL shapes"
+            }
+        ]
+    },
+    "shaclMod": {
+        "cmd": "",
+        "description": "SHACL evaluation mod",
+        "values": [
+            {
+                "value": "-cs",
+                "description": "Standard"
+            },
+            {
+                "value": "-psh",
+                "description": "Probabilistic"
+            }
+        ]
+    },
+    "shaclAlpha": {
+        "cmd": "--shacl-alpha",
+        "description": "value of alpha for SHACL probabilistic mode (Hypothesis testing)",
+        "values": [
+            {
+                "description": "default",
+                "value": 0.05
+            }
+        ]
+    },
+    "shaclProb": {
+        "cmd": "--shacl-alpha",
+        "description": "the value of p for SHACL probabilistic mode",
+        "values": [
+            {
+                "description": "default",
+                "value": 0.05
+            }
+        ]
+    },
+    "axiomsMining": {
+        "cmd": "-ge -ra",
+        "description": "OWL Axioms Discovering",
+        "values": []
+    },
+    "axiomsAssessment": {
+        "cmd": "-af",
+        "description": "SHACL Shapes Assessment",
+        "values": [
+            {
+                "description": "Sample of SHACL Shapes (HasValue constraints)",
+                "value": "PREFIX :             <http://www.example.com/myDataGraph#>\n PREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#>\n PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n PREFIX sh:       <http://www.w3.org/ns/shacl#>\n \n :1 a sh:NodeShape ;\n     sh:targetClass <http://www.wikidata.org/entity/Q271779> ;\n     sh:property [\n         sh:path rdf:type ;\n         sh:hasValue <http://www.wikidata.org/entity/Q104541>;\n ] .\n \n :2 a sh:NodeShape ;\n     sh:targetClass <http://www.wikidata.org/entity/Q104541> ;\n     sh:property [\n          sh:path rdf:type ;\n           sh:hasValue <http://www.wikidata.org/entity/Q271779>;\n ] .\n"
+            },
+            {
+                "value": "",
+                "description": "Add my OWL axioms"
+            }
+        ]
+    }
+}

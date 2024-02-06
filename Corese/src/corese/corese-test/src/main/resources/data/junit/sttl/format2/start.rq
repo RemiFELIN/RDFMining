@@ -1,5 +1,0 @@
-template st:start {
-    format { <format/test.html> }
-}
-where {
-}

@@ -1,5 +1,0 @@
-template st:start {
-    us:test()
-}
-where {
-}

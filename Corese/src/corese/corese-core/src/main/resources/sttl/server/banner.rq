@@ -1,4 +1,0 @@
-template st:banner  {
-format { st:home("banner.html") }
-}
-where {}

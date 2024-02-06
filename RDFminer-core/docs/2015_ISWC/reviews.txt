@@ -1,0 +1,159 @@
+BEFORE THE REBUTTAL:
+
+----------------------- REVIEW 1 ---------------------
+PAPER: 225
+TITLE: Scalable Possibilistic Testing of SubClassOf Axioms Against RDF Data to Enrich Schemas
+AUTHORS: Andrea Tettamanzi, Catherine Faron Zucker and Fabien Gandon
+
+
+----------- REVIEW -----------
+This paper proposes a framework for axiom scoring. Unlike existing probability-based scoring frameworks, the proposed framework relies on the possibility theory of epistemic uncertainty, aiming to overcome  some limitations of the the probability-based frameworks.
+The paper also proposes enriching the proposed framework with a “time-capped” possibilistic testing (using two heuristics) in order to lower the computational cost of the framework.
+The authors evaluate their framework by performing tests of  SubClassOf axioms against the DBpedia database with and without using the time-capped testing. Results show that using axiom scoring with time-capped heuristics greatly lowers the computational cost while maintaining a high performance in comparison with using the framework with no time-capped testing. 
+
+Overall I enjoyed reading this paper. It is well- written, structured and organised. The proposed approach is sound and the problem is tackles is clearly motivated. Also the contributions and evaluation results are well highlighted and described, and show a good potential of the proposed framework. 
+
+However, my main concern here is that a large body of the work presented in this paper has been already presented and published in a previous article by the same authors [1]. Particularly, the possibility-based axiom scoring framework has been already published, which limits the contribution of this work to only proposing and evaluating the time-capped heuristics, which in my opinion might not be enough to warrant publication in the ISWC main track. However, I’m open for discussion about this point.
+Also, the paper is missing a cross-comparison of the proposed framework against other probably-based frameworks. Such comparison would be very useful since the premise of relying on the possibility theory, as stated by the authors, is to overcome the limitations of the probability- and statistical-based approaches for axiom scoring.
+
+[1] Tettamanzi,A.G.B.,Faron-Zucker,C.,Gandon,F.L.:TestingOWLaxiomsagainst RDF facts: A possibilistic approach. In: EKAW 2014. pp. 519–530
+
+----------------------- REVIEW 2 ---------------------
+PAPER: 225
+TITLE: Scalable Possibilistic Testing of SubClassOf Axioms Against RDF Data to Enrich Schemas
+AUTHORS: Andrea Tettamanzi, Catherine Faron Zucker and Fabien Gandon
+
+
+----------- REVIEW -----------
+The paper presents an axiom scoring heuristic, that is based on possibility theory, to be used for tasks such as automatic enrichment/learning and validation of knowledge bases. The main goal addressed by the paper is to reduce the computational effort for computing the heuristic, by exploiting time capping, while still preserving the precision of the scores. The proposed heuristic has been experimentally evaluated by applying it to the problem of testing SubClassOf axioms for the case of the DBPedia dataset. 
+
+The paper weakly motivate the importance and the utility of the presented and lacks of a clear and formal presentation of the focused problem besides of the reason why the solution for such a problem is of interest for the semantic web community. The reason why a probability-based framework is not always satisfactory should be given, jointly with a definition of what satisfactory means in this context. References and discussion with respect to [19] are too specific. They require a deep knowledge of [19] and cannot be straightforwardly understood. The authors should present the main points in a more clear and straightforward way. 
+
+It would be helpful to complete the example reported on page 5 by adding examples of the axioms that will be added to content (subClassOf(C,D)). Some aspects presented in section 2.2 needs to be clarified. Specifically, on page 5, it is not clear to which further check the authors refer to in the last sentence before (1). Also, while reading the example on page 5, it seems that all elements belonging to case 3 are removed while building content(axiom) while before (2) it is reported that there could be cases of element in content(axiom) belonging to case 3. Please clarify on this aspect. 
+
+The presented work should be completed with the analysis of the computational complexity for the proposed heuristic. 
+
+Item 2 of section 4.3 is not fully clear. It is also not clear how the error rate reported in section 5.3 has been computed. Also the discussion of section 5.4 seems to contradict the one reported in section 5.3, where it is written that the heuristic does not produce false positive while in section 5.4 a certain number of false positive is reported. 
+
+MINOR:
+- the numbers reported in section 5.4 are not fully straightforward. A tabular representation of the results would be certainly of help for the reader and for having an overall picture of the performance.
+
+----------------------- REVIEW 3 ---------------------
+PAPER: 225
+TITLE: Scalable Possibilistic Testing of SubClassOf Axioms Against RDF Data to Enrich Schemas
+AUTHORS: Andrea Tettamanzi, Catherine Faron Zucker and Fabien Gandon
+
+
+----------- REVIEW -----------
+This paper introduces an enhanced version of their previous work showed in proceedings of EKAW2014. This new one depends on heuristics based on time capping to cut computational time for axioms.
+They insisted that their heuristics does not give up the precision of the score, but some errors, even though they emphasized the errors are all in the same direction, were influenced by the time capping which is originated from a simple idea. I do not know why they tested their heuristics only for subsumption axioms and only with DBpedia. The experimental results are, of course, very intuitive and expectable, but we can sufficiently expect that kind of results. Comparative results will be also needed. The authors showed many references, but only their self-cited reference can be closely related with this contribution.
+I have to give negative decision sue to the above reasons.
+
+
+-------------------------  METAREVIEW  ------------------------
+PAPER: 225
+TITLE: Scalable Possibilistic Testing of SubClassOf Axioms Against RDF Data to Enrich Schemas
+
+Meta review
+
+The paper presents a possibility theory based axiom scoring heuristics for tasks such as validation of automatic learned axioms for ontologies. The paper is generally well written, structured and organised.
+
+Please address the following questions and concerns in the rebuttal (compiled from the reviews):
+
+1. The motivation should be further clarified. The reason why a probability-based framework is not always satisfactory should be given, jointly with a definition of what satisfactory means in this context.
+2. The possibility-based axiom scoring framework has been already published by the same authors [19], which limits the contribution of this work to only proposing and evaluating the time-capped heuristics.
+3. What is the computational complexity for the proposed heuristics?
+4. Why does the evaluation only include subsumption axioms and only consider DBpedia as test data? 
+5. The paper is missing a cross-comparison of the proposed framework against other probably-based and statistical-based approaches for axiom scoring.
+
+
+ 
+
+------------------------------------------------------
+
+AFTER THE REBUTTAL:
+
+
+----------------------- REVIEW 1 ---------------------
+PAPER: 225
+TITLE: Scalable Possibilistic Testing of SubClassOf Axioms Against RDF Data to Enrich Schemas
+AUTHORS: Andrea Tettamanzi, Catherine Faron Zucker and Fabien Gandon
+
+OVERALL EVALUATION: 1 (weak accept)
+
+----------- REVIEW -----------
+I have read the author's rebuttal and it does not change my review of the paper.
+
+====
+
+This paper proposes a framework for axiom scoring. Unlike existing probability-based scoring frameworks, the proposed framework relies on the possibility theory of epistemic uncertainty, aiming to overcome  some limitations of the the probability-based frameworks.
+The paper also proposes enriching the proposed framework with a “time-capped” possibilistic testing (using two heuristics) in order to lower the computational cost of the framework.
+The authors evaluate their framework by performing tests of  SubClassOf axioms against the DBpedia database with and without using the time-capped testing. Results show that using axiom scoring with time-capped heuristics greatly lowers the computational cost while maintaining a high performance in comparison with using the framework with no time-capped testing. 
+
+Overall I enjoyed reading this paper. It is well- written, structured and organised. The proposed approach is sound and the problem is tackles is clearly motivated. Also the contributions and evaluation results are well highlighted and described, and show a good potential of the proposed framework. 
+
+However, my main concern here is that a large body of the work presented in this paper has been already presented and published in a previous article by the same authors [1]. Particularly, the possibility-based axiom scoring framework has been already published, which limits the contribution of this work to only proposing and evaluating the time-capped heuristics, which in my opinion might not be enough to warrant publication in the ISWC main track. However, I’m open for discussion about this point.
+Also, the paper is missing a cross-comparison of the proposed framework against other probably-based frameworks. Such comparison would be very useful since the premise of relying on the possibility theory, as stated by the authors, is to overcome the limitations of the probability- and statistical-based approaches for axiom scoring.
+
+[1] Tettamanzi,A.G.B.,Faron-Zucker,C.,Gandon,F.L.:TestingOWLaxiomsagainst RDF facts: A possibilistic approach. In: EKAW 2014. pp. 519–530
+
+
+----------------------- REVIEW 2 ---------------------
+PAPER: 225
+TITLE: Scalable Possibilistic Testing of SubClassOf Axioms Against RDF Data to Enrich Schemas
+AUTHORS: Andrea Tettamanzi, Catherine Faron Zucker and Fabien Gandon
+
+OVERALL EVALUATION: 0 (borderline paper)
+
+----------- REVIEW -----------
+The paper presents an axiom scoring heuristic, that is based on possibility theory, to be used for tasks such as automatic enrichment/learning and validation of knowledge bases. The main goal addressed by the paper is to reduce the computational effort for computing the heuristic, by exploiting time capping, while still preserving the precision of the scores. The proposed heuristic has been experimentally evaluated by applying it to the problem of testing SubClassOf axioms for the case of the DBPedia dataset. 
+
+The paper weakly motivate the importance and the utility of the presented and lacks of a clear and formal presentation of the focused problem besides of the reason why the solution for such a problem is of interest for the semantic web community. The reason why a probability-based framework is not always satisfactory should be given, jointly with a definition of what satisfactory means in this context. References and discussion with respect to [19] are too specific. They require a deep knowledge of [19] and cannot be straightforwardly understood. The authors should present the main points in a more clear and straightforward way. 
+
+It would be helpful to complete the example reported on page 5 by adding examples of the axioms that will be added to content (subClassOf(C,D)). Some aspects presented in section 2.2 needs to be clarified. Specifically, on page 5, it is not clear to which further check the authors refer to in the last sentence before (1). Also, while reading the example on page 5, it seems that all elements belonging to case 3 are removed while building content(axiom) while before (2) it is reported that there could be cases of element in content(axiom) belonging to case 3. Please clarify on this aspect. 
+
+The presented work should be completed with the analysis of the computational complexity for the proposed heuristic. 
+
+Item 2 of section 4.3 is not fully clear. It is also not clear how the error rate reported in section 5.3 has been computed. Also the discussion of section 5.4 seems to contradict the one reported in section 5.3, where it is written that the heuristic does not produce false positive while in section 5.4 a certain number of false positive is reported. 
+
+MINOR:
+- the numbers reported in section 5.4 are not fully straightforward. A tabular representation of the results would be certainly of help for the reader and for having an overall picture of the performance.
+
+AFTER REBUTTAL PHASE
+Here I acknowledge that I've read the reply from the authors that only partially replies to the issues raised in my review.
+
+
+----------------------- REVIEW 3 ---------------------
+PAPER: 225
+TITLE: Scalable Possibilistic Testing of SubClassOf Axioms Against RDF Data to Enrich Schemas
+AUTHORS: Andrea Tettamanzi, Catherine Faron Zucker and Fabien Gandon
+
+OVERALL EVALUATION: -1 (weak reject)
+
+----------- REVIEW -----------
+This paper introduces an enhanced version of their previous work showed in proceedings of EKAW2014. This new one depends on heuristics based on time capping to cut computational time for axioms.
+They insisted that their heuristics does not give up the precision of the score, but some errors, even though they emphasized the errors are all in the same direction, were influenced by the time capping which is originated from a simple idea. I do not know why they tested their heuristics only for subsumption axioms and only with DBpedia. The experimental results are, of course, very intuitive and expectable, but we can sufficiently expect that kind of results. Comparative results will be also needed. The authors showed many references, but only their self-cited reference can be closely related with this contribution.
+
+
+Signed by: Hanmin Jung
+
+
+-------------------------  METAREVIEW  ------------------------
+PAPER: 225
+TITLE: Scalable Possibilistic Testing of SubClassOf Axioms Against RDF Data to Enrich Schemas
+
+Meta review
+
+The paper presents a possibility theory based axiom scoring heuristics for tasks such as validation of automatic learned axioms for ontologies. The paper is generally well written, structured and organised.
+
+The reviewers raised the following questions and concerns in the rebuttal and they think the authors' reply only partially addressed the concerns raised.  
+
+1. The motivation should be further clarified. The reason why a probability-based framework is not always satisfactory should be given, jointly with a definition of what satisfactory means in this context.
+2. The possibility-based axiom scoring framework has been already published by the same authors [19], which limits the contribution of this work to only proposing and evaluating the time-capped heuristics.
+3. What is the computational complexity for the proposed heuristics?
+4. Why does the evaluation only include subsumption axioms and only consider DBpedia as test data? 
+5. The paper is missing a cross-comparison of the proposed framework against other probably-based and statistical-based approaches for axiom scoring.
+
+Although the reviewers believe that the paper, in the current form, is not strong enough for ISWC, they strongly encourage the authors to pursue this interesting and relevant line of research. 
+ 
+

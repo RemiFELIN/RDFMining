@@ -1,0 +1,67 @@
+{
+    "rdfminer": {
+        "files": {
+            "shapes": "-sf",
+            "axioms": "-af",
+            "prefixes": "-p",
+            "grammar": "-g",
+            "outputFolder": "-dir",
+            "subClassOfList": "-s"
+        },
+        "features": {
+            "geForAxioms": { "cmd": "-ge -ra", "text": "OWL Axioms Discovering" },
+            "geForSHACL": { "cmd": "-ge -rs", "text": "SHACL Shapes Discovering" },
+            "assessmentSHACL": { "cmd": "TODO", "text": "SHACL Shapes Assessment" },
+            "assessmentAxiom": { "cmd": "TODO", "text": "Probabilistic SHACL Shapes Assessment" }
+        },
+        "endpoints": {
+            "trainSparqlEndpoint": "-train",
+            "targetSparqlEndpoint": "-target"
+        },
+        "parameters": {
+            "kBase": "-kb",
+            "sparqlTimeout": "-st",
+            "timeCap": "-tc",
+            "populationSize": "-ps",
+            "lenChromosome": "-init",
+            "maxWrapp": "-mxw",
+            "pCrossover": "-pc",
+            "pMutation": "-pm",
+            "typeSelection": "-se",
+            "typeCrossover": "-cr",
+            "typeMutation": "-mu",
+            "sizeSelection": "-sez",
+            "diversity": "-div",
+            "checkpoint": "-ckp",
+            "noveltySearch": "-ns"
+        },
+        "typeSelection": {
+            "1": { "cmd": "1", "text": "Elite Operation Selection" },
+            "2": { "cmd": "2", "text": "Proportional Roulette Wheel Selection" },
+            "3": { "cmd": "3", "text": "Scaled Roulette Wheel Selection" },
+            "4": { "cmd": "4", "text": "Tournament Selection" }
+        },
+        "typeCrossover": {
+            "1": { "cmd": "1", "text": "Single Point Crossover" },
+            "2": { "cmd": "2", "text": "Two Point Crossover" },
+            "3": { "cmd": "3", "text": "Sub Tree Crossover" },
+            "4": { "cmd": "4", "text": "Customized Crossover" }
+        },
+        "typeMutation": {
+            "1": { "cmd": "1", "text": "Int Flip Mutation" },
+            "2": { "cmd": "2", "text": "Int Flip Byte Mutation" },
+            "3": { "cmd": "3", "text": "Nodal Mutation" },
+            "4": { "cmd": "4", "text": "Sub Tree Mutation" }
+        },
+        "axiomsGrammar": {
+            "simpleSubClassOf": { "key": "Atomic SubClassOf Axioms", "content": "# Set of productions for generating Axioms: SubClassOf(Class, Class)\n# Extracted and adapted from the complete grammar of the functional-style syntax defined in\n# http://www.w3.org/TR/2012/REC-owl2-syntax-20121211/\nAxiom := ClassAxiom\nClassAxiom := SubClassOf\nSubClassOf := 'SubClassOf' '(' Class ' ' Class ')'\n#---------------------------------------------------------------\nClass := '[sparql] ?Class a owl:Class .'\n" },
+            "complexSubClassOf": { "key": "Complex SubClassOf Axioms", "content": "# Set of productions for generating Axioms: SubClassOf(subClassExpression, superClassExpression)\n# Extracted and adapted from the complete grammar of the functional-style syntax defined in\n# http://www.w3.org/TR/2012/REC-owl2-syntax-20121211/\nAxiom := ClassAxiom\nClassAxiom := SubClassOf\nSubClassOf := 'SubClassOf' '(' subClassExpression ' ' superClassExpression ')'\n#---------------------------------------------------------------\nsubClassExpression := ObjectSomeValuesFrom | ObjectAllValuesFrom | ObjectIntersectionOf | Class\nsuperClassExpression := ObjectSomeValuesFrom | ObjectAllValuesFrom | ObjectIntersectionOf | Class\n#---------------------------------------------------------------\nObjectIntersectionOf := 'ObjectIntersectionOf' '(' Class ' ' Class ')'\nObjectSomeValuesFrom := 'ObjectSomeValuesFrom' '(' Property ' ' Class ')'\nObjectAllValuesFrom := 'ObjectAllValuesFrom' '(' Property ' ' Class ')'\n#---------------------------------------------------------------\nClass := '[sparql] ?Class a owl:Class .'\nProperty := '[sparql] ?s ?Property ?o . FILTER ( isIRI(?o) ) .'"},
+            "simpleDisjointClasses": { "key": "Atomic DisjointClasses Axioms", "content": "# Set of productions for generating Axioms: DisjointClass(Class, Class)\n# Extracted and adapted from the complete grammar of the functional-style syntax defined in# http://www.w3.org/TR/2012/REC-owl2-syntax-20121211/\nAxiom := ClassAxiom\nClassAxiom := DisjointClasses\nDisjointClasses := 'DisjointClasses' '(' Class ' ' Class ')'\n#--------------------------------------------------------------\nClass := '[sparql] ?Class a owl:Class .'" },
+            "complexDisjointClasses": { "key": "Complex DisjointClasses Axioms", "content": "# Set of productions for generating Axioms: DisjointClass(ClassExpression, ClassExpression)\n# Extracted and adapted from the complete grammar of the functional-style syntax defined in\n# http://www.w3.org/TR/2012/REC-owl2-syntax-20121211/\nAxiom := ClassAxiom\nClassAxiom := DisjointClasses\nDisjointClasses := 'DisjointClasses' '(' ClassExpression ' ' ClassExpression ')'\n#---------------------------------------------------------------\nClassExpression := ObjectSomeValuesFrom | ObjectAllValuesFrom | ObjectIntersectionOf | Class\n#--------------------------------------------------------------\nObjectIntersectionOf := 'ObjectIntersectionOf' '(' Class ' ' Class ')'\nObjectSomeValuesFrom := 'ObjectSomeValuesFrom' '(' Property ' ' Class ')'\nObjectAllValuesFrom := 'ObjectAllValuesFrom' '(' Property ' ' Class ')'\n#--------------------------------------------------------------\nClass := '[sparql] ?Class a owl:Class .'\nProperty := '[sparql] ?s ?Property ?o . FILTER ( isIRI(?o) ) .'" }
+        },
+        "SHACLGrammar": {
+            "associationRules": { "key": "HasValue Constraints", "content": "# RDFMiner v1.4\n# Test of SHACL Shapes generation v1.0\n# Example:\n#   a sh:NodeShape ;\n#   sh:targetClass Class ;\n#   sh:property [ sh:path rdf:type ; sh:hasValue Class ; ] .\n#   The subject of the given shape will be generate randomly using Java code\n#---------------------------------------------------------------\nShape := ' a ' NodeShape\nNodeShape := 'sh:NodeShape ; ' ShapeBody\nShapeBody := 'sh:targetClass ' Class ' ; ' ShapeProperty\nShapeProperty := ' sh:property [ ' PropertyBody ' ] . '\nPropertyBody := ' sh:path rdf:type ; sh:hasValue ' Class ' ; '\n#---------------------------------------------------------------\nClass := '[sparql] ?x a ?Class .'\n" },
+            "valueTypeConstraints": { "key": "Value Type Constraints Component", "content": "# SHACL Shapes generation v1.0 based on SHACL W3C Recommandation : https://www.w3.org/TR/shacl/\n# The subject of the given shape will be generate randomly using Java code\nShape := ' a ' NodeShape\nNodeShape := 'sh:NodeShape ; ' ShapeBody\n#---------------------------------------------------------------\nShapeBody := ClassTarget | SubjectsOfTarget | ObjectsOfTarget # | NodeTarget\n# In this version, because 'NodeTarget' will consider only one triple. It is not yet considered (until multi-node target)\n# But you can choose to enable it by uncommenting the line below and the rule above\n# NodeTarget := 'sh:targetNode ' Node ' ; ' ShapeProperty\nClassTarget := 'sh:targetClass ' Class ' ; ' ShapeProperty\nSubjectsOfTarget := 'sh:targetSubjectsOf ' Property ' ; ' ShapeProperty\n# Here, we will directly target the objects using ObjectsOfTarget, as a consequence we will specify the ValueTypeConstraintComponent fragment\nObjectsOfTarget := 'sh:targetObjectsOf ' Property ' ; ' ValueTypeConstraintComponent ' . '\n#---------------------------------------------------------------\n# Value type Constraint Components\n#---------------------------------------------------------------\nShapeProperty := 'sh:property [ ' PropertyBody ' ] . '\nPropertyBody := 'sh:path ' Property ' ; ' ValueTypeConstraintComponent ' ; '\n# \nValueTypeConstraintComponent := ClassConstraint | DatatypeConstraint | NodeKindConstraint\n# Constraint Component IRI: sh:ClassConstraintComponent\n# The condition specified by sh:class is that each value node is a SHACL instance of a given type.\nClassConstraint := 'sh:class ' Class\n# Constraint Component IRI: sh:DatatypeConstraintComponent\n# sh:datatype specifies a condition to be satisfied with regards to the datatype of each value node.\nDatatypeConstraint := 'sh:datatype ' DataType\n# Constraint Component IRI: sh:NodeKindConstraintComponent\n# sh:nodeKind specifies a condition to be satisfied by the RDF node kind of each value node.\nNodeKindConstraint := 'sh:nodeKind ' NodeKind\n# It can be: sh:BlankNode, sh:IRI, sh:Literal sh:BlankNodeOrIRI, sh:BlankNodeOrLiteral and sh:IRIOrLiteral\nNodeKind := 'sh:BlankNode' | 'sh:IRI' | 'sh:Literal' | 'sh:BlankNodeOrIRI' | 'sh:BlankNodeOrLiteral' | 'sh:IRIOrLiteral'\n# sh:hasValue ' Class ' ; '\nClass := '[sparql] ?x a ?Class .'\nProperty := '[sparql] ?subj ?Property ?obj . FILTER ( isIRI(?Property) ) .'\nDataType := '[sparql] { SELECT distinct ?o WHERE { ?s ?p ?o . FILTER ( isLiteral(?o) ) } } BIND( datatype(?o) as ?DataType ) .'\n" }
+        }
+    }
+}

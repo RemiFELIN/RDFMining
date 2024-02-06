@@ -1,8 +1,0 @@
-## Backup files
-*~
-*.bak
-*.backup
-.*.swp
-\#*#
-reports/manifests.nt
-.DS_Store

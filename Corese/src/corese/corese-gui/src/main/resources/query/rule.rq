@@ -1,5 +1,0 @@
-select * 
-from kg:rule
-where {
-   ?x ?p ?y
-}

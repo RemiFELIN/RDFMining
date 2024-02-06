@@ -1,0 +1,71 @@
+version: '3.8'
+services:
+  # RDFminer-core
+  rdfminer:
+    restart: always
+    image: rdfminer-core:${RDFMINER_VERSION}
+    hostname: rdfminer
+    build:
+      context: ./RDFMiner-core/.
+    command: launch
+    volumes:
+      - type: bind
+        source: ${pwd}/IO
+        target: /rdfminer/io
+    environment:
+      - RDFMINER_VERSION=${RDFMINER_VERSION}
+      - RDFMINER_SERVER_PORT=${RDFMINER_SERVER_PORT}
+      - CORESE_PORT=${CORESE_PORT}
+      - HOME=${RDFMINER_HOME}
+  # RDFMiner-front
+  front:
+    restart: always
+    image: rdfminer-front:${RDFMINER_VERSION}
+    hostname: front
+    build:
+      context: ./RDFminer-front/.
+    ports:
+      - '${RDFMINER_FRONT_PORT}:${RDFMINER_FRONT_PORT}'
+    volumes:
+      - type: bind
+        source: ${pwd}/RDFminer-front/node_modules
+        target: /app/node_modules
+    environment:
+      - APP=/app
+      - RDFMINER_FRONT_PORT=${RDFMINER_FRONT_PORT}
+      - RDFMINER_FRONT_ENDPOINT=${RDFMINER_FRONT_ENDPOINT}
+      - RDFMINER_FRONT_SOCKET_ENDPOINT=${RDFMINER_FRONT_SOCKET_ENDPOINT}
+  # RDFminer-server
+  # Developped by Rémi Felin
+  server:
+    restart: always
+    image: rdfminer-server:${RDFMINER_VERSION}
+    hostname: server
+    build:
+      context: ./RDFminer-server/.
+    ports:
+      - '8890:8890'
+    volumes:
+      - type: bind
+        source: ${pwd}/RDFminer-server/node_modules
+        target: /app/node_modules
+    environment:
+      - APP=/app
+      - RDFMINER_SERVER_PORT=${RDFMINER_SERVER_PORT}
+      - RDFMINER_SERVER_MONGODB_PORT=${RDFMINER_SERVER_MONGODB_PORT}
+      - RDFMINER_SERVER_MONGODB_CONNECTION=${RDFMINER_SERVER_MONGODB_CONNECTION}
+      - RDFMINER_SERVER_AUTH_KEY=${RDFMINER_SERVER_AUTH_KEY}
+      - RDFMINER_SERVER_MONGODB_DATAPATH=${RDFMINER_SERVER_MONGODB_DATAPATH}
+      - RDFMINER_SERVER_REDIS_PORT=${RDFMINER_SERVER_REDIS_PORT}
+      - RDFMINER_SERVER_WS=${RDFMINER_SERVER_WS}
+  # MongoDB
+  mongo:
+    restart: always
+    image: mongo:6.0
+    hostname: mongo
+    ports:
+      - '${RDFMINER_SERVER_MONGODB_PORT}:${RDFMINER_SERVER_MONGODB_PORT}'
+    volumes:
+      - type: bind
+        source: ${RDFMINER_SERVER_MONGODB_DATAPATH}/data
+        target: /data/db

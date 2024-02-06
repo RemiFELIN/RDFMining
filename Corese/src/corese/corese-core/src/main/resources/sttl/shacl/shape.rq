@@ -1,7 +1,0 @@
-template  {
-    st:apply-templates(?sh)
-}
-where {
-    ?in a sh:NodeShape ;
-    sh:targetClass 
-}   

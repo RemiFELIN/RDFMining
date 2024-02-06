@@ -1,5 +1,0 @@
-template st:start {
-    st:apply-templates-with(<../format2/>)
-}
-where {
-}

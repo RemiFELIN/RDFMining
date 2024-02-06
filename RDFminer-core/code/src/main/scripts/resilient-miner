@@ -1,0 +1,8 @@
+#!/bin/bash
+until java -jar miner.jar; do
+  echo ">>> Pausing for 10 minutes..."
+  sleep 10m
+  echo ">>> Restarting miner..."
+done
+echo ">>> Miner terminated normally."
+

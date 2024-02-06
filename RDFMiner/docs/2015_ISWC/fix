@@ -1,8 +1,0 @@
-#! /bin/bash
-# Fix the names of the figures (run after "pdflatex" and before "svn commit"):
-for i in *-eps-converted-to.pdf
-do
-    tgt=$(echo $i | sed -e "s/-eps-converted-to//")
-    mv $i $tgt
-done
-
