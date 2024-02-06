@@ -1,0 +1,194 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+SPARQL Template Transformation
+Olivier Corby - Wimmics - Inria UNS CNRS I3S
+Mon Jul 08 20:08:23 CEST 2019
+-->
+<rdf:RDF  xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+  xmlns='http://ns.inria.fr/sparql-template/'>
+<rule>
+<body>
+<![CDATA[
+#
+# Display SHACL validation result on server 
+#
+prefix sh: <http://www.w3.org/ns/shacl#>
+ 
+template st:start {
+    st:call-template(st:main)
+}
+where {
+    
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+prefix sh: <http://www.w3.org/ns/shacl#>
+prefix ft: <http://ns.inria.fr/sparql-template/format/ds/>
+
+template st:title {
+    format {
+        ft:title.html
+        
+        st:get(st:service)
+        
+        if (! ?text, coalesce(st:get(st:param), st:get(st:rdf), ""), "")
+        if (! ?text, coalesce(st:get(st:mode),  st:get(st:schema), ""), "")  
+        
+        if (?text,   coalesce(st:get(st:param), ""), "")
+        if (?text,   coalesce(st:get(st:mode), ""), "") 
+        
+        ?title ?comment
+    } 
+}
+where {
+   bind (st:get(st:format) as ?format)
+   bind (bound(?format) as ?text)
+   bind (coalesce(st:get(st:title), "Shacl") as ?title) 
+   bind (coalesce(st:get(st:comment), "")    as ?comment)
+}
+
+
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+prefix sh: <http://www.w3.org/ns/shacl#>
+ 
+template st:main {
+    st:call-template(st:title)
+    st:call-template(st:shape)
+    st:call-template(st:index)
+    
+    st:call-template(st:show)
+
+    #st:apply-templates-with-graph(st:hturtle, ?g)
+}
+where {
+    #bind (st:get(st:param) as ?par)
+    bind (st:visitedGraph() as ?g)
+    #filter bound(?par)
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+prefix sh: <http://www.w3.org/ns/shacl#>
+ 
+template st:index {
+    format {
+        "<h4>%s: %s</h4>" 
+        
+        strafter(?s, sh:) ?c
+    }
+}
+where {
+    select ?s (count(*) as ?c) where {
+        graph st:visitor { ?x a sh:ValidationResult ; sh:resultSeverity ?s }
+    } 
+    group by ?s
+    order by ?s
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+prefix sh: <http://www.w3.org/ns/shacl#>
+ 
+template st:detail {
+    format {
+        """
+        <pre>%s</pre> 
+        <pre>%s</pre>
+        
+        """ 
+        
+       if (exists { ?s ?p ?o }, st:apply-templates-with(st:turtlehtml, ?s), str(?s))
+        
+        group { st:apply-templates-with-graph(st:turtlehtml, st:visitor, ?r) ; separator = "\n" }
+    }
+}
+where {
+    graph st:visitor { ?r sh:focusNode ?s }  
+    
+}
+group by ?s
+order by ?s
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+template st:profile {}
+where {}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+prefix sh: <http://www.w3.org/ns/shacl#>
+ 
+template st:shape {
+    format {
+        "<h4>Validation Result: %s</h4>" 
+        
+        ?c
+    }
+}
+where {
+
+    {select (count(*) as ?c) where {
+        graph st:visitor { ?x a sh:ValidationResult }
+    }}
+    filter (?c > 0)
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+prefix sh:  <http://www.w3.org/ns/shacl#>
+prefix doc: <http://w3c.github.io/data-shapes/shacl/#>
+prefix ft: <http://ns.inria.fr/sparql-template/format/ds/>
+prefix tt: <http://ns.inria.fr/sparql-template/hturtle#>
+
+template st:show {
+format {
+    ft:show.html
+
+    st:apply-templates-with-graph(st:hturtle, st:shape)
+    #st:apply-templates-with-graph(st:hturtle, st:visitor)
+    st:apply-templates-with-graph(tt:startshape, st:visitor)
+    st:apply-templates-with(st:hturtle)
+}
+
+#st:apply-templates-with-graph(<http://ns.inria.fr/sparql-template/d3#frame>, st:shape)
+
+}
+where {
+
+}
+]]>
+</body>
+</rule>
+
+</rdf:RDF>

@@ -1,0 +1,21 @@
+#
+# Select a query name to display and execute
+# query name bound to uri param
+# Generate query names list from context graph
+#
+prefix ft: <http://ns.inria.fr/sparql-template/format/tutorial/>
+template st:selectform(?t) {
+
+format {
+
+  ft:selectform.html
+  
+  st:get(st:service) 
+  st:get(st:profile)   
+  st:call-template(st:prev, ?t)  
+  st:call-template(st:list, ?t)  
+  st:call-template(st:next, ?t)
+}
+}
+where {
+}

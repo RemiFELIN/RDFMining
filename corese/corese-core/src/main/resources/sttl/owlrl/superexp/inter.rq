@@ -1,0 +1,15 @@
+template {
+  ?suc
+}
+where {
+  ?in owl:intersectionOf ?z 
+  ?z rdf:rest*/rdf:first ?e 
+  
+  bind (
+    st:call-template(st:superClassExpression, ?e)
+    as ?suc
+  )
+  
+  filter if (us:mytrace(?suc), xt:print("error super:", ?in, owl:intersectionOf, ?e), true)
+  
+}

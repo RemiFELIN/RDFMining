@@ -1,0 +1,137 @@
+prefix gui: <function://fr.inria.corese.gui.core.Callback>
+prefix ag:  <function://fr.inria.corese.core.extension.Agent>
+prefix fun: <function://fr.inria.corese.core.extension.Extension>
+
+@public {
+
+
+# return AST of query OR parse function URI
+function xt:parse(q) {
+    fun:parse(q)
+}
+
+function xt:log() {
+    fun:getContextLog()
+}
+
+function xt:logGraph() {
+    fun:getLogGraph()
+}
+
+function xt:logURL() {
+    fun:getLogURL()
+}
+
+# return singleton Agent
+function xt:agent() {
+    ag:getDatatypeValue()
+}
+
+
+
+# use case: transformer operate on Mappings
+function xt:solution() {
+   maplist(xt:maptolist, xt:mappings())
+}
+
+function xt:maptolist(mm) {
+   maplist(lambda((var, val)) { xt:list(var, val) }, mm)
+}
+
+function xt:gui(aa) {
+    gui:display(aa)
+}
+function xt:gui(aa, bb) {
+    gui:display(aa, bb)
+}
+function xt:gui(aa, bb, cc) {
+    gui:display(aa, bb, cc)
+}
+function xt:gui(aa, bb, cc, dd) {
+    gui:display(aa, bb, cc, dd)
+}
+function xt:gui(aa, bb, cc, dd, ee) {
+    gui:display(aa, bb, cc, dd, ee)
+}
+
+function xt:xpath(doc, exp) {
+    let (list = xpath(doc, exp)) {
+        coalesce(xt:get(list, 0), list)
+    }
+}
+
+function xt:div(?a, ?b) {  xsd:integer(floor(?a / ?b)) }
+
+function xt:mod(?a, ?b) {  xsd:integer(?a - (?b * xt:div(?a, ?b))) }
+
+function kg:compare(?x, ?y) { 
+  if (?x < ?y, -1, 
+  if (?x > ?y, 1, 0)) }
+
+function xt:prime(?x) { 
+    if (?x = 1, false,
+    if (?x = 2, true, 
+    ! mapany (xt:divisible, ?x, xt:cons(2, xt:iota(3, power(?x, 0.5), 2)))))
+ }
+                             
+function xt:divisible(?x, ?n) { 
+   (xt:mod(?x, ?n) = 0)
+}
+
+function xt:ast(?q) {
+    java:getAST(?q)
+}
+
+function xt:ast() {
+    xt:ast(xt:query())
+}
+
+function xt:namedgraph(?name, ?graph){
+    java:setNamedGraph(xt:graph(), ?name, ?graph)
+}
+
+function xt:values(?s, ?p) {
+    maplist(xt:object, xt:edges(?s, ?p))
+}
+
+function xt:myobjects(?s, ?p) {
+    maplist(xt:object, xt:edges(?s, ?p))
+}
+
+function xt:myobjects(?p) {
+    maplist(xt:object, xt:edges(?p))
+}
+
+function xt:mysubjects(?p, ?o) {
+    maplist(xt:subject, xt:edges(bnode(), ?p, ?o))
+}
+
+function xt:mysubjects(?p) {
+    maplist(xt:subject, xt:edges(?p))
+}
+
+function xt:trace(?s, ?p) {
+    xt:tune(xt:debug, ?s, ?p)
+}
+
+function xt:trace(?s, ?p, ?o) {
+    xt:tune(xt:debug, ?s, ?p, ?o)
+}
+
+function xt:transformer(?t, ?b) {
+    xt:tune(xt:debug, xt:transformer, ?t, ?b)
+}
+
+function xt:setPublicDatatypeValue(val) {
+     ds:setPublicDatatypeValue(true, val)
+}
+
+function xt:getPublicDatatypeValue() {
+     ds:getPublicDatatypeValue(true)
+}
+
+function xt:engine() {
+    java:getSPARQLEngine(java:getEval(xt:env()))
+}
+
+}

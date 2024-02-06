@@ -1,0 +1,44 @@
+prefix sh:   <http://www.w3.org/ns/shacl#> 
+prefix fun:  <http://www.w3.org/ns/shacl#> 
+prefix java: <http://www.w3.org/ns/shacl#>  
+prefix doc:  <http://w3c.github.io/data-shapes/shacl/#>
+
+# @compile <fr.inria.corese.extension.DataShape>  @path </user/corby/home/NetBeansProjects/corese-github/kgtool/src/main/java/fr/inria/corese/extension/>
+
+# @import <http://ns.inria.fr/sparql-template/function/datashape/main.rq>
+
+@import <function/datashape/main.rq>   
+
+template st:profile {} where {}
+
+
+@skip
+function st:aggregate(out) {
+  st:agg_and(out)
+}
+
+@skip
+function st:default(term){
+    true
+}
+
+@skip
+function st:defaultNamed(term){
+    true
+}
+
+#
+# Template optimizer
+# Results of graph ?shape { ?sh sh:property ?cst } are cached in table: ?sh -> Mappings
+# Next evaluations are retrieved from cache: 40% faster
+#
+function st:optimize(shape, sh){
+    true
+}
+
+
+
+
+
+
+

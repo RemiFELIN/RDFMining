@@ -1,0 +1,108 @@
+#
+# Generate param selector, ?n = query name  
+# Use a context graph for select values
+# context graph has a sw:name st:graphName in content workflow (see tutohal service in profile.ttl)
+# specify context graph with st:param [ st:export true ; st:contextlist(st:graphName) ]
+#
+prefix ft: <http://ns.inria.fr/sparql-template/format/tutorial/>
+template st:selectparam2(?n, ?select) {
+
+format {
+  if (?insert, ft:selectparam2insert.html , ft:selectparam2.html) 
+  
+  coalesce(?title, "")
+  ?name
+  
+  if (bound (?default), 
+    st:format(
+        us:format (st:get(?uri, ?default)),             
+        ?default, coalesce(?label, "Any")),
+    "")
+            
+  group { 
+    format { 
+        us:format (coalesce(
+           # st:get(?uri) = if (isURI(?value), ?value, str(?value)),
+            if (isURI(?value),
+                st:get(?uri) = ?value || st:get(?uri) = str(?value),
+                st:get(?uri) = str(?value)),
+            false))                        
+        ?value ?value
+    } 
+}
+}
+   
+}
+where {
+  bind (st:get(st:context) as ?g)
+  
+  # TODO: mandatory to bind ?select parameter
+  graph ?g { ?select st:name ?name ; st:uri ?uri 
+    optional { ?select st:action ?action }
+    bind (coalesce(?action = st:insert, false) as ?insert)
+  }
+  
+  {
+    graph ?g {
+        ?select st:value/rdf:rest*/rdf:first ?value }
+  }
+  union 
+  {
+    graph ?g { 
+        ?select st:graph ?gname 
+        optional { ?select st:title   ?title } 
+        optional { ?select st:default ?default optional { ?select st:defaultLabel ?label }}
+        
+        # get graph object ?gg in context corresponding to graph name ?gname
+        bind (st:get(?gname) as ?gg)
+        filter bound(?gg)
+        
+          { ?select st:relation ?p 
+           graph ?gg { 
+            select distinct ?p ?value 
+            where { 
+                {?x ?p ?value}
+                union
+                {?value ?p ?x}
+                filter (! isBlank(?value)) 
+            }  
+            order by ?value }
+        }
+        union 
+        { ?select st:predicate ?p 
+           graph ?gg { 
+            select distinct ?p ?value 
+            where { ?x ?p ?value   filter (! isBlank(?value)) }  
+            order by ?value }
+        }
+        union 
+        { ?select st:predicate [ ?p ?object ] 
+          graph ?gg { 
+            select distinct ?p ?object ?value 
+            where { ?value ?p ?object } 
+            order by ?value }
+        }
+    }            
+   }
+   union
+   {
+    graph ?g { 
+        ?select st:graph ?gname ; st:function ?fun 
+        optional { ?select st:title   ?title } 
+        optional { ?select st:default ?default optional { ?select st:defaultLabel ?label }}
+        
+        # get graph object ?gg in context corresponding to graph name ?gname
+        bind (st:get(?gname) as ?gg)
+        filter bound(?gg)
+        
+        values ?value { unnest (xt:focus(?gg, funcall(?fun))) }
+        
+    }
+  }
+}
+
+function us:format(?b) {
+    if (?b, 
+        '<option value="%s" selected="true">%s</option>', 
+        '<option value="%s">%s</option>')
+}

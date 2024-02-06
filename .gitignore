@@ -34,3 +34,4 @@ prod.env
 *package-lock.json
 *.pem
 local-docker-compose.yml
+corese/ignore.git/

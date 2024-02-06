@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+SPARQL Template Transformation
+Olivier Corby - Wimmics - Inria UCA I3S
+Tue Apr 19 17:10:54 CEST 2022
+-->
+<rdf:RDF  xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+  xmlns='http://ns.inria.fr/sparql-template/'>
+<rule>
+<body>
+<![CDATA[
+#
+# Check OWL RL conformance using STTL
+# axiom:    OWL class and property axioms
+# subexp:   subClassExpression
+# superexp: superClassExpression
+# equivexp: equivClassExpression
+# http://www.w3.org/TR/owl2-profiles/#OWL_2_RL
+#
+# Olivier Corby - Wimmics - INRIA I3S UNS CNRS - 2015
+#
+template st:core {
+}
+where {
+    bind (st:visit(st:start, st:trace) as ?vis)
+    bind (st:call-template(st:start)   as ?b)
+}  
+
+function st:process(?x) {
+    ?x
+}
+
+
+
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+#
+# Check OWL RL conformance using STTL
+# axiom:    OWL class and property axioms
+# subexp:   subClassExpression
+# superexp: superClassExpression
+# equivexp: equivClassExpression
+# http://www.w3.org/TR/owl2-profiles/#OWL_2_RL
+#
+# Olivier Corby - Wimmics - INRIA I3S UNS CNRS - 2015
+#
+
+template st:start {
+  st:apply-templates-with-all(st:axiom)
+}
+where {
+}
+
+
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+#
+# Check OWL RL conformance using STTL
+# axiom:    OWL class and property axioms
+# subexp:   subClassExpression
+# superexp: superClassExpression
+# equivexp: equivClassExpression
+# http://www.w3.org/TR/owl2-profiles/#OWL_2_RL
+#
+# Olivier Corby - Wimmics - INRIA I3S UNS CNRS - 2015
+#
+template st:main {
+    st:call-template-with(st:pperror, st:display, "OWL RL", ?map)
+}
+where {
+    bind (st:visit(st:start, st:trace) as ?vis)
+    bind (st:call-template(st:start)   as ?b)    
+    bind (st:errormap()                as ?map)
+}  
+
+function st:process(?x) {
+    ?x
+}
+
+
+
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+#
+# Check OWL RL conformance using STTL
+# axiom:    OWL class and property axioms
+# subexp:   subClassExpression
+# superexp: superClassExpression
+# equivexp: equivClassExpression
+# http://www.w3.org/TR/owl2-profiles/#OWL_2_RL
+#
+# Olivier Corby - Wimmics - INRIA I3S UNS CNRS - 2015
+#
+
+template st:error {
+    true 
+}
+where {
+    values ?e { unnest(st:visited()) }
+    values ?m { unnest(st:errors(?e)) }
+    bind (xt:print(?e, ?m) as ?p)
+}
+
+
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+template st:profile {}
+where {}
+
+
+
+function st:aggregate(?x) { st:agg_and(?x) }
+
+
+
+
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+template st:display (?amap) {
+    ?key " : " ?val 
+}
+where {
+    values (?key ?val) { unnest(?amap) }
+}
+]]>
+</body>
+</rule>
+
+</rdf:RDF>

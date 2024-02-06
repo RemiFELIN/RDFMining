@@ -1,0 +1,45 @@
+#
+# Event Driven Function for SPARQL Update
+# Write @event before update query (after prefix)
+# Write @event @update for processing @update event when function is @public
+#
+
+@event 
+insert data {
+us:John foaf:name 'John'
+} ;
+load rdf:
+
+
+@beforeUpdate 
+function us:beforeUpdate(q) {
+    xt:print("before update", "graph size:", xt:size(xt:graph()))
+}
+
+@afterUpdate  
+function us:afterUpdate(res) {
+    xt:print("after update", "graph size:", xt:size(xt:graph()))
+    # additional update query to ensure consistency
+    #;query (delete {?x foaf:name ?n} insert {?x rdfs:label ?n} where {?x foaf:name ?n})
+}
+
+@update     
+function us:update(q, deleteList, insertList) {
+    xt:print("update delete:", deleteList) ;
+    xt:print("update insert:", insertList)
+}
+
+@beforeLoad 
+function us:beforeLoad(path) {
+    xt:print("before load:", path, "graph size:", xt:size(xt:graph()))
+}
+
+@insert  # load edge
+function us:insert(path, edge) {
+
+}
+
+@afterLoad  
+function us:afterLoad(path) {
+    xt:print("after load: ", path, "graph size:", xt:size(xt:graph()))
+}

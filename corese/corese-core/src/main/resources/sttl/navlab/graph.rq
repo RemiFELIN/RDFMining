@@ -1,0 +1,9 @@
+prefix ft: <http://ns.inria.fr/sparql-template/format/d3/>
+template st:graph {
+  
+      st:call-template-with(st:d3, st:frame)
+
+  
+}
+where {
+}

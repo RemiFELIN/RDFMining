@@ -1,0 +1,320 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+SPARQL Template Transformation
+Olivier Corby - Wimmics - Inria UNS CNRS I3S
+Fri Oct 08 15:55:02 CEST 2021
+-->
+<rdf:RDF  xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+  xmlns='http://ns.inria.fr/sparql-template/'>
+<rule>
+<body>
+<![CDATA[
+template st:profile {
+ 
+}
+where {}
+
+  function st:aggregate(?x) { st:agg_and(?x) }
+  
+  function st:err(?x) { URI(concat(st:, "owlrl/", str(?x))) }
+  
+  function st:alreadyVisited(?x, ?tag, ?suc) {
+    if(st:visited(?x), true, st:visit(st:err(?tag), ?x, ?suc)) 
+  }
+
+
+function us:mytrace(suc) {
+    return (bound(trace_sttl) && ! suc)
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+template  {
+  ?suc  
+}
+where {
+  ?in rdfs:domain|rdfs:range ?y
+      
+  bind (
+    isURI(?y) ||
+    st:call-template-with(st:superexp, st:superClassExpression, ?y)  
+  as ?suc)
+  
+  filter(st:alreadyVisited(?in, "domain", ?suc))
+
+}
+
+
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+#
+# Forbidden in OWL RL
+#
+template {
+  false
+}
+where {
+
+  { ?in owl:disjointUnionOf ?y }
+  union { ?in a owl:ReflexiveProperty }
+  # unionOf|intersectionOf only as argument of other expression, hence not in URI but in bnode
+  # [owl:unionOf()] rdfs:subClassOf ...
+  union { ?in owl:unionOf|owl:intersectionOf ?y  filter isURI(?in) }
+  
+  filter(st:alreadyVisited(?in, "fail", false))
+ 
+}
+limit 1
+
+
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+# the following datatypes must not be used in OWL 2 RL:
+# owl:real, owl:rational
+
+template {
+  ?suc
+}
+where {
+  
+  bind ( 
+    not exists { 
+      ?in ?p ?y 
+      filter (datatype(?y) IN (owl:real, owl:rational))
+    }
+  as ?suc)
+
+  filter (st:visit(st:err("datatypelit"), st:datatype, ?suc))
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+template  {
+  ?suc  
+}
+where {
+  ?in owl:AllDisjointClasses ?z
+  
+   bind (
+    not exists { 
+      ?z rdf:rest*/rdf:first ?e      
+      filter(! st:call-template-with(st:subexp, st:subClassExpression, ?e))
+    }
+    as ?suc
+  )
+  
+  filter(st:alreadyVisited(?in, "disjointClass", ?suc))
+
+}
+
+
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+template {
+  ?suc  
+}
+where {
+
+  ?in rdfs:subClassOf ?y
+  
+  filter (
+    isURI(?in) ||
+    not exists { ?x ?p ?in }
+  )
+  
+  bind (st:call-template-with(st:subexp,   st:subClassExpression, ?in)  as ?b1)
+  bind (st:call-template-with(st:superexp, st:superClassExpression, ?y) as ?b2) 
+  bind (?b1 && ?b2 as ?suc)
+  filter if (us:mytrace(?suc), xt:print("error axiom:", ?in, rdfs:subClassOf, ?y, ?b1, ?b2), true)
+  
+  filter(st:alreadyVisited(?in, "subClass", ?suc))
+
+}
+
+
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+template  {
+  ?suc 
+}
+where {
+  ?in owl:disjointWith ?y
+  
+  filter (
+    isURI(?in) ||
+    not exists { ?x ?p ?in }
+  )
+   
+  bind (
+    st:call-template-with(st:subexp, st:subClassExpression, ?in) && 
+    st:call-template-with(st:subexp, st:subClassExpression, ?y)  
+  as ?suc)
+  
+  filter(st:alreadyVisited(?in, "disjointClass", ?suc))
+  
+}
+
+
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+template  {
+  ?suc
+}
+where {
+  ?in owl:equivalentClass ?y
+  
+  filter (
+    isURI(?in) ||
+    not exists { ?x ?p ?in }
+  )
+ 
+  bind (
+    st:call-template-with(st:equivexp, st:equivClassExpression, ?in) &&
+    st:call-template-with(st:equivexp, st:equivClassExpression, ?y)  
+  as ?suc)
+  
+  filter(st:alreadyVisited(?in, "equivClass", ?suc))
+
+}
+
+
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+# the following datatypes must not be used in OWL 2 RL:
+# owl:real, owl:rational
+
+template {
+	?suc
+}
+where {
+	{ ?in rdfs:range ?y }
+	union { ?in a owl:Restriction;
+			?p ?y }
+	bind (
+		#datatypes not allowed
+		?y NOT IN (
+			owl:real, owl:rational
+		)
+	as ?suc)
+
+	filter(isURI(?y) && ! ?suc)
+	filter(st:visit(st:err("datatypeRes"), ?in, ?suc))
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+template  {
+  ?suc  
+}
+where {
+  ?in owl:hasKey ?z
+  
+   bind (
+     st:call-template-with(st:subexp, st:subClassExpression, ?in)
+   as ?suc)
+   
+   filter(st:visit(st:err("key"), ?in, ?suc))
+   
+}
+
+
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+  # OWL 2 RL does not support the predefined properties :
+  # owl:topObjectProperty, owl:bottomObjectProperty,
+  # owl:topDataProperty, and owl:bottomDataProperty
+
+template {
+
+  ?suc
+}
+where {
+
+  bind ( not exists { {?x ?p ?y} union {?y ?p ?x} union { ?a ?x ?b } } as ?suc)
+  
+  filter(st:visit(st:err("properties"), ?x, ?suc))
+}
+values ?x { 
+  owl:topObjectProperty owl:bottomObjectProperty 
+  owl:topDataProperty   owl:bottomDataProperty 
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+template {
+  ?suc  
+}
+where {
+  ?in a owl:NamedIndividual, ?t
+  
+  filter (
+    isURI(?in) ||
+    not exists { ?x ?p ?in }
+  )
+ 
+ bind (isURI(?t) ||
+   st:call-template-with(st:superexp, st:superClassExpression, ?t) 
+ as ?suc)
+ 
+ filter(st:visit(st:err("individual"), ?in, ?suc))
+
+      
+}
+
+
+]]>
+</body>
+</rule>
+
+</rdf:RDF>

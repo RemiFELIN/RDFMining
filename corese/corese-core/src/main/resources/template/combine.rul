@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+SPARQL Template Transformation
+Olivier Corby - Wimmics - Inria UNS CNRS I3S
+Fri Jun 21 13:43:42 CEST 2019
+-->
+<rdf:RDF  xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+  xmlns='http://ns.inria.fr/sparql-template/'>
+<rule>
+<body>
+<![CDATA[
+template st:start {
+    if (bound(?list), st:call-template(st:main, ?list), 
+        st:call-template(st:old))
+}
+where {
+    bind (st:get(st:transformations) as ?list)
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+template st:main(?list) {
+       st:apply-templates-with(?sttl) 
+}
+where {
+    values ?sttl { unnest(?list) }
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+template st:old {
+    st:apply-templates-with(coalesce(st:get(st:sttl1), <http://ns.inria.fr/sparql-template/d3#frame> ))
+    st:apply-templates-with(coalesce(st:get(st:sttl2), st:hturtle))
+}
+where {}
+]]>
+</body>
+</rule>
+
+</rdf:RDF>

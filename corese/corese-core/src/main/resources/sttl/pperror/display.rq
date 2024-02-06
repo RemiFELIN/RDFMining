@@ -1,0 +1,13 @@
+template st:display (?title, ?amap) {
+
+    if (xt:size(?amap) = 0, 
+        str(?title),
+        concat(str(?title), " not correct: ", xt:size(?amap), " failures"))
+        
+    st:nl() st:nl() 
+    
+    st:call-template(st:displaymap, ?amap)
+}
+where {
+    bind (st:set(st:execmode, st:standalone) as ?tmp)
+}

@@ -1,0 +1,23 @@
+#
+# Get list st:topic from profile.ttl st:param
+#
+prefix cn: <http://cdn.fr/schema/>
+template cn:row(?d) {
+
+  format {
+    "<td>%s</td>"
+    
+    group {
+	st:call-template(cn:date, ?d, ?topic)
+    } 
+  }
+  
+
+}
+where {  
+  values ?topicList { unnest(st:get(st:topic)) }
+  bind (kg:number() as ?n)
+  values ?topic  { unnest(?topicList) }
+}
+group by ?topicList
+order by ?n

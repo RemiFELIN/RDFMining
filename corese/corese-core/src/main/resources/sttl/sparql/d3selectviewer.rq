@@ -1,0 +1,11 @@
+prefix d3: <http://ns.inria.fr/sparql-template/format/d3/>
+template st:d3selectviewer {
+    format {
+        d3:frameselect.html
+        ?id
+        coalesce(xt:json(st:get(st:mappings)), "{ error: 'error when reading st:mappings'}")
+    }
+}
+where {
+    bind (substr(replace(rand(), "\\.", ""), 0, 5) as ?id)
+}

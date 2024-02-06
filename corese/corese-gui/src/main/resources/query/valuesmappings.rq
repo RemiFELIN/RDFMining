@@ -1,0 +1,11 @@
+#
+# Compute query on query results from preceding query accessed with xt:mappings()
+# GUI Copy button copies  query results of selected query panel 
+# into result panel of last query (this query)
+#
+select ?var ?val 
+where {
+values ?amap { unnest(maplist(xt:self, xt:mappings())) }
+values (?var ?val) { 
+    unnest(maplist(function((?var, ?val)){xt:list(?var, ?val)}, ?amap)) }
+}

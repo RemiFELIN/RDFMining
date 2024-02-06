@@ -1,0 +1,20 @@
+#
+# Transfom Mappings with variables ?location ?lon ?lat into a map
+# Transformer is created with Mappings argument
+# Transformer set Mappings into start template
+# Start template in this case is: http://ns.inria.fr/sparql-template/navlab#mapper 
+# Function xt:mappings() gets mappings from current st:mapper template query which is the start template
+# 
+#
+prefix ft:  <http://ns.inria.fr/sparql-template/format/navlab/>
+
+template st:mapper {
+    st:call-template(st:mapmap, xt:mappings())        
+} 
+where { 
+    # display url as is in map, see map2.rq
+    bind (st:set(st:maplod, st:url) as ?tmp)
+    bind (st:set(st:mapsize, coalesce(funcall(function(){ ?mapsize }), "maplarge")) as ?s)
+    bind (st:set(st:mapzoom, coalesce(funcall(function(){ ?mapzoom }), 6)) as ?z)    
+}
+

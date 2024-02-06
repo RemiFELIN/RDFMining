@@ -1,0 +1,22 @@
+template {
+  ?suc  
+}
+where {
+
+  ?in rdfs:subClassOf ?y
+  
+  filter (
+    isURI(?in) ||
+    not exists { ?x ?p ?in }
+  )
+  
+  bind (st:call-template-with(st:subexp,   st:subClassExpression, ?in)  as ?b1)
+  bind (st:call-template-with(st:superexp, st:superClassExpression, ?y) as ?b2) 
+  bind (?b1 && ?b2 as ?suc)
+  filter if (us:mytrace(?suc), xt:print("error axiom:", ?in, rdfs:subClassOf, ?y, ?b1, ?b2), true)
+  
+  filter(st:alreadyVisited(?in, "subClass", ?suc))
+
+}
+
+

@@ -1,0 +1,22 @@
+prefix ft: <http://ns.inria.fr/sparql-template/format/sparql/>
+template st:tableconsall {
+format {
+        ft:triple.html
+        
+        st:number()
+        st:call-template(st:show,    ?x)
+        st:display(?x) 
+        st:display(?p) 
+        st:display(?y) 
+        st:call-template(st:show,    ?y)
+    }
+}
+where {
+    select * where {
+        ?x ?p ?y
+    }
+    order by ?x ?p ?y
+    limit 50000
+}
+
+

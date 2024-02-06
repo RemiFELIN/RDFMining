@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE rdf:RDF [
+  <!ENTITY rule   "http://ns.inria.fr/corese/rule/"> 
+  <!ENTITY rdf    "http://www.w3.org/1999/02/22-rdf-syntax-ns">
+  <!ENTITY rdfs   "http://www.w3.org/2000/01/rdf-schema">
+  <!ENTITY xsd    "http://www.w3.org/2001/XMLSchema#">
+  <!ENTITY spin   "http://spinrdf.org/sp#">
+  <!ENTITY owl    "http://www.w3.org/2002/07/owl#">
+]>
+<!--
+  OWL RL extended construct-where Rule Base
+  Olivier Corby - Wimmics INRIA I3S - 2021
+-->
+
+<rdf:RDF 
+    xmlns:rdf  = "&rdf;#"
+    xmlns:rdfs = "&rdfs;#"
+    xmlns:xsd  = "&xsd;" 
+    xmlns:rule = "&rule;#"
+    xmlns:owl  = "&owl;"
+    xmlns:sp   = "&spin;"
+    xmlns      = "&rule;"  
+>
+
+
+
+
+
+#
+# Extension that complete the OWL ontology
+#
+
+<rule>
+<body>  
+CONSTRUCT {
+    ?x owl:equivalentClass      [ owl:unionOf ?l ] .
+    [] a owl:AllDisjointClasses ; owl:members ?l
+}
+WHERE {
+    ?x owl:disjointUnionOf ?l 
+}
+</body>
+</rule>
+
+
+
+<rule>
+<body>  
+CONSTRUCT {
+    ?ci owl:disjointWith ?cj .
+    ?cj owl:disjointWith ?ci .
+}
+WHERE {
+    ?y a owl:AllDisjointClasses .
+	?y owl:members ?list1 .
+    ?list1 rdf:rest* ?list2 .
+    ?list2 rdf:first ?ci .
+    ?list2 rdf:rest+ ?list3 .
+    ?list3 rdf:first ?cj .
+}
+</body>
+</rule>
+
+
+
+<rule>
+<body>  
+CONSTRUCT {
+	?x a owl:Class .
+    ?y a owl:Class
+}
+WHERE {
+          {?x rdfs:subClassOf     ?y}
+    union {?x owl:equivalentClass ?y}
+    union {?x owl:disjointWith    ?y}
+    union {?x owl:complementOf    ?y}
+    union {[] (owl:unionOf|owl:intersectionOf)/rdf:rest*/rdf:first ?x}
+    union { ?x a owl:Restriction }
+}
+</body>
+</rule>
+
+
+
+
+</rdf:RDF>
+

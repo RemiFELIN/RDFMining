@@ -1,0 +1,8 @@
+# relative URI to st:logger
+@import <function/server/logger.rq>
+
+template st:profile {
+}
+where {
+}
+

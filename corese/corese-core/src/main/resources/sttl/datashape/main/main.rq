@@ -1,0 +1,16 @@
+#
+# SHACL Interpreter
+#
+# Olivier Corby - Inria I3S - 2016
+#
+prefix sh: <http://www.w3.org/ns/shacl#> 
+
+template st:main(?shape, ?name, ?s, ?sh) {
+    ?g
+}
+where {
+  bind (
+    sh:shacl(?shape, 
+        apply(?name, if (bound(?sh), xt:list(?shape, ?s, ?sh), xt:list(?shape, ?s))) )
+    as ?g) 
+}

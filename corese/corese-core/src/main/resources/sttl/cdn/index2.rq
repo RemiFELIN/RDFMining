@@ -1,0 +1,34 @@
+prefix cn: <http://cdn.fr/schema/>
+prefix ft: <http://ns.inria.fr/sparql-template/format/cdn/>
+template cn:list {
+
+format {
+
+  ft:listtable.html
+  
+  st:plink(<http://fr.dbpedia.org/resource/Nice>, st:dbpedia)
+  
+  st:format("<td>&nbsp;</td><td><a href='%s'>%s</a></td>", st:plink(st:global), "Global")  
+
+  group {
+    format {
+      ft:list.html
+      
+      st:misc(?query)
+      str(?title)
+    }
+  }
+  
+}
+  
+}
+where {
+
+}
+values (?query ?title){
+  ("/data/query/cdnplace.rq" 	"Lieu")
+  ("/data/query/cdnperson.rq" 	"Personne")
+  ("/data/query/cdnfr.rq" 	"France")
+  ("/data/query/cdneds.rq" 	"Savoie")
+  ("/data/query/cdnmisc.rq" 	"Autre")
+}

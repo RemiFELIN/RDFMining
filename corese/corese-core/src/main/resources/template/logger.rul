@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+SPARQL Template Transformation
+Olivier Corby - Wimmics - Inria UNS CNRS I3S
+Thu Aug 22 14:23:23 CEST 2019
+-->
+<rdf:RDF  xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+  xmlns='http://ns.inria.fr/sparql-template/'>
+<rule>
+<body>
+<![CDATA[
+prefix ft:  <http://ns.inria.fr/sparql-template/format/navlab/>
+
+template st:map(?jsonlist) {
+   st:call-template-with(st:navlab, st:maplist, ft:map.html, ?list, "")
+}
+where {
+   bind (us:location(?jsonlist) as ?list)
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+template st:start {
+   "<h2>Server Log</h2>"
+   
+   st:call-template(st:map,   ?jsonlist)
+   st:call-template(st:chart, ?jsonlist, "country")
+   #st:call-template(st:chart, ?jsonlist, "org")
+}
+where {
+    # list of json descriptions of IP address
+    bind (us:jsonlist() as ?jsonlist)
+}
+
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+#
+# table: key->value
+# generate a JSON SPARQL Result format for graphic chart 
+#
+template st:json(?table) {
+format {
+
+"""{
+"head": { "vars": [ "x", "c"] },
+"results": { "bindings": [
+%s
+]
+}
+}
+"""
+
+group {
+    format {
+        """{
+        "x": { "type": "literal", "value": "%s"},
+        "c": { "type": "typed-literal", "datatype": "http://www.w3.org/2001/XMLSchema#integer", "value": "%s"}
+        }"""
+        ?key ?value
+    }
+    ; separator=',\n'
+}
+
+}
+
+
+}
+where {    
+    select * where {
+        values ?table { UNDEF }
+        values (?key ?value)    { unnest(?table) }
+    }
+    order by desc(?value) ?key
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+prefix d3: <http://ns.inria.fr/sparql-template/format/d3/>
+template st:chart(?jsonlist, ?key) {
+    format {
+        d3:frameselect.html
+        ?id
+        coalesce(?json, "{ error: 'error when reading st:mappings'}")
+    }
+}
+where {
+    bind (substr(replace(rand(), "\\.", ""), 0, 5) as ?id)
+    bind (us:nbmap(?jsonlist, ?key) as ?table) 
+    bind (st:call-template(st:json, ?table) as ?json)
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+# relative URI to st:logger
+@import <function/server/logger.rq>
+
+template st:profile {
+}
+where {
+}
+
+]]>
+</body>
+</rule>
+
+</rdf:RDF>

@@ -1,0 +1,56 @@
+prefix ft: <http://ns.inria.fr/sparql-template/format/dbedit/>
+
+template st:profile {
+
+}
+where {}
+
+function st:process(?x) {
+    if (isLiteral(?x), xsd:string(?x), st:apply-templates(?x))
+  }
+    
+function st:default(?x) { 
+    xsd:string(?x)
+}
+       
+function st:misc(?name) { 
+    st:protocol(
+      concat(st:get(st:service), "?name=", st:get(st:server), ?name, "&profile=st:sparql"))
+      #"&transform=st:sparql%23core&profile=st:dbpedia"))
+}
+  
+
+#
+# Generation of HTML table  
+#
+function us:table(list, size) {
+ let (table  = us:split(list, size)) {
+     st:format(ft:table.html, 
+      letdyn (n = 0){
+	    us:mapconcat (lambda(row) {
+	      st:format(ft:tr.html, 
+	        set(n = n + 1), 
+	        us:mapconcat (lambda(cell) { st:format(ft:td.html, cell) }, row ) )
+	    }, table)
+	  }
+     )
+     }
+}
+
+function us:mapconcat(fun, exp) {
+    reduce(rq:concat, maplist(fun, exp))
+}
+
+
+function us:split(?list, ?n) {
+  let (?table = xt:list()) {
+    xt:add(?table, xt:list());
+    for (?e in ?list) {
+      if (xt:size(xt:first(?table)) = ?n) {
+        xt:add(?table, 0, xt:list())
+      } ;
+      xt:add(xt:first(?table), ?e)
+    } ;
+    return (xt:reverse(?table))
+  } 
+}

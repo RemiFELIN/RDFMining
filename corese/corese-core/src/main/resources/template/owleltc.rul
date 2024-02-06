@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+SPARQL Template Transformation
+Olivier Corby - Wimmics - Inria UCA I3S
+Wed Apr 20 09:08:58 CEST 2022
+-->
+<rdf:RDF  xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+  xmlns='http://ns.inria.fr/sparql-template/'>
+<rule>
+<body>
+<![CDATA[
+#
+# Check OWL EL conformance using STTL
+# axiom:    OWL class and property axioms
+# classexp: classExpression
+# http://www.w3.org/TR/owl2-profiles/#OWL_2_EL
+
+template st:start {
+  st:apply-templates-with-all(st:axiomowleltc)
+}
+where {
+}
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+#
+# Olivier Corby - Wimmics - INRIA I3S UNS CNRS - 2015
+#
+template st:main {
+    st:call-template-with(st:pperror, st:display, "OWL EL", ?map)
+}
+where {
+    bind (st:visit(st:start, st:trace) as ?vis)
+    bind (st:call-template(st:start)   as ?b)    
+    bind (st:errormap()                as ?map)
+}  
+
+function st:process(?x) {
+    ?x
+}
+
+
+
+]]>
+</body>
+</rule>
+
+<rule>
+<body>
+<![CDATA[
+template st:profile(?x) {
+ 
+
+}
+where {}
+
+function st:aggregate(?x) { st:agg_and(?x) }
+
+]]>
+</body>
+</rule>
+
+</rdf:RDF>
