@@ -10,7 +10,7 @@ services:
     command: launch
     volumes:
       - type: bind
-        source: ${pwd}/IO
+        source: ${RDFMINER_ROOT}/IO
         target: /rdfminer/io
     environment:
       - RDFMINER_VERSION=${RDFMINER_VERSION}
@@ -28,7 +28,7 @@ services:
       - '${RDFMINER_FRONT_PORT}:${RDFMINER_FRONT_PORT}'
     volumes:
       - type: bind
-        source: ${pwd}/RDFminer-front/node_modules
+        source: ${RDFMINER_ROOT}/RDFminer-front/node_modules
         target: /app/node_modules
     environment:
       - APP=/app
@@ -47,7 +47,7 @@ services:
       - '8890:8890'
     volumes:
       - type: bind
-        source: ${pwd}/RDFminer-server/node_modules
+        source: ${RDFMINER_ROOT}/RDFminer-server/node_modules
         target: /app/node_modules
     environment:
       - APP=/app
