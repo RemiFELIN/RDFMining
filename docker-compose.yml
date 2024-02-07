@@ -6,7 +6,7 @@ services:
     image: rdfminer-core:${RDFMINER_VERSION}
     hostname: rdfminer
     build:
-      context: ./RDFMiner-core/.
+      context: ./RDFminer-core/.
     command: launch
     volumes:
       - type: bind
