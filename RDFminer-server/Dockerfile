@@ -19,7 +19,7 @@ COPY app.js $APP/
 COPY ./run.sh   $APP/
 # copy code
 COPY ./auth $APP/auth/
-COPY ./data $APP/data/
+# COPY ./data $APP/data/
 COPY ./docker $APP/docker/
 COPY ./logs $APP/logs/
 COPY ./model $APP/model/
@@ -32,7 +32,5 @@ RUN apt-get update && apt-get install redis -y
 ENV LAUNCH=$APP/run.sh
 # enable exec
 RUN chmod +x $LAUNCH
-
-RUN ls -al /app/
 
 ENTRYPOINT ["./app/run.sh"]
