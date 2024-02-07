@@ -14,7 +14,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
 import org.apache.log4j.Logger;
 
-import javax.ws.rs.core.MediaType;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -243,7 +242,7 @@ public class CoreseEndpoint {
         HttpPost post = new HttpPost(builder.build());
         // Accept header
         post.setHeader("Accept", "text/turtle");
-        post.setHeader("Content-Type", MediaType.APPLICATION_FORM_URLENCODED);
+        post.setHeader("Content-Type", "application/x-www-form-urlencoded");
         // specify params
         post.setEntity(urlEncodedFormEntity);
         // exec
