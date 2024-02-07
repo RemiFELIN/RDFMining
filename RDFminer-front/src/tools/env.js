@@ -1,5 +1,4 @@
 import io from "socket.io-client";
-require('dotenv').config();
 
 console.log("~~~")
 console.log(process.env.NODE_ENV)

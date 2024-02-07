@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "serve:prod": "NODE_ENV=production vue-cli-service serve",
+    "serve:prod": "NODE_ENV=production RDFMINER_FRONT_PORT=${RDFMINER_FRONT_PORT} RDFMINER_FRONT_ENDPOINT=${RDFMINER_FRONT_ENDPOINT} RDFMINER_FRONT_SOCKET_ENDPOINT=${RDFMINER_FRONT_SOCKET_ENDPOINT} vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
@@ -16,7 +16,6 @@
     "clipboard": "^2.0.11",
     "codemirror": "^6.0.1",
     "core-js": "^3.8.3",
-    "dotenv": "^16.4.1",
     "lodash": "^4.17.21",
     "marked": ">=4.0.10",
     "socket.io-client": "^4.7.1",
