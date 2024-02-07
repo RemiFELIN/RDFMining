@@ -25,6 +25,7 @@ COPY ./logs $APP/logs/
 COPY ./model $APP/model/
 COPY ./servers $APP/servers/
 COPY ./services $APP/services/
+COPY ./node_modules $APP/node_modules/
 COPY ./tools $APP/tools/
 # install
 RUN cd $APP && npm install

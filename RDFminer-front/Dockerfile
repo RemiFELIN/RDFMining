@@ -11,6 +11,7 @@ RUN mkdir $APP
 COPY package*.json $APP/
 COPY ./public   $APP/public/
 COPY ./src      $APP/src/
+COPY ./node_modules $APP/node_modules/
 RUN cd $APP && npm install
 COPY *.js       $APP/
 # expose port
