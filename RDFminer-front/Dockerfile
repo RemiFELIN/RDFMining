@@ -1,5 +1,11 @@
 FROM node:18
 
+# Import env variables
+ARG APP
+ARG RDFMINER_FRONT_PORT
+ARG RDFMINER_FRONT_ENDPOINT
+ARG RDFMINER_FRONT_SOCKET_ENDPOINT
+# build app...
 RUN mkdir $APP
 # installing dependencies
 COPY package*.json $APP/

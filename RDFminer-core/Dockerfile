@@ -1,10 +1,11 @@
 # The aim of this file is to setup an complete environment to launch RDFMiner tool
 # Get maven:3-jdk-11 image from Docker Hub
 FROM maven:3-jdk-11
-# Setup RDFMiner version
-# ENV RDFMINER_VERSION=1.4
-# Setup HOME environment variable
-# ENV HOME=/rdfminer/
+# Import env variables
+ARG RDFMINER_VERSION
+ARG RDFMINER_SERVER_PORT
+ARG CORESE_PORT
+ARG HOME
 # Update
 RUN apt-get update
 # Install gcc 
