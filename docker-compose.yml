@@ -32,9 +32,8 @@ services:
     ports:
       - '${RDFMINER_FRONT_PORT}:${RDFMINER_FRONT_PORT}'
     volumes:
-      - type: bind
-        source: ${RDFMINER_ROOT}/RDFminer-front/node_modules
-        target: /app/node_modules
+      - ./RDFminer-front/:/app/
+      - /app/node_modules
   # MongoDB
   mongo:
     restart: always
