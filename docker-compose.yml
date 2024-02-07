@@ -7,16 +7,16 @@ services:
     hostname: rdfminer
     build:
       context: ./RDFminer-core/.
+      args:
+        RDFMINER_VERSION: ${RDFMINER_VERSION}
+        RDFMINER_SERVER_PORT: ${RDFMINER_SERVER_PORT}
+        CORESE_PORT: ${CORESE_PORT}
+        HOME: ${RDFMINER_HOME}
     command: launch
     volumes:
       - type: bind
         source: ${RDFMINER_ROOT}/IO
         target: /rdfminer/io
-    args:
-      RDFMINER_VERSION: ${RDFMINER_VERSION}
-      RDFMINER_SERVER_PORT: ${RDFMINER_SERVER_PORT}
-      CORESE_PORT: ${CORESE_PORT}
-      HOME: ${RDFMINER_HOME}
   # RDFMiner-front
   front:
     restart: always
@@ -24,17 +24,17 @@ services:
     hostname: front
     build:
       context: ./RDFminer-front/.
+      args:
+        APP: /app
+        RDFMINER_FRONT_PORT: ${RDFMINER_FRONT_PORT}
+        RDFMINER_FRONT_ENDPOINT: ${RDFMINER_FRONT_ENDPOINT}
+        RDFMINER_FRONT_SOCKET_ENDPOINT: ${RDFMINER_FRONT_SOCKET_ENDPOINT}
     ports:
       - '${RDFMINER_FRONT_PORT}:${RDFMINER_FRONT_PORT}'
     volumes:
       - type: bind
         source: ${RDFMINER_ROOT}/RDFminer-front/node_modules
         target: /app/node_modules
-    args:
-      APP: /app
-      RDFMINER_FRONT_PORT: ${RDFMINER_FRONT_PORT}
-      RDFMINER_FRONT_ENDPOINT: ${RDFMINER_FRONT_ENDPOINT}
-      RDFMINER_FRONT_SOCKET_ENDPOINT: ${RDFMINER_FRONT_SOCKET_ENDPOINT}
   # RDFminer-server
   # Developped by Rémi Felin
   server:
@@ -43,21 +43,21 @@ services:
     hostname: server
     build:
       context: ./RDFminer-server/.
+      args:
+        APP: /app
+        RDFMINER_SERVER_PORT: ${RDFMINER_SERVER_PORT}
+        RDFMINER_SERVER_MONGODB_PORT: ${RDFMINER_SERVER_MONGODB_PORT}
+        RDFMINER_SERVER_MONGODB_CONNECTION: ${RDFMINER_SERVER_MONGODB_CONNECTION}
+        RDFMINER_SERVER_AUTH_KEY: ${RDFMINER_SERVER_AUTH_KEY}
+        RDFMINER_SERVER_MONGODB_DATAPATH: ${RDFMINER_SERVER_MONGODB_DATAPATH}
+        RDFMINER_SERVER_REDIS_PORT: ${RDFMINER_SERVER_REDIS_PORT}
+        RDFMINER_SERVER_WS: ${RDFMINER_SERVER_WS}
     ports:
       - '8890:8890'
     volumes:
       - type: bind
         source: ${RDFMINER_ROOT}/RDFminer-server/node_modules
         target: /app/node_modules
-    args:
-      APP: /app
-      RDFMINER_SERVER_PORT: ${RDFMINER_SERVER_PORT}
-      RDFMINER_SERVER_MONGODB_PORT: ${RDFMINER_SERVER_MONGODB_PORT}
-      RDFMINER_SERVER_MONGODB_CONNECTION: ${RDFMINER_SERVER_MONGODB_CONNECTION}
-      RDFMINER_SERVER_AUTH_KEY: ${RDFMINER_SERVER_AUTH_KEY}
-      RDFMINER_SERVER_MONGODB_DATAPATH: ${RDFMINER_SERVER_MONGODB_DATAPATH}
-      RDFMINER_SERVER_REDIS_PORT: ${RDFMINER_SERVER_REDIS_PORT}
-      RDFMINER_SERVER_WS: ${RDFMINER_SERVER_WS}
   # MongoDB
   mongo:
     restart: always
