@@ -17,13 +17,13 @@ RDFMiner/io/
 *.idea
 .vscode
 IO/users/
-*.jar
+RDFminer-core/jar/
 *.iml
 *.so
 .dba_pwd_set
 # docker-compose.yml
-Corese/data/
-rdfmining-server/node_modules/
+# Corese/data/
+RDFminer-front/node_modules/
 # Corese persistent data
 *.dat
 *.idn
