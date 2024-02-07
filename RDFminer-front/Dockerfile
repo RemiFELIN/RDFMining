@@ -11,19 +11,13 @@ ENV RDFMINER_FRONT_SOCKET_ENDPOINT=$RDFMINER_FRONT_SOCKET_ENDPOINT
 # build app...
 RUN mkdir $APP
 # installing dependencies
-COPY package*.json $APP/
-COPY ./public   $APP/public/
-COPY ./src      $APP/src/
-COPY ./node_modules $APP/node_modules/
+COPY package.json $APP/
 RUN cd $APP && npm install
-COPY *.js       $APP/
+# copy all files in app folder
+COPY .   $APP/
 # expose port
 EXPOSE $RDFMINER_FRONT_PORT
-# copy run.sh
-COPY ./run.sh   $APP/
-ENV LAUNCH=$APP/run.sh
 # enable exec
-# RUN pwd
-RUN chmod +x $LAUNCH
+RUN chmod +x /app/run.sh
 # launcher
 ENTRYPOINT ["./app/run.sh"]
