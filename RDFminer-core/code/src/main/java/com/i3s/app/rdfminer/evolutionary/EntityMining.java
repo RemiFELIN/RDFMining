@@ -2,6 +2,7 @@ package com.i3s.app.rdfminer.evolutionary;
 
 import com.i3s.app.rdfminer.Endpoint;
 import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.evolutionary.fitness.Fitness;
@@ -29,46 +30,12 @@ public class EntityMining {
 
     private static final Logger logger = Logger.getLogger(EntityMining.class.getName());
 
+    Parameters parameters = Parameters.getInstance();
+
 //    private static long start;
 
-    public static ArrayList<Entity> run(Generator generator, ArrayList<Entity> entities,
-                                        int curGeneration, int curCheckpoint) {
-        // compute execution time (in ns)
-//        start = System.nanoTime();
-        // checkpoint ?
-//        boolean checkpointReached = (long) RDFMiner.parameters.populationSize * curGeneration >=
-//                Math.round((double) (RDFMiner.parameters.kBase * (curCheckpoint + 1)) / RDFMiner.parameters.checkpoint);
-        // Checkpoint reached, this is a code to evaluate and save axioms in output file
-//        if(checkpointReached) {
-//            ArrayList<Entity> originalPopulation = new ArrayList<>(entities);
-//            if(RDFMiner.parameters.checkpoint != 1 && curCheckpoint != RDFMiner.parameters.checkpoint - 1) {
-//                // INTERMEDIATE step (i.e. checkpoint)
-//                logger.info("Checkpoint n°" + (curCheckpoint + 1) + " reached !");
-//                // evaluate distinct genotype and avoid additional useless computation
-//                ArrayList<Entity> newPopulation = Fitness.computePopulation(entities, generator);
-//                // stats
-//                setStats(originalPopulation, newPopulation, curGeneration);
-//                // return final pop
-//                return newPopulation;
-//            } else {
-//                // FINAL step
-//                logger.info("Final assessment !");
-//                // evaluate distinct genotype and avoid additional useless computation
-//                ArrayList<Entity> newPopulation = Fitness.computePopulation(entities, generator);
-//                // stats
-//                setStats(originalPopulation, newPopulation, curGeneration);
-//                // fill content in json output file
-//                for(Entity entity : newPopulation) {
-//                    // add this entity is its fitness is not equal to 0
-////                    if(entity.individual.getFitness().getDouble() != 0) {
-//                    RDFMiner.content.add(entity.toJSON());
-////                    }
-//                }
-//                logger.info(RDFMiner.content.size() + " entities has been added in " + Global.RESULTS_FILENAME);
-//                // return final pop
-//                return newPopulation;
-//            }
-//        }
+    public ArrayList<Entity> run(Generator generator, ArrayList<Entity> entities,
+                                        int curGeneration) {
         // A list of individuals (from entities list)
         ArrayList<GEIndividual> entitiesI = new ArrayList<>();
         // Use list of individuals instead of list of entities
@@ -84,9 +51,11 @@ public class EntityMining {
         }
         // Selected population (for replacement)
         logger.info("Selection of individuals...");
-        ArrayList<GEIndividual> selected = EAOperators.getSelectionFromPopulation(entitiesI);
+        EAOperators operators = new EAOperators();
+        ArrayList<GEIndividual> selected = operators.getSelectionFromPopulation(entitiesI);
         // replacement phasis
-        ArrayList<GEIndividual> replacement = Recombination.perform(generator, elites, selected);
+        Recombination recombination = new Recombination();
+        ArrayList<GEIndividual> replacement = recombination.perform(generator, elites, selected);
         // Assessment phasis:
         // bind individuals and define fitness value for new individuals
         ArrayList<Entity> newPopulation = new ArrayList<>(EATools.bindIndividualsWithEntities(elites, entities));
@@ -113,10 +82,10 @@ public class EntityMining {
         // fill the evaluated individuals
         for (Future<Entity> future : futureEntities) {
             try {
-                if(RDFMiner.parameters.timeCap != 0) {
+                if(parameters.timeCap != 0) {
                     // we multiply the timecap by 2 to consider the maximum
                     // time-cap assessment for 2 childs
-                    newPopulation.add(future.get(RDFMiner.parameters.timeCap, TimeUnit.MINUTES));
+                    newPopulation.add(future.get(parameters.timeCap, TimeUnit.MINUTES));
                 } else {
                     newPopulation.add(future.get());
                 }
@@ -154,7 +123,7 @@ public class EntityMining {
         return newPopulation;
     }
 
-    public static void setStats(ArrayList<Entity> originalPopulation, ArrayList<Entity> newPopulation, int curGeneration) {
+    public void setStats(ArrayList<Entity> originalPopulation, ArrayList<Entity> newPopulation, int curGeneration) {
 //        for(Entity ent : newPopulation) {
 //            logger.debug("newPop(i): " +
 //                    Arrays.toString(ent.individual.getGenotype().get(0).toString().replace("Chromosome Contents: ", "").split(","))
@@ -180,11 +149,11 @@ public class EntityMining {
         sendGenerations();
     }
 
-    public static void sendGenerations() {
+    public void sendGenerations() {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             JSONObject toSend = new JSONObject();
-            toSend.put(Results.USER_ID, RDFMiner.parameters.username);
-            toSend.put(Results.PROJECT_NAME, RDFMiner.parameters.directory);
+            toSend.put(Results.USER_ID, parameters.getUserID());
+            toSend.put(Results.PROJECT_NAME, parameters.getProjectName());
             toSend.put(Results.STATISTICS, RDFMiner.stats.toJSON());
             HttpPut put = new HttpPut(Endpoint.API_RESULTS);
 //            System.out.println("update generations:");

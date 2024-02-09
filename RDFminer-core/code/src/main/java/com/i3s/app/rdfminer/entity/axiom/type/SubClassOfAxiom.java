@@ -3,7 +3,7 @@
  */
 package com.i3s.app.rdfminer.entity.axiom.type;
 
-import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
 import com.i3s.app.rdfminer.expression.Expression;
@@ -29,6 +29,8 @@ import java.util.Objects;
 public class SubClassOfAxiom extends Axiom {
 
 	private static final Logger logger = Logger.getLogger(SubClassOfAxiom.class.getName());
+
+	Parameters parameters = Parameters.getInstance();
 
 	/**
 	 * The subclass expression.
@@ -192,14 +194,14 @@ public class SubClassOfAxiom extends Axiom {
 			ari = ARI();
 			return;
 			
-		} else if (RDFMiner.parameters.sparqlTimeOut > 0 || RDFMiner.parameters.dynTimeOut != 0.0) {
+		} else if (parameters.sparqlTimeOut > 0) {
 //			logger.info("compute the number of exceptions with a timeout ...");
 			// Since the query to count exception is complex and may take very long to
 			// execute, we execute it with the user-supplied time out.
 			// we need to instanciate a new endpoint which will consider the desired timeout
 //			endpoint.setTimeout(RDFMiner.parameters.timeOut);
 			boolean finish = false;
-			if (RDFMiner.parameters.loop) {
+			if (parameters.loop) {
 				try {
 					finish = getExceptionsUsingCoreseLoop(endpoint);
 				} catch (Exception e) {
@@ -223,7 +225,7 @@ public class SubClassOfAxiom extends Axiom {
 			// This is the EKAW 2014 version, without time-out:
 //			numExceptions = endpoint.count("?x",
 //					subClass.graphPattern + "\n" + superClassComplement.graphPattern, 0);
-			if (RDFMiner.parameters.loop) {
+			if (parameters.loop) {
 				try {
 					getExceptionsUsingCoreseLoop(endpoint);
 				} catch (Exception e) {

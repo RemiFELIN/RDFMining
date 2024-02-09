@@ -1,7 +1,7 @@
 package com.i3s.app.rdfminer.sparql.corese;
 
 import com.i3s.app.rdfminer.Global;
-import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.sparql.RequestBuilder;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
 import org.apache.http.HttpResponse;
@@ -32,6 +32,8 @@ import java.util.Objects;
 public class CoreseEndpoint {
 
     private static final Logger logger = Logger.getLogger(CoreseEndpoint.class.getName());
+
+    Parameters parameters = Parameters.getInstance();
 
     /**
      * The URL of the SPARQL endpoint.
@@ -227,9 +229,9 @@ public class CoreseEndpoint {
         ArrayList<BasicHeader> bodyMap = new ArrayList<>();
         // 'query' is a mandatory param !
         bodyMap.add(new BasicHeader("query", "construct where {?s ?p ?o}"));
-        if(RDFMiner.parameters.useProbabilisticShaclMode) {
+        if(parameters.useProbabilisticShaclMode) {
             bodyMap.add(new BasicHeader("mode", CoreseService.PROBABILISTIC_SHACL_EVALUATION));
-            bodyMap.add(new BasicHeader("param", "p:" + RDFMiner.parameters.probShaclP + ";nT:" + Global.nTriples));
+            bodyMap.add(new BasicHeader("param", "p:" + parameters.getProbShaclP() + ";nT:" + Global.nTriples));
             bodyMap.add(new BasicHeader("content", content));
         } else {
             bodyMap.add(new BasicHeader("mode", CoreseService.SHACL_EVALUATION));

@@ -29,16 +29,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator.selection;
 
-import com.i3s.app.rdfminer.RDFMiner;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.*;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Genotype;
+import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Phenotype;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.GEGrammar;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.RouletteWheel;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.Stochastic;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Roulette wheel selection based on fitness proprtional selection.
@@ -46,6 +51,8 @@ import java.util.*;
  * value the more likely it is to be selected
  **/
 public class ProportionalRouletteWheel extends RouletteWheel implements Stochastic {
+
+    Parameters parameters = Parameters.getInstance();
 
     /**
      * New instance
@@ -61,7 +68,7 @@ public class ProportionalRouletteWheel extends RouletteWheel implements Stochast
      */
     public ProportionalRouletteWheel() {
         super();
-        this.size = (int) (RDFMiner.parameters.selectionRate * RDFMiner.parameters.populationSize);
+        this.size = (int) (parameters.getSelectionRate() * parameters.getPopulationSize());
         this.rng = new MersenneTwisterFast();
     }
 

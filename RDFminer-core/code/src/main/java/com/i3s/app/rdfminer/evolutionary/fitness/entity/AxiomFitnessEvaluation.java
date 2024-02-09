@@ -1,7 +1,7 @@
 package com.i3s.app.rdfminer.evolutionary.fitness.entity;
 
 import com.i3s.app.rdfminer.Global;
-import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.entity.axiom.AxiomFactory;
@@ -29,6 +29,8 @@ import java.util.concurrent.*;
 public class AxiomFitnessEvaluation implements FitnessEvaluation {
 
 	private static final Logger logger = Logger.getLogger(AxiomFitnessEvaluation.class.getName());
+
+	Parameters parameters = Parameters.getInstance();
 
 //	public List<JSONObject> evaluatedAxioms = new ArrayList<>();
 
@@ -66,8 +68,8 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 		// We recover our axioms
 		for (Future<Entity> entity : futureEntities) {
 			try {
-				if(RDFMiner.parameters.timeCap != 0)
-					entities.add(entity.get(RDFMiner.parameters.timeCap, TimeUnit.MINUTES));
+				if(parameters.timeCap != 0)
+					entities.add(entity.get(parameters.timeCap, TimeUnit.MINUTES));
 				else
 					entities.add(entity.get());
 			} catch (InterruptedException | ExecutionException e) {
@@ -90,11 +92,11 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 		// set new population
 		ArrayList<Entity> newPopulation = new ArrayList<>();
 		// manage not evaluated axioms
-		if(RDFMiner.parameters.timeCap != 0) {
+		if(parameters.timeCap != 0) {
 			newPopulation.addAll(EATools.getTimeCappedIndividuals(individuals, entities));
 		}
 		// Check if Novelty Search is enabled
-		if(RDFMiner.parameters.useNoveltySearch) {
+		if(parameters.isUseNoveltySearch()) {
 		 	// Compute the similarities of each axiom between them, and update the population
 			NoveltySearch noveltySearch = new NoveltySearch(new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
 			try {
@@ -145,8 +147,8 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 		// We recover our axioms
 		for (Future<Entity> entity : futureEntities) {
 			try {
-				if(RDFMiner.parameters.timeCap != 0)
-					entities.add(entity.get(RDFMiner.parameters.timeCap, TimeUnit.MINUTES));
+				if(parameters.timeCap != 0)
+					entities.add(entity.get(parameters.timeCap, TimeUnit.MINUTES));
 				else
 					entities.add(entity.get());
 			} catch (InterruptedException | ExecutionException e) {
@@ -167,7 +169,7 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 			executor.shutdownNow();
 		}
 		// Check if Novelty Search is enabled
-		if(RDFMiner.parameters.useNoveltySearch) {
+		if(parameters.isUseNoveltySearch()) {
 			// Compute the similarities of each axiom between them, and update the population
 			NoveltySearch noveltySearch = new NoveltySearch(new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
 			try {
@@ -180,7 +182,7 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 		// set new population
 		ArrayList<Entity> newPopulation = new ArrayList<>(entities);
 		// manage not evaluated axioms
-		if(RDFMiner.parameters.timeCap != 0) {
+		if(parameters.timeCap != 0) {
 			newPopulation.addAll(EATools.getTimeCappedEntities(population, entities));
 		}
 		// Update fitness of individuals from a population

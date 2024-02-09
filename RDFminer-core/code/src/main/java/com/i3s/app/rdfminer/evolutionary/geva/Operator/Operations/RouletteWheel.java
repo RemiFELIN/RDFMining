@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations;
 
-import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.selection.SelectionOperation;
@@ -42,7 +42,10 @@ import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.Stochastic;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * This is an abstract class for creating Roulette wheel selection
@@ -51,6 +54,8 @@ import java.util.*;
  * @author jbyrne
  */
 public abstract class RouletteWheel extends SelectionOperation implements Stochastic {
+
+    Parameters parameters = Parameters.getInstance();
 
     protected RandomNumberGenerator rng;
     protected double minFit;
@@ -68,7 +73,7 @@ public abstract class RouletteWheel extends SelectionOperation implements Stocha
      */
     public RouletteWheel() {
         super();
-        this.size = (int) (RDFMiner.parameters.selectionRate * RDFMiner.parameters.populationSize);
+        this.size = (int) (parameters.getSelectionRate() * parameters.getPopulationSize());
         this.rng = new MersenneTwisterFast();
     }
 

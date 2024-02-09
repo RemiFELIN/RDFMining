@@ -2,12 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   	
-  <groupId>RDFMiner</groupId>
-  <artifactId>RDFMining</artifactId>
+  <groupId>RDFminer</groupId>
+  <artifactId>RDFminer</artifactId>
   <version>1.4</version>
   <packaging>jar</packaging>
   	
-  <name>RDFMining</name>
+  <name>RDFminer</name>
   	
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -125,18 +125,28 @@
 		  <artifactId>rdf4j-rio-turtle</artifactId>
 		  <version>4.0.0-M1</version>
 	  </dependency>
-	  <!-- Corese 4.3.0 -->
-	  <!-- <dependency>
-		  <groupId>fr.inria.corese</groupId>
-		  <artifactId>corese-core</artifactId>
-		  <version>4.3.0</version>
+	  <!-- Jetty -->
+	  <dependency>
+		  <groupId>org.eclipse.jetty</groupId>
+		  <artifactId>jetty-server</artifactId>
+		  <version>9.4.44.v20210927</version>
 	  </dependency>
 	  <dependency>
-		  <groupId>fr.inria.corese</groupId>
-		  <artifactId>corese-rdf4j</artifactId>
-		  <version>4.3.0</version>
-	  </dependency> -->
-	  <!-- SPIN 2.0.0 -->
+		  <groupId>org.eclipse.jetty</groupId>
+		  <artifactId>jetty-servlet</artifactId>
+		  <version>9.4.44.v20210927</version>
+	  </dependency>
+	  <!-- Jersey -->
+	  <dependency>
+		  <groupId>org.glassfish.jersey.containers</groupId>
+		  <artifactId>jersey-container-servlet</artifactId>
+		  <version>2.35</version>
+	  </dependency>
+	  <dependency>
+		  <groupId>org.glassfish.jersey.inject</groupId>
+		  <artifactId>jersey-hk2</artifactId>
+		  <version>2.35</version>
+	  </dependency>
 	  <dependency>
 		  <groupId>org.topbraid</groupId>
 		  <artifactId>spin</artifactId>

@@ -1,6 +1,6 @@
 package com.i3s.app.rdfminer.evolutionary.tools;
 
-import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Individual;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.crossover.SinglePointCrossover;
@@ -23,6 +23,8 @@ import java.util.ArrayList;
 
 public class EAOperators {
 
+    Parameters parameters = Parameters.getInstance();
+
     public static ArrayList<GEIndividual> getElitesFromPopulation(ArrayList<GEIndividual> population) {
         ArrayList<GEIndividual> elites = new ArrayList<>();
         // find the best individuals
@@ -39,9 +41,9 @@ public class EAOperators {
      * @param population the entire population
      * @return selected population
      */
-    public static ArrayList<GEIndividual> getSelectionFromPopulation(ArrayList<GEIndividual> population) {
+    public ArrayList<GEIndividual> getSelectionFromPopulation(ArrayList<GEIndividual> population) {
         ArrayList<GEIndividual> selectedPopulation = new ArrayList<>();
-        switch(RDFMiner.parameters.typeSelection) {
+        switch(parameters.getSelectionType()) {
             default:
             case TypeSelection.PROPORTIONAL_ROULETTE_WHEEL:
                 ProportionalRouletteWheel prw = new ProportionalRouletteWheel();
@@ -68,8 +70,8 @@ public class EAOperators {
         return selectedPopulation;
     }
 
-    public static void crossover(ArrayList<GEIndividual> couple) {
-        switch (RDFMiner.parameters.typeCrossover) {
+    public void crossover(ArrayList<GEIndividual> couple) {
+        switch (parameters.getCrossoverType()) {
             default:
             case TypeCrossover.SINGLE_POINT:
                 // Single-point crossover
@@ -98,8 +100,8 @@ public class EAOperators {
         }
     }
 
-    public static void mutation(ArrayList<GEIndividual> couple) {
-        switch (RDFMiner.parameters.typeMutation) {
+    public void mutation(ArrayList<GEIndividual> couple) {
+        switch (parameters.getMutationType()) {
             default:
             case TypeMutation.INT_FLIP:
                 IntFlipMutation ifm = new IntFlipMutation();

@@ -29,13 +29,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator.selection;
 
-import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.Population;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Populations.SimplePopulation;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.Operation;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Constants;
-import org.apache.log4j.Logger;
 
 import java.util.List;
 import java.util.Properties;
@@ -45,7 +44,7 @@ import java.util.Properties;
  */
 public abstract class SelectionOperation implements Operation {
 
-    private static final Logger logger = Logger.getLogger(SelectionOperation.class.getName());
+    Parameters parameters = Parameters.getInstance();
 
     protected Population selectedPopulation;
     protected int size;
@@ -71,7 +70,7 @@ public abstract class SelectionOperation implements Operation {
      * New instance based on RDFMiner parameters
      */
     public SelectionOperation() {
-        this.size = (int) (RDFMiner.parameters.eliteSelectionRate * RDFMiner.parameters.populationSize);
+        this.size = (int) (parameters.getEliteSelectionRate() * parameters.getPopulationSize());
         this.selectedPopulation = new SimplePopulation(this.size);
 //        logger.info("Size selection = " + this.size);
     }

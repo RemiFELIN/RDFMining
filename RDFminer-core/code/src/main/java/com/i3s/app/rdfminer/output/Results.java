@@ -1,6 +1,7 @@
 package com.i3s.app.rdfminer.output;
 
 import com.i3s.app.rdfminer.Endpoint;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.RDFMiner;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -23,6 +24,8 @@ import java.util.ArrayList;
 public class Results {
 
     private static final Logger logger = Logger.getLogger(Results.class.getName());
+
+    Parameters parameters = Parameters.getInstance();
 
     public final static String USER_ID = "userId";
     public final static String PROJECT_NAME = "projectName";
@@ -56,8 +59,8 @@ public class Results {
      */
     public JSONObject toJSON() {
         JSONObject json = new JSONObject();
-        json.put(USER_ID, RDFMiner.parameters.username);
-        json.put(PROJECT_NAME, RDFMiner.parameters.directory);
+        json.put(USER_ID, parameters.getUserID());
+        json.put(PROJECT_NAME, parameters.getProjectName());
         if (RDFMiner.stats != null) json.put(STATISTICS, RDFMiner.stats.toJSON());
         if (this.nEntities != 0) json.put(N_ENTITIES, this.nEntities);
         json.put(ENTITIES, new JSONArray(RDFMiner.content));

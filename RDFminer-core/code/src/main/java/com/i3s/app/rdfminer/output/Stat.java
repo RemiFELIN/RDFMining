@@ -1,6 +1,6 @@
 package com.i3s.app.rdfminer.output;
 
-import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.evolutionary.types.TypeCrossover;
 import com.i3s.app.rdfminer.evolutionary.types.TypeMutation;
 import com.i3s.app.rdfminer.evolutionary.types.TypeSelection;
@@ -16,6 +16,8 @@ import org.json.JSONObject;
  *
  */
 public class Stat {
+
+	Parameters parameters = Parameters.getInstance();
 
 	public int populationSize;
 	public int maxLengthChromosome;
@@ -35,19 +37,19 @@ public class Stat {
 	public JSONArray generations;
 
 	public Stat() {
-		this.populationSize = RDFMiner.parameters.populationSize;
-		this.maxLengthChromosome = RDFMiner.parameters.initLenChromosome;
-		this.maxWrapping = RDFMiner.parameters.maxWrapp;
-		this.timeOut = RDFMiner.parameters.sparqlTimeOut;
-		this.timeCap = RDFMiner.parameters.timeCap;
-		this.crossoverProbability = RDFMiner.parameters.proCrossover;
-		this.mutationProbability = RDFMiner.parameters.proMutation;
-		this.eliteSelectionSize = (int) (RDFMiner.parameters.eliteSelectionRate * RDFMiner.parameters.populationSize);
-		this.selectionSize = (int) (RDFMiner.parameters.selectionRate * RDFMiner.parameters.populationSize);
-		this.nGenerations = (int) Math.ceil((double) RDFMiner.parameters.effort / this.populationSize);
-		this.selectionMethod = TypeSelection.getLabel(RDFMiner.parameters.typeSelection);
-		this.crossoverMethod = TypeCrossover.getLabel(RDFMiner.parameters.typeCrossover);
-		this.mutationMethod = TypeMutation.getLabel(RDFMiner.parameters.typeMutation);
+		this.populationSize = parameters.getPopulationSize();
+		this.maxLengthChromosome = parameters.getSizeChromosome();
+		this.maxWrapping = parameters.getMaxWrap();
+		this.timeOut = parameters.sparqlTimeOut;
+		this.timeCap = parameters.timeCap;
+		this.crossoverProbability = parameters.getProCrossover();
+		this.mutationProbability = parameters.getProMutation();
+		this.eliteSelectionSize = (int) (parameters.getEliteSelectionRate() * parameters.getPopulationSize());
+		this.selectionSize = (int) (parameters.getSelectionRate() * parameters.getPopulationSize());
+		this.nGenerations = (int) Math.ceil((double) parameters.getEffort() / this.populationSize);
+		this.selectionMethod = TypeSelection.getLabel(parameters.getSelectionType());
+		this.crossoverMethod = TypeCrossover.getLabel(parameters.getCrossoverType());
+		this.mutationMethod = TypeMutation.getLabel(parameters.getMutationType());
 		this.generations = new JSONArray();
 	}
 

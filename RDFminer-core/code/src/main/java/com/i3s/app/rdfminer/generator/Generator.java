@@ -1,6 +1,6 @@
 package com.i3s.app.rdfminer.generator;
 
-import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Genotype;
@@ -22,6 +22,8 @@ import java.net.URISyntaxException;
 public abstract class Generator {
 
     private static final Logger logger = Logger.getLogger(Generator.class.getName());
+
+    Parameters parameters = Parameters.getInstance();
 
     /**
      * The grammar defining the logical language of the axioms.
@@ -56,7 +58,7 @@ public abstract class Generator {
             // grammar.setDerivationTreeType(ContextualDerivationTree.class.getName());
             grammar.setMaxDerivationTreeDepth(Integer.MAX_VALUE);
             // set max wrapp
-            grammar.setMaxWraps(RDFMiner.parameters.maxWrapp);
+            grammar.setMaxWraps(parameters.getMaxWrap());
         }
     }
 

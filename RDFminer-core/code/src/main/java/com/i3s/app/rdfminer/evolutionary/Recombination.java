@@ -1,6 +1,6 @@
 package com.i3s.app.rdfminer.evolutionary;
 
-import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.tools.EAOperators;
 import com.i3s.app.rdfminer.evolutionary.tools.EATools;
@@ -14,12 +14,14 @@ public class Recombination {
 
     private static final Logger logger = Logger.getLogger(Recombination.class.getName());
 
+    Parameters parameters = Parameters.getInstance();
+
     /**
      * To compute all tasks about crossover, mutation and evaluation phasis of
      * evolutionary algorithm
      * @return a new population
      */
-    public static ArrayList<GEIndividual> perform(Generator generator, ArrayList<GEIndividual> elites,
+    public ArrayList<GEIndividual> perform(Generator generator, ArrayList<GEIndividual> elites,
                                                   ArrayList<GEIndividual> selectedIndividuals) {
         ArrayList<GEIndividual> replacement = new ArrayList<>();
 //        System.out.println(newPopulation.size());
@@ -27,14 +29,15 @@ public class Recombination {
         // reset nPhasis before starting a new one !
         GrammaticalEvolution.nRecombinaison = 0;
         // while the new population size is not equals to the target
-        int target = RDFMiner.parameters.populationSize - elites.size();
+        int target = parameters.getPopulationSize() - elites.size();
+        EAOperators operators = new EAOperators();
         while (replacement.size() != target)  {
             // operate crossover and mutation: 2 by 2
             ArrayList<GEIndividual> couple = EATools.getCoupleInPopulation(selectedIndividuals, generator);
             // crossover
-            EAOperators.crossover(couple);
+            operators.crossover(couple);
             // mutation
-            EAOperators.mutation(couple);
+            operators.mutation(couple);
             // adding the new individuals
             for(GEIndividual individual : couple) {
                 // update phenotype

@@ -3,7 +3,6 @@
  */
 package com.i3s.app.rdfminer.entity.axiom;
 
-import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.axiom.type.DisjointClassesAxiom;
 import com.i3s.app.rdfminer.entity.axiom.type.OWLAxiom;
 import com.i3s.app.rdfminer.entity.axiom.type.SubClassOfAxiom;
@@ -106,10 +105,10 @@ public class AxiomFactory extends DLFactory {
 
 		Axiom axiom = null;
 		List<List<Symbol>> arguments = parseArguments(syntax);
-		if(RDFMiner.parameters.sparqlTimeOut != 0) {
-			// set timeout
-			endpoint.setTimeout(RDFMiner.parameters.sparqlTimeOut);
-		}
+//		if(parameters.sparqlTimeOut != 0) {
+//			// set timeout
+//			endpoint.setTimeout(parameters.sparqlTimeOut);
+//		}
 		// check syntax
 		if (syntax.get(0).equals(OWLAxiom.SUBCLASSOF)) {
 			require(arguments.size() == 2);

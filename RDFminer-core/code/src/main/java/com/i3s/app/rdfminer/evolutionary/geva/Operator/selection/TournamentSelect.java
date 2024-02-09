@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator.selection;
 
-import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.evolutionary.geva.Exceptions.BadParameterException;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.Fitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
@@ -53,6 +53,8 @@ import java.util.Properties;
 public class TournamentSelect extends SelectionOperation implements Stochastic {
 
     private static final Logger logger = Logger.getLogger(TournamentSelect.class.getName());
+
+    Parameters parameters = Parameters.getInstance();
     
     protected RandomNumberGenerator rng;
     protected int tournamentSize;
@@ -87,9 +89,9 @@ public class TournamentSelect extends SelectionOperation implements Stochastic {
      */
     public TournamentSelect() {
         super();
-        this.size = (int) (RDFMiner.parameters.selectionRate * RDFMiner.parameters.populationSize);
+        this.size = (int) (parameters.getSelectionRate() * parameters.getPopulationSize());
         this.rng = new MersenneTwisterFast();
-        this.tournamentSize = (int) (RDFMiner.parameters.tournamentSelectionRate * RDFMiner.parameters.populationSize);
+        this.tournamentSize = (int) (parameters.getTournamentSelectionRate() * parameters.getPopulationSize());
         tour = new ArrayList<>(this.tournamentSize);
     }
     

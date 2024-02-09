@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.i3s.app.rdfminer.evolutionary.geva.Individuals;
 
-import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.Fitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.GEGrammar;
@@ -60,6 +60,8 @@ import java.util.regex.Pattern;
 public class GEIndividual extends AbstractIndividual {
 
     private static final Logger logger = Logger.getLogger(GEIndividual.class.getName());
+
+    Parameters parameters = Parameters.getInstance();
 
     private Genotype genotype;
     private Phenotype phenotype;
@@ -310,8 +312,8 @@ public class GEIndividual extends AbstractIndividual {
     }
 
     public GEChromosome getChromosomes() {
-        GEChromosome chromosome = new GEChromosome(RDFMiner.parameters.initLenChromosome);
-        chromosome.setMaxCodonValue(RDFMiner.parameters.maxValCodon);
+        GEChromosome chromosome = new GEChromosome(parameters.getSizeChromosome());
+        chromosome.setMaxCodonValue(Integer.MAX_VALUE);
         chromosome.setMaxChromosomeLength(1000);
         String genotype = this.genotype.get(0).toString().replace("Chromosome Contents: ", "");
 //        System.out.println("genotype: " + genotype);

@@ -2,25 +2,27 @@ package com.i3s.app.rdfminer.launcher.evaluator;
 
 import com.github.jsonldjava.shaded.com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import com.i3s.app.rdfminer.Endpoint;
 import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.entity.axiom.AxiomFactory;
 import com.i3s.app.rdfminer.entity.shacl.Shape;
 import com.i3s.app.rdfminer.entity.shacl.ShapesManager;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Phenotype;
-import com.i3s.app.rdfminer.generator.axiom.AxiomGenerator;
-import com.i3s.app.rdfminer.generator.axiom.CandidateAxiomGenerator;
-import com.i3s.app.rdfminer.generator.axiom.IncreasingTimePredictorAxiomGenerator;
-import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.ht.HypothesisTesting;
 import com.i3s.app.rdfminer.output.Results;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
-import org.apache.commons.math3.distribution.ChiSquaredDistribution;
-import org.apache.jena.shared.JenaException;
-import org.apache.jena.sparql.engine.http.QueryExceptionHTTP;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -34,18 +36,20 @@ public class Evaluator {
 
 	private static final Logger logger = Logger.getLogger(Evaluator.class.getName());
 
+	Parameters parameters = Parameters.getInstance();
+
 	public Evaluator()
 			throws URISyntaxException, IOException, ExecutionException, InterruptedException {
 		// set results content as JSON object
 		RDFMiner.results = new Results(true);
 		// special case where -af and -sf are used in the same time
-		if(RDFMiner.parameters.axiomFile != null && RDFMiner.parameters.shapeFile != null) {
+		if(parameters.getAxioms() != null && parameters.getShapes() != null) {
 			logger.error("(--axioms-file) and (--shapes-file) are used in the same time !");
 			System.exit(1);
-		} else if(RDFMiner.parameters.axiomFile != null) {
+		} else if(parameters.getAxioms() != null) {
 			// launch axioms evaluator
 			runAxiomEvaluation();
-		} else if(RDFMiner.parameters.shapeFile != null) {
+		} else if(parameters.getShapes() != null) {
 			// launch shapes evaluator
 			runShapeEvaluation();
 		} else {
@@ -58,60 +62,29 @@ public class Evaluator {
 	/**
 	 * The first version of RDFMiner launcher
 	 */
-	public void runAxiomEvaluation() throws InterruptedException, ExecutionException, URISyntaxException, IOException {
-		
-		AxiomGenerator generator = null;
-		BufferedReader axiomFile = null;
+	public void runAxiomEvaluation() throws InterruptedException, ExecutionException, IOException {
+
+		BufferedReader axiomFile;
 
 		// Create an empty JSON array which will be fill with our results
 		RDFMiner.evaluatedEntities = new JSONArray();
 
-		// todo: refacto !
-		if (RDFMiner.parameters.axiomFile == null) {
-			if (RDFMiner.parameters.singleAxiom == null) {
-				if (RDFMiner.parameters.useRandomAxiomGenerator) {
-					logger.info(
-							"Initializing the random axiom generator with grammar " + RDFMiner.parameters.grammarFile + "...");
-					generator = new RandomAxiomGenerator(RDFMiner.parameters.grammarFile, false);
-				} else if (RDFMiner.parameters.subClassList != null) {
-					logger.info("Initializing the increasing TP axiom generator...");
-					generator = new IncreasingTimePredictorAxiomGenerator(RDFMiner.parameters.subClassList);
-				} else {
-					logger.info("Initializing the candidate axiom generator...");
-					generator = new CandidateAxiomGenerator(RDFMiner.parameters.grammarFile, false);
-				}
-			} else {
-				logger.info("launch test on a single axiom");
-			}
-		} else {
-			Global.AXIOMS_FILE = Global.OUTPUT_PATH + RDFMiner.parameters.axiomFile;
-			logger.info("Reading axioms from file " + RDFMiner.parameters.axiomFile + "...");
-			try {
-				// Try to read the status file:
-				axiomFile = new BufferedReader(new FileReader(Global.AXIOMS_FILE));
-			} catch (IOException e) {
-				logger.error("Could not open file " + RDFMiner.parameters.axiomFile);
-				return;
-			}
+		Global.AXIOMS_FILE = Global.OUTPUT_PATH + parameters.getAxioms();
+		logger.info("Reading axioms from file " + parameters.getAxioms() + "...");
+		try {
+			// Try to read the status file:
+			axiomFile = new BufferedReader(new FileReader(Global.AXIOMS_FILE));
+		} catch (IOException e) {
+			logger.error("Could not open file " + parameters.getAxioms());
+			return;
 		}
-		
-		// ShutDownHook
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			// Save results in output file
-			if (RDFMiner.parameters.singleAxiom == null)
-				writeAndFinish();
-		}));
 
-		if (RDFMiner.parameters.singleAxiom == null) {
-			// as the test of a single axiom is return on standard output, we don't need to
-			// write file of the results
-			try {
-				RDFMiner.output = new FileWriter(RDFMiner.outputFolder + Global.RESULTS_FILENAME);
-			} catch (IOException e) {
-				logger.error(e.getMessage());
-				e.printStackTrace();
-				System.exit(1);
-			}
+		try {
+			RDFMiner.output = new FileWriter(RDFMiner.outputFolder + Global.RESULTS_FILENAME);
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			System.exit(1);
 		}
 
 		// Prepare multi-threading
@@ -124,64 +97,26 @@ public class Evaluator {
 		while (true) {
 
 			// Axiom a = null;
-			String axiomName = null;
+			String phenotype;
 
-			if (generator != null) {
-				Phenotype axiom = generator.nextAxiom();
-				if (axiom == null)
+			try {
+				phenotype = axiomFile.readLine();
+				if (phenotype == null || phenotype.isEmpty()) {
+					logger.info("No more axioms to evaluate ...");
 					break;
-				axiomName = axiom.getStringNoSpace();
-				// create a callable and add it on list of callables
-				String finalAxiomName = axiomName;
-				callables.add(() -> {
-					try {
-						logger.info("Testing axiom: " + finalAxiomName);
-						Axiom a = AxiomFactory.create(null, axiom, new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
-//						a.setEntityAsString(finalAxiomName);
-						return a;
-					} catch (QueryExceptionHTTP httpError) {
-						logger.error("HTTP Error " + httpError.getMessage() + " making a SPARQL query.");
-						httpError.printStackTrace();
-					} catch (JenaException jenaException) {
-						logger.error("Jena Exception " + jenaException.getMessage() + " making a SPARQL query.");
-						jenaException.printStackTrace();
-					}
-					return null;
-				});
-
-			} else {
-				try {
-					if (axiomFile == null && RDFMiner.parameters.singleAxiom != null) {
-						axiomName = RDFMiner.parameters.singleAxiom;
-					} else if (axiomFile != null && RDFMiner.parameters.singleAxiom == null) {
-						axiomName = axiomFile.readLine();
-					} else {
-						logger.error("The options -a and -sa are used at the same time ...");
-						System.exit(1);
-					}
-					if (axiomName == null || axiomName.isEmpty()) {
-						logger.info("No more axioms to evaluate ...");
-						break;
-					}
-					String finalAxiomName = axiomName;
-					callables.add(() -> {
-						logger.info("Testing axiom: " + finalAxiomName);
-						Axiom a = AxiomFactory.create(null, finalAxiomName, new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
-						a.setEntityAsString(finalAxiomName);
-						if (RDFMiner.parameters.singleAxiom != null) {
-							logger.info("Axiom evaluated !");
-							logger.info("Result (using JSON format) :\n" + a.toJSON().toString(2));
-						}
-						return a;
-					});
-					if (RDFMiner.parameters.singleAxiom != null)
-						break;
-				} catch (IOException e) {
-					logger.error("Could not read the next axiom.");
-					e.printStackTrace();
-					writeAndFinish();
-					System.exit(1);
 				}
+				String finalPhenotype = phenotype;
+				callables.add(() -> {
+					logger.info("Testing axiom: " + finalPhenotype);
+					Axiom a = AxiomFactory.create(null, finalPhenotype, new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
+					a.setEntityAsString(finalPhenotype);
+					return a;
+				});
+			} catch (IOException e) {
+				logger.error("Could not read the next axiom.");
+				e.printStackTrace();
+				writeAndFinish();
+				System.exit(1);
 			}
 
 		}
@@ -203,7 +138,7 @@ public class Evaluator {
 		for(Axiom axiom : axiomList) {
 			// Save a JSON report of the test
 			RDFMiner.content.add(axiom.toJSON());
-			RDFMiner.sendEntities();
+			sendEntities();
 		}
 
 //		JSONObject jsonResults = new JSONObject();
@@ -222,7 +157,7 @@ public class Evaluator {
 	/**
 	 * The first version of RDFMiner launcher
 	 */
-	public void runShapeEvaluation() throws URISyntaxException, IOException {
+	public void runShapeEvaluation() throws IOException {
 
 //		BufferedReader shapeFile = null;
 		String shapesContent = null;
@@ -230,14 +165,14 @@ public class Evaluator {
 		// Create an empty JSON object which will be fill with our results
 		RDFMiner.evaluatedEntities = new JSONArray();
 
-		if (RDFMiner.parameters.shapeFile != null) {
-			Global.SHAPES_FILE = Global.OUTPUT_PATH + RDFMiner.parameters.shapeFile;
-			logger.info("Reading SHACL Shapes from file " + RDFMiner.parameters.shapeFile + "...");
+		if (parameters.getShapes() != null) {
+			Global.SHAPES_FILE = Global.OUTPUT_PATH + parameters.getShapes();
+			logger.info("Reading SHACL Shapes from file " + parameters.getShapes() + "...");
 			try {
 				// Try to read the status file:
 				shapesContent = Files.asCharSource(new File(Global.SHAPES_FILE), Charsets.UTF_8).read();
 			} catch (IOException e) {
-				logger.error("Could not open file " + RDFMiner.parameters.shapeFile);
+				logger.error("Could not open file " + parameters.getShapes());
 				return;
 			}
 		} else {
@@ -263,13 +198,14 @@ public class Evaluator {
 
 		// filewriter: json file with all shapes as JSON
 		FileWriter results = new FileWriter(RDFMiner.outputFolder + Global.RESULTS_FILENAME);
+		HypothesisTesting ht = new HypothesisTesting();
 
 		for (int i=0; i<shapesManager.getPopulation().size(); i++) {
 			Shape shape = shapesManager.getPopulation().get(i);
-			HypothesisTesting.eval(shape);
+			ht.eval(shape);
 //			RDFMiner.evaluatedEntities.put(shape.toJSON());
 			RDFMiner.content.add(shape.toJSON());
-			RDFMiner.sendEntities();
+			sendEntities();
 			if (i==0) RDFMiner.output.write(shape.validationReport.getContent(true));
 			else RDFMiner.output.write(shape.validationReport.getContent(false));
 		}
@@ -293,8 +229,21 @@ public class Evaluator {
 		logger.warn("Shutting down RDFMiner ...");
 	}
 
-	public static void main(String[] args) {
-		System.out.println( new ChiSquaredDistribution(1).inverseCumulativeProbability(1 - RDFMiner.parameters.alpha) );
+	public void sendEntities() {
+		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+			JSONObject toSend = new JSONObject();
+			toSend.put(Results.USER_ID, parameters.getUserID());
+			toSend.put(Results.PROJECT_NAME, parameters.getProjectName());
+			toSend.put(Results.ENTITIES, RDFMiner.content);
+			HttpPut put = new HttpPut(Endpoint.API_RESULTS);
+			put.setEntity(new StringEntity(toSend.toString(), ContentType.APPLICATION_JSON));
+			logger.info("PUT request: updating entities ...");
+			HttpResponse response = httpClient.execute(put);
+			logger.info("Status code: " + response.getStatusLine().getStatusCode());
+			logger.info(new BasicResponseHandler().handleResponse(response));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
 

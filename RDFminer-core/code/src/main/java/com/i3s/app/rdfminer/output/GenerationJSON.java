@@ -1,6 +1,6 @@
 package com.i3s.app.rdfminer.output;
 
-import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.evolutionary.tools.EATools;
 import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
@@ -19,6 +19,8 @@ import java.util.ArrayList;
  *
  */
 public class GenerationJSON {
+
+	Parameters parameters = Parameters.getInstance();
 
 	public final static String GENERATION = "generation";
 	public final static String POPULATION_DEVELOPMENT_RATE = "populationDevelopmentRate";
@@ -59,7 +61,7 @@ public class GenerationJSON {
 		this.numRecombinaison = GrammaticalEvolution.nRecombinaison;
 		this.numCrossover = GrammaticalEvolution.nCrossover;
 		this.numMutation = GrammaticalEvolution.nMutation;
-		if(RDFMiner.parameters.useNoveltySearch) {
+		if(parameters.isUseNoveltySearch()) {
 			this.averageSumDistance = Statistics.getAverageSumDistance(newPopulation);
 		}
 	}
@@ -78,7 +80,7 @@ public class GenerationJSON {
 		json.put(NUM_CROSSOVER, this.numCrossover);
 		json.put(NUM_MUTATION, this.numMutation);
 		json.put(AVERAGE_SUM_DISTANCE,
-				(RDFMiner.parameters.useNoveltySearch ? this.averageSumDistance : JSONObject.NULL));
+				(parameters.isUseNoveltySearch() ? this.averageSumDistance : JSONObject.NULL));
 		return json;
 	}
 

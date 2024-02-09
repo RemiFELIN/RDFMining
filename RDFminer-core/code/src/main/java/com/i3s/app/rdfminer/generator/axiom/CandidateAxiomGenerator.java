@@ -4,7 +4,7 @@
 package com.i3s.app.rdfminer.generator.axiom;
 
 import com.i3s.app.rdfminer.Global;
-import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Phenotype;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Production;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Rule;
@@ -46,6 +46,8 @@ public class CandidateAxiomGenerator extends AxiomGenerator {
 
 	private static final Logger logger = Logger.getLogger(CandidateAxiomGenerator.class.getName());
 
+	Parameters parameters = Parameters.getInstance();
+
 	/**
 	 * An iterator on the classes to be used as the sub-class of the candidate
 	 * axiom.
@@ -79,7 +81,7 @@ public class CandidateAxiomGenerator extends AxiomGenerator {
 	 * </p>
 	 */
 	protected final String statusFileName = "AxiomGenerator-"
-			+ (RDFMiner.parameters.sparqlTimeOut > 0 ? "-" + RDFMiner.parameters.sparqlTimeOut : "") + ".status";
+			+ (parameters.sparqlTimeOut > 0 ? "-" + parameters.sparqlTimeOut : "") + ".status";
 
 	/**
 	 * Constructs a new axiom generator for the language described by the given

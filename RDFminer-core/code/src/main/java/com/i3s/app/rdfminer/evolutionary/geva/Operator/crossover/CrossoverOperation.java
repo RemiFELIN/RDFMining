@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.i3s.app.rdfminer.evolutionary.geva.Operator.crossover;
 
-import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.evolutionary.geva.Exceptions.BadParameterException;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Operator.Operations.Operation;
@@ -53,7 +53,9 @@ import java.util.Properties;
  * @author Conor
  */
 public abstract class CrossoverOperation implements Operation, Stochastic {
-    
+
+    Parameters parameters = Parameters.getInstance();
+
     protected double probability;
     protected RandomNumberGenerator rand;
     
@@ -64,7 +66,7 @@ public abstract class CrossoverOperation implements Operation, Stochastic {
      * parameters provided by RDFMiner application
      */
     public CrossoverOperation() {
-        this.probability = RDFMiner.parameters.proCrossover;
+        this.probability = parameters.getProCrossover();
         this.rand = new MersenneTwisterFast();
     }
 

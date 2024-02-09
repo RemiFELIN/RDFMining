@@ -233,13 +233,13 @@ public class Shape extends Entity {
      */
     public double computeFitness() {
         // compute a hypothesis testing
-//        HypothesisTesting ht = new HypothesisTesting(this);
-        HypothesisTesting.eval(this);
+        HypothesisTesting ht = new HypothesisTesting();
+        ht.eval(this);
         // if the ht gives a success
         if(this.accepted) {
             return this.numConfirmations;
         } else {
-            return this.numConfirmations * (this.likelihood.doubleValue() / HypothesisTesting.getMaxMassFunction(this));
+            return this.numConfirmations * (this.likelihood.doubleValue() / ht.getMaxMassFunction(this));
         }
     }
 

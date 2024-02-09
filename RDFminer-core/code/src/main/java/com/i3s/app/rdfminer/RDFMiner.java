@@ -9,21 +9,10 @@ import com.i3s.app.rdfminer.launcher.evaluator.Evaluator;
 import com.i3s.app.rdfminer.output.Results;
 import com.i3s.app.rdfminer.output.SimilarityMap;
 import com.i3s.app.rdfminer.output.Stat;
-import com.i3s.app.rdfminer.parameters.CmdLineParameters;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -51,7 +40,9 @@ public class RDFMiner {
 
 	private static final Logger logger = Logger.getLogger(RDFMiner.class.getName());
 
-	public static CmdLineParameters parameters = new CmdLineParameters();
+//	public static Parameters parameters = new Parameters();
+
+	Parameters parameters = Parameters.getInstance();
 
 	/**
 	 * The output file in json
@@ -77,7 +68,7 @@ public class RDFMiner {
 	/**
 	 * The entry point of the RDFMiner application.
 	 */
-	public static void main(String[] args) throws InterruptedException, ExecutionException, URISyntaxException, IOException {
+	public void main(String[] args) throws InterruptedException, ExecutionException, URISyntaxException, IOException {
 
 		// Print the banner of RDF Miner
 		System.out.println(Global.BANNER);
@@ -86,33 +77,35 @@ public class RDFMiner {
 		PropertyConfigurator.configure(Global.LOG4J_PROPERTIES);
 		
 		// Parse the command-line parameters and options:
-		CmdLineParser parser = new CmdLineParser(parameters);
+//		CmdLineParser parser = new CmdLineParser(parameters);
 
 		// if you have a wider console, you could increase the value;
 		// here 80 is also the default
-		parser.getProperties().withUsageWidth(80);
+//		parser.getProperties().withUsageWidth(80);
 
-		try {
-			// parse the arguments.
-			parser.parseArgument(args);
-		} catch (CmdLineException e) {
-			// if there's a problem in the command line, you'll get this
-			// exception. this will report an error message.
-			System.err.println(e.getMessage());
-			// print the list of available options
-			System.err.println();
-			parser.printUsage(System.out);
-			System.err.println();
-			return;
-		}
+		configureFileLogger("toto");
 
-		if (parameters.help) {
-			// print the list of available options
-			System.out.println();
-			parser.printUsage(System.out);
-			System.out.println();
-			return;
-		}
+//		try {
+//			// parse the arguments.
+//			parser.parseArgument(args);
+//		} catch (CmdLineException e) {
+//			// if there's a problem in the command line, you'll get this
+//			// exception. this will report an error message.
+//			System.err.println(e.getMessage());
+//			// print the list of available options
+//			System.err.println();
+//			parser.printUsage(System.out);
+//			System.err.println();
+//			return;
+//		}
+
+//		if (parameters.help) {
+//			// print the list of available options
+//			System.out.println();
+//			parser.printUsage(System.out);
+//			System.out.println();
+//			return;
+//		}
 		
 		logger.info("Number of processors avalaibles: " + Global.NB_THREADS);
 		
@@ -122,17 +115,17 @@ public class RDFMiner {
 		System.loadLibrary(Global.SO_LIBRARY);
 
 		// Update output and caches path
-		Global.OUTPUT_PATH += Global.USERS + parameters.username + "/";
+		Global.OUTPUT_PATH += Global.USERS + parameters.getUserID() + "/";
 
-		if(parameters.singleAxiom == null) {
-			logger.info("Output folder: " + Global.OUTPUT_PATH + parameters.directory);
-			if(!(new File(Global.OUTPUT_PATH + parameters.directory)).exists()) {
-				boolean created = (new File(Global.OUTPUT_PATH + parameters.directory)).mkdirs();
-				if(created)
-					logger.info("Successfully created !");
-			}
-			RDFMiner.outputFolder = Global.OUTPUT_PATH + parameters.directory;
-		}
+//		if(parameters.singleAxiom == null) {
+//			logger.info("Output folder: " + Global.OUTPUT_PATH + parameters.directory);
+//			if(!(new File(Global.OUTPUT_PATH + parameters.directory)).exists()) {
+//				boolean created = (new File(Global.OUTPUT_PATH + parameters.directory)).mkdirs();
+//				if(created)
+//					logger.info("Successfully created !");
+//			}
+//			RDFMiner.outputFolder = Global.OUTPUT_PATH + parameters.directory;
+//		}
 		// Create cache folder if it not already exists
 		Global.CACHE_FOLDER = RDFMiner.outputFolder + "/caches/";
 		if(!(new File(Global.CACHE_FOLDER)).exists()) {
@@ -143,21 +136,21 @@ public class RDFMiner {
 
 		// define a SPARQL Endpoint to use if provided
 		// todo: switch case ???
-		if ((parameters.useClassicShaclMode || parameters.useProbabilisticShaclMode) && parameters.targetSparqlEndpoint == null) {
+		if ((parameters.useClassicShaclMode || parameters.useProbabilisticShaclMode) && parameters.getNamedDataGraph() == null) {
 			// SHACL Shapes mining !
 			Global.TARGET_SPARQL_ENDPOINT = Global.CORESE_IP;
 			logger.warn("RDFMiner will query the Corese semantic factory: " + Global.TARGET_SPARQL_ENDPOINT);
 			logger.warn("This version of Corese contains an implementation of SHACL (standard and probabilistic) ...");
-		} else if(parameters.targetSparqlEndpoint != null) {
+		} else if(parameters.getNamedDataGraph() != null) {
 			logger.info("(--target-endpoint) a target SPARQL Endpoint is specified !");
 			try {
 				// Test if the given url is a valid URL or not
-				new URL(parameters.targetSparqlEndpoint);
+				new URL(parameters.getNamedDataGraph());
 			} catch (MalformedURLException e) {
 				logger.error("The given SPARQL Endpoint is not a valid URL ...");
 				System.exit(1);
 			}
-			Global.TARGET_SPARQL_ENDPOINT = parameters.targetSparqlEndpoint;
+			Global.TARGET_SPARQL_ENDPOINT = parameters.getNamedDataGraph();
 			logger.info("RDFMiner will query the following link in SERVICE clause: " + Global.TARGET_SPARQL_ENDPOINT);
 		} else {
 			Global.TARGET_SPARQL_ENDPOINT = Global.VIRTUOSO_DBPEDIA_2015_04_SPARQL_ENDPOINT;
@@ -166,26 +159,26 @@ public class RDFMiner {
 			logger.warn("This database contains a dump of DBPedia 2015-04 ...");
 		}
 		// define a training dataset if it's provided
-		if(parameters.trainSparqlEndpoint != null) {
-			logger.info("(--train-endpoint) a training SPARQL Endpoint is specified !");
-			try {
-				// Test if the given url is a valid URL or not
-				new URL(parameters.trainSparqlEndpoint);
-			} catch (MalformedURLException e) {
-				logger.error("The given SPARQL Endpoint is not a valid URL ...");
-				System.exit(1);
-			}
-			Global.TRAINING_SPARQL_ENDPOINT = parameters.trainSparqlEndpoint;
-			logger.info("RDFMiner will query the following link in SERVICE clause: " + Global.TRAINING_SPARQL_ENDPOINT);
-		} else if(parameters.grammaticalEvolution && (!parameters.useProbabilisticShaclMode && !parameters.useClassicShaclMode)) {
-			logger.warn("Grammatical evolution activated without training dataset specified !");
-			logger.warn("RDFMiner will query the target database in SERVICE clause: " + Global.TARGET_SPARQL_ENDPOINT);
-			logger.warn("The processes may take longer if the target database contains a large set of RDF triples ...");
-			Global.TRAINING_SPARQL_ENDPOINT = Global.TARGET_SPARQL_ENDPOINT;
-		}
+//		if(parameters.trainSparqlEndpoint != null) {
+//			logger.info("(--train-endpoint) a training SPARQL Endpoint is specified !");
+//			try {
+//				// Test if the given url is a valid URL or not
+//				new URL(parameters.trainSparqlEndpoint);
+//			} catch (MalformedURLException e) {
+//				logger.error("The given SPARQL Endpoint is not a valid URL ...");
+//				System.exit(1);
+//			}
+//			Global.TRAINING_SPARQL_ENDPOINT = parameters.trainSparqlEndpoint;
+//			logger.info("RDFMiner will query the following link in SERVICE clause: " + Global.TRAINING_SPARQL_ENDPOINT);
+//		} else if(parameters.grammaticalEvolution && (!parameters.useProbabilisticShaclMode && !parameters.useClassicShaclMode)) {
+//			logger.warn("Grammatical evolution activated without training dataset specified !");
+//			logger.warn("RDFMiner will query the target database in SERVICE clause: " + Global.TARGET_SPARQL_ENDPOINT);
+//			logger.warn("The processes may take longer if the target database contains a large set of RDF triples ...");
+//			Global.TRAINING_SPARQL_ENDPOINT = Global.TARGET_SPARQL_ENDPOINT;
+//		}
 
 		// define a set of prefixes provided by user (with -prefix option), else use the default prefixes
-		Global.PREFIXES_FILE = RDFMiner.outputFolder + parameters.prefixesFile;
+		Global.PREFIXES_FILE = RDFMiner.outputFolder + parameters.getNamedDataGraph();
 		File prefixesFile = new File(Global.PREFIXES_FILE);
 		if(prefixesFile.exists()) {
 			logger.info("RDFMiner will use the specified prefixes file");
@@ -210,7 +203,7 @@ public class RDFMiner {
 		logger.info("COUNT #RDF triples: " + Global.nTriples);
 
 		// Novelty search
-		if(parameters.useNoveltySearch) {
+		if(parameters.isUseNoveltySearch()) {
 			Global.SIMILARITIES_FILE = Global.CACHE_FOLDER + "axioms_similarity.json";
 			if(!new File(Global.SIMILARITIES_FILE).exists()) {
 				logger.info("Create the similarity map and save it into " + Global.SIMILARITIES_FILE);
@@ -224,7 +217,8 @@ public class RDFMiner {
 		// Grammar-based genetic programming
 		if(parameters.grammaticalEvolution) {
 			try {
-				GrammaticalEvolution.run();
+				GrammaticalEvolution evolution = new GrammaticalEvolution();
+				evolution.run();
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.exit(0);
@@ -235,19 +229,20 @@ public class RDFMiner {
 		}
 	}
 
-	public static void sendEntities() {
-		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-			JSONObject toSend = new JSONObject();
-			toSend.put(Results.USER_ID, RDFMiner.parameters.username);
-			toSend.put(Results.PROJECT_NAME, RDFMiner.parameters.directory);
-			toSend.put(Results.ENTITIES, RDFMiner.content);
-			HttpPut put = new HttpPut(Endpoint.API_RESULTS);
-			put.setEntity(new StringEntity(toSend.toString(), ContentType.APPLICATION_JSON));
-			logger.info("PUT request: updating entities ...");
-			HttpResponse response = httpClient.execute(put);
-			logger.info("Status code: " + response.getStatusLine().getStatusCode());
-			logger.info(new BasicResponseHandler().handleResponse(response));
-		} catch (IOException e) {
+	private static void configureFileLogger(String projectId) {
+		try {
+			String logFileName = "/user/rfelin/home/projects/RDFMining/IO/logs/" + projectId + ".log";
+			//
+			RollingFileAppender fileAppender = new RollingFileAppender(
+					new PatternLayout("%d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %c - %m%n"), logFileName);
+			fileAppender.setMaxFileSize("1GB");
+			fileAppender.setMaxBackupIndex(5);
+			//
+			logger.addAppender(fileAppender);
+			logger.setLevel(Level.DEBUG);
+			//
+			Logger.getRootLogger().removeAppender("server");
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

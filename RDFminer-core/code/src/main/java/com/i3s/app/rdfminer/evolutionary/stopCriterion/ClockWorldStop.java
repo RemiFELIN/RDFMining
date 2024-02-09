@@ -1,11 +1,10 @@
 package com.i3s.app.rdfminer.evolutionary.stopCriterion;
 
-import com.i3s.app.rdfminer.RDFMiner;
-import org.apache.log4j.Logger;
+import com.i3s.app.rdfminer.Parameters;
 
 public class ClockWorldStop implements StopCriterion {
 
-    private static final Logger logger = Logger.getLogger(ClockWorldStop.class.getName());
+    Parameters parameters = Parameters.getInstance();
 
     public long maxTime;
     public long chrono;
@@ -28,7 +27,7 @@ public class ClockWorldStop implements StopCriterion {
         this.curGeneration = 1;
         // Max time to spent for GE
         // convert time: min to ms
-        this.maxTime = chrono + RDFMiner.parameters.maxTime * 60000L;
+        this.maxTime = chrono + parameters.getMaxMiningTime() * 60000L;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.i3s.app.rdfminer.evolutionary.individual;
 
-import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
@@ -23,13 +23,15 @@ public class CandidatePopulation {
 
 	private static final Logger logger = Logger.getLogger(CandidatePopulation.class.getName());
 
+	Parameters parameters = Parameters.getInstance();
+
 	protected int generation;
 	protected Generator generator;
 	protected ArrayList<GEChromosome> chromosomes;
 
 	public CandidatePopulation(Generator generator) {
 		this.generator = generator;
-		this.chromosomes = new ArrayList<>(RDFMiner.parameters.populationSize);
+		this.chromosomes = new ArrayList<>(parameters.getPopulationSize());
 	}
 
 	/**
@@ -41,7 +43,7 @@ public class CandidatePopulation {
 			throws NumberFormatException, IndexOutOfBoundsException {
 		GEChromosome chromosome;
 		GEIndividual individual;
-		ArrayList<Double> fitnessList = new ArrayList<>(RDFMiner.parameters.populationSize);
+		ArrayList<Double> fitnessList = new ArrayList<>(parameters.getPopulationSize());
 		// TODO developed only in the case of random initialization -
 		// typeInitialization=1 ... Later need to develop other type of initialization.
 		if (cache != null) {
@@ -49,7 +51,7 @@ public class CandidatePopulation {
 			// for each individuals, we will set an GEInidividual
 			for(JSONObject ind : cache.individualsJSON) {
 				chromosome = new GEChromosome(cache.lenChromosomes);
-				chromosome.setMaxCodonValue(RDFMiner.parameters.maxValCodon);
+				chromosome.setMaxCodonValue(parameters.maxValCodon);
 				chromosome.setMaxChromosomeLength(1000);
 				for(String integer : ind.getString(IndividualJSON.GENOTYPE).split(",")) {
 					chromosome.add(Integer.parseInt(integer));
@@ -63,7 +65,7 @@ public class CandidatePopulation {
 			this.chromosomes = initializeChromosomes();
 		}
 		logger.info("Number of chromosomes created: " + chromosomes.size());
-		ArrayList<GEIndividual> population = new ArrayList<>(RDFMiner.parameters.populationSize);
+		ArrayList<GEIndividual> population = new ArrayList<>(parameters.getPopulationSize());
 		for(int i=0; i<chromosomes.size(); i++) {
 			if (generator != null) {
 				// init individual
@@ -92,13 +94,13 @@ public class CandidatePopulation {
 		GEChromosome chromosome;
 		int maxLenChromosome = 1000;
 		int n = 0;
-		while (n < RDFMiner.parameters.populationSize) {
-			chromosome = new GEChromosome(RDFMiner.parameters.initLenChromosome);
-			chromosome.setMaxCodonValue(RDFMiner.parameters.maxValCodon);
+		while (n < parameters.getPopulationSize()) {
+			chromosome = new GEChromosome(parameters.getSizeChromosome());
+			chromosome.setMaxCodonValue(parameters.maxValCodon);
 			chromosome.setMaxChromosomeLength(maxLenChromosome);
-			for (int i = 0; i < RDFMiner.parameters.initLenChromosome; i++) {
+			for (int i = 0; i < parameters.getSizeChromosome(); i++) {
 				// typeInitialization = 1
-				chromosome.add(Math.abs(random.nextInt(RDFMiner.parameters.maxValCodon)));
+				chromosome.add(Math.abs(random.nextInt(parameters.maxValCodon)));
 			}
 			chromosomes.add(chromosome);
 			n++;
