@@ -3,7 +3,6 @@
  */
 package com.i3s.app.rdfminer.expression;
 
-import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.sparql.RDFNodePair;
 import com.i3s.app.rdfminer.sparql.virtuoso.VirtuosoEndpoint;
 import org.apache.jena.query.QuerySolution;
@@ -163,14 +162,16 @@ public abstract class Expression {
 	 * and a second part, consisting of the 32-bit hash of the expression itself in
 	 * hexadecimal notation, to ensure (virtual) uniqueness.
 	 * </p>
+	 * <b>Updated: return null since RDFminer v1.5</b>
 	 */
 	protected String cacheName() {
 		// Take the root symbol as the base of the name,
 		// but remove the prefix and the closing ">":
-		String[] s = rootSymbol.split("/");
-		String name = s[s.length - 1];
-		return String.format(Global.CACHE_FOLDER + "%s-%08x.cache", name.substring(0, name.length() - 1),
-				toString().hashCode());
+//		String[] s = rootSymbol.split("/");
+//		String name = s[s.length - 1];
+//		return String.format(Global.CACHE_FOLDER + "%s-%08x.cache", name.substring(0, name.length() - 1),
+//				toString().hashCode());
+		return null;
 	}
 
 	/**

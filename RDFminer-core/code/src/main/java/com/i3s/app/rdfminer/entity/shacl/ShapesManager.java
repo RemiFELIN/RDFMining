@@ -1,7 +1,6 @@
 package com.i3s.app.rdfminer.entity.shacl;
 
 import com.i3s.app.rdfminer.Global;
-import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.entity.shacl.vocabulary.Shacl;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
@@ -45,11 +44,9 @@ public class ShapesManager {
 
     public ShapesManager() {}
 
-    public ShapesManager(String content, boolean prefix, CoreseEndpoint endpoint) {
+    public ShapesManager(String content, CoreseEndpoint endpoint) {
         // set content to submit in http request
-        if(prefix)
-            this.content += Global.PREFIXES;
-        this.content += content;
+        this.content = endpoint.getPrefixes() + "\n\n" + content;
         // init model
         try {
             this.model = Rio.parse(new StringReader(this.content), "", RDFFormat.TURTLE);
@@ -107,8 +104,8 @@ public class ShapesManager {
                     shapes.add("<" + solution.getValue("shapes") + ">");
                 }
                 logger.info(shapes.size() + " shape(s) are ready to be evaluated !");
-                RDFMiner.results.setNumberEntities(shapes.size());
-                RDFMiner.results.saveResult();
+//                RDFminer.results.setNumberEntities(shapes.size());
+//                RDFminer.results.saveResult();
                 for(String shapeSubject : shapes) {
                     // feel shape content
                     StringBuilder sb = new StringBuilder();

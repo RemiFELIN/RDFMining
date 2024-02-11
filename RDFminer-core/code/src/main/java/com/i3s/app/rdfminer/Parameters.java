@@ -21,7 +21,7 @@ public class Parameters {
 	private String projectName = "results";
 
 	@JsonProperty("mod")
-	private String mod;
+	private int mod;
 
 	@JsonProperty("prefixes")
 	private String prefixes;
@@ -94,6 +94,12 @@ public class Parameters {
 	@JsonProperty("shaclAlpha")
 	private double probShaclAlpha = 0.05;
 
+	/**
+	 * The timeout used for SPARQL queries <i>(default value: 600,000 ms)</i>
+	 */
+	@JsonProperty("sparqlTimeOut")
+	private long sparqlTimeOut = 600000;
+
 	// @TODO: map it on json input when the implementation is finished
 	private boolean useNoveltySearch = false;
 
@@ -117,7 +123,7 @@ public class Parameters {
 
 //	@Option(name = "-st", aliases = {
 //				"--sparql-timeout" }, usage = "time-out (in ms.) for SPARQL Query", metaVar = "TIMEOUT")
-	public long sparqlTimeOut = 0;
+
 
 //	@Option(name = "-tc", aliases = {
 //			"--time-cap" }, usage = "time-cap (in min.) for axiom mining assessment", metaVar = "TIMECAP")
@@ -155,7 +161,7 @@ public class Parameters {
 		return projectName;
 	}
 
-	public String getMod() {
+	public int getMod() {
 		return mod;
 	}
 
@@ -241,6 +247,10 @@ public class Parameters {
 
 	public double getProbShaclAlpha() {
 		return probShaclAlpha;
+	}
+
+	public long getSparqlTimeOut() {
+		return sparqlTimeOut;
 	}
 
 	public boolean isUseNoveltySearch() {

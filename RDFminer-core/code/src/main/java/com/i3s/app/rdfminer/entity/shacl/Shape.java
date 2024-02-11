@@ -212,7 +212,7 @@ public class Shape extends Entity {
         this.referenceCardinality = report.referenceCardinalityByShape.get(iri).intValue();
         this.numConfirmations = report.numConfirmationsByShape.get(iri).intValue();
         this.numExceptions = report.numExceptionsByShape.get(iri).intValue();
-        this.likelihood = report.likelihoodByShape.get(iri);
+        this.likelihood = (Double) report.likelihoodByShape.get(iri);
         this.generality = (double) report.generalityByShape.get(iri);
         if(report.exceptionsByShape.get(iri) != null) {
             this.exceptions = new ArrayList<>(report.exceptionsByShape.get(iri));
@@ -239,7 +239,7 @@ public class Shape extends Entity {
         if(this.accepted) {
             return this.numConfirmations;
         } else {
-            return this.numConfirmations * (this.likelihood.doubleValue() / ht.getMaxMassFunction(this));
+            return this.numConfirmations * (this.likelihood / ht.getMaxMassFunction(this));
         }
     }
 
@@ -255,7 +255,7 @@ public class Shape extends Entity {
             this.referenceCardinality = 0;
             this.numConfirmations = 0;
             this.numExceptions = 0;
-            this.likelihood = 0;
+            this.likelihood = 0.0;
             this.generality = 0;
             if(this.individual != null) this.individual.setFitness(new BasicFitness(0, this.individual));
         } else {

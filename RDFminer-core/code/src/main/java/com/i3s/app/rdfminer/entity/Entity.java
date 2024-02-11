@@ -88,7 +88,7 @@ public class Entity {
      */
     public long elapsedTime = 0L;
 
-    public Number likelihood;
+    public Double likelihood;
 
     /**
      * A list of facts in the RDF store that explicitly corroborate the axiom.

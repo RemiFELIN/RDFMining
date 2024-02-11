@@ -81,7 +81,7 @@ public class CandidateAxiomGenerator extends AxiomGenerator {
 	 * </p>
 	 */
 	protected final String statusFileName = "AxiomGenerator-"
-			+ (parameters.sparqlTimeOut > 0 ? "-" + parameters.sparqlTimeOut : "") + ".status";
+			+ (parameters.getSparqlTimeOut() > 0 ? "-" + parameters.getSparqlTimeOut() : "") + ".status";
 
 	/**
 	 * Constructs a new axiom generator for the language described by the given
@@ -148,7 +148,7 @@ public class CandidateAxiomGenerator extends AxiomGenerator {
 	 */
 	protected Set<String> getNodes(String sparql) throws URISyntaxException, IOException {
 		logger.warn("Querying DBpedia with query " + sparql);
-		CoreseEndpoint endpoint = new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
+		CoreseEndpoint endpoint = new CoreseEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES);
 		List<String> results = endpoint.selectFederatedQuery("class", sparql);
 		return new TreeSet<>(results);
 	}

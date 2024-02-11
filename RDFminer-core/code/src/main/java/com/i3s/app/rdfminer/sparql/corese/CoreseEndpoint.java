@@ -43,17 +43,17 @@ public class CoreseEndpoint {
     /**
      * The service to query using Corese federated queries
      */
-    public String service;
+    public String namedGraphUri;
 
     /**
      * The prefixes that will be used to query the SPARQL endpoint.
      */
-    public String prefixes;
+    private String prefixes;
 
     /**
      * The timeout used for each queries (in ms)
      */
-    public long timeout = Integer.MAX_VALUE;
+    private long timeout = parameters.getSparqlTimeOut();
 
 //    /**
 //     * HTTP client
@@ -66,17 +66,17 @@ public class CoreseEndpoint {
      * @param prefixes the prefixes used for the queries
      */
     public CoreseEndpoint(String service, String prefixes) {
-        this.url = Global.CORESE_IP;
-        this.service = service;
+        this.url = Global.SPARQL_ENDPOINT;
+        this.namedGraphUri = service;
         this.prefixes = prefixes;
     }
 
     public String addFederatedQuery(String sparql) {
-        return "SERVICE <" + this.service + "> { " + sparql + " }";
+        return "SERVICE <" + this.namedGraphUri + "> { " + sparql + " }";
     }
 
     public String addFederatedQueryWithLoop(String sparql, int limit) {
-        return "SERVICE <" + this.service + "?loop=true&limit=" + limit + "> { " + sparql + " }";
+        return "SERVICE <" + this.namedGraphUri + "?loop=true&limit=" + limit + "> { " + sparql + " }";
     }
 
 //    public String timeoutParam = "@timeout " + this.timeout + " ";
@@ -93,15 +93,13 @@ public class CoreseEndpoint {
 
 
     public boolean askFederatedQuery(String sparql) throws URISyntaxException, IOException {
-        String request = RequestBuilder.ask(addFederatedQuery(sparql), true);// "\nASK WHERE { " + addFederatedQuery(sparql) + " }";
-//        logger.debug("ASK Request: " + request);
+        String request = RequestBuilder.ask(addFederatedQuery(sparql), true);
         String resultAsJSON = query(Format.JSON, request);
         return ResultParser.getResultFromAskQuery(resultAsJSON);
     }
 
     public List<String> selectFederatedQuery(String var, String sparql) throws URISyntaxException, IOException {
         String request = buildSelectAllQuery(addFederatedQuery(sparql));
-//        System.out.println(request);
         String resultAsJSON = query(Format.JSON, request);
         return ResultParser.getResultsFromVariable(var, resultAsJSON);
     }
@@ -225,13 +223,16 @@ public class CoreseEndpoint {
 //    }
 
     public String getValidationReportFromServer(String content) throws URISyntaxException, IOException {
+        // todo: faire la requete sparql !
+        int nTriples = 0;
         // fill params
         ArrayList<BasicHeader> bodyMap = new ArrayList<>();
         // 'query' is a mandatory param !
         bodyMap.add(new BasicHeader("query", "construct where {?s ?p ?o}"));
         if(parameters.useProbabilisticShaclMode) {
             bodyMap.add(new BasicHeader("mode", CoreseService.PROBABILISTIC_SHACL_EVALUATION));
-            bodyMap.add(new BasicHeader("param", "p:" + parameters.getProbShaclP() + ";nT:" + Global.nTriples));
+            bodyMap.add(new BasicHeader("named-graph-uri", this.namedGraphUri));
+            bodyMap.add(new BasicHeader("param", "p:" + parameters.getProbShaclP() + ";nT:" + nTriples));
             bodyMap.add(new BasicHeader("content", content));
         } else {
             bodyMap.add(new BasicHeader("mode", CoreseService.SHACL_EVALUATION));
@@ -364,6 +365,10 @@ public class CoreseEndpoint {
         }
         in.close();
         return sb.toString();
+    }
+
+    public String getPrefixes() {
+        return prefixes;
     }
 
     public void setTimeout(long timeout) {

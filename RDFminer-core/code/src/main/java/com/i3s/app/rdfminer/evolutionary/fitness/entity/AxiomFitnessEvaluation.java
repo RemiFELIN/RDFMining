@@ -38,7 +38,7 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 	public ArrayList<Entity> initializePopulation(ArrayList<GEIndividual> individuals) {
 		Set<Callable<Entity>> callables = new HashSet<>();
 		ArrayList<Entity> entities = new ArrayList<>();
-		logger.info("The axioms will be intialized using the target SPARQL Endpoint : " + Global.TARGET_SPARQL_ENDPOINT);
+		logger.info("The axioms will be intialized using the target SPARQL Endpoint : " + Global.SPARQL_ENDPOINT);
 		logger.info("Begin updating population ...");
 		for(GEIndividual individual : individuals) {
 //			System.out.println(individual.getPhenotype());
@@ -47,7 +47,7 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 			if (individual.isMapped()) {
 				callables.add(() -> {
 					Axiom axiom = AxiomFactory.create(individual, individual.getPhenotype(),
-						new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
+						new CoreseEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES));
 					// compute fitness
 					axiom.computeFitness();
 					return axiom;
@@ -98,7 +98,7 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 		// Check if Novelty Search is enabled
 		if(parameters.isUseNoveltySearch()) {
 		 	// Compute the similarities of each axiom between them, and update the population
-			NoveltySearch noveltySearch = new NoveltySearch(new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
+			NoveltySearch noveltySearch = new NoveltySearch(new CoreseEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES));
 			try {
 				entities = noveltySearch.update(entities);
 			} catch (URISyntaxException | IOException e) {
@@ -120,13 +120,13 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 
 	@Override
 	public ArrayList<Entity> updatePopulation(ArrayList<Entity> population) {
-		logger.info("Update the current population using the target SPARQL Endpoint : " + Global.TARGET_SPARQL_ENDPOINT);
+		logger.info("Update the current population using the target SPARQL Endpoint : " + Global.SPARQL_ENDPOINT);
 		Set<Callable<Entity>> callables = new HashSet<>();
 		List<Entity> entities = new ArrayList<>();
 		for(Entity entity : population) {
 			callables.add(() -> {
 				Axiom axiom = AxiomFactory.create(entity.individual, entity.individual.getPhenotype(),
-						new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
+						new CoreseEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES));
 				// compute fitness
 				axiom.computeFitness();
 				// the generation in which this axiom was discovered
@@ -171,7 +171,7 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 		// Check if Novelty Search is enabled
 		if(parameters.isUseNoveltySearch()) {
 			// Compute the similarities of each axiom between them, and update the population
-			NoveltySearch noveltySearch = new NoveltySearch(new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES));
+			NoveltySearch noveltySearch = new NoveltySearch(new CoreseEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES));
 			try {
 				entities = noveltySearch.update(entities);
 			} catch (URISyntaxException | IOException e) {
@@ -197,7 +197,7 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 		// instance of axiom
 //		if (individual.isMapped()) {
 		Axiom axiom = AxiomFactory.create(individual, individual.getPhenotype(),
-				new CoreseEndpoint(Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES));
+				new CoreseEndpoint(parameters.getNamedDataGraph(), Global.PREFIXES));
 		// compute fitness
 		axiom.computeFitness();
 		f = axiom.individual.getFitness().getDouble();

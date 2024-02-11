@@ -1,6 +1,6 @@
 package com.i3s.app.rdfminer.generator.shacl;
 
-import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Production;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Rule;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Symbol;
@@ -26,6 +26,8 @@ import java.util.List;
 public abstract class ShapeGenerator extends Generator {
 
     private static final Logger logger = Logger.getLogger(ShapeGenerator.class.getName());
+
+    Parameters parameters = Parameters.getInstance();
 
     /**
      * Constructs a new SHACL Shape generator for the language described by the given grammar.
@@ -95,7 +97,7 @@ public abstract class ShapeGenerator extends Generator {
         } catch (IOException ioe) {
             logger.info("Cache for " + symbol + " not found. Querying SPARQL endpoint");
             logger.info("Querying SPARQL endpoint for symbol <" + symbol + "> ...");
-            CoreseEndpoint endpoint = new CoreseEndpoint(Global.CORESE_IP, Global.PREFIXES);
+            CoreseEndpoint endpoint = new CoreseEndpoint(parameters.getNamedDataGraph(), parameters.getPrefixes());
             List<String> results = endpoint.select(symbol, sparql);
             if(results.size() > 0) {
                 PrintStream cache = null;

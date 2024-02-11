@@ -1,16 +1,12 @@
 package com.i3s.app.rdfminer.evolutionary.individual;
 
 import com.i3s.app.rdfminer.Parameters;
-import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.MersenneTwisterFast;
 import com.i3s.app.rdfminer.evolutionary.geva.Util.Random.RandomNumberGenerator;
 import com.i3s.app.rdfminer.generator.Generator;
-import com.i3s.app.rdfminer.output.Cache;
-import com.i3s.app.rdfminer.output.IndividualJSON;
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -39,45 +35,45 @@ public class CandidatePopulation {
 	 * @param cache a given file used as a cache file
 	 * @return a new candidate population
 	 */
-	public ArrayList<GEIndividual> initialize(Cache cache)
+	public ArrayList<GEIndividual> initialize()
 			throws NumberFormatException, IndexOutOfBoundsException {
 		GEChromosome chromosome;
 		GEIndividual individual;
 		ArrayList<Double> fitnessList = new ArrayList<>(parameters.getPopulationSize());
 		// TODO developed only in the case of random initialization -
 		// typeInitialization=1 ... Later need to develop other type of initialization.
-		if (cache != null) {
-			int i = 0;
-			// for each individuals, we will set an GEInidividual
-			for(JSONObject ind : cache.individualsJSON) {
-				chromosome = new GEChromosome(cache.lenChromosomes);
-				chromosome.setMaxCodonValue(parameters.maxValCodon);
-				chromosome.setMaxChromosomeLength(1000);
-				for(String integer : ind.getString(IndividualJSON.GENOTYPE).split(",")) {
-					chromosome.add(Integer.parseInt(integer));
-				}
-				chromosomes.add(i, chromosome);
-				fitnessList.add(i, ind.getDouble(IndividualJSON.FITNESS));
-				i++;
-			}
-		} else {
-			logger.info("Buffer file does not exists, initializing chromosomes ...");
-			this.chromosomes = initializeChromosomes();
-		}
+//		if (cache != null) {
+//			int i = 0;
+//			// for each individuals, we will set an GEInidividual
+//			for(JSONObject ind : cache.individualsJSON) {
+//				chromosome = new GEChromosome(cache.lenChromosomes);
+//				chromosome.setMaxCodonValue(parameters.maxValCodon);
+//				chromosome.setMaxChromosomeLength(1000);
+//				for(String integer : ind.getString(IndividualJSON.GENOTYPE).split(",")) {
+//					chromosome.add(Integer.parseInt(integer));
+//				}
+//				chromosomes.add(i, chromosome);
+//				fitnessList.add(i, ind.getDouble(IndividualJSON.FITNESS));
+//				i++;
+//			}
+//		} else {
+//			logger.info("Buffer file does not exists, initializing chromosomes ...");
+		this.chromosomes = initializeChromosomes();
+//		}
 		logger.info("Number of chromosomes created: " + chromosomes.size());
 		ArrayList<GEIndividual> population = new ArrayList<>(parameters.getPopulationSize());
-		for(int i=0; i<chromosomes.size(); i++) {
+		for (GEChromosome geChromosome : chromosomes) {
 			if (generator != null) {
 				// init individual
-				individual = generator.getIndividualFromChromosome(chromosomes.get(i));
+				individual = generator.getIndividualFromChromosome(geChromosome);
 				// set its fitness
-				if(cache != null) {
-					individual.setFitness(new BasicFitness(fitnessList.get(i), individual));
-				}
+//				if(cache != null) {
+//					individual.setFitness(new BasicFitness(fitnessList.get(i), individual));
+//				}
 				population.add(individual);
 			} else {
-				logger.error("Generator is null");
-				System.exit(0);
+				logger.error("Generator is null ...");
+				// System.exit(0);
 			}
 		}
 		logger.info("Number of individuals created: " + population.size());

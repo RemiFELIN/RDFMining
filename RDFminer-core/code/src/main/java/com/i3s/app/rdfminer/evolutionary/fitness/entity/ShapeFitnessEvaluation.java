@@ -1,14 +1,12 @@
 package com.i3s.app.rdfminer.evolutionary.fitness.entity;
 
 import com.i3s.app.rdfminer.Global;
-import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.entity.shacl.Shape;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
 import org.apache.log4j.Logger;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -30,7 +28,7 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
 //            ShapesManager shapesManager = new ShapesManager(individuals);
             logger.info(individuals.size() + " SHACL Shapes ready to be evaluated !");
             // launch evaluation
-            CoreseEndpoint endpoint = new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
+            CoreseEndpoint endpoint = new CoreseEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES);
             // For each SHACL Shapes individuals, we instanciate SHACL shape
             ArrayList<Entity> newPopulation = new ArrayList<>();
             for(GEIndividual individual : individuals) {
@@ -56,7 +54,7 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
         try {
             logger.info(population.size() + " distinct SHACL Shapes ready to be evaluated !");
             // set endpoint
-            CoreseEndpoint endpoint = new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
+            CoreseEndpoint endpoint = new CoreseEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES);
             // For each SHACL Shapes individuals, we set all results of them
             ArrayList<Entity> newPop = new ArrayList<>();
             // iterate on entities
@@ -65,8 +63,8 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
                 newPop.add(new Shape(entity.individual, endpoint));
             }
             // write validation report in file
-            FileWriter fw = new FileWriter(RDFMiner.outputFolder + Global.SHACL_VALIDATION_REPORT_FILENAME);
-            fw.close();
+//            FileWriter fw = new FileWriter(RDFminer.outputFolder + Global.SHACL_VALIDATION_REPORT_FILENAME);
+//            fw.close();
             return newPop;
         } catch (IOException e) {
             logger.error("I/O exceptions while evaluating SHACL Shapes ...");
@@ -87,7 +85,7 @@ public class ShapeFitnessEvaluation implements FitnessEvaluation {
     public Entity updateIndividual(GEIndividual individual) {
         // evaluation of SHACL Shapes
         try {
-            CoreseEndpoint endpoint = new CoreseEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
+            CoreseEndpoint endpoint = new CoreseEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES);
             return new Shape(individual, endpoint);
         } catch (IOException e) {
             logger.error("I/O exceptions while evaluating SHACL Shapes ...");

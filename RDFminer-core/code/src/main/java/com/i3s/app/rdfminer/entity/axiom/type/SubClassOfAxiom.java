@@ -194,7 +194,7 @@ public class SubClassOfAxiom extends Axiom {
 			ari = ARI();
 			return;
 			
-		} else if (parameters.sparqlTimeOut > 0) {
+		} else if (parameters.getSparqlTimeOut() > 0) {
 //			logger.info("compute the number of exceptions with a timeout ...");
 			// Since the query to count exception is complex and may take very long to
 			// execute, we execute it with the user-supplied time out.

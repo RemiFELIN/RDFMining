@@ -1,7 +1,7 @@
 package com.i3s.app.rdfminer.evolutionary.fitness.novelty;
 
 import com.i3s.app.rdfminer.Parameters;
-import com.i3s.app.rdfminer.RDFMiner;
+import com.i3s.app.rdfminer.RDFminer;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFitness;
 import com.i3s.app.rdfminer.sparql.corese.CoreseEndpoint;
@@ -43,14 +43,14 @@ public class NoveltySearch {
             for (int j = 0; j < entities.size(); j++) {
                 if (i != j) {
                     // use similarity cache
-                    if (RDFMiner.similarityMap.get(entities.get(i), entities.get(j)) != null) {
+                    if (RDFminer.similarityMap.get(entities.get(i), entities.get(j)) != null) {
 //                        logger.debug("get similarity value from similarity map ...");
-                        entities.get(i).similarities.add(RDFMiner.similarityMap.get(entities.get(i), entities.get(j)));
+                        entities.get(i).similarities.add(RDFminer.similarityMap.get(entities.get(i), entities.get(j)));
                     } else {
                         Similarity sim = new Similarity(entities.get(i), entities.get(j));
                         double simValue = sim.getModifiedSimilarity(endpoint);
                         entities.get(i).similarities.add(simValue);
-                        RDFMiner.similarityMap.append(entities.get(i), entities.get(j), simValue);
+                        RDFminer.similarityMap.append(entities.get(i), entities.get(j), simValue);
                         countNewSim++;
                     }
                 }

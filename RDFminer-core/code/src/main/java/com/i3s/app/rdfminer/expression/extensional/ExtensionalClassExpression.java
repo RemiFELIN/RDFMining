@@ -40,7 +40,7 @@ public class ExtensionalClassExpression extends ExtensionalExpression {
 		super();
 		rootSymbol = "ObjectOneOf (";
 		extension = new TreeSet<>();
-		VirtuosoEndpoint endpoint = new VirtuosoEndpoint(Global.TARGET_SPARQL_ENDPOINT, Global.PREFIXES);
+		VirtuosoEndpoint endpoint = new VirtuosoEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES);
 		Model m = endpoint.tdb;
 
 		for (List<Symbol> symbols : syntax) {

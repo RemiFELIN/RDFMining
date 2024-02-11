@@ -1,16 +1,16 @@
 package com.i3s.app.rdfminer.evolutionary;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.i3s.app.rdfminer.Endpoint;
 import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.Parameters;
-import com.i3s.app.rdfminer.RDFMiner;
 import com.i3s.app.rdfminer.entity.Entity;
 import com.i3s.app.rdfminer.evolutionary.fitness.Fitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
 import com.i3s.app.rdfminer.evolutionary.tools.EAOperators;
 import com.i3s.app.rdfminer.evolutionary.tools.EATools;
 import com.i3s.app.rdfminer.generator.Generator;
-import com.i3s.app.rdfminer.output.GenerationJSON;
+import com.i3s.app.rdfminer.output.Generation;
 import com.i3s.app.rdfminer.output.Results;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPut;
@@ -20,22 +20,23 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.*;
 
 public class EntityMining {
 
     private static final Logger logger = Logger.getLogger(EntityMining.class.getName());
 
-    Parameters parameters = Parameters.getInstance();
+    public Parameters parameters = Parameters.getInstance();
 
-//    private static long start;
+    public Results results = Results.getInstance();
 
-    public ArrayList<Entity> run(Generator generator, ArrayList<Entity> entities,
-                                        int curGeneration) {
+    public ArrayList<Entity> iterate(Generator generator, ArrayList<Entity> entities, int curGeneration) {
         // A list of individuals (from entities list)
         ArrayList<GEIndividual> entitiesI = new ArrayList<>();
         // Use list of individuals instead of list of entities
@@ -104,68 +105,37 @@ public class EntityMining {
         } catch (InterruptedException e) {
             executor.shutdownNow();
         }
-
-        // Check if Novelty Search is enabled
-//        if(RDFMiner.parameters.useNoveltySearch) {
-//            // Compute the similarities of each axiom between them, and update the population
-//            NoveltySearch noveltySearch = new NoveltySearch(new CoreseEndpoint(Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES));
-//            try {
-//                evaluatedIndividuals = noveltySearch.update(evaluatedIndividuals);
-//            } catch (URISyntaxException | IOException e) {
-//                logger.error("Error during the computation of similarities ...");
-//                e.printStackTrace();
-//            }
-//        }
-        // stats
-        setStats(entities, newPopulation, curGeneration);
-//        logger.debug("size new pop= " + newPopulation.size());
-        // renew population
+        // update results and send it to the RDFminer-server
+        updateResults(entities, newPopulation, curGeneration);
         return newPopulation;
     }
 
-    public void setStats(ArrayList<Entity> originalPopulation, ArrayList<Entity> newPopulation, int curGeneration) {
-//        for(Entity ent : newPopulation) {
-//            logger.debug("newPop(i): " +
-//                    Arrays.toString(ent.individual.getGenotype().get(0).toString().replace("Chromosome Contents: ", "").split(","))
-//            + " ~ " + ent.individual.getPhenotype().getStringNoSpace());
-//
-//        }
-        // set stats
-        // get computation time in ms
-        ArrayList<Long> durations = new ArrayList<>();
-        for(Entity entity : newPopulation) {
-            durations.add(entity.elapsedTime);
-        }
-        long duration = durations.stream().mapToLong(a -> a).sum();
-        GenerationJSON generation = new GenerationJSON(originalPopulation, newPopulation, curGeneration, durations);
+    private void updateResults(ArrayList<Entity> originalPopulation, ArrayList<Entity> newPopulation, int curGeneration) {
+        Generation generation = new Generation(originalPopulation, newPopulation, curGeneration);
         // Log usefull stats concerning the algorithm evolution
-        logger.info("Computation time: " + duration + " ms.");
-        logger.info("Average fitness: " + generation.averageFitness);
-        logger.info("Diversity coefficient: " + (generation.diversityCoefficient * 100) + "%");
-        logger.info("Population development rate: " + (generation.populationDevelopmentRate * 100) + "%");
-        logger.info("Number of individual(s) with a non-null fitness: " + generation.numIndividualsWithNonNullFitness);
-        RDFMiner.stats.generations.put(generation.toJSON());
+        logGenerationInfo(generation);
         // send generations to the server
-        sendGenerations();
-    }
-
-    public void sendGenerations() {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            JSONObject toSend = new JSONObject();
-            toSend.put(Results.USER_ID, parameters.getUserID());
-            toSend.put(Results.PROJECT_NAME, parameters.getProjectName());
-            toSend.put(Results.STATISTICS, RDFMiner.stats.toJSON());
+            // PUT request
             HttpPut put = new HttpPut(Endpoint.API_RESULTS);
-//            System.out.println("update generations:");
-//            System.out.println(toSend.toString(2));
-            put.setEntity(new StringEntity(toSend.toString(), ContentType.APPLICATION_JSON));
-            logger.info("PUT request: updating generations ...");
+            // Mapping Results instance in JSON string using Jackson
+            String updated = new ObjectMapper().writeValueAsString(results);
+            put.setEntity(new StringEntity(updated, ContentType.APPLICATION_JSON));
+            logger.info("/PUT - update results ...");
             HttpResponse response = httpClient.execute(put);
             logger.info("Status code: " + response.getStatusLine().getStatusCode());
             logger.info(new BasicResponseHandler().handleResponse(response));
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void logGenerationInfo(Generation generation) {
+        logger.info("sum. computation time: " + generation.getComputationTime() + " ms.");
+        logger.info("avg. fitness: " + generation.getAverageFitness());
+        logger.info("diversity coefficient: " + (generation.getDiversityCoefficient() * 100) + "%");
+        logger.info("population development rate: " + (generation.getPopulationDevelopmentRate() * 100) + "%");
+        logger.info("Number of individual(s) with a non-null fitness: " + generation.getNumIndividualsWithNonNullFitness());
     }
 
 }

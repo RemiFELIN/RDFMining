@@ -1,6 +1,6 @@
 package com.i3s.app.rdfminer.generator.axiom;
 
-import com.i3s.app.rdfminer.Global;
+import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.Phenotype;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Production;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Rule;
@@ -28,6 +28,8 @@ import java.util.List;
 public abstract class AxiomGenerator extends Generator {
 
 	private static final Logger logger = Logger.getLogger(AxiomGenerator.class.getName());
+
+	Parameters parameters = Parameters.getInstance();
 
 	/**
 	 * Constructs a new axiom generator with no grammar attached.
@@ -141,9 +143,9 @@ public abstract class AxiomGenerator extends Generator {
 			logger.info("File readed: " + cacheName(symbol, sparql) + ", " + rule.size() + " production(s) added !");
 			cache.close();
 		} catch (IOException ioe) {
-			logger.info("Cache for " + symbol + " not found. Querying SPARQL endpoint: " + Global.TRAINING_SPARQL_ENDPOINT);
-			logger.info("Querying SPARQL endpoint for symbol <" + symbol + "> ...");
-			CoreseEndpoint endpoint = new CoreseEndpoint(Global.TRAINING_SPARQL_ENDPOINT, Global.PREFIXES);
+//			logger.info("Cache for " + symbol + " not found. Querying SPARQL endpoint: " + Global.TRAINING_SPARQL_ENDPOINT);
+//			logger.info("Querying SPARQL endpoint for symbol <" + symbol + "> ...");
+			CoreseEndpoint endpoint = new CoreseEndpoint(parameters.getNamedDataGraph(), parameters.getPrefixes());
 			PrintStream cache = null;
 			try {
 				cache = new PrintStream(cacheName(symbol, sparql));

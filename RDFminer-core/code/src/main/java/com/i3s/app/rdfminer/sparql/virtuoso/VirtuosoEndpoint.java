@@ -3,24 +3,15 @@
  */
 package com.i3s.app.rdfminer.sparql.virtuoso;
 
-import java.io.File;
 import org.apache.jena.atlas.web.HttpException;
-import org.apache.jena.query.Dataset;
-import org.apache.jena.query.Query;
-import org.apache.jena.query.QueryException;
-import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.query.QueryFactory;
-import org.apache.jena.query.QueryParseException;
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
-import org.apache.jena.query.ResultSetFactory;
+import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
 import org.apache.jena.tdb.TDBFactory;
 import org.apache.log4j.Logger;
 
-import com.i3s.app.rdfminer.Global;
+import java.io.File;
 
 /**
  * A class to encapsulate a SPARQL endpoint and centralise all accesses to the
@@ -81,14 +72,14 @@ public class VirtuosoEndpoint {
 	 * as the SPARQL executor. Otherwise, the SPARQL endpoint will default to the
 	 * URL provided to the constructor.
 	 * </p>
-	 * 
+	 *
 	 * @param url    The URL of the endpoint.
 	 * @param prefix The SPARQL prefixes, that will be prepended to all queries.
 	 */
 	public VirtuosoEndpoint(String url, String prefix) {
-		if (new File(Global.DBPEDIA_TDB_PATH).exists()) {
+		if (new File("tmp").exists()) {
 			endpoint = null;
-			Dataset dataset = TDBFactory.createDataset(Global.DBPEDIA_TDB_PATH);
+			Dataset dataset = TDBFactory.createDataset("tmp");
 			tdb = dataset.getDefaultModel();
 		} else {
 			endpoint = url;

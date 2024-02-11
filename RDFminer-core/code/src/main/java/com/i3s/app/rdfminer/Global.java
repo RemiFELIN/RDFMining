@@ -1,5 +1,8 @@
 package com.i3s.app.rdfminer;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * This class is used to centralize paths of each resources used around the
  * project
@@ -9,16 +12,23 @@ package com.i3s.app.rdfminer;
 public class Global {
 
     /**
+     * Number of threads used to perform evaluation of axioms, its value depends on
+     * the processor(s) of the server which are used to deploy and use the RDF
+     * Miner.
+     */
+    public static final int NB_THREADS = Runtime.getRuntime().availableProcessors();
+
+    /**
      * This is a banner to present RDF Miner on a terminal
      */
-    public static final String BANNER = "  _____  _____  ______   __  __ _____ _   _ ______ _____  \n"
-            + " |  __ \\|  __ \\|  ____| |  \\/  |_   _| \\ | |  ____|  __ \\ \n"
-            + " | |__) | |  | | |__    | \\  / | | | |  \\| | |__  | |__) |\n"
-            + " |  _  /| |  | |  __|   | |\\/| | | | | . ` |  __| |  _  / \n"
-            + " | | \\ \\| |__| | |      | |  | |_| |_| |\\  | |____| | \\ \\ \n"
-            + " |_|  \\_\\_____/|_|      |_|  |_|_____|_| \\_|______|_|  \\_\\\n"
-            + "                                                          \n" + "\033[0;1m" + " VERSION "
-            + System.getenv("RDFMINER_VERSION") + "\033[0m" + "\n";
+    public static final List<String> BANNER = Arrays.asList(
+            "  _____  _____  ______   __  __ _____ _   _ ______ _____  \n",
+            " |  __ \\|  __ \\|  ____| |  \\/  |_   _| \\ | |  ____|  __ \\ \n",
+            " | |__) | |  | | |__    | \\  / | | | |  \\| | |__  | |__) |\n",
+            " |  _  /| |  | |  __|   | |\\/| | | | | . ` |  __| |  _  / \n",
+            " | | \\ \\| |__| | |      | |  | |_| |_| |\\  | |____| | \\ \\ \n",
+            " |_|  \\_\\_____/|_|      |_|  |_|_____|_| \\_|______|_|  \\_\\\n"
+    );
 
     public static final String HOME = System.getenv("HOME");
 
@@ -40,28 +50,28 @@ public class Global {
     /**
      * path to DBPEDIA TDB (not used in this version)
      */
-    public static final String DBPEDIA_TDB_PATH = HOME + "/tdb/";
+//    public static final String DBPEDIA_TDB_PATH = HOME + "/tdb/";
 
     /**
      * The SPARQL Endpoint targetted (to query it)
      */
-    public static String TARGET_SPARQL_ENDPOINT = null;
+    public static String SPARQL_ENDPOINT = "http://localhost:8081/sparql"; // "http://172.19.0.1:" + System.getenv("CORESE_PORT") + "/sparql";
 
     /**
      * SPARQL endpoint which contains full instance of DBPedia
      */
-    public final static String VIRTUOSO_DBPEDIA_2015_04_SPARQL_ENDPOINT = "store:DBpedia";
+//    public final static String VIRTUOSO_DBPEDIA_2015_04_SPARQL_ENDPOINT = "store:DBpedia";
 
     /**
      * SPARQL endpoint from local server used as training dataset (a part of full dataset used)
      * By default, it contains 1% of full instance of DBPedia 2015.04
      */
-    public static String TRAINING_SPARQL_ENDPOINT = "store:SmallDBpedia";
+//    public static String TRAINING_SPARQL_ENDPOINT = "store:SmallDBpedia";
 
     /**
      * Corese IP Address
      */
-    public static final String CORESE_IP = "http://172.19.0.1:" + System.getenv("CORESE_PORT") + "/";
+//    public static final String CORESE_IP = "http://172.19.0.1:" + System.getenv("CORESE_PORT") + "/";
 
     /**
      * RDFMiner Server IP Address
@@ -71,10 +81,10 @@ public class Global {
     /**
      * Number of RDF triples available on the tested SPARQL endpoint
      */
-    public static int nTriples;
+//    public static int nTriples;
 
     /**
-     * default prefixes used to perform queries with the remote {@link Global#TARGET_SPARQL_ENDPOINT
+     * default prefixes used to perform queries with the remote {@link Global#SPARQL_ENDPOINT
      * SPARQL endpoint}
      */
     public static String PREFIXES =
@@ -104,54 +114,49 @@ public class Global {
     /**
      * Output path of results, it corresponding to '/rdfminer/io/' in container
      */
-    public static String OUTPUT_PATH = HOME + "io/";
+//    public static String OUTPUT_PATH = HOME + "io/";
 
     /**
      * Name of output results file in JSON
      */
-    public static final String RESULTS_FILENAME = "/results.json";
+//    public static final String RESULTS_FILENAME = "/results.json";
 
     /**
      * Name of SHACL Validation report (Classic; probabilistic) file using turtle (.ttl) format
      */
-    public static final String SHACL_VALIDATION_REPORT_FILENAME = "/shacl_report.ttl";
+//    public static final String SHACL_VALIDATION_REPORT_FILENAME = "/shacl_report.ttl";
 
-    public static final String SHACL_SHAPES_FILENAME = "shapes.ttl";
+//    public static final String SHACL_SHAPES_FILENAME = "shapes.ttl";
 
-    public static final String SHACL_HYPOTHESIS_TEST_FILENAME = "hypothesis_test.ttl";
+//    public static final String SHACL_HYPOTHESIS_TEST_FILENAME = "hypothesis_test.ttl";
 
     /**
      * Path to the probabilisitic STTL Template file (.rq format)
      */
-    public static final String PROBABILISTIC_STTL_TEMPLATE = OUTPUT_PATH + "psh_template.rq";
+//    public static final String PROBABILISTIC_STTL_TEMPLATE = OUTPUT_PATH + "psh_template.rq";
 
     /**
      * Path to the probabilisitic STTL Template result (html)
      */
-    public static final String PROBABILISTIC_STTL_RESULT_AS_HTML = "results.html";
+//    public static final String PROBABILISTIC_STTL_RESULT_AS_HTML = "results.html";
 
-    public static final String USERS = "users/";
+//    public static final String USERS = "users/";
 
     /**
      * .cache files folder path
      */
-    public static String CACHE_FOLDER = "";
+//    public static String CACHE_FOLDER = "";
 
-    public static String GRAMMAR_FILE = "";
+//    public static String GRAMMAR_FILE = "";
 
-    public static String PREFIXES_FILE = "";
+//    public static String PREFIXES_FILE = "";
 
     public static String SIMILARITIES_FILE = "";
 
-    public static String AXIOMS_FILE = "";
+//    public static String AXIOMS_FILE = "";
 
-    public static String SHAPES_FILE = "";
+//    public static String SHAPES_FILE = "";
 
-    /**
-     * Number of threads used to perform evaluation of axioms, its value depends on
-     * the processor(s) of the server which are used to deploy and use the RDF
-     * Miner.
-     */
-    public static final int NB_THREADS = Runtime.getRuntime().availableProcessors();
+
 
 }
