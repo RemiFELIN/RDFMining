@@ -1,0 +1,7 @@
+{
+    "username": "admin",
+    "projectName": "axiomAssessment",
+    "mod": 2,
+    "namedDataGraph": "https://example.org/graph#3",
+    "axioms": "SubClassOf(<http://schema.org/Airport> <http://dbpedia.org/ontology/Airport>)\nSubClassOf(<http://schema.org/Airport> <http://dbpedia.org/ontology/ArchitecturalStructure>)\nSubClassOf(<http://schema.org/Airport> <http://dbpedia.org/ontology/Infrastructure>)"
+}

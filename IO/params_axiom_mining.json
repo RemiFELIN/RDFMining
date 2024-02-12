@@ -1,0 +1,11 @@
+{
+    "username": "admin",
+    "projectName": "axiomMining",
+    "mod": 1,
+    "namedDataGraph": "https://example.org/graph#3",
+    "grammar": "Axiom := ClassAxiom\nClassAxiom := SubClassOf\nSubClassOf := 'SubClassOf' '(' Class ' ' Class ')'\nClass := 'SPARQL ?Class a owl:Class . FILTER(contains(str(?Class), \"http://dbpedia.org/ontology/\"))'",
+    "populationSize": 10,
+    "time": 1,
+    "sparqlTimeOut": 30000,
+    "sizeChromosome": 2
+}

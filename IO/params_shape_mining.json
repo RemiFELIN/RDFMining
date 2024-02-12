@@ -1,0 +1,10 @@
+{
+    "username": "admin",
+    "projectName": "monTest",
+    "mod": 3,
+    "namedDataGraph": "https://example.org/graph#1",
+    "grammar": "Shape := ' a ' NodeShape\nNodeShape := 'sh:NodeShape ; ' ShapeBody\nShapeBody := 'sh:targetClass ' Class ' ; ' ShapeProperty\nShapeProperty := ' sh:property [ ' PropertyBody ' ] . '\nPropertyBody := ' sh:path rdf:type ; sh:hasValue ' Class ' ; '\n#---------------------------------------------------------------\nClass := 'SPARQL ?x a ?Class .'",
+    "populationSize": 20,
+    "time": 5,
+    "sizeChromosome": 2
+}

@@ -1,0 +1,9 @@
+{
+    "username": "admin",
+    "projectName": "shapeAssessment",
+    "mod": 4,
+    "namedDataGraph": "https://example.org/graph#1",
+    "shaclProb": 0.5,
+    "shaclAlpha": 0.05,
+    "shapes": ":1 a sh:NodeShape ; sh:targetClass <http://www.wikidata.org/entity/Q212354> ;  sh:property [  sh:path rdf:type ; sh:hasValue <http://www.wikidata.org/entity/Q212354> ;  ] .\n :2  a sh:NodeShape ; sh:targetClass <http://www.wikidata.org/entity/Q575296> ;  sh:property [  sh:path rdf:type ; sh:hasValue <http://www.wikidata.org/entity/Q103537> ;  ] ."
+}
