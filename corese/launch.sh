@@ -5,6 +5,5 @@
 echo $(pwd)/corese-server/corese-default-properties.ini
 java -jar corese-server/target/corese-server-4.5.0.jar \
      -init $(pwd)/corese-server/build-docker/corese/corese-default-properties.properties \
-     -l $(pwd)/../IO/db/demo/data.ttl \
      -p ${CORESE_PORT} \
      -su 
