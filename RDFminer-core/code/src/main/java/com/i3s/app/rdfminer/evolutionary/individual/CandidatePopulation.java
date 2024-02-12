@@ -19,24 +19,23 @@ public class CandidatePopulation {
 
 	private static final Logger logger = Logger.getLogger(CandidatePopulation.class.getName());
 
-	Parameters parameters = Parameters.getInstance();
-
 	protected int generation;
 	protected Generator generator;
 	protected ArrayList<GEChromosome> chromosomes;
 
 	public CandidatePopulation(Generator generator) {
+		Parameters parameters = Parameters.getInstance();
 		this.generator = generator;
 		this.chromosomes = new ArrayList<>(parameters.getPopulationSize());
 	}
 
 	/**
-	 * Initialize a set of individuals 
-	 * @param cache a given file used as a cache file
+	 * Initialize a set of individuals
 	 * @return a new candidate population
 	 */
 	public ArrayList<GEIndividual> initialize()
 			throws NumberFormatException, IndexOutOfBoundsException {
+		Parameters parameters = Parameters.getInstance();
 		GEChromosome chromosome;
 		GEIndividual individual;
 		ArrayList<Double> fitnessList = new ArrayList<>(parameters.getPopulationSize());
@@ -85,6 +84,7 @@ public class CandidatePopulation {
 	 * @return an array of chromosomes
 	 */
 	public ArrayList<GEChromosome> initializeChromosomes() {
+		Parameters parameters = Parameters.getInstance();
 		RandomNumberGenerator random;
 		random = new MersenneTwisterFast(System.currentTimeMillis());
 		GEChromosome chromosome;

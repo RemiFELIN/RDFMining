@@ -128,7 +128,7 @@ public class Shape extends Entity {
         // that simply stores everything in main memory.
         this.db = new SailRepository(new MemoryStore());
         setIdentifierWithQuery();
-        this.setEntityAsString(this.absoluteIri);
+        this.setEntityAsString(content);
         // get the targetted class(es) if it provides
         this.targetClasses = getValuesFromProperty(Shacl.TARGETCLASS);
         // get the targetSubjectsOf if it provides

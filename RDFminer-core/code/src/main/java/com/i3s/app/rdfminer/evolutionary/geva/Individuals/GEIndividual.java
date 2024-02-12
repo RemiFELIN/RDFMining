@@ -40,7 +40,6 @@ import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.BasicFi
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.FitnessPackage.Fitness;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.GEGrammar;
 import com.i3s.app.rdfminer.evolutionary.geva.Mapper.Mapper;
-import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -58,10 +57,6 @@ import java.util.regex.Pattern;
  */
 @SuppressWarnings({"CloneDoesntCallSuperClone"})
 public class GEIndividual extends AbstractIndividual {
-
-    private static final Logger logger = Logger.getLogger(GEIndividual.class.getName());
-
-    Parameters parameters = Parameters.getInstance();
 
     private Genotype genotype;
     private Phenotype phenotype;
@@ -312,6 +307,7 @@ public class GEIndividual extends AbstractIndividual {
     }
 
     public GEChromosome getChromosomes() {
+        Parameters parameters = Parameters.getInstance();
         GEChromosome chromosome = new GEChromosome(parameters.getSizeChromosome());
         chromosome.setMaxCodonValue(Integer.MAX_VALUE);
         chromosome.setMaxChromosomeLength(1000);

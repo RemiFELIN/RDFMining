@@ -4,12 +4,11 @@ import com.i3s.app.rdfminer.Parameters;
 
 public class EffortStop implements StopCriterion {
 
-    Parameters parameters = Parameters.getInstance();
-
     public int curGeneration;
 
     @Override
     public boolean isFinish() {
+        Parameters parameters = Parameters.getInstance();
         return parameters.getPopulationSize() * this.curGeneration >= parameters.getEffort();
     }
 

@@ -8,11 +8,13 @@ import com.i3s.app.rdfminer.generator.axiom.RandomAxiomGenerator;
 import com.i3s.app.rdfminer.generator.shacl.RandomShapeGenerator;
 import com.i3s.app.rdfminer.launcher.Evaluator;
 import com.i3s.app.rdfminer.launcher.GrammaticalEvolution;
+import com.i3s.app.rdfminer.output.Results;
 import com.i3s.app.rdfminer.output.SimilarityMap;
 import org.apache.log4j.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -33,35 +35,22 @@ public class RDFminer {
 	// Novelty search
 	public static SimilarityMap similarityMap = null;
 
+	private Parameters parameters;
+
+	public RDFminer() {
+		this.parameters = Parameters.getInstance();
+	}
+
 	/**
 	 * The entry point of the RDFMiner application.
 	 */
-	public static void exec(Parameters parameters) throws InterruptedException, ExecutionException, URISyntaxException, IOException {
+	public void exec() throws InterruptedException, ExecutionException, URISyntaxException, IOException {
 		// load additional librairies
 		System.loadLibrary(Global.SO_LIBRARY);
-		// Configure the log4j loggers:
-		PropertyConfigurator.configure(Global.LOG4J_PROPERTIES);
 		// Configuring logger on a specific file
-		configureFileLogger(parameters.getProjectName());
+		configureFileLogger();
 		// Print the banner of RDFminer
 		logRDFminerBanner();
-		// define a set of prefixes provided by user (with -prefix option), else use the default prefixes
-//		Global.PREFIXES_FILE = RDFMiner.outputFolder + parameters.getNamedDataGraph();
-//		File prefixesFile = new File(Global.PREFIXES_FILE);
-//		if(prefixesFile.exists()) {
-//			logger.info("RDFMiner will use the specified prefixes file");
-//			logger.info(prefixesFile.getAbsolutePath());
-//			try {
-//				Global.PREFIXES = Files.readString(Path.of(prefixesFile.getAbsolutePath()));
-//			} catch (IOException e) {
-//				logger.error("Error when reading the prefix file ...");
-//				logger.error(e.getMessage());
-//				System.exit(1);
-//			}
-//		} else {
-//			logger.info("RDFMiner will use the default prefixes to perform SPARQL queries ...");
-//		}
-
 		// compute the number of triples published on the considered SPARQL endpoint
 		// usefull to compute 'one time' the number of triples (because it is redundant and can be very long ...)
 		// use it to provide it to Corese and compute the generality for each shape
@@ -69,29 +58,17 @@ public class RDFminer {
 //		logger.info("COUNT the total number of triples available through the SPARQL endpoint: " + Global.SPARQL_ENDPOINT);
 //		Global.nTriples = endpoint.count("*", "?s ?p ?o");
 //		logger.info("COUNT #RDF triples: " + Global.nTriples);
-
-		// Novelty search
-//		if(parameters.isUseNoveltySearch()) {
-//			Global.SIMILARITIES_FILE = Global.CACHE_FOLDER + "axioms_similarity.json";
-//			if(!new File(Global.SIMILARITIES_FILE).exists()) {
-//				logger.info("Create the similarity map and save it into " + Global.SIMILARITIES_FILE);
-//				similarityMap = new SimilarityMap();
-//			} else {
-//				similarityMap = new SimilarityMap(new File(Global.SIMILARITIES_FILE));
-//			}
-//		}
-		//
 		Generator generator;
 		GrammaticalEvolution evolution;
 		Evaluator evaluator;
 		// Launching the appropriate feature according to the parameters
-		switch (parameters.getMod()) {
+		switch (this.parameters.getMod()) {
 			// Shape Mining
 			// require SHACL shapes generator to build well-formed candidates
 			// grammatical evolution will be used
 			case Mod.SHAPE_MINING:
 				// init generator with BNF grammar provided by user
-				generator = new RandomShapeGenerator(parameters.getGrammar());
+				generator = new RandomShapeGenerator(this.parameters.getGrammar());
 				evolution = new GrammaticalEvolution();
 				try {
 					evolution.run(generator);
@@ -106,7 +83,7 @@ public class RDFminer {
 			// grammatical evolution will be used
 			case Mod.AXIOM_MINING:
 				// init generator with BNF grammar provided by user
-				generator = new RandomAxiomGenerator(parameters.getGrammar(), true);
+				generator = new RandomAxiomGenerator(this.parameters.getGrammar(), true);
 				evolution = new GrammaticalEvolution();
 				try {
 					evolution.run(generator);
@@ -122,40 +99,29 @@ public class RDFminer {
 			case Mod.SHAPE_ASSESSMENT:
 				// launch evaluator
 				evaluator = new Evaluator();
-				evaluator.run(parameters.getMod());
+				evaluator.run(this.parameters.getMod());
 				break;
-
+			default:
+				logger.error("This mod is not recognized ! provided mod code: " + this.parameters.getMod());
+				break;
 		}
-//		if(parameters.grammaticalEvolution) {
-//			try {
-//				GrammaticalEvolution evolution = new GrammaticalEvolution();
-//				evolution.run();
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				System.exit(0);
-//			}
-//		} else {
-//			// launch evaluator !
-//			new Evaluator();
-//		}
 	}
 
-	private static void configureFileLogger(String projectName) {
-		try {
-			String filePath = "/user/rfelin/home/projects/RDFMining/IO/logs/" + projectName + ".log";
-			//
-			RollingFileAppender fileAppender = new RollingFileAppender(
-					new PatternLayout("%d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %c - %m%n"), filePath);
-			fileAppender.setMaxFileSize("1GB");
-			fileAppender.setMaxBackupIndex(5);
-			//
-			logger.addAppender(fileAppender);
-			logger.setLevel(Level.DEBUG);
-			//
-			Logger.getRootLogger().removeAppender("server");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	private void configureFileLogger() {
+		Results results = Results.getInstance();
+		String filePath = "/user/rfelin/home/projects/RDFMining/IO/logs/" + results.getLogs();
+		// set properties
+		Properties props = new Properties();
+		props.put("log4j.rootLogger", "INFO, A1");
+		props.put("log4j.appender.A1", "org.apache.log4j.RollingFileAppender");
+		props.put("log4j.appender.A1.File", filePath);
+		// Deal with 'very' huge experiments
+		props.put("log4j.appender.A1.MaxFileSize", "500MB");
+		props.put("log4j.appender.A1.layout", "org.apache.log4j.PatternLayout");
+		props.put("log4j.appender.A1.layout.ConversionPattern", "%d [%t] %-5p %c - %m%n");
+		// set props for Log4j
+		LogManager.resetConfiguration();
+		PropertyConfigurator.configure(props);
 	}
 
 	private static void logRDFminerBanner() {

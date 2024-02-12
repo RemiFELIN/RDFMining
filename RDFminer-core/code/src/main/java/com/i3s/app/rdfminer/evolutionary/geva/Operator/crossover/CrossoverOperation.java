@@ -54,8 +54,6 @@ import java.util.Properties;
  */
 public abstract class CrossoverOperation implements Operation, Stochastic {
 
-    Parameters parameters = Parameters.getInstance();
-
     protected double probability;
     protected RandomNumberGenerator rand;
     
@@ -66,6 +64,7 @@ public abstract class CrossoverOperation implements Operation, Stochastic {
      * parameters provided by RDFMiner application
      */
     public CrossoverOperation() {
+        Parameters parameters = Parameters.getInstance();
         this.probability = parameters.getProCrossover();
         this.rand = new MersenneTwisterFast();
     }

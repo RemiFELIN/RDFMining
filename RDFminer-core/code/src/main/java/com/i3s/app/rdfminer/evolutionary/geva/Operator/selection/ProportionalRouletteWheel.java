@@ -52,8 +52,6 @@ import java.util.List;
  **/
 public class ProportionalRouletteWheel extends RouletteWheel implements Stochastic {
 
-    Parameters parameters = Parameters.getInstance();
-
     /**
      * New instance
      * @param size size of selection
@@ -68,6 +66,7 @@ public class ProportionalRouletteWheel extends RouletteWheel implements Stochast
      */
     public ProportionalRouletteWheel() {
         super();
+        Parameters parameters = Parameters.getInstance();
         this.size = (int) (parameters.getSelectionRate() * parameters.getPopulationSize());
         this.rng = new MersenneTwisterFast();
     }

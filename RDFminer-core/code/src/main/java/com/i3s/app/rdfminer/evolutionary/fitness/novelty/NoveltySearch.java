@@ -21,8 +21,6 @@ public class NoveltySearch {
 
     private static final Logger logger = Logger.getLogger(NoveltySearch.class.getName());
 
-    Parameters parameters = Parameters.getInstance();
-
     public CoreseEndpoint endpoint;
 
     public NoveltySearch(CoreseEndpoint endpoint) {
@@ -94,6 +92,7 @@ public class NoveltySearch {
      * @return the value of based novelty fitness <var>f</var>(&phi)
      */
     public double updateFitness(Entity phi) {
+        Parameters parameters = Parameters.getInstance();
         if (!parameters.isUseNoveltySearch()) {
             return phi.individual.getFitness().getDouble();
         }

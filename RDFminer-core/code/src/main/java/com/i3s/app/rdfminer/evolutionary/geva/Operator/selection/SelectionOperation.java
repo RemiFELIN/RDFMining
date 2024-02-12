@@ -44,8 +44,6 @@ import java.util.Properties;
  */
 public abstract class SelectionOperation implements Operation {
 
-    Parameters parameters = Parameters.getInstance();
-
     protected Population selectedPopulation;
     protected int size;
 
@@ -70,6 +68,7 @@ public abstract class SelectionOperation implements Operation {
      * New instance based on RDFMiner parameters
      */
     public SelectionOperation() {
+        Parameters parameters = Parameters.getInstance();
         this.size = (int) (parameters.getEliteSelectionRate() * parameters.getPopulationSize());
         this.selectedPopulation = new SimplePopulation(this.size);
 //        logger.info("Size selection = " + this.size);

@@ -1,5 +1,6 @@
 package com.i3s.app.rdfminer.entity;
 
+import com.i3s.app.rdfminer.Mod;
 import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.entity.axiom.Axiom;
 import com.i3s.app.rdfminer.entity.axiom.type.DisjointClassesAxiom;
@@ -22,8 +23,6 @@ import java.util.stream.Collectors;
  * @author Rémi FELIN
  */
 public class Entity {
-
-    Parameters parameters = Parameters.getInstance();
 
     public String entityAsString;
 
@@ -208,6 +207,7 @@ public class Entity {
     }
 
     public JSONObject toJSON() {
+        Parameters parameters = Parameters.getInstance();
         JSONObject json = new JSONObject();
         if(this.individual != null) {
             json.put("phenotype", this.individual.getPhenotype().getStringNoSpace());
@@ -226,7 +226,7 @@ public class Entity {
         json.put("elapsedTime", this.elapsedTime);
 //        if (RDFMiner.parameters.useClassicShaclMode) {
 //            json.put("likelihood", this.likelihood.doubleValue());
-        if (parameters.useProbabilisticShaclMode) {
+        if (parameters.getMod() == Mod.SHAPE_ASSESSMENT) {
             json.put("generality", this.generality);
             json.put("likelihood", this.likelihood.doubleValue());
             json.put("pValue", this.pValue.doubleValue());

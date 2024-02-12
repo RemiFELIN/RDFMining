@@ -4,13 +4,8 @@ import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.entity.shacl.Shape;
 import org.apache.commons.math3.distribution.BinomialDistribution;
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
-import org.apache.log4j.Logger;
 
 public class HypothesisTesting {
-
-    private static final Logger logger = Logger.getLogger(HypothesisTesting.class.getName());
-
-    Parameters parameters = Parameters.getInstance();
 
     public Shape shape;
     private Double X2;
@@ -19,6 +14,7 @@ public class HypothesisTesting {
     public HypothesisTesting() {}
 
     public HypothesisTesting(Shape shape) {
+        Parameters parameters = Parameters.getInstance();
         this.shape = shape;
         this.X2 = null;
         // X^2 computation
@@ -41,6 +37,7 @@ public class HypothesisTesting {
     }
 
     public void eval(Shape shape) {
+        Parameters parameters = Parameters.getInstance();
 //        logger.info("\n~~~" +
 //                "\nshape.referenceCardinality= " + shape.referenceCardinality +
 //                "\nshape.numExceptions= " + shape.numExceptions +
@@ -79,6 +76,7 @@ public class HypothesisTesting {
     }
 
     public double getMaxMassFunction(Shape shape) {
+        Parameters parameters = Parameters.getInstance();
         BinomialDistribution bd = new BinomialDistribution(shape.referenceCardinality, parameters.getProbShaclP());
         return bd.probability((int) Math.floor(bd.getNumericalMean()));
     }

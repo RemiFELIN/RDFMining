@@ -134,17 +134,17 @@ public class DisjointClassesAxiom extends Axiom {
 //			System.out.println("generalityGraphPattern: " + generalityGraphPattern);
 //			System.out.println("generalityGraphPattern2: " + generalityGraphPattern2);
 			// compute the cost of GP
-			generality = Math.min(endpoint.count(generalityGraphPattern), endpoint.count(generalityGraphPattern2));
+			generality = Math.min(endpoint.count("?x", generalityGraphPattern), endpoint.count("?x", generalityGraphPattern2));
 			k = k + 2;
 		}
-		logger.info("generality: " + generality);
+//		logger.info("generality: " + generality);
 		// skipping computing the reference cardinality when generality=0
 		if (generality != 0) {
-			referenceCardinality = endpoint.count(refCardGraphPattern.toString());
+			referenceCardinality = endpoint.count("?x", refCardGraphPattern.toString());
 			StringBuilder exceptionGraphPattern = new StringBuilder();
 			for (Expression aClass : disjointClass) exceptionGraphPattern.append(aClass.graphPattern).append("\n");
-			numExceptions = endpoint.count(exceptionGraphPattern.toString());
-			logger.info("Num. exceptions: " + numExceptions);
+			numExceptions = endpoint.count("?x", exceptionGraphPattern.toString());
+//			logger.info("Num. exceptions: " + numExceptions);
 //			if (numExceptions > 0 && numExceptions < 100) {
 				// query the exceptions
 				// endpoint.select("TO DO");

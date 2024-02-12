@@ -1,5 +1,6 @@
 package com.i3s.app.rdfminer.generator;
 
+import com.i3s.app.rdfminer.Global;
 import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEChromosome;
 import com.i3s.app.rdfminer.evolutionary.geva.Individuals.GEIndividual;
@@ -12,6 +13,8 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * An abstract class of generator in RDFMiner
@@ -22,8 +25,6 @@ import java.net.URISyntaxException;
 public abstract class Generator {
 
     private static final Logger logger = Logger.getLogger(Generator.class.getName());
-
-    Parameters parameters = Parameters.getInstance();
 
     /**
      * The grammar defining the logical language of the axioms.
@@ -43,12 +44,15 @@ public abstract class Generator {
 
     public final String sparql = "SPARQL ";
 
+    private String cachesPath;
+
     /**
      * Load a given file path as a grammar to follow for our future rules
      *
      * @param filePath the path of grammar file
      */
     public Generator(String filePath) {
+        Parameters parameters = Parameters.getInstance();
         // Set up the grammar to be used for generating the axioms:
         if (filePath == null) {
             grammar = null;
@@ -124,9 +128,18 @@ public abstract class Generator {
     /**
      * Generate a cache file name from a SPARQL query, so that each file has a different name.
      */
-    public static String cacheName(String symbol, String sparql) {
-         return String.format("/home/rfelin/projects/RDFMining/RDFMiner/caches/%s%08x.cache", symbol, sparql.hashCode());
-//       return String.format(Global.CACHE_FOLDER + "%s%08x.cache", symbol, sparql.hashCode());
+    public void setCachesPath(String symbol, String sparql) {
+        Parameters parameters = Parameters.getInstance();
+        String root = Global.CACHES + parameters.getNamedDataGraph().hashCode();
+        // create cache directory if not exists for this RDF data graph
+        try {
+            Files.createDirectory(Paths.get(root));
+        } catch (IOException ignored) {}
+        this.cachesPath = String.format(root + "/%s%08x.cache", symbol, sparql.hashCode());
+    }
+
+    public String getCachesPath() {
+        return cachesPath;
     }
 
 }

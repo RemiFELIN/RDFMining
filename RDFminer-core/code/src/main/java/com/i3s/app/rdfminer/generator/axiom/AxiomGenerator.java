@@ -29,8 +29,6 @@ public abstract class AxiomGenerator extends Generator {
 
 	private static final Logger logger = Logger.getLogger(AxiomGenerator.class.getName());
 
-	Parameters parameters = Parameters.getInstance();
-
 	/**
 	 * Constructs a new axiom generator with no grammar attached.
 	 */
@@ -119,6 +117,7 @@ public abstract class AxiomGenerator extends Generator {
 
 	@Override
 	protected void generateProductions(String symbol, String sparql) throws URISyntaxException, IOException {
+		Parameters parameters = Parameters.getInstance();
 		Rule rule = grammar.findRule(symbol);
 		if (rule == null) {
 			rule = new Rule();
@@ -127,9 +126,11 @@ public abstract class AxiomGenerator extends Generator {
 			logger.debug("Added a new (dynamical) rule for " + rule.getLHS());
 		}
 
+		this.setCachesPath(symbol, sparql);
 		try {
+
 			// Try to read the productions from a cache file named after the query:
-			BufferedReader cache = new BufferedReader(new FileReader(cacheName(symbol, sparql)));
+			BufferedReader cache = new BufferedReader(new FileReader(this.getCachesPath()));
 			while (true) {
 				String s = cache.readLine();
 				if (s == null)
@@ -140,7 +141,7 @@ public abstract class AxiomGenerator extends Generator {
 				prod.add(t);
 				rule.add(prod);
 			}
-			logger.info("File readed: " + cacheName(symbol, sparql) + ", " + rule.size() + " production(s) added !");
+			logger.info("File readed: " + this.getCachesPath() + ", " + rule.size() + " production(s) added !");
 			cache.close();
 		} catch (IOException ioe) {
 //			logger.info("Cache for " + symbol + " not found. Querying SPARQL endpoint: " + Global.TRAINING_SPARQL_ENDPOINT);
@@ -148,11 +149,11 @@ public abstract class AxiomGenerator extends Generator {
 			CoreseEndpoint endpoint = new CoreseEndpoint(parameters.getNamedDataGraph(), parameters.getPrefixes());
 			PrintStream cache = null;
 			try {
-				cache = new PrintStream(cacheName(symbol, sparql));
+				cache = new PrintStream(this.getCachesPath());
 			} catch (FileNotFoundException e) {
 				logger.warn("Could not create cache for symbol " + symbol + ".");
 			}
-			List<String> results = endpoint.selectFederatedQuery(symbol, sparql);
+			List<String> results = endpoint.select(symbol, sparql, false);
 			if(results.size() > 0) {
 				for(String result : results) {
 					// declare a new production

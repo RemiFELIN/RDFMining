@@ -30,12 +30,11 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 
 	private static final Logger logger = Logger.getLogger(AxiomFitnessEvaluation.class.getName());
 
-	Parameters parameters = Parameters.getInstance();
-
 //	public List<JSONObject> evaluatedAxioms = new ArrayList<>();
 
 	@Override
 	public ArrayList<Entity> initializePopulation(ArrayList<GEIndividual> individuals) {
+		Parameters parameters = Parameters.getInstance();
 		Set<Callable<Entity>> callables = new HashSet<>();
 		ArrayList<Entity> entities = new ArrayList<>();
 		logger.info("The axioms will be intialized using the target SPARQL Endpoint : " + Global.SPARQL_ENDPOINT);
@@ -120,6 +119,7 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 
 	@Override
 	public ArrayList<Entity> updatePopulation(ArrayList<Entity> population) {
+		Parameters parameters = Parameters.getInstance();
 		logger.info("Update the current population using the target SPARQL Endpoint : " + Global.SPARQL_ENDPOINT);
 		Set<Callable<Entity>> callables = new HashSet<>();
 		List<Entity> entities = new ArrayList<>();
@@ -192,6 +192,7 @@ public class AxiomFitnessEvaluation implements FitnessEvaluation {
 
 	@Override
 	public Entity updateIndividual(GEIndividual individual) throws URISyntaxException, IOException {
+		Parameters parameters = Parameters.getInstance();
 		// in a case of new individual, we need to compute it as a new axiom
 		double f;
 		// instance of axiom

@@ -3,6 +3,7 @@
  */
 package com.i3s.app.rdfminer;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -14,6 +15,8 @@ public class Parameters {
 
 	private static Parameters instance = null;
 
+	private Parameters() {}
+
 	@JsonProperty("username")
 	private String userID = "admin";
 
@@ -24,12 +27,12 @@ public class Parameters {
 	private int mod;
 
 	@JsonProperty("prefixes")
-	private String prefixes;
+	private String prefixes = Global.PREFIXES;
 
 	@JsonProperty("namedDataGraph")
 	private String namedDataGraph;
 
-	@JsonProperty("bnf")
+	@JsonProperty("grammar")
 	private String grammar;
 
 	@JsonProperty("populationSize")
@@ -103,55 +106,13 @@ public class Parameters {
 	// @TODO: map it on json input when the implementation is finished
 	private boolean useNoveltySearch = false;
 
-
-//	@Option(name = "-cs", aliases = { "--classic-shacl" }, usage = "use classic SHACL validation", metaVar = "CLASSIC_SHACL")
-	public boolean useClassicShaclMode = false;
-
-//	@Option(name = "-psh", aliases = { "--probabilistic-shacl" }, usage = "use classic SHACL validation", metaVar = "CLASSIC_SHACL")
-	public boolean useProbabilisticShaclMode = false;
-
-
-//	@Option(name = "-ns", aliases = { "--novelty-search" }, usage = "use Novelty Search approach", metaVar = "NOVELTY_SEARCH")
-//	public boolean useNoveltySearch = false;
-
-	// GENERATOR
-//	@Option(name = "-ra", aliases = { "--random-axiom" }, usage = "use the random axiom generator")
-	public boolean useRandomAxiomGenerator = false;
-
-//	@Option(name = "-rs", aliases = { "--random-shapes" }, usage = "enable SHACL Shapes mining", metaVar = "SHAPES")
-	public boolean useRandomShaclShapeGenerator = false;
-
-//	@Option(name = "-st", aliases = {
-//				"--sparql-timeout" }, usage = "time-out (in ms.) for SPARQL Query", metaVar = "TIMEOUT")
-
-
-//	@Option(name = "-tc", aliases = {
-//			"--time-cap" }, usage = "time-cap (in min.) for axiom mining assessment", metaVar = "TIMECAP")
 	public long timeCap = 0;
 
-//	@Option(name = "-l", aliases = {
-//			"--loop" }, usage = "Launch SubClassOf assessment with loop operator from Corese", metaVar = "LOOP_CORESE")
-	public boolean loop = false;
-
-	// **************************************************//
-	// List of parameters as the input for GE operation //
-	// **************************************************//
-
-//	@Option(name = "-ge", aliases = {
-//			"--grammatical-evolution" }, usage = "activate the grammatical evolution for the entities extraction", metaVar = "GRAMMATICAL_EVOLUTION")
 	public boolean grammaticalEvolution;
 
-//	@Option(name = "-mxc", aliases = {
-//			"--max-codon" }, usage = "use as this value as the max value of codon", metaVar = "MAX_CODON")
 	public int maxValCodon = Integer.MAX_VALUE;
 
-//	@Option(name = "-ckp", aliases = { "--Checkpoint" }, usage = "Checkpoint", metaVar = "CHECK_POINT")
 	public int checkpoint = 1;
-//
-//	// receives other command line parameters than options
-//	@Argument
-//	public List<String> arguments = new ArrayList<>();
-
 
 	public String getUserID() {
 		return userID;
@@ -257,11 +218,12 @@ public class Parameters {
 		return useNoveltySearch;
 	}
 
-	public static Parameters getInstance() {
-		if(Parameters.instance == null) {
-			Parameters.instance = new Parameters();
+	@JsonCreator
+	public static synchronized Parameters getInstance() {
+		if(instance == null) {
+			instance = new Parameters();
 		}
-		return Parameters.getInstance();
+		return instance;
 	}
 
 }

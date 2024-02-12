@@ -33,15 +33,13 @@ public class CoreseEndpoint {
 
     private static final Logger logger = Logger.getLogger(CoreseEndpoint.class.getName());
 
-    Parameters parameters = Parameters.getInstance();
-
     /**
      * The URL of the SPARQL endpoint.
      */
     public String url;
 
     /**
-     * The service to query using Corese federated queries
+     * The named data graph to query
      */
     public String namedGraphUri;
 
@@ -53,7 +51,9 @@ public class CoreseEndpoint {
     /**
      * The timeout used for each queries (in ms)
      */
-    private long timeout = parameters.getSparqlTimeOut();
+    private long timeout;
+
+    private Parameters parameters;
 
 //    /**
 //     * HTTP client
@@ -66,99 +66,60 @@ public class CoreseEndpoint {
      * @param prefixes the prefixes used for the queries
      */
     public CoreseEndpoint(String service, String prefixes) {
+        Parameters parameters = Parameters.getInstance();
         this.url = Global.SPARQL_ENDPOINT;
         this.namedGraphUri = service;
         this.prefixes = prefixes;
+        this.parameters = Parameters.getInstance();
+        this.setTimeout(parameters.getSparqlTimeOut());
     }
 
-    public String addFederatedQuery(String sparql) {
-        return "SERVICE <" + this.namedGraphUri + "> { " + sparql + " }";
+    /**
+     * SPARQL 'SELECT' query.<br>Template: "select "<b>var</b>" where { "<b>body</b>" }"
+     * @param var
+     * @param body
+     * @return
+     * @throws URISyntaxException
+     * @throws IOException
+     */
+    public List<String> select(String var, String body, boolean distinct, Integer... limitOffset) throws URISyntaxException, IOException {
+        String request = this.parameters.getPrefixes() + "\n";
+        request += "@timeout " + this.parameters.getSparqlTimeOut() + "\n";
+        if (distinct) {
+            request += "SELECT distinct " + var + " WHERE {  " + body + " } ";
+        } else {
+            request += "SELECT " + var + " WHERE {  " + body + " } ";
+        }
+        // mapping limitOffset variables
+        if (limitOffset.length > 0) {
+            request += "LIMIT " + limitOffset[0];
+        }
+        if (limitOffset.length > 1) {
+            request += " OFFSET " + limitOffset[1];
+        }
+        String resultAsJSON = query(Format.JSON, request);
+        return ResultParser.getResultsFromVariable(var, resultAsJSON);
     }
 
-    public String addFederatedQueryWithLoop(String sparql, int limit) {
-        return "SERVICE <" + this.namedGraphUri + "?loop=true&limit=" + limit + "> { " + sparql + " }";
-    }
-
-//    public String timeoutParam = "@timeout " + this.timeout + " ";
-
-    public String buildSelectAllQuery(String sparql) {
-//        System.out.println("sparql: " + RequestBuilder.select("*", sparql, this.timeout, true));
-        return RequestBuilder.select("*", sparql, this.timeout, true);// "\nSELECT * WHERE { " + sparql + " }";
-    }
-
-    public String buildQuery(String basis, String sparql) {
-//        System.out.println("sparql: " + RequestBuilder.select("*", sparql, this.timeout, true));
-        return RequestBuilder.select(basis, sparql, this.timeout, true);// "\nSELECT * WHERE { " + sparql + " }";
-    }
 
 
-    public boolean askFederatedQuery(String sparql) throws URISyntaxException, IOException {
-        String request = RequestBuilder.ask(addFederatedQuery(sparql), true);
+
+    public boolean ask(String sparql) throws URISyntaxException, IOException {
+        String request = RequestBuilder.ask(sparql, true);
         String resultAsJSON = query(Format.JSON, request);
         return ResultParser.getResultFromAskQuery(resultAsJSON);
-    }
-
-    public List<String> selectFederatedQuery(String var, String sparql) throws URISyntaxException, IOException {
-        String request = buildSelectAllQuery(addFederatedQuery(sparql));
-        String resultAsJSON = query(Format.JSON, request);
-        return ResultParser.getResultsFromVariable(var, resultAsJSON);
-    }
-
-    public List<String> select(String var, String sparql) throws URISyntaxException, IOException {
-        String resultAsJSON = query(Format.JSON, sparql);
-        return ResultParser.getResultsFromVariable(var, resultAsJSON);
     }
 
     /**
      * <i>SELECT (count(distinct ?x) as ?n) WHERE { ... }</i> in SERVICE clause
      */
-    public int count(String sparql) throws URISyntaxException, IOException {
-        // "SELECT (count(distinct ?x) as ?n) WHERE { " + sparql + " }"));
-        String request = buildSelectAllQuery(addFederatedQuery(RequestBuilder.select("(count(distinct ?x) as ?n)", sparql, this.timeout, false)));
-        String resultAsJSON = query(Format.JSON, request);
-        if(resultAsJSON.contains("Read timed out") || resultAsJSON.contains("connect timed out")) {
-            // time out
-            // i.e. SocketTimeoutException from Corese server
-            return -1;
-        }
-        try {
-            return Integer.parseInt(Objects.requireNonNull(ResultParser.getResultsFromVariable("n", resultAsJSON)).get(0));
-        } catch (NullPointerException e) {
-            logger.error("Error during the counting ...");
-            logger.error("Result as JSON: " + resultAsJSON);
-        }
-        // return an error
-        return -1;
-    }
-
-    /**
-     * <i>SELECT (count(var) as ?n) WHERE { ... }</i> in SERVICE clause
-     */
     public int count(String var, String sparql) throws URISyntaxException, IOException {
+        Parameters parameters = Parameters.getInstance();
         // "SELECT (count(distinct ?x) as ?n) WHERE { " + sparql + " }"));
-        String request = buildSelectAllQuery(addFederatedQuery(RequestBuilder.select("(count(" + var + ") as ?n)", sparql, this.timeout, false)));
-        String resultAsJSON = query(Format.JSON, request);
-        if(resultAsJSON.contains("Read timed out") || resultAsJSON.contains("connect timed out")) {
-            // time out
-            // i.e. SocketTimeoutException from Corese server
-            return -1;
-        }
-        try {
-            return Integer.parseInt(Objects.requireNonNull(ResultParser.getResultsFromVariable("n", resultAsJSON)).get(0));
-        } catch (NullPointerException e) {
-            logger.error("Error during the counting ...");
-            logger.error("Result as JSON: " + resultAsJSON);
-        }
-        // return an error
-        return -1;
-    }
-
-    /**
-     * <i>SELECT (count(*) as ?n) WHERE { ?s ?p ?o }</i> in SERVICE clause
-     */
-    public int countAllFromCoreseTripleStore() throws URISyntaxException, IOException {
-        // "SELECT (count(distinct ?x) as ?n) WHERE { " + sparql + " }"));
-        String request = buildQuery("(count(*) as ?n)", "?s ?p ?o");
+        String request = parameters.getPrefixes() + "\n";
+        request += "@timeout " + parameters.getSparqlTimeOut() + "\n";
+        request += "SELECT (count(distinct " + var + ") as ?n) WHERE {  " + sparql + " }";
+//        String request = buildSelectAllQuery(addFederatedQuery(RequestBuilder.select("(count(distinct ?x) as ?n)", sparql, this.timeout, false)));
         String resultAsJSON = query(Format.JSON, request);
         if(resultAsJSON.contains("Read timed out") || resultAsJSON.contains("connect timed out")) {
             // time out
@@ -185,15 +146,16 @@ public class CoreseEndpoint {
      */
     public String query(String format, String sparql) throws URISyntaxException, IOException {
         // build the final URL
-        final String service = this.url + CoreseService.CORESE_SPARQL_ENDPOINT;
+//        final String service = this.url + CoreseService.CORESE_SPARQL_ENDPOINT;
         // specify all the query params needed to launch a request on Corese server
         HashMap<String, String> params = new HashMap<>();
         // specify SPARQL and Format in parameters
         params.put("query", sparql);
+        params.put("default-graph-uri", this.namedGraphUri);
 //        System.out.println("Request :\n" + sparql);
         params.put("format", format);
         // call the get method and return it result
-        return get(service, params);
+        return get(this.url, params);
     }
 
 //    /**
@@ -223,25 +185,26 @@ public class CoreseEndpoint {
 //    }
 
     public String getValidationReportFromServer(String content) throws URISyntaxException, IOException {
+        Parameters parameters = Parameters.getInstance();
         // todo: faire la requete sparql !
         int nTriples = 0;
         // fill params
         ArrayList<BasicHeader> bodyMap = new ArrayList<>();
         // 'query' is a mandatory param !
         bodyMap.add(new BasicHeader("query", "construct where {?s ?p ?o}"));
-        if(parameters.useProbabilisticShaclMode) {
-            bodyMap.add(new BasicHeader("mode", CoreseService.PROBABILISTIC_SHACL_EVALUATION));
-            bodyMap.add(new BasicHeader("named-graph-uri", this.namedGraphUri));
-            bodyMap.add(new BasicHeader("param", "p:" + parameters.getProbShaclP() + ";nT:" + nTriples));
-            bodyMap.add(new BasicHeader("content", content));
-        } else {
-            bodyMap.add(new BasicHeader("mode", CoreseService.SHACL_EVALUATION));
-        }
+//        if(parameters.getMod() == Mod.SHAPE_MINING) {
+        bodyMap.add(new BasicHeader("mode", CoreseService.PROBABILISTIC_SHACL_EVALUATION));
+        bodyMap.add(new BasicHeader("default-graph-uri", this.namedGraphUri));
+        bodyMap.add(new BasicHeader("param", "p:" + parameters.getProbShaclP() + ";nT:" + nTriples));
+        bodyMap.add(new BasicHeader("content", content));
+//        } else {
+//            bodyMap.add(new BasicHeader("mode", CoreseService.SHACL_EVALUATION));
+//        }
         // create form: body
         UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(bodyMap, StandardCharsets.UTF_8);
         // send POST request
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-        URIBuilder builder = new URIBuilder(this.url + CoreseService.CORESE_SPARQL_ENDPOINT);
+        URIBuilder builder = new URIBuilder(this.url);
         HttpPost post = new HttpPost(builder.build());
         // Accept header
         post.setHeader("Accept", "text/turtle");
@@ -311,19 +274,17 @@ public class CoreseEndpoint {
 //    }
 
     public String getHTMLResultFromSTTLTransformation(String sttl) throws URISyntaxException, IOException {
-        // build the final URL
-        final String service = this.url + CoreseService.CORESE_SPARQL_ENDPOINT;
         // specify all the query params needed to launch a request on Corese server
         HashMap<String, String> params = new HashMap<>();
         // specify sttl template
         params.put("query", sttl);
         // call the get method and return it result
-        return get(service, params);
+        return get(this.url, params);
     }
 
     /**
      * GET Request send to the server using a given service
-     * @param service URL of the service endpoint
+     * @param service URL of the SPARQL endpoint
      * @param params [OPTIONAL] the query params of the request
      * @return the result of the given request
      * @throws URISyntaxException Error concerning the syntax of the given URL

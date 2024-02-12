@@ -23,8 +23,6 @@ import java.util.ArrayList;
 
 public class EAOperators {
 
-    Parameters parameters = Parameters.getInstance();
-
     public static ArrayList<GEIndividual> getElitesFromPopulation(ArrayList<GEIndividual> population) {
         ArrayList<GEIndividual> elites = new ArrayList<>();
         // find the best individuals
@@ -42,6 +40,7 @@ public class EAOperators {
      * @return selected population
      */
     public ArrayList<GEIndividual> getSelectionFromPopulation(ArrayList<GEIndividual> population) {
+        Parameters parameters = Parameters.getInstance();
         ArrayList<GEIndividual> selectedPopulation = new ArrayList<>();
         switch(parameters.getSelectionType()) {
             default:
@@ -71,6 +70,7 @@ public class EAOperators {
     }
 
     public void crossover(ArrayList<GEIndividual> couple) {
+        Parameters parameters = Parameters.getInstance();
         switch (parameters.getCrossoverType()) {
             default:
             case TypeCrossover.SINGLE_POINT:
@@ -101,6 +101,7 @@ public class EAOperators {
     }
 
     public void mutation(ArrayList<GEIndividual> couple) {
+        Parameters parameters = Parameters.getInstance();
         switch (parameters.getMutationType()) {
             default:
             case TypeMutation.INT_FLIP:

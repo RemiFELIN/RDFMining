@@ -53,8 +53,6 @@ import java.util.Properties;
 public class TournamentSelect extends SelectionOperation implements Stochastic {
 
     private static final Logger logger = Logger.getLogger(TournamentSelect.class.getName());
-
-    Parameters parameters = Parameters.getInstance();
     
     protected RandomNumberGenerator rng;
     protected int tournamentSize;
@@ -89,6 +87,7 @@ public class TournamentSelect extends SelectionOperation implements Stochastic {
      */
     public TournamentSelect() {
         super();
+        Parameters parameters = Parameters.getInstance();
         this.size = (int) (parameters.getSelectionRate() * parameters.getPopulationSize());
         this.rng = new MersenneTwisterFast();
         this.tournamentSize = (int) (parameters.getTournamentSelectionRate() * parameters.getPopulationSize());

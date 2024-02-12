@@ -32,11 +32,8 @@ public class EntityMining {
 
     private static final Logger logger = Logger.getLogger(EntityMining.class.getName());
 
-    public Parameters parameters = Parameters.getInstance();
-
-    public Results results = Results.getInstance();
-
     public ArrayList<Entity> iterate(Generator generator, ArrayList<Entity> entities, int curGeneration) {
+        Parameters parameters = Parameters.getInstance();
         // A list of individuals (from entities list)
         ArrayList<GEIndividual> entitiesI = new ArrayList<>();
         // Use list of individuals instead of list of entities
@@ -111,7 +108,10 @@ public class EntityMining {
     }
 
     private void updateResults(ArrayList<Entity> originalPopulation, ArrayList<Entity> newPopulation, int curGeneration) {
+        Results results = Results.getInstance();
         Generation generation = new Generation(originalPopulation, newPopulation, curGeneration);
+        results.addGeneration(generation);
+        results.setEntities(newPopulation);
         // Log usefull stats concerning the algorithm evolution
         logGenerationInfo(generation);
         // send generations to the server
@@ -126,7 +126,7 @@ public class EntityMining {
             logger.info("Status code: " + response.getStatusLine().getStatusCode());
             logger.info(new BasicResponseHandler().handleResponse(response));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warn("RDFminer-server is offline !");
         }
     }
 

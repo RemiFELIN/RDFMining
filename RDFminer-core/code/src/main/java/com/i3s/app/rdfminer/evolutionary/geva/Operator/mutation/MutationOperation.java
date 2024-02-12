@@ -57,8 +57,6 @@ import java.util.Properties;
  */
 public abstract class MutationOperation implements Stochastic, Operation {
 
-    Parameters parameters = Parameters.getInstance();
-
     protected double probability;
     protected double noOfMutationCalls;
     protected RandomNumberGenerator rng;
@@ -69,6 +67,7 @@ public abstract class MutationOperation implements Stochastic, Operation {
      * parameters provided by RDFMiner application
      */
     public MutationOperation() {
+        Parameters parameters = Parameters.getInstance();
         this.probability = parameters.getProMutation();
         this.rng = new MersenneTwisterFast();
         this.noOfMutationCalls = 0;

@@ -1,8 +1,11 @@
 package com.i3s.app.rdfminer.output;
 
 import com.i3s.app.rdfminer.entity.Entity;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 /**
@@ -18,6 +21,11 @@ public class Results {
 
     private String projectName;
 
+    /**
+     * This is a key to retrieve logs file into RDFminer logs folder if needed
+     */
+    private String logs;
+
     private ArrayList<JSONObject> entities = new ArrayList<>();
 
     private ArrayList<Generation> generations = new ArrayList<>();
@@ -28,18 +36,24 @@ public class Results {
 
     public void setProjectName(String projectName) {
         this.projectName = projectName;
+        // define logs filename
+        this.setLogs();
     }
 
-    public void addEntity(JSONObject entity) {
-        this.entities.add(entity);
+    public void addEntity(Entity entity) {
+        this.entities.add(entity.toJSON());
     }
 
     public void setEntities(ArrayList<Entity> entities) {
+        // reset list before it
+        this.entities = new ArrayList<>();
         for(Entity entity : entities) {
-            this.addEntity(entity.toJSON());
+            this.addEntity(entity);
         }
     }
-    
+
+    public void addGeneration(Generation generation) { this.generations.add(generation); }
+
     public void setGenerations(ArrayList<Generation> generations) {
         this.generations = generations;
     }
@@ -58,11 +72,34 @@ public class Results {
 //        }
 //    }
 
+    public void setLogs() {
+        this.logs = Instant.now().truncatedTo(ChronoUnit.MILLIS) + "_" + this.projectName.hashCode() + ".log";
+    }
+
+    public String getLogs() {
+        return this.logs;
+    }
+
     public static Results getInstance() {
-        if(Results.instance == null) {
-            Results.instance = new Results();
+        if(instance == null) {
+            instance = new Results();
         }
-        return Results.getInstance();
+        return instance;
+    }
+
+    public void resetLists() {
+        this.entities = new ArrayList<>();
+        this.generations = new ArrayList<>();
+    }
+
+    public JSONObject toJSON() {
+        JSONObject json = new JSONObject();
+        json.put("userID", this.userID);
+        json.put("projectName", this.projectName);
+        json.put("logs", this.logs);
+        json.put("entities", new JSONArray(entities));
+        json.put("generations", new JSONArray(generations));
+        return json;
     }
 
 }

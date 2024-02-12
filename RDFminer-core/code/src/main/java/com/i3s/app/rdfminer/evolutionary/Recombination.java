@@ -14,8 +14,6 @@ public class Recombination {
 
     private static final Logger logger = Logger.getLogger(Recombination.class.getName());
 
-    Parameters parameters = Parameters.getInstance();
-
     /**
      * To compute all tasks about crossover, mutation and evaluation phasis of
      * evolutionary algorithm
@@ -23,6 +21,7 @@ public class Recombination {
      */
     public ArrayList<GEIndividual> perform(Generator generator, ArrayList<GEIndividual> elites,
                                                   ArrayList<GEIndividual> selectedIndividuals) {
+        Parameters parameters = Parameters.getInstance();
         ArrayList<GEIndividual> replacement = new ArrayList<>();
 //        System.out.println(newPopulation.size());
 //        int phasis = 0;

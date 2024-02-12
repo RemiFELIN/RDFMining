@@ -47,10 +47,10 @@ public class Similarity {
         String simNumSparql = "{ " + this.phi1SubClass.graphPattern + this.phi1SuperClass.graphPattern + " } UNION { " +
                 phi2SubClass.graphPattern + phi2SuperClass.graphPattern + " } ";
         String simDenSparql = "{ " + this.phi1SuperClass.graphPattern + " } UNION { " + this.phi2SuperClass.graphPattern + " }";
-        double similarityNumerator = endpoint.count(simNumSparql);
+        double similarityNumerator = endpoint.count("?x", simNumSparql);
 //        logger.info("numerator query : " + simNumSparql);
 //        logger.info("result = " + similarityNumerator);
-        double similarityDenominator = endpoint.count(simDenSparql);
+        double similarityDenominator = endpoint.count("?x", simDenSparql);
 //        logger.info("denominator query : " + simDenSparql);
 //        logger.info("result = " + similarityDenominator);
         // avoid NaN value returned by a zero-denominator
@@ -66,9 +66,9 @@ public class Similarity {
         String simDenSparql = "{ " + this.phi1SubClass.graphPattern + " } UNION { " + this.phi1SuperClass.graphPattern + " }" +
                 " UNION { " + this.phi2SubClass.graphPattern + " } UNION { " + this.phi2SuperClass.graphPattern + " }";
 //        logger.info("numerator query : " + simNumSparql);
-        int similarityNumerator = endpoint.count(simNumSparql);
+        int similarityNumerator = endpoint.count("?x", simNumSparql);
 //        logger.info("result numerator = " + similarityNumerator);
-        int similarityDenominator = endpoint.count(simDenSparql);
+        int similarityDenominator = endpoint.count("?x", simDenSparql);
 //        logger.info("denominator query : " + simDenSparql);
 //        logger.info("result denominator = " + similarityDenominator);
 //        System.out.println("final result: " + ((float)similarityNumerator / similarityDenominator));

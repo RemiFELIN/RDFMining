@@ -4,8 +4,12 @@ import java.time.Instant;
 
 public class MyLogger {
 
-    public static void info(String method, String message) {
-        System.out.println(Instant.now() + " - " + method + "/ - " + message);
+    public static void error(String message) {
+        System.out.println(Instant.now() + " - ERROR - " + message);
+    }
+
+    public static void info(String message) {
+        System.out.println(Instant.now() + " - INFO - " + message);
     }
 
 }

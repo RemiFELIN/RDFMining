@@ -4,8 +4,6 @@ import com.i3s.app.rdfminer.Parameters;
 
 public class ClockWorldStop implements StopCriterion {
 
-    Parameters parameters = Parameters.getInstance();
-
     public long maxTime;
     public long chrono;
     public int curGeneration;
@@ -21,6 +19,7 @@ public class ClockWorldStop implements StopCriterion {
 
     @Override
     public void start() {
+        Parameters parameters = Parameters.getInstance();
         // start chrono
         this.chrono = System.currentTimeMillis();
         // set current generation

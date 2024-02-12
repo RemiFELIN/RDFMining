@@ -106,7 +106,7 @@ public class EquivalentClassesAxiom extends Axiom {
 				refCardGraphPattern.append(" UNION ");
 			refCardGraphPattern.append("{ ").append(equivalentClass[i].graphPattern).append(" }");
 		}
-		referenceCardinality = endpoint.count(refCardGraphPattern.toString());
+		referenceCardinality = endpoint.count("?x", refCardGraphPattern.toString());
 
 		StringBuilder confirmationGraphPattern = new StringBuilder();
 		for (int i = 0; i < equivalentClass.length; i++) {
@@ -121,7 +121,7 @@ public class EquivalentClassesAxiom extends Axiom {
 			}
 			confirmationGraphPattern.append(" }");
 		}
-		numConfirmations = endpoint.count(confirmationGraphPattern.toString());
+		numConfirmations = endpoint.count("?x", confirmationGraphPattern.toString());
 //		if (numConfirmations > 0 && numConfirmations < 100) {
 //			// query the confirmations
 //			RDFMiner.endpoint.select("TO DO", 0);
@@ -133,7 +133,7 @@ public class EquivalentClassesAxiom extends Axiom {
 //		}
 		StringBuilder exceptionGraphPattern = new StringBuilder();
 		for (Expression aClass : equivalentClass) exceptionGraphPattern.append(aClass.graphPattern).append("\n");
-		numExceptions = endpoint.count(exceptionGraphPattern.toString());
+		numExceptions = endpoint.count("?x", exceptionGraphPattern.toString());
 //		if (numExceptions > 0 && numExceptions < 100) {
 //			// query the exceptions
 //			RDFMiner.endpoint.select("TO DO", 0);

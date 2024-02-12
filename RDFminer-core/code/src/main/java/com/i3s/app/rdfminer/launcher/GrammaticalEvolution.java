@@ -23,10 +23,6 @@ public class GrammaticalEvolution {
 
     private static final Logger logger = Logger.getLogger(GrammaticalEvolution.class.getName());
 
-    private final Parameters parameters = Parameters.getInstance();
-
-    Results results = Results.getInstance();
-
     public static int nRecombinaison;
 
     public static int nCrossover;
@@ -36,7 +32,9 @@ public class GrammaticalEvolution {
     /**
      * Implementation of GE
      */
-    public void run(Generator generator) throws Exception {
+    public void run(Generator generator) {
+        Results results = Results.getInstance();
+        Parameters parameters = Parameters.getInstance();
         // log settings
         logUsedParameters(parameters);
         // Generate candidate population
@@ -141,7 +139,16 @@ public class GrammaticalEvolution {
     private void logUsedParameters(Parameters parameters) {
         logger.info("=== RESOURCES SETTINGS ==============================");
         logger.info("SPARQL endpoint: " + Global.SPARQL_ENDPOINT);
-        logger.info("max. mining time: " + parameters.getMaxMiningTime() * 60000L + " min.");
+        logger.info("named data graph: " + parameters.getNamedDataGraph());
+        switch (parameters.getStopCriterion()) {
+            case 1:
+                logger.info("max. mining time: " + parameters.getMaxMiningTime() + " min.");
+                break;
+            case 2:
+                logger.info("effort: " + parameters.getEffort());
+                break;
+        }
+
         logger.info("n. of thread(s) used: " + Global.NB_THREADS);
         //
         logger.info("=== POPULATION SETTINGS ==============================");

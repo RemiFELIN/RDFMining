@@ -143,8 +143,7 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 			// Now that we have the sub-class iterator correctly positioned...
 			// We have to position the iterator to the super-class.
 			Expression expr = ExpressionFactory.createClass(subClass);
-			Set<String> types = getNodes(
-					"SELECT DISTINCT ?class WHERE { " + expr.createGraphPattern("?x", "?y") + "\n" + "?x a ?class . }");
+			Set<String> types = getNodes(expr.createGraphPattern("?x", "?y") + "\n" + "?x a ?class . ");
 			superClassIterator = types.iterator();
 			// Unroll the super class iterator up to the saved super class:
 			while (superClassIterator.hasNext()) {
@@ -171,7 +170,7 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 	protected Set<String> getNodes(String sparql) throws URISyntaxException, IOException {
 		logger.warn("Querying DBpedia with query " + sparql);
 		CoreseEndpoint endpoint = new CoreseEndpoint(Global.SPARQL_ENDPOINT, Global.PREFIXES);
-		List<String> results = endpoint.selectFederatedQuery("class", sparql);
+		List<String> results = endpoint.select("?class", sparql, false);
 		return new TreeSet<>(results);
 	}
 
@@ -200,8 +199,7 @@ public class IncreasingTimePredictorAxiomGenerator extends AxiomGenerator {
 			subClass = subClassIterator.next();
 			logger.debug("Subclass is now " + subClass);
 			Expression expr = ExpressionFactory.createClass(subClass);
-			types = getNodes(
-					"SELECT DISTINCT ?class WHERE { " + expr.createGraphPattern("?x", "?y") + "\n" + "?x a ?class . }");
+			types = getNodes(expr.createGraphPattern("?x", "?y") + "\n" + "?x a ?class . ");
 			logger.debug("Found " + types.size() + " classes!");
 			// }
 			// while(/* types.size()>=30 || */ types.size()<30);

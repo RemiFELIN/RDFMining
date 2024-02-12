@@ -40,7 +40,8 @@ import java.util.Properties;
  * @author Andrea G. B. Tettamanzi
  */
 public class DLGEGrammar extends GEGrammar {
-    static Logger logger = Logger.getLogger("rdfminer.DLGEGrammar");
+
+    static Logger logger = Logger.getLogger(DLGEGrammar.class.getName());
 
     /**
      * Creates a new, empty instance of DLGEGrammar.
@@ -97,16 +98,17 @@ public class DLGEGrammar extends GEGrammar {
      * Language</a>.
      * </p>
      *
-     * @param fileName the name of a text file to read the grammar from.
+     * @param bnfGrammar the BNF grammar provided.
      */
-    public void readW3CGrammarFile(String fileName) throws MalformedGrammarException {
+    public void readW3CGrammarFile(String bnfGrammar) throws MalformedGrammarException {
         try {
-            logger.info("Reading grammar file ...");
-            File file = new File(fileName);
-            InputStream is = new FileInputStream(file);
-            logger.assertLog(is != null, "Cannot open file: " + fileName);
-            InputStreamReader isr = new InputStreamReader(is);
-            Reader r = new BufferedReader(isr, 1024);
+            logger.info("Reading grammar ...");
+//            File file = new File(fileName);
+//            InputStream is = new FileInputStream(file);
+//            logger.assertLog(is != null, "Cannot open file: " + fileName);
+//            InputStreamReader isr = new InputStreamReader(is);
+//            Reader r = new BufferedReader(isr, 1024);
+            Reader r = new StringReader(bnfGrammar);
             // Initialize the BNF grammar tokenizer:
             BNFGrammarTokenizer source = new BNFGrammarTokenizer(r);
 
@@ -330,11 +332,8 @@ public class DLGEGrammar extends GEGrammar {
             // Add the last production, which is still pending, to the current rule:
             rule.add(prod);
             r.close();
-        } catch (FileNotFoundException e) {
-            logger.error(this.getClass().getName() + ": Grammar File not found: " + fileName);
         } catch (IOException e) {
-            logger.error(this.getClass().getName() + ": IOException when looking for grammar file: " + fileName + ": "
-                    + e.getMessage());
+            logger.error("IOException when looking for BNF grammar: " + e.getMessage());
         }
 
     }

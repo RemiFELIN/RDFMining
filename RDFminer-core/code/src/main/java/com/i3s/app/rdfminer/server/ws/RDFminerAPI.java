@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.RDFminer;
+import com.i3s.app.rdfminer.output.ServerError;
 import com.i3s.app.rdfminer.output.Results;
 import com.i3s.app.rdfminer.server.MyLogger;
 
@@ -25,23 +26,32 @@ public class RDFminerAPI {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response exec(@FormParam("params") String params) throws JsonProcessingException {
-        MyLogger.info("POST", "exec RDFminer ...");
+        MyLogger.info("exec RDFminer ...");
         // map parameters provided by user
         Parameters parameters = new ObjectMapper().readValue(params, Parameters.class);
-        MyLogger.info("POST", "project: " + parameters.getProjectName() + " (" + parameters.getUserID() + ")");
-        // get instance of results
+//        new ObjectMapper().updateValue(parameters, params);
+        MyLogger.info("project: " + parameters.getProjectName() + " is launched by " + parameters.getUserID());
+        // instanciate results
         Results results = Results.getInstance();
         results.setUserID(parameters.getUserID());
         results.setProjectName(parameters.getProjectName());
+        results.resetLists();
+        // starting RDFminer
+        RDFminer rdfMiner = new RDFminer();
         try {
-            RDFminer.exec(parameters);
+            rdfMiner.exec();
         } catch (InterruptedException | ExecutionException | URISyntaxException | IOException e) {
-            MyLogger.info("ERROR", "error during the RDFminer execution ...");
-            MyLogger.info("ERROR", e.getMessage());
-            MyLogger.info("ERROR", "project " + parameters.getProjectName() + " (" + parameters.getUserID() + ") failed !");
+            ServerError error = new ServerError();
+            error.setCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+            error.setMessage(e.getMessage());
+            MyLogger.error("error during the RDFminer execution ...");
+            MyLogger.error(e.getMessage());
+            MyLogger.error("project " + parameters.getProjectName() + " (user: " + parameters.getUserID() + ") failed !");
 //            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new ObjectMapper().writeValueAsString(error)).build();
         }
-        return Response.ok(new ObjectMapper().writeValueAsString(results)).build();
+        MyLogger.info("project: " + parameters.getProjectName() + " (user: " + parameters.getUserID() + ") finished !");
+        return Response.ok(results.toJSON().toString(2)).build();
     }
 
 }

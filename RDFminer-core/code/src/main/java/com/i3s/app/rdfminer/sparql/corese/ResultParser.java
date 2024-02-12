@@ -58,7 +58,7 @@ public class ResultParser {
         JSONArray vars = resultsJSON.getJSONObject("head").getJSONArray("vars");
         boolean inVars = false;
         for(int i=0; i<vars.length(); i++) {
-            if(Objects.equals(vars.getString(i), var)) {
+            if(Objects.equals(vars.getString(i), var.replace("?", ""))) {
                 inVars = true;
                 break;
             }
@@ -83,7 +83,7 @@ public class ResultParser {
 
         for(int i=0; i<bindings.length(); i++) {
             // get object from given var
-            JSONObject choosenVar = bindings.getJSONObject(i).getJSONObject(var);
+            JSONObject choosenVar = bindings.getJSONObject(i).getJSONObject(var.replace("?", ""));
             String type = choosenVar.getString("type");
             if(Objects.equals(type, Format.TYPE_URI)) {
                 // URI case

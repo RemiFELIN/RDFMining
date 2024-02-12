@@ -55,8 +55,6 @@ import java.util.Properties;
  */
 public abstract class RouletteWheel extends SelectionOperation implements Stochastic {
 
-    Parameters parameters = Parameters.getInstance();
-
     protected RandomNumberGenerator rng;
     protected double minFit;
     protected double sumFit;
@@ -73,6 +71,7 @@ public abstract class RouletteWheel extends SelectionOperation implements Stocha
      */
     public RouletteWheel() {
         super();
+        Parameters parameters = Parameters.getInstance();
         this.size = (int) (parameters.getSelectionRate() * parameters.getPopulationSize());
         this.rng = new MersenneTwisterFast();
     }
