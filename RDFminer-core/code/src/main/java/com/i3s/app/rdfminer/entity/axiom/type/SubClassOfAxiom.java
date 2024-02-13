@@ -219,16 +219,16 @@ public class SubClassOfAxiom extends Axiom {
 		// get all types related to the subClassExpression for which it does not exists any ?z of this type and superClassExpression
 		String type = "?t";
 		while (offset != numIntersectingClasses) {
-			String body = "{ ";
-			body += 	      "SELECT " + type + " WHERE { ";
-			body += 		  	 "SELECT distinct " + type + " WHERE { ";
+			String body = " { ";
+			body += 	      " SELECT " + type + " WHERE { ";
+			body += 		  	 " SELECT distinct " + type + " WHERE { ";
 			body += 		  	 	subClass.graphPattern + " ?x a " + type;
-			body += 		  	 "} ORDER BY " + type;
+			body += 		  	 " } ORDER BY " + type;
 			// @todo set limit value with a parameters ?
-			body += 	      "} LIMIT 1000 OFFSET " + offset;
+			body += 	      " } LIMIT 1000 OFFSET " + offset;
 			body += 	 " } ";
 			// filter not exists part
-			body +=		 " FILTER NOT EXISTS { " + superClass.graphPattern + " ?x a " + type + " }";
+			body +=		 " FILTER NOT EXISTS { " + superClass.graphPattern + " ?x a " + type + " } ";
 //			System.out.println(getTypesQuery);
 			List<String> results = endpoint.select(type, body, true);
 			if (results != null)

@@ -12,4 +12,8 @@ public class MyLogger {
         System.out.println(Instant.now() + " - INFO - " + message);
     }
 
+    public static void warn(String message) {
+        System.out.println(Instant.now() + " - WARN - " + message);
+    }
+
 }

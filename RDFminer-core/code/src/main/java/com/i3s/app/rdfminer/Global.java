@@ -32,6 +32,8 @@ public class Global {
 
     public static final String HOME = System.getenv("HOME");
 
+    public static final int MAX_SIMULTANEOUS_EXEC = 1;
+
     /**
      * Path to log4j.properties file
      */

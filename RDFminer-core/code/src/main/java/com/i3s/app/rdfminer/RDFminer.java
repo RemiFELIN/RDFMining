@@ -112,7 +112,7 @@ public class RDFminer {
 		String filePath = "/user/rfelin/home/projects/RDFMining/IO/logs/" + results.getLogs();
 		// set properties
 		Properties props = new Properties();
-		props.put("log4j.rootLogger", "INFO, A1");
+		props.put("log4j.rootLogger", "DEBUG, A1");
 		props.put("log4j.appender.A1", "org.apache.log4j.RollingFileAppender");
 		props.put("log4j.appender.A1.File", filePath);
 		// Deal with 'very' huge experiments

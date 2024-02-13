@@ -97,6 +97,7 @@ public class CoreseEndpoint {
         if (limitOffset.length > 1) {
             request += " OFFSET " + limitOffset[1];
         }
+        logger.debug(request);
         String resultAsJSON = query(Format.JSON, request);
         return ResultParser.getResultsFromVariable(var, resultAsJSON);
     }

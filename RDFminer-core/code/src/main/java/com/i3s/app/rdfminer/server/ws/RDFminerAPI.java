@@ -4,9 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.i3s.app.rdfminer.Parameters;
 import com.i3s.app.rdfminer.RDFminer;
-import com.i3s.app.rdfminer.output.ServerError;
 import com.i3s.app.rdfminer.output.Results;
 import com.i3s.app.rdfminer.server.MyLogger;
+import com.i3s.app.rdfminer.server.RDFminerProcess;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -19,10 +19,11 @@ import java.util.concurrent.ExecutionException;
  * RDFminer Web services
  * endpoints to exploit RDFminer tools (SHACL or OWL axioms mining; SHACL Validation; ...)
  */
-@Path("rdfminer")
+@Path("/")
 public class RDFminerAPI {
 
     @POST
+    @Path("start")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response exec(@FormParam("params") String params) throws JsonProcessingException {
@@ -36,22 +37,43 @@ public class RDFminerAPI {
         results.setUserID(parameters.getUserID());
         results.setProjectName(parameters.getProjectName());
         results.resetLists();
-        // starting RDFminer
-        RDFminer rdfMiner = new RDFminer();
-        try {
-            rdfMiner.exec();
-        } catch (InterruptedException | ExecutionException | URISyntaxException | IOException e) {
-            ServerError error = new ServerError();
-            error.setCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-            error.setMessage(e.getMessage());
-            MyLogger.error("error during the RDFminer execution ...");
-            MyLogger.error(e.getMessage());
-            MyLogger.error("project " + parameters.getProjectName() + " (user: " + parameters.getUserID() + ") failed !");
-//            e.printStackTrace();
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new ObjectMapper().writeValueAsString(error)).build();
+        // init RDFminer processes manager
+        RDFminerProcess processes = RDFminerProcess.getInstance();
+        Thread task = new Thread(() -> {
+            // starting RDFminer
+            RDFminer rdfMiner = new RDFminer();
+            try {
+                rdfMiner.exec();
+            } catch (InterruptedException e) {
+                // thread interruption due to /stop ws call
+                MyLogger.warn("RDFminer task has been interrupted !");
+            } catch (ExecutionException | URISyntaxException | IOException e) {
+                // others cases
+                MyLogger.error("error during the RDFminer execution ...");
+                MyLogger.error(e.getMessage());
+                MyLogger.error("project " + parameters.getProjectName() + " (user: " + parameters.getUserID() + ") failed !");
+            }
+        });
+        // submit task
+        if (processes.setProcess(parameters.getUserID(), task)) {
+            // launch
+            processes.startThread(parameters.getUserID());
+            MyLogger.info("project: " + parameters.getProjectName() + " (user: " + parameters.getUserID() + ") finished !");
+            return Response.ok(results.toJSON().toString(2)).build();
         }
-        MyLogger.info("project: " + parameters.getProjectName() + " (user: " + parameters.getUserID() + ") finished !");
-        return Response.ok(results.toJSON().toString(2)).build();
+        return Response.status(Response.Status.SERVICE_UNAVAILABLE).entity("RDFminer-core is unavalaible (already in use, maintenance, ...), try it latter !").build();
+    }
+
+    @GET
+    @Path("stop")
+    public Response stop(@QueryParam("userID") String userID) {
+        RDFminerProcess processes = RDFminerProcess.getInstance();
+        // kill process
+        if (processes.killProcess(userID)) {
+            MyLogger.info("user: " + userID + " has stopped its experiment ...");
+            return Response.ok("your RDFminer execution has been stopped !").build();
+        }
+        return Response.status(Response.Status.NOT_FOUND).entity("No RDFminer execution to interrupt ...").build();
     }
 
 }
