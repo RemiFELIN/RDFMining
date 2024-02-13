@@ -44,6 +44,7 @@ public class Fitness {
     }
 
     public static Entity computeEntity(GEIndividual individual, Generator generator) throws URISyntaxException, IOException {
+        logger.debug("eval. fitness of individual: " + individual.getPhenotype().getStringNoSpace());
         if(generator.generateAxioms) {
             AxiomFitnessEvaluation fit = new AxiomFitnessEvaluation();
             return fit.updateIndividual(individual);

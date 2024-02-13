@@ -62,13 +62,13 @@ public class CoreseEndpoint {
 
     /**
      * Constructor of SparqlEndpoint
-     * @param service the SPARQL endpoint to ask into federated query
+     * @param namedGraphUri the named graph uri to query
      * @param prefixes the prefixes used for the queries
      */
-    public CoreseEndpoint(String service, String prefixes) {
+    public CoreseEndpoint(String namedGraphUri, String prefixes) {
         Parameters parameters = Parameters.getInstance();
         this.url = Global.SPARQL_ENDPOINT;
-        this.namedGraphUri = service;
+        this.namedGraphUri = namedGraphUri;
         this.prefixes = prefixes;
         this.parameters = Parameters.getInstance();
         this.setTimeout(parameters.getSparqlTimeOut());
@@ -188,7 +188,7 @@ public class CoreseEndpoint {
     public String getValidationReportFromServer(String content) throws URISyntaxException, IOException {
         Parameters parameters = Parameters.getInstance();
         // todo: faire la requete sparql !
-        int nTriples = 0;
+        int nTriples = 1;
         // fill params
         ArrayList<BasicHeader> bodyMap = new ArrayList<>();
         // 'query' is a mandatory param !

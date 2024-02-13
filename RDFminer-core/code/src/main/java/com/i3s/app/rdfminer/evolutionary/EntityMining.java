@@ -88,7 +88,9 @@ public class EntityMining {
                     newPopulation.add(future.get());
                 }
             } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
+                logger.warn("The mining has been interrupted !");
+                executor.shutdown();
+                return null;
             } catch (TimeoutException e) {
                 logger.warn("Time-cap reached !");
             }

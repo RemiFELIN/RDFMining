@@ -29,14 +29,21 @@ public class GrammaticalEvolution {
 
     public static int nMutation;
 
+    private Parameters parameters;
+
+    private Results results;
+
+    public GrammaticalEvolution() {
+        this.results = Results.getInstance();
+        this.parameters = Parameters.getInstance();
+    }
+
     /**
      * Implementation of GE
      */
     public void run(Generator generator) {
-        Results results = Results.getInstance();
-        Parameters parameters = Parameters.getInstance();
         // log settings
-        logUsedParameters(parameters);
+        logUsedParameters(this.parameters);
         // Generate candidate population
         logger.info("Initializing candidate population ...");
         // init population as GEIndividuals
@@ -46,7 +53,7 @@ public class GrammaticalEvolution {
         // Stop Criterion
         StopCriterion stopCriterion;
         // select the way to stop GE
-        switch (parameters.getStopCriterion()) {
+        switch (this.parameters.getStopCriterion()) {
             default:
             case 1:
                 // We stop the mining process based on the maximum time provided
@@ -66,6 +73,11 @@ public class GrammaticalEvolution {
             logger.info("Generation: " + stopCriterion.getCurGeneration());
             // running an iteration ...
             entities = mining.iterate(generator, entities, stopCriterion.getCurGeneration());
+            // it means that the mining has been interrupted (exception or by calling /stop web service)
+            // finishing GE and return current results
+            if (entities == null) {
+                break;
+            }
 //            editCache(CACHE_PATH, entities, stopCriterion.getCurGeneration(), curCheckpoint);
             // reset crossover and mutation counter
             nCrossover = 0;
@@ -79,7 +91,9 @@ public class GrammaticalEvolution {
 //        for(Entity entity : entities) {
 //            RDFminer.content.add(entity.toJSON());
 //        }
-        results.setEntities(entities);
+//        if (entities != null) {
+//            this.results.setEntities(entities);
+//        }
 //        logger.info(RDFminer.content.size() + " entities has been added in " + Global.RESULTS_FILENAME);
         logger.info("Evolutionary process is done...");
         // System.exit(0);
@@ -148,7 +162,6 @@ public class GrammaticalEvolution {
                 logger.info("effort: " + parameters.getEffort());
                 break;
         }
-
         logger.info("n. of thread(s) used: " + Global.NB_THREADS);
         //
         logger.info("=== POPULATION SETTINGS ==============================");

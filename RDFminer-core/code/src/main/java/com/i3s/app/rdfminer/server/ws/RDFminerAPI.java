@@ -68,12 +68,14 @@ public class RDFminerAPI {
     @Path("stop")
     public Response stop(@QueryParam("userID") String userID) {
         RDFminerProcess processes = RDFminerProcess.getInstance();
+        // return the instance of current results
+        Results results = Results.getInstance();
         // kill process
         if (processes.killProcess(userID)) {
             MyLogger.info("user: " + userID + " has stopped its experiment ...");
-            return Response.ok("your RDFminer execution has been stopped !").build();
+            return Response.ok(results.toJSON().toString(2)).build();
         }
-        return Response.status(Response.Status.NOT_FOUND).entity("No RDFminer execution to interrupt ...").build();
+        return Response.status(Response.Status.NOT_FOUND).entity("No RDFminer execution to stop ...").build();
     }
 
 }
